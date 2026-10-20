@@ -105,27 +105,17 @@
 
 <h2 id="bal">① 밸런스 — 확인·결정 <small>숫자는 <code>밸런스_점검.html</code> 맨 위 "10-20"</small></h2>
 <ul class="todo">
-  <li data-id="b2-noad"><label><input type="checkbox"><span><span class="tag t-pick">결정</span><span class="txt"><b>광고를 안 보는 무과금은 150챕터까지 452일 (1.2년)</b> (광고 최대 = 146일, 약 3배 차이) — 광고 x2 가 공격력·골드 둘 다라서입니다. 이대로 둘까요?
-    <ol class="opts">
-      <li>그대로 둠 — 광고를 보는 게 사실상 필수인 게임</li>
-      <li>광고 버프를 <b>공격력·골드 중 하나만</b> 켜지게 (둘 다 보려면 광고 2번)</li>
-      <li>광고 버프 배율을 x1.5 로 낮추고 다시 맞춤 (광고 최대 = 그대로 147일, 광고 안 봄이 빨라짐) <span class="rec">추천 — 광고 안 보는 사람도 끝까지 갈 만한 길이</span></li>
-    </ol></span></span></label></li>
-  <li data-id="b2-share"><label><input type="checkbox"><span><span class="tag t-pick">결정</span><span class="txt"><b>"무료 3 : 결제 7" 해석 확인</b> — <b>다이아로 살 수 있는 것 전부</b>(스킨 17 · 보급품 25 · 총알 SSU 3칸 · 슬롯 강화 +150 x 3칸 = 약 214만) 중 <b>무료로 150챕터까지 버는 양 = 30%</b>(약 65만)로 맞췄습니다. 맞나요? <span class="f">(다르게 뜻하셨으면 적어 주세요 — 예: "무과금이 버는 다이아 = 결제 유저의 30%")</span></span></span></label></li>
-  <li data-id="b2-mine"><label><input type="checkbox"><span><span class="tag t-pick">결정</span><span class="txt"><b>무료 다이아의 69%가 광산</b> (광산 44만 · 보스 던전 17만 · 도전 1만 · 상점 광고 1.8만 · 미션 0.4만) — "광산 = 보스 던전 수준"으로 올렸더니, 보스 던전은 <b>새 단계를 깰 때만</b> 보상인데 광산은 <b>매일 2장</b>이라 광산이 훨씬 커졌습니다. <span class="rec">추천: 그대로 (매일 들어갈 이유가 확실)</span> · 다르게 원하시면 "광산 = 보스 던전의 절반" 처럼 적어 주세요</span></span></label></li>
-  <li data-id="b2-slot"><label><input type="checkbox"><span><span class="tag t-pick">결정</span><span class="txt"><b>슬롯 강화 골드 = 그 챕터 골드 수입 10분</b> (+1 = 1챕터 기준 … +150 = 150챕터 기준) — 더 비싸게/싸게? <span class="rec">추천: 그대로</span> <span class="f">(<code>tools/balance_apply_1020.py</code> 의 ENCH_MIN)</span></span></span></label></li>
-  <li data-id="b2-mgold"><label><input type="checkbox"><span><span class="tag t-pick">결정</span><span class="txt"><b>미션 골드 환산</b> — 다이아 1 = 지금 스테이지 좀비 6마리 골드 x 돈 배율 (상점 골드 상자 100다이아 = 600마리와 같은 비율). 미션 보상 = 다이아 30% + 이 환산으로 골드 70%. <span class="rec">추천: 그대로</span> <span class="f">(<code>Config.xlsx</code> Mission_Gem_Ratio · Gem_Gold_Kills)</span></span></span></label></li>
+  <li data-id="b2-noad"><label><input type="checkbox" checked disabled><span><span class="tag t-you">끝</span><b>광고 안 보는 무과금 — 그대로 (10-20 결정)</b> — 광고를 봐야 진행되는 구조로 둠. 광산 조정 뒤 광고 안 봄 = 150챕터 <b>538일</b> (광고 최대 149일의 약 3.6배)</span></label></li>
+  <li data-id="b2-share"><label><input type="checkbox" checked disabled><span><span class="tag t-you">끝</span><b>"무료 3 : 결제 7" — 맞음 (10-20 결정)</b> — 다이아로 살 수 있는 것 전부 약 214만 중 무료로 150챕터까지 약 66만 = <b>31%</b></span></label></li>
+  <li data-id="b2-mine"><label><input type="checkbox" checked disabled><span><span class="tag t-you">끝</span><b>광산 = 보스 던전의 절반 — 반영 (10-20)</b> — 광산 티켓 1장 = 같은 챕터 보스 던전 1회 보상의 절반. 줄어든 만큼 보상 배율을 다시 맞춰 30% 유지 → 무료 다이아 광산 36만(54%) · 보스 던전 26만(40%) · 도전 1.5만 · 상점 광고 1.8만 · 미션 0.6만. 날짜: 50챕터 20일 · 100챕터 62일 · 150챕터 149일 <span class="f">(광산은 매일 2장이라 절반이어도 가장 큼 · <code>tools/balance_apply_1020.py</code> 의 MINE_RATIO)</span></span></label></li>
+  <li data-id="b2-slot"><label><input type="checkbox" checked disabled><span><span class="tag t-you">끝</span><b>슬롯 강화 골드 = 그 챕터 수입 10분 — 그대로 (10-20 결정)</b> — <code>tools/balance_apply_1020.py</code> 의 ENCH_MIN</span></label></li>
+  <li data-id="b2-mgold"><label><input type="checkbox" checked disabled><span><span class="tag t-you">끝</span><b>미션 골드 환산 — 그대로 (10-20 결정)</b> — 다이아 1 = 좀비 6마리 골드, 미션 보상 다이아 30% + 골드 70%</span></label></li>
 </ul>
 
 <h2 id="game">② 게임 방향 — 정해 주실 것</h2>
 <ul class="todo">
-  <li data-id="g2-hunt"><label><input type="checkbox"><span><span class="tag t-pick">결정</span><span class="txt"><b>사냥 (질문 주신 것)</b> — 기획서에는 <b>"Stage 35 도달 시 · 후반부 엔드 콘텐츠 사냥터 던전"</b> 한 줄뿐이고 규칙·보상은 없습니다. 만든다면 어떤 것으로 할까요?
-    <ol class="opts">
-      <li><b>무한 웨이브 사냥터</b> — 하루 N번, 점점 세지는 좀비를 버틴 웨이브만큼 보상(다이아·골드), 최고 기록을 넘기면 추가 보상 <span class="rec">추천 — 지금 던전 구조 그대로 써서 빠름, 후반 할 거리</span></li>
-      <li><b>방치 사냥</b> — 분대 일부를 사냥터에 보내 두면 시간당 재료가 쌓임 (새 재료 → 새 성장 줄이 필요)</li>
-      <li><b>만들지 않음</b> — 펫·탈것처럼 폐기</li>
-    </ol></span></span></label></li>
-  <li data-id="g2-priority"><label><input type="checkbox"><span><span class="tag t-pick">결정</span><span class="txt"><b>다음에 만들 것 우선순위</b> (펫·탈것·패스 폐기 반영) — 광고/결제 SDK · 소리 · 클라우드 저장 · 사냥 · 스토어 등록 <span class="rec">추천: 광고/결제 SDK + 스토어 준비(아이콘·AAB) → 소리 → 클라우드 저장</span></span></span></label></li>
+  <li data-id="g2-hunt"><label><input type="checkbox" checked disabled><span><span class="tag t-you">끝</span><b>사냥 — 만들지 않음 (10-20 결정)</b> — 환생이 폐기돼서 스테이지를 늘리는 방향. 지금도 표 끝(750 = 150챕터) 너머는 좀비 체력·골드를 이어서 계산해 계속 진행됨 <span class="f">(Stage.xlsx 에 줄을 더하면 그 값이 우선)</span></span></label></li>
+  <li data-id="g2-priority"><label><input type="checkbox"><span><span class="tag t-pick">결정</span><span class="txt"><b>다음에 만들 것 우선순위</b> (펫·탈것·패스 폐기 반영) — 광고/결제 SDK · 소리 · 클라우드 저장 · 스토어 등록 <span class="f">(사냥은 만들지 않음)</span> <span class="rec">추천: 광고/결제 SDK + 스토어 준비(아이콘·AAB) → 소리 → 클라우드 저장</span></span></span></label></li>
   <li data-id="g2-push"><label><input type="checkbox" checked disabled><span><span class="tag t-you">끝</span><b>GitHub 에 올리기 — 10-20 올림 완료</b> — 저장소(<code>JeongJoongHee/KachiGun</code>, 비공개)를 GitHub 에서 만든 뒤, 대화창에 <code>! git -C "D:\00 Final_Game" push -u origin main</code> <span class="f">(처음엔 약 135MB 라 몇 분 걸림 · 미리보기·캡처·Unity 임시 폴더는 안 올라감)</span></span></label></li>
 </ul>
 
@@ -135,8 +125,8 @@
   <li data-id="s2-shop"><label><input type="checkbox"><span><span class="tag t-see">보기</span><b>상점 [무료 다이아]</b> — 광고 1번 = 다이아 40, 하루 3번 (버튼에 "광고 2/3"). 남아 있으면 상점 버튼에 빨간 점</span></label></li>
   <li data-id="s2-mission"><label><input type="checkbox"><span><span class="tag t-see">보기</span><b>미션</b> — [받기] 버튼에 다이아·골드 둘 다 표시, 스테이지 미션은 150단계 뒤 "모든 단계 완료"</span></label></li>
   <li data-id="s2-skin"><label><input type="checkbox"><span><span class="tag t-see">보기</span><b>스킨 17 해적 선장</b> — 그림·뼈대 넣음 (18~30 삭제). 이름·가격·효과는 <code>Skin.xlsx</code></span></label></li>
-  <li data-id="s2-feel"><label><input type="checkbox"><span><span class="tag t-see">보기</span><b>새 밸런스 손맛</b> — 골드 1/2 · 강화 표 새로 · 광산 보상 큼. 초반 1~10챕터가 너무 느리거나 빠르면 ✎ 의견에</span></label></li>
-  <li data-id="s2-name"><label><input type="checkbox"><span><span class="tag t-see">보기</span><b>앱 이름 카피바라vs좀비</b> — Player Settings 의 Product Name (에디터가 켜질 때 맞춰짐, 바꾸려면 <code>Editor/ProjectInfo.cs</code>)</span></label></li>
+  <li data-id="s2-feel"><label><input type="checkbox"><span><span class="tag t-see">보기</span><b>새 밸런스 손맛</b> — 골드 1/2 · 강화 표 새로 · 광산 = 보스 던전 절반. 초반 1~10챕터가 너무 느리거나 빠르면 ✎ 의견에</span></label></li>
+  <li data-id="s2-name"><label><input type="checkbox" checked disabled><span><span class="tag t-you">끝</span><b>앱 이름 카피바라vs좀비 — 이걸로 진행 (10-20 결정)</b> — Player Settings 의 Product Name (<code>Editor/ProjectInfo.cs</code>)</span></label></li>
 </ul>
 
 <h2 id="art">④ 그림·소리 — 리소스가 필요한 것 <small><code>리소스\</code> 폴더에 넣고 말씀해 주시면 적용</small></h2>
@@ -151,7 +141,6 @@
   <li data-id="d2-iap"><label><input type="checkbox"><span><span class="tag t-me">개발</span><b>실제 결제</b> — 지금 원 상품은 "준비 중"</span></label></li>
   <li data-id="d2-cloud"><label><input type="checkbox"><span><span class="tag t-me">개발</span><b>클라우드 저장 · 문의</b> — 지금 세이브는 기기 안에만</span></label></li>
   <li data-id="d2-sound"><label><input type="checkbox"><span><span class="tag t-me">개발</span><b>소리 연결</b> — ④ 의 소리가 오면 효과음·배경음·설정 창 소리 크기</span></label></li>
-  <li data-id="d2-hunt"><label><input type="checkbox"><span><span class="tag t-me">개발</span><b>사냥</b> — ② 에서 정하시면</span></label></li>
 </ul>
 
 <h2 id="rel">⑥ 출시 전 정리 <small>나중에 — 잊지 않게 적어 둠</small></h2>

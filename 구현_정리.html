@@ -148,7 +148,7 @@ figcaption{font-size:13px;color:var(--sub);padding:6px 10px}
 <tr><td>총알 분해</td><td><span class="tag">구현</span> <span class="tag w">새로</span></td><td>무기 창에서 인벤토리 총알을 누르고 [분해] → 등급별 다이아 (D 15 … SSU 195)</td></tr>
 <tr><td>스킨</td><td><span class="tag">구현</span> <span class="tag w">표</span></td><td><code>Skin_Table</code> 기본 + <b>17종</b>(10-20: 17번 해적 선장 그림 넣음, 18~30 삭제). 사면 바로 입고, 가진 스킨 효과는 입지 않아도 전부 합산</td></tr>
 <tr><td>도전</td><td><span class="tag">구현</span> <span class="tag w">표</span></td><td><code>Challenge</code> 챕터마다 시간·좀비 수·체력·보상(다이아 30 → 후반 100), 챕터당 1번 (광고 x2)</td></tr>
-<tr><td>다이아 광산</td><td><span class="tag">구현</span> <span class="tag w">표</span></td><td>4-1 에서 열림, 하루 2장, 60초, 모든 공격 피해 1. 광석 = <code>Mine_Ore_Spec</code> (작은 보석·큰 보석·회색 바위·<b>거대 황금 크리스탈</b>), 보상 배율 = <code>Mine_Scaling</code> 30단계 — <b>10-20: 티켓 1장 = 같은 챕터 보스 던전 1회 보상</b></td></tr>
+<tr><td>다이아 광산</td><td><span class="tag">구현</span> <span class="tag w">표</span></td><td>4-1 에서 열림, 하루 2장, 60초, 모든 공격 피해 1. 광석 = <code>Mine_Ore_Spec</code> (작은 보석·큰 보석·회색 바위·<b>거대 황금 크리스탈</b>), 보상 배율 = <code>Mine_Scaling</code> 30단계 — <b>10-20: 티켓 1장 = 같은 챕터 보스 던전 1회 보상의 절반</b></td></tr>
 <tr><td>보스 던전</td><td><span class="tag">구현</span> <span class="tag w">표</span></td><td>10-1 에서 열림, 하루 3장. <code>Boss_Dungeon</code> Lv.1~150 체력·시간·크기·보상</td></tr>
 <tr><td>던전 결과</td><td><span class="tag">구현</span></td><td>성공 = 별 3개 / 실패 = 파란 X, [받기] · [광고 보고 x2]</td></tr>
 <tr><td>미션</td><td><span class="tag">구현</span> <span class="tag w">표</span></td><td>5종: 좀비 처치·스테이지 클리어·광산 플레이·보스 처치·총알 합성. <b>10-20: 보상 = 다이아 30% + 골드 70%</b>(<code>Mission_Gem_Ratio</code>, 1다이아 = 좀비 6마리 골드) · 처치 1단계 ≈ 1.5챕터 · 스테이지 미션은 750(150단계)에서 끝(<code>Max_Tier</code>) · 합성 1·2·4·8… (<code>Mission_Master</code>·<code>Mission_Tier</code>)</td></tr>
@@ -243,7 +243,7 @@ figcaption{font-size:13px;color:var(--sub);padding:6px 10px}
   <div class="ev"><b>10-19 저녁</b>UI 배치 변경(<code>UI 수정.png</code>): 드롭다운 삭제 → 아래 버튼 줄, 총알 칸, 상점·도전 위치</div>
   <div class="ev"><b>10-19 밤</b>뼈대 애니메이션(좀비 12·카피바라 17) · 도트 UI 팩 적용 · 안 쓰는 그림 40장 삭제 · UI 테두리 매끈하게</div>
   <div class="ev"><b>10-19 밤 (이어서)</b>알림 → 토스트(판 없음) · 강화 카드 한 판 · 절전모드·자동강화 오른쪽 아래 · 배경 밝게 · 카피바라 1.2배 · 안내 화살표 날렵하게 · <b>보스 30초 제한 + 반복 사냥 + [보스 도전]</b></div>
-  <div class="ev"><b>10-20 · 남은 작업 의견 반영</b>밸런스 다시 맞춤(광고 최대·하루 4시간 = 50챕터 3주·100챕터 9주·150챕터 21주, 골드 1/2, 무료 다이아 30%, 미션 다이아+골드, 광산 = 보스 던전 수준, 슬롯 강화 골드 = 수입 10분) · 상점 광고 다이아 · 스킨 17개(해적 선장) · 펫/탈것·패스 폐기 · 영어(설정 언어 버튼, <code>String.xlsx</code>) · 앱 이름 카피바라vs좀비 · git 저장소</div>
+  <div class="ev"><b>10-20 · 남은 작업 의견 반영</b>밸런스 다시 맞춤(광고 최대·하루 4시간 = 50챕터 3주·100챕터 9주·150챕터 21주, 골드 1/2, 무료 다이아 30%, 미션 다이아+골드, 광산 = 보스 던전 절반, 슬롯 강화 골드 = 수입 10분) · 상점 광고 다이아 · 스킨 17개(해적 선장) · 펫/탈것·패스 폐기 · 영어(설정 언어 버튼, <code>String.xlsx</code>) · 앱 이름 카피바라vs좀비 · git 저장소</div>
   <div class="ev"><b>10-19 밤 (표)</b>기획 표 xlsx 15개 적용 + xlsx → csv 자동 변환. 스테이지 750·강화 1500·등급 13·스킨 31·도전/보스 던전 150. 새로: <b>보급품 25종 · 총알 슬롯 강화 · 분해 · 보스/합성 미션 · 골드 상자 · 거대 황금 크리스탈</b></div>
 </div>
 </section>
@@ -253,12 +253,12 @@ figcaption{font-size:13px;color:var(--sub);padding:6px 10px}
 <p class="note">10-20 부터 남은 일·결정은 <code>남은_작업_정리.html</code> 에서 체크·의견으로 관리합니다. 아래는 요약.</p>
 <h3>아직 없는 것</h3>
 <ul>
-  <li>사냥(기획서엔 한 줄뿐 — 만들지 결정 대기) · 실제 광고·결제 SDK · 클라우드 저장 · 문의</li>
+  <li>실제 광고·결제 SDK · 클라우드 저장 · 문의</li>
   <li>사운드 (총소리·배경음 리소스 없음) · 보급품 25종 그림 (지금은 상자 아이콘)</li>
 </ul>
 <h3>정해진 것 (10-20)</h3>
 <ul>
-  <li>앱 이름 <b>카피바라vs좀비</b> · 스킨 17개(이름·값은 <code>Skin.xlsx</code>) · 총알 슬롯 강화 = 칸마다 그대로 · 좀비 속도는 <code>Zombie.xlsx</code> 로 직접 조절 · 펫/탈것·패스 폐기 · git 저장소(GitHub <code>JeongJoongHee/KachiGun</code>, push 는 직접)</li>
+  <li>앱 이름 <b>카피바라vs좀비</b> · 스킨 17개(이름·값은 <code>Skin.xlsx</code>) · 총알 슬롯 강화 = 칸마다 그대로 · 좀비 속도는 <code>Zombie.xlsx</code> 로 직접 조절 · 펫/탈것·패스·<b>사냥</b> 폐기(사냥 대신 스테이지를 늘리는 방향) · 광고 안 보는 무과금 538일 그대로 · git 저장소(GitHub <code>JeongJoongHee/KachiGun</code>, push 는 직접)</li>
 </ul>
 <h3>알아 두실 점</h3>
 <ul>

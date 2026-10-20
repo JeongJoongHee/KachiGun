@@ -30,6 +30,7 @@ ENCH_MIN = 10                             # 슬롯 강화 1번 골드 = 그 챕�
 SKIN_MAX = 17
 AD_GEMS_DAILY, AD_GEMS_AMOUNT = 3, 40
 GEM_RATIO, GEM_KILLS = 0.3, 6
+MINE_RATIO = 0.5                          # 광산 티켓 1장 = 보스 던전 1회 보상의 절반 (10-20 의견)
 MINE_FULL = None                          # 광산 보석 전부 기본 다이아 (Mine_Ore_Spec 에서 계산)
 
 
@@ -211,13 +212,13 @@ def edit_params(W, P):
         g = round(base * M); cum += g
         bd.set(r, 'Reward_Gems', g); bd.set(r, 'Reward_Add_Gems', round((bd.get(r, 'Reward_Add_Gems') or 0) * M))
         bd.set(r, 'Reward_Ad_x2_Gems', g * 2); bd.set(r, 'Cum_Reward_Gems', cum)
-    # 광산 티켓 1장 = 같은 챕터 보스 던전 1회 보상 (배율 M 포함)
+    # 광산 티켓 1장 = 같은 챕터 보스 던전 1회 보상 x MINE_RATIO (배율 M 포함)
     ms = Sheet(W['Mine.xlsx']['Mine_Scaling_150Ch'])
     prev = None
     for r in ms.rows():
         c = ms.get(r, 'Unlock_Chapter')
         rew = [g for rc, g in boss_by_ch if rc <= c]
-        per = (rew[-1] if rew else boss_by_ch[0][1]) * M
+        per = (rew[-1] if rew else boss_by_ch[0][1]) * M * MINE_RATIO
         mul = round(per / MINE_FULL, 3)
         ms.set(r, 'Reward_Multiplier', mul); ms.set(r, 'Reward_Growth_Add', round(mul - prev, 3) if prev else 0); prev = mul
         ms.set(r, 'Small_Ore_Gems', round(0.1 * mul, 2)); ms.set(r, 'Big_Ore_Gems', round(mul, 2))
@@ -372,7 +373,15 @@ def tune(P):
 
 def main():
     P = dict(K=[0.35, 0.35, 0.35, 0.41, 0.415], bounds=[80, 250, 643, 1207], M=0.577, kill_targets=[100 * t for t in range(1, 151)])
-    if '--apply' in sys.argv and os.path.exists(PARAMS):
+    if '--retune' in sys.argv and os.path.exists(PARAMS):
+        # 저장한 값에서 출발해 다시 맞추기 (규칙을 조금 바꿨을 때)
+        P.update(json.load(io.open(PARAMS, encoding='utf-8')))
+        inc = P.pop('income_pts')
+        P['income'] = income_fn({str(c): dict(grate=g) for c, g in inc})
+        for a in sys.argv:
+            if a.startswith('--M='): P['M'] = float(a[4:])
+        P = tune(P)
+    elif '--apply' in sys.argv and os.path.exists(PARAMS):
         # 저장한 값으로 다시 쓰기만 (맞추기 없이)
         P.update(json.load(io.open(PARAMS, encoding='utf-8')))
         inc = P.pop('income_pts')
