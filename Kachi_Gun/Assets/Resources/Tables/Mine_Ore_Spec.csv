@@ -1,0 +1,5 @@
+﻿Ore_Kind,Name_KR,Hit_HP (타수),Base_Reward_Gems,Spawn_Count,Base_Max_Gems,Scale,Hitbox_Radius,Spawn_X_Near,Spawn_X_Far,Sprite_Path,Impl_Note
+Big,큰 푸른 보석,25,1,9,9,1.05,0.578,0.72,1,UI/icon_gem,현재 구현 (오른쪽 끝 밀집)
+Small,작은 푸른 보석,4,0.1,22,2.2,0.55,0.303,0.2,0.85,UI/icon_gem,현재 구현 (중앙~오른쪽 분포)
+Rock,회색 바위,8,0,14,0,0.85,0.468,0,0.45,Gen/ore_rock,현재 구현 (분대 앞 함정 오브젝트)
+Huge_Crystal,거대 황금 크리스탈,45,3,3,9,1.35,0.743,0.82,1,UI/icon_gem,심층 광산 확장용 (고타수·대량 다이아)

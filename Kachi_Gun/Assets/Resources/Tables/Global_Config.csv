@@ -1,0 +1,47 @@
+﻿Key,Value,Unit,Category,Control_Table,Description
+HpBase,150,HP,스테이지,Stage.xlsx,Stage 1-1 (idx=0) 기본 좀비 체력
+HpGrowth,1.28,배율,스테이지,Stage.xlsx,초반(Ch.1~8) 기본 체력 성장률 (이후 구간은 테이블 제어)
+GoldBase,30,골드,스테이지,Stage.xlsx,Stage 1-1 (idx=0) 기본 좀비 처치 골드
+GoldGrowth,1.25,배율,스테이지,Stage.xlsx,초반(Ch.1~8) 기본 골드 성장률 (이후 구간은 테이블 제어)
+KillsPerStage,20,마리,스테이지,Stage.xlsx,서브 스테이지 클리어 필요 처치 수
+MaxAlive,8,마리,스테이지,Stage.xlsx,화면 내 동시 존재 최대 일반 좀비 수
+SpawnInterval,0.7,초,스테이지,Stage.xlsx,좀비 스폰 기본 간격 (0.7~1.3배 랜덤)
+BossHpMul,15,배,보스,Stage.xlsx,챕터 N-5 보스 기본 체력 배율 (구간별 15~22배 제어)
+BossGoldMul,10,배,보스,Stage.xlsx,챕터 N-5 보스 기본 골드 배율 (구간별 10~16배 제어)
+BossScale,1.7,배,보스,Stage.xlsx,챕터 N-5 보스 크기 배율
+BossTime,30,초,보스,Stage.xlsx,챕터 N-5 보스 제한 시간 (실패 시 반복 사냥)
+CostBase,50,골드,골드강화,Player.xlsx,하단 골드 강화 Lv.0 기본 비용
+CostGrowth,1.38,배율,골드강화,Player.xlsx,초반 골드 강화 비용 성장률 (구간별 테이블 제어)
+StatGrowth,1.078,배율,골드강화,Player.xlsx,초반 공격력/골드 강화 성장률 (구간별 테이블 제어)
+SpeedPerLv,10,%/Lv,골드강화,Player.xlsx,초반 공격속도 레벨당 증가량 (구간별 테이블 제어)
+GachaCost,100,다이아,무기/총알,Weapon.xlsx,총알 1회 뽑기 다이아 비용
+MaxGrade,12,등급인덱스,무기/총알,Weapon.xlsx,"최고 무기 등급 인덱스 (0=D ~ 12=SSU, 총 13등급)"
+WeaponUnlockGems,100,다이아,해금,Unlock.xlsx,무기 탭 해금 기준 다이아 (또는 첫 도전 클리어)
+ChallengeTime,60,초,도전던전,Challenge.xlsx,도전 던전 제한 시간
+ChallengeCount,24,마리,도전던전,Challenge.xlsx,도전 던전 등장 좀비 수
+ChallengeHpMul,1.2,배,도전던전,Challenge.xlsx,도전 좀비 체력 배율 (챕터 첫 스테이지 대비)
+ChallengeReward,30,다이아,도전던전,Challenge.xlsx,도전 기본 클리어 보상 다이아 (챕터별 증가)
+AdMultiplier,2,배,광고,Buff.xlsx,던전 결과 광고 시청 보상 배율
+MineStage,15,idx(4-1),해금,Unlock.xlsx,다이아 광산 해금 스테이지 (Stage 4-1)
+MineTickets,2,장/일,광산던전,Mine.xlsx,일일 다이아 광산 무료 티켓 수
+MineTime,60,초,광산던전,Mine.xlsx,다이아 광산 제한 시간 (모든 공격 피해 1)
+MineSmallHp,4,타수,광산던전,Mine.xlsx,작은 보석 체력(타격 횟수)
+MineSmallReward,0.1,다이아,광산던전,Mine.xlsx,작은 보석 기본 다이아 보상
+MineSmallCount,22,개,광산던전,Mine.xlsx,작은 보석 스폰 개수
+MineBigHp,25,타수,광산던전,Mine.xlsx,큰 보석 체력(타격 횟수)
+MineBigReward,1,다이아,광산던전,Mine.xlsx,큰 보석 기본 다이아 보상
+MineBigCount,9,개,광산던전,Mine.xlsx,큰 보석 스폰 개수
+MineRockHp,8,타수,광산던전,Mine.xlsx,"회색 바위 체력(타격 횟수, 보상 0)"
+MineRockCount,14,개,광산던전,Mine.xlsx,회색 바위 스폰 개수
+BuffMinutes,5,분,버프,Buff.xlsx,광고 버프 1회 지속 시간(분)
+BuffCooldown,12,초,버프,Buff.xlsx,광고 버프 재시청 쿨타임(초)
+BuffMul,2,배,버프,Buff.xlsx,공격력/골드 광고 버프 배율
+MenuStage,1,idx(1-2),해금,Unlock.xlsx,미션·버프·상점·절전 해금 스테이지 (Stage 1-2)
+SkinStage,1,idx(1-2),해금,Unlock.xlsx,스킨 해금 스테이지 (Stage 1-2)
+FishStage,25,idx(6-1),해금,Unlock.xlsx,보급품(수집품) 해금 스테이지 (Stage 6-1)
+BossRaidStage,45,idx(10-1),해금,Unlock.xlsx,보스 던전 해금 스테이지 (Stage 10-1)
+BossRaidTickets,3,장/일,보스던전,Boss_Dungeon.xlsx,일일 보스 던전 무료 티켓 수
+BossRaidTime,60,초,보스던전,Boss_Dungeon.xlsx,보스 던전 제한 시간(초)
+BossRaidHpMul,25,배,보스던전,Boss_Dungeon.xlsx,보스 던전 기본 체력 배율
+BossRaidReward,50,다이아,보스던전,Boss_Dungeon.xlsx,보스 던전 Lv.1 기본 보상 다이아
+MoveSpeed,3.4,unit/s,분대,Player.xlsx,던전 수동/AI 분대 이동 속도

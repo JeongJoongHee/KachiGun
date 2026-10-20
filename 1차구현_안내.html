@@ -1,0 +1,173 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>카치건 1차 구현 안내</title>
+<style>
+  :root { --bg:#1f1712; --card:#2c2119; --line:#4a3627; --text:#f4ead9; --dim:#c9b79c; --gold:#ffd25a; --green:#8be06b; --red:#ff7a6e; --sky:#8fd3ff; }
+  * { box-sizing:border-box; }
+  body { margin:0; background:var(--bg); color:var(--text); font-family:"Malgun Gothic","Apple SD Gothic Neo",sans-serif; line-height:1.6; }
+  main { max-width:1100px; margin:0 auto; padding:24px 16px 80px; }
+  h1 { font-size:28px; margin:0 0 4px; color:var(--gold); }
+  h2 { font-size:21px; margin:36px 0 12px; padding-bottom:6px; border-bottom:2px solid var(--line); color:var(--gold); }
+  p.sub { color:var(--dim); margin:0 0 18px; }
+  .card { background:var(--card); border:1px solid var(--line); border-radius:12px; padding:16px 18px; margin:12px 0; }
+  code { background:#120d0a; padding:1px 6px; border-radius:5px; color:var(--sky); font-size:14px; }
+  table { width:100%; border-collapse:collapse; font-size:15px; }
+  th, td { border-bottom:1px solid var(--line); padding:8px 8px; text-align:left; vertical-align:top; }
+  th { color:var(--dim); font-weight:normal; }
+  .ok { color:var(--green); font-weight:bold; } .tmp { color:var(--gold); font-weight:bold; } .no { color:var(--red); font-weight:bold; }
+  .cmp { display:grid; grid-template-columns:1fr 1fr; gap:14px; }
+  .cmp figure { margin:0; } .cmp img { width:100%; border-radius:10px; border:1px solid var(--line); }
+  figcaption { color:var(--dim); font-size:14px; text-align:center; margin-top:4px; }
+  .shots { display:grid; grid-template-columns:repeat(auto-fill,minmax(160px,1fr)); gap:10px; }
+  .shots a { color:var(--dim); text-decoration:none; font-size:13px; text-align:center; }
+  .shots img { width:100%; border-radius:8px; border:1px solid var(--line); display:block; margin-bottom:3px; }
+  ol li, ul li { margin:4px 0; }
+  .todo label { display:flex; gap:10px; align-items:flex-start; padding:8px 4px; border-bottom:1px dashed var(--line); cursor:pointer; }
+  .todo input[type=checkbox] { width:20px; height:20px; margin-top:3px; flex:none; }
+  .todo .done span { text-decoration:line-through; color:var(--dim); }
+  .todo textarea { width:100%; min-height:44px; margin:4px 0 8px 30px; width:calc(100% - 30px); background:#120d0a; color:var(--text); border:1px solid var(--line); border-radius:6px; padding:6px; font:inherit; font-size:14px; }
+  .pill { display:inline-block; font-size:12px; padding:1px 8px; border-radius:20px; background:#3a2a1e; color:var(--dim); margin-left:6px; }
+  @media (max-width:700px) { .cmp { grid-template-columns:1fr; } }
+</style>
+</head>
+<body>
+<main>
+<h1>카치건 (좀비 키우기) — 1차 구현 안내</h1>
+<p class="sub">2026-10-18 · 기획서 v2.0 + 폴더의 리소스로 만든 첫 버전 · 자동 시험 통과(오류 0)<br>10-18 밤 변경: 애니메이션 개선 · 환생 시스템 폐기 · 옆 메뉴 → [메뉴] 드롭다운 · 강화 안내 화살표</p>
+
+<h2>1. 참고 게임과 비교</h2>
+<div class="cmp">
+  <figure><img src="참고 게임.jpg" alt="참고 게임"><figcaption>참고 게임</figcaption></figure>
+  <figure><img src="캡처/06_squad3.png" alt="우리 게임"><figcaption>우리 게임 (Stage 2-1, 분대 3마리)</figcaption></figure>
+</div>
+<div class="card">
+  배치를 참고 게임에 맞췄습니다: <b>맨 위 진행 막대(%)</b> · 왼쪽 위 설정 · 가운데 <b>챕터 마디 5개 + Stage N-M + 절전모드</b> · 오른쪽 위 <b>골드/다이아 + 미션</b> ·
+  왼쪽 <b>버프 x3 + [메뉴]</b>(누르면 무기·스킨·도전·광산·보스·상점·보급품·자동강화 목록이 아래로 펼쳐짐 — 10-18 변경) · 아래 <b>공격력 / 공격속도 / 돈 획득량 강화 카드</b>(길게 누르면 연속 강화).
+  필드는 Main_Map 그대로, 좀비는 Battle.png 표시처럼 <b>오른쪽 위 길에서 나와 왼쪽 아래 분대(리더 + 동료 2)</b> 쪽으로 걸어옵니다.
+</div>
+
+<h2>2. 실행해 보는 법</h2>
+<div class="card"><ol>
+  <li>Unity Hub 에서 <code>D:\00 Final_Game\Kachi_Gun</code> 열기 (Unity 6000.0.84f1)</li>
+  <li><code>Assets/Scenes/Main.unity</code> 열기 (예전 SampleScene 은 쓰지 않음)</li>
+  <li><b>Game 창 해상도를 세로로</b> — Game 창 위 해상도 칸 → + → 1080 x 2340 (가로 화면이면 UI 가 겹쳐 보입니다)</li>
+  <li>재생 ▶ — 컷신 없이 바로 Stage 1-1 전투가 시작되고, 노란 화살표가 공격력 카드를 가리킵니다</li>
+  <li>필드를 <b>누르고 있으면</b> 리더가 그쪽으로 가고 동료가 따라옵니다(손을 떼고 1.5초 뒤 자동으로 돌아감)</li>
+  <li>시험용 재화: 설정(톱니) → <b>[테스트용]</b> 다이아 +1000 · 골드 x100 · 다음 스테이지 · 처음부터 (출시 전에 지울 것)</li>
+</ol></div>
+
+<h2>3. 기획서 대비 구현 현황</h2>
+<div class="card">
+<table>
+<tr><th style="width:24%">기획서 항목</th><th style="width:12%">상태</th><th>내용</th></tr>
+<tr><td>1·2.1 분대 전투 · 터치 이동</td><td class="ok">구현</td><td>리더(장착 1칸) + 동료(2·3칸) 최대 3마리, 가장 가까운 대상 자동 사격. 던전에선 AI 가 가까운 것부터 쫓아감(광산에선 회색 바위도 때림 → 직접 움직여야 이득)</td></tr>
+<tr><td>2.2 시작 · 강화 안내 · 설정</td><td class="ok">구현</td><td>바로 1-1 시작, 첫 강화 전까지 화살표(눌러서 강화!). 설정: 배경음/효과음/진동 켜고 끄기(소리 파일이 아직 없음), 저장</td></tr>
+<tr><td>3 기능 열림 순서</td><td class="ok">구현</td><td>도전(처음부터) · 무기(다이아 100 또는 첫 도전) · 스킨(1-2) · 미션·버프·상점·절전(1-2) · 광산(4-1) · 보급품(6-1) · 보스 던전(10-1). 메뉴 목록에서 잠긴 항목은 자물쇠 + 누르면 조건 안내</td></tr>
+<tr><td>4 챕터 N-1~N-5 · 보스</td><td class="ok">구현</td><td>서브 스테이지마다 좀비 20마리, N-5 끝에 <b>변이 오우거</b>(크기 1.7배, 체력 15배, 골드 10배). 챕터마다 맵 색을 바꿔 해안·사막·설원·연구소 느낌(맵 그림은 1장뿐)</td></tr>
+<tr><td>5 골드 강화 공식</td><td class="ok">구현</td><td>비용 50×1.38^Lv · 공격력/돈 100×1.078^Lv · 공속 100+10×Lv · 1k/1m/1b/1t 표기 (표 값과 똑같이 나오는지 시험함)</td></tr>
+<tr><td>6 총알 뽑기 · 합성</td><td class="ok">구현</td><td>뽑기 100 다이아(D 100%), 5x3 인벤토리, 같은 등급 끌어 겹치면 위 등급 <b>랜덤 종류</b>. D~2S(이상은 3S… 자동 2배). 단발·산탄·속사·관통(드릴)·레이저·미사일. 최소 1개 장착 · 장착 중 합성 불가 규칙</td></tr>
+<tr><td>7.1 스킨</td><td class="tmp">16종</td><td>보유 효과 합산(N번 = +16%·+10%·+5% 씩). 그림이 기본 + 16장이라 25종 중 17종(기본 포함). 이름은 제가 붙인 임시 이름</td></tr>
+<tr><td>7.2 생선 → 보급품</td><td class="no">아직</td><td>버튼·열림 조건만 있음(누르면 "준비 중")</td></tr>
+<tr><td>8.1 도전</td><td class="ok">구현</td><td>60초 안에 24마리 섬멸, 챕터당 1번, 다이아 30 (광고 x3)</td></tr>
+<tr><td>8.2 다이아 광산</td><td class="ok">구현</td><td>하루 티켓 2장, 60초, 모든 공격 피해 1 고정. 회색 바위 0 · 작은 보석 0.1 · 큰 보석(위쪽에 모여 있음) 1.0. 광석 그림 = UI 의 다이아 그림(회색 바위는 그걸 회색으로)</td></tr>
+<tr><td>9 환생 · 슈퍼 환생 · 2배속</td><td class="no">폐기</td><td>10-18 결정으로 시스템 자체를 뺐습니다(환생석·환생 상점·2배속·환생 미션 포함)</td></tr>
+<tr><td>10 미션 · 패스</td><td class="tmp">미션만</td><td>좀비 처치·스테이지·광산 단계별 반복 미션 → 다이아. 시즌/VIP 패스는 결제 기능 뒤에</td></tr>
+<tr><td>11 광고 · 결제</td><td class="tmp">임시</td><td>광고 버튼은 <b>광고 없이 바로 지급</b>(테스트), 결제 상품은 목록만 있고 "준비 중". 나중에 AdService·Iap 안만 바꾸면 됨</td></tr>
+<tr><td>보스 던전 (10-1)</td><td class="ok">구현</td><td>하루 3번, 60초 안에 큰 오우거 처치, 깰 때마다 보스 Lv 상승·보상 증가</td></tr>
+<tr><td>펫·탈것(12) · 사냥(35)</td><td class="no">아직</td><td>화면에 넣지 않음</td></tr>
+<tr><td>절전모드</td><td class="ok">구현</td><td>화면 어둡게 + 초당 15프레임, 누르면 돌아옴</td></tr>
+</table>
+</div>
+
+<h2>4. 리소스를 어떻게 썼나</h2>
+<div class="card"><ul>
+  <li><b>원본 PNG 는 손대지 않았습니다.</b> <code>tools/slice_assets.py</code> 가 흰 배경을 지우고 잘라서 <code>Kachi_Gun/Assets/Resources/Art</code> 에 만듭니다 (다시 돌려도 같은 결과).</li>
+  <li>Main_Character + 스킨 16장 → 대기 4장·사격 4장 시트로 정렬(발 위치 맞춤). 좀비 12종 → 걷기·맞기·죽기 (걷기 그림이 1장이라 통통 튀기·흔들기로 움직임).</li>
+  <li>UI.png → 왼쪽/오른쪽 가장자리 버튼(원본이 한쪽이 잘린 모양이라 참고 게임처럼 화면 끝에 붙임), 강화 카드(글자를 지운 바탕 + 아이콘 칸 3종), 아이콘(상점·권총·다이아·칼·지폐).</li>
+  <li>Zombie_01 아래쪽 나무 판 → 창 바탕·PLAY/OK 버튼. Bullet_01~05 → 총알·산탄 알·드릴·레이저·미사일·조준점.</li>
+  <li>원본에 없는 작은 것(설정 톱니·미션·자물쇠·화살표·보급품 상자·자동강화·폭발·불꽃)은 같은 도트 느낌으로 직접 그렸습니다(<code>tools/icon_gen.py</code>).</li>
+  <li>스킨 시트 오른쪽 아래 구석에 있던 <b>✦ 표시(그림 생성 도구 표식)</b>가 마지막 쓰러짐 그림에 겹쳐 있어 그 칸은 쓰지 않습니다.</li>
+  <li>글꼴: 모나12(OFL 무료 글꼴, 신작 서바이벌에서 쓰던 것).</li>
+</ul></div>
+
+<h2>5. 수치 고치는 곳 (엑셀로 열기)</h2>
+<div class="card">
+<code>Kachi_Gun/Assets/Resources/Tables/</code> — 고친 뒤 <b>CSV UTF-8</b> 로 저장하면 다음 재생부터 반영됩니다.
+<table>
+<tr><th style="width:22%">파일</th><th>내용</th></tr>
+<tr><td>Config.csv</td><td>좀비 체력·골드 성장, 스테이지당 처치 수, 보스 배율, 강화 공식 숫자, 뽑기 비용, 도전/광산/보스 던전 시간·보상, 버프, 기능 열림 스테이지 (각 줄에 설명 있음)</td></tr>
+<tr><td>Weapon.csv</td><td>등급(0=D … 6=2S)·종류별 이름·공격력·연사·발 수·퍼짐·관통·폭발 범위·사거리</td></tr>
+<tr><td>Skin.csv</td><td>스킨 이름·가격·보유 효과(%)</td></tr>
+<tr><td>Zombie.csv</td><td>좀비 종류별 체력/골드 배율·속도·크기·처음 나오는 챕터·나오는 비율</td></tr>
+<tr><td>Mission.csv</td><td>미션 목표 단계·보상</td></tr>
+</table>
+밸런스는 <b>임시값</b>입니다(간단 계산상 1-5 까지 약 1분, 5-5 약 13분, 8챕터쯤부터 총알·스킨이 필요해짐 — 환생이 빠졌으니 후반 곡선은 다시 맞춰야 함).
+</div>
+
+<h2>6. 화면 캡처 (자동 시험)</h2>
+<div class="shots">
+  <a href="캡처/01_battle.png"><img src="캡처/01_battle.png">시작 전투</a>
+  <a href="캡처/02b_menu.png"><img src="캡처/02b_menu.png">메뉴 펼침</a>
+  <a href="캡처/03_boss.png"><img src="캡처/03_boss.png">1-5 보스</a>
+  <a href="캡처/04_weapon.png"><img src="캡처/04_weapon.png">총알(합성)</a>
+  <a href="캡처/05_skin.png"><img src="캡처/05_skin.png">스킨</a>
+  <a href="캡처/08_challenge.png"><img src="캡처/08_challenge.png">도전</a>
+  <a href="캡처/09_result.png"><img src="캡처/09_result.png">결과</a>
+  <a href="캡처/10_mine.png"><img src="캡처/10_mine.png">다이아 광산</a>
+  <a href="캡처/14_high_weapons.png"><img src="캡처/14_high_weapons.png">레이저·미사일</a>
+  <a href="캡처/15_boss_raid.png"><img src="캡처/15_boss_raid.png">보스 던전</a>
+  <a href="캡처/16_mission.png"><img src="캡처/16_mission.png">미션</a>
+  <a href="캡처/17_shop.png"><img src="캡처/17_shop.png">상점</a>
+  <a href="캡처/18_settings.png"><img src="캡처/18_settings.png">설정</a>
+</div>
+
+<h2>7. 확인해 주실 것 <span class="pill">체크·의견은 이 브라우저에 저장됩니다</span></h2>
+<div class="card todo" id="todo">
+  <label data-id="play"><input type="checkbox"><span>Unity 에서 직접 재생해 보기 (Game 창 세로 1080x2340)</span></label><textarea data-note="play" placeholder="의견"></textarea>
+  <label data-id="layout"><input type="checkbox"><span>화면 배치가 참고 게임과 충분히 비슷한지 (버튼 위치·크기, 강화 카드)</span></label><textarea data-note="layout" placeholder="의견"></textarea>
+  <label data-id="squad"><input type="checkbox"><span>카피바라 분대 위치·크기, 좀비가 걸어오는 방향·속도</span></label><textarea data-note="squad" placeholder="의견"></textarea>
+  <label data-id="drag"><input type="checkbox"><span>필드를 눌러 분대 움직이기 느낌 (도전·광산에서 특히)</span></label><textarea data-note="drag" placeholder="의견"></textarea>
+  <label data-id="merge"><input type="checkbox"><span>총알 창: 끌어서 합성·장착이 편한지</span></label><textarea data-note="merge" placeholder="의견"></textarea>
+  <label data-id="anim"><input type="checkbox"><span>(10-18 밤) 캐릭터·좀비 애니메이션이 자연스러운지 — 걷기 속도·흔들림·흰색 번쩍·쓰러짐</span></label><textarea data-note="anim" placeholder="의견"></textarea>
+  <label data-id="menu"><input type="checkbox"><span>(10-18 밤) [메뉴] 드롭다운·자동강화 아이콘 위치·강화 안내 화살표</span></label><textarea data-note="menu" placeholder="의견"></textarea>
+  <label data-id="tone"><input type="checkbox"><span>(10-18 밤) 카피바라 색 톤·발밑 그림자 세기 (더 어둡게/밝게)</span></label><textarea data-note="tone" placeholder="의견"></textarea>
+  <label data-id="walkart"><input type="checkbox"><span><b>결정</b>: 좀비 걷기 프레임 그림을 새로 만들지 (지금은 걷기 1장에서 다리만 움직여 만든 것)</span></label><textarea data-note="walkart" placeholder="의견"></textarea>
+  <label data-id="name"><input type="checkbox"><span><b>결정</b>: 게임 이름 (지금 앱 이름은 프로젝트 이름 Kachi_Gun 그대로)</span></label><textarea data-note="name" placeholder="이름"></textarea>
+  <label data-id="skinname"><input type="checkbox"><span><b>결정</b>: 스킨 이름 16개 (지금은 제가 붙인 임시 이름, Skin.csv 에서 바로 고칠 수 있음)</span></label><textarea data-note="skinname" placeholder="의견"></textarea>
+  <label data-id="next"><input type="checkbox"><span><b>결정</b>: 다음에 할 것 — 보급품(생선) 수집 · 펫/탈것 · 사운드 · 광고/결제 SDK · 밸런스 중 우선순위</span></label><textarea data-note="next" placeholder="순서"></textarea>
+  <label data-id="sound"><input type="checkbox"><span>사운드(총소리·배경음) 리소스가 없습니다 — 준비해 주시거나 무료 소리로 할지</span></label><textarea data-note="sound" placeholder="의견"></textarea>
+</div>
+
+<h2>8. 알아 두실 점</h2>
+<div class="card"><ul>
+  <li>좀비는 기획서 12장대로 <b>분대를 공격하지 않습니다</b>(게임오버 없음). 가까이 오면 멈춰서 꿈틀댑니다.</li>
+  <li>광고 버튼은 지금 <b>광고 없이 바로 보상</b>을 줍니다(시험용). 결제는 전부 "준비 중".</li>
+  <li>세이브는 기기 안(PlayerPrefs)에만. 클라우드 저장·결제 복원·문의는 준비 중.</li>
+  <li>다국어는 아직 한국어만입니다.</li>
+  <li>예전 <code>SampleScene</code> 은 그대로 두었고, 빌드 목록에는 <code>Main</code> 만 들어 있습니다.</li>
+</ul></div>
+</main>
+<script>
+(function () {
+  const KEY = 'kachigun-todo-1018';
+  let st = {};
+  try { st = JSON.parse(localStorage.getItem(KEY) || '{}'); } catch (e) { st = {}; }
+  const save = () => { try { localStorage.setItem(KEY, JSON.stringify(st)); } catch (e) {} };
+  document.querySelectorAll('#todo label').forEach(l => {
+    const id = l.dataset.id, cb = l.querySelector('input');
+    cb.checked = !!(st[id] && st[id].done);
+    l.classList.toggle('done', cb.checked);
+    cb.addEventListener('change', () => { st[id] = Object.assign(st[id] || {}, { done: cb.checked }); l.classList.toggle('done', cb.checked); save(); });
+  });
+  document.querySelectorAll('#todo textarea').forEach(t => {
+    const id = t.dataset.note;
+    t.value = (st[id] && st[id].note) || '';
+    t.addEventListener('input', () => { st[id] = Object.assign(st[id] || {}, { note: t.value }); save(); });
+  });
+})();
+</script>
+</body>
+</html>

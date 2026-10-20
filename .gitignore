@@ -1,0 +1,29 @@
+# Unity 가 다시 만드는 폴더 (저장 안 함)
+Kachi_Gun/Library/
+Kachi_Gun/Temp/
+Kachi_Gun/Obj/
+Kachi_Gun/Logs/
+Kachi_Gun/UserSettings/
+Kachi_Gun/.utmp/
+Kachi_Gun/Build/
+Kachi_Gun/Builds/
+Kachi_Gun/*.csproj
+Kachi_Gun/*.sln
+Kachi_Gun/*.apk
+Kachi_Gun/*.aab
+
+# 다시 만들 수 있는 미리보기·캡처 (용량 큼)
+tools/_preview/
+캡처/
+
+# 임시 파일
+__pycache__/
+~$*
+*.tmp
+Thumbs.db
+.DS_Store
+
+# 서명 키 (절대 저장소에 올리지 않음)
+키 보관/
+*.keystore
+*.jks

@@ -1,0 +1,5 @@
+﻿Buff_Id,Name,Trigger_Type,Target_Stat,Multiplier,Duration_Sec,Max_Stack_Sec,Cooldown_Sec,Unlock_Stage,Description
+buff_atk,공격력 x2 버프,RewardAd,AtkMul,2,300,3600,12,1-2 (idx=1),광고 시청 시 5분간 최종 공격력 2배 (연속 시청 시 시간 누적)
+buff_gold,골드 획득 x2 버프,RewardAd,GoldMul,2,300,3600,12,1-2 (idx=1),광고 시청 시 5분간 최종 골드 획득량 2배 (연속 시청 시 시간 누적)
+dungeon_ad_x3,던전 보상 2배,RewardAd,DungeonReward,2,0,0,0,1-1 (idx=0),도전·광산·보스던전 클리어 결과창에서 광고 시청 시 다이아 보상 2배
+perma_buff_iap,영구 3배 버프 패키지,IAP,AtkMul & GoldMul,3,-1,-1,0,1-2 (idx=1),상점 패키지 구매 시 공격력·골드 3배 버프 영구 적용

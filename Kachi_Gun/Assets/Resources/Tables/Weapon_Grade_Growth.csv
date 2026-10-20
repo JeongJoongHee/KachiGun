@@ -1,0 +1,14 @@
+﻿Grade_Idx,Grade_Name,Grade_Atk_Growth_Rate,Cum_Atk_Multiplier_vs_D,Required_D_Count (2^G),Gacha_Gem_Equivalent,Recommended_Chapter,Available_Types,Grade_Color_Hex
+0,D,1,1,1,100,Ch.1 ~ 2,"single, shotgun, fast",#9E9E9E
+1,C,2,2,2,200,Ch.3 ~ 4,"single, shotgun, pierce",#73C759
+2,B,2,4,4,400,Ch.5 ~ 8,"single, shotgun, fast, pierce",#5999F2
+3,A,2,8,8,800,Ch.9 ~ 14,"single, shotgun, fast, pierce",#B36BE6
+4,S,2.25,18,16,1600,Ch.15 ~ 22,"laser, missile",#FF9E33
+5,SS,2,36,32,3200,Ch.23 ~ 32,"laser, missile",#F24D4D
+6,SSS,2,72,64,6400,Ch.33 ~ 44,"laser, missile",#FFD940
+7,R,2.2,158.4,128,12800,Ch.45 ~ 58,"laser, missile",#4DF2E6
+8,SR,2.2,348.48,256,25600,Ch.59 ~ 74,"laser, missile",#FF80D9
+9,SSR,2.5,871.2,512,51200,Ch.75 ~ 92,"laser, missile",#FFFFFF
+10,U,2.5,2178,1024,102400,Ch.93 ~ 112,"laser, missile",#99FF66
+11,SU,2.8,6098.4,2048,204800,Ch.113 ~ 132,"laser, missile",#FF661A
+12,SSU,3,18295.2,4096,409600,Ch.133 ~ 150,"laser, missile",#FFCC00

@@ -1,0 +1,11 @@
+﻿Content_Id,Content_Name,UI_Location,Unlock_Condition_Type,Unlock_Stage_Idx,Unlock_Stage_Name,Unlock_Value,Lock_Toast_Message,Unlock_Banner_Message
+challenge,도전 던전,상단 중앙 [도전],Stage,0,1-1,0,다음 챕터에서 새 도전이 열립니다,-
+weapon,무기 (총알 뽑기/합성),하단 탭 1 [무기],Gems_Or_Challenge,0,1-1,100,무기는 다이아 100 또는 도전 클리어 에서 열립니다,무기 메뉴가 열렸습니다!
+skin,스킨,하단 탭 2 [스킨],Stage,1,1-2,1,Stage 1-2 에서 열립니다,스킨이 열렸습니다!
+shop,상점,좌측 상단 [상점],Stage,1,1-2,1,Stage 1-2 에서 열립니다,-
+mission,반복 미션,좌측 상단 [미션],Stage,1,1-2,1,Stage 1-2 에서 열립니다,-
+buff,공격/골드 x2 버프,우측 상단 [x2],Stage,1,1-2,1,Stage 1-2 에서 열립니다,-
+eco,절전모드,우측 중단 [절전모드],Stage,1,1-2,1,Stage 1-2 에서 열립니다,-
+mine,다이아 광산,하단 탭 5 [광산],Stage,15,4-1,15,Stage 4-1 에서 열립니다,다이아 광산이 열렸습니다!
+supply,보급품 (수집품),하단 탭 3 [보급품],Stage,25,6-1,25,Stage 6-1 에서 열립니다,보급품이 열렸습니다!
+boss_raid,보스 던전,하단 탭 4 [보스],Stage,45,10-1,45,Stage 10-1 에서 열립니다,보스 던전이 열렸습니다!

@@ -1,0 +1,319 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>카치건 구현 정리</title>
+<style>
+:root{
+  --bg:#f6f1e7; --paper:#fffaf0; --ink:#3a2615; --sub:#7a6248; --line:#e3d5bd;
+  --accent:#4f9e6e; --accent-ink:#ffffff; --warn:#b4542f; --chip:#efe3cc; --code:#f1e7d4;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#1d1813; --paper:#27201a; --ink:#f1e6d4; --sub:#bba78c; --line:#3d3229;
+    --accent:#5fb882; --accent-ink:#10140f; --warn:#e08a63; --chip:#3a2f25; --code:#332a21;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#1d1813; --paper:#27201a; --ink:#f1e6d4; --sub:#bba78c; --line:#3d3229;
+  --accent:#5fb882; --accent-ink:#10140f; --warn:#e08a63; --chip:#3a2f25; --code:#332a21;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.65 "Pretendard","Malgun Gothic","Apple SD Gothic Neo",system-ui,sans-serif}
+.wrap{max-width:1040px;margin:0 auto;padding:28px 16px 80px}
+header h1{margin:0 0 4px;font-size:30px;letter-spacing:-.5px}
+header p{margin:0;color:var(--sub)}
+nav.toc{position:sticky;top:0;z-index:5;background:var(--bg);border-bottom:1px solid var(--line);margin:20px -16px 0;padding:10px 16px;display:flex;gap:6px;flex-wrap:wrap}
+nav.toc a{font-size:13px;text-decoration:none;color:var(--ink);background:var(--chip);padding:4px 10px;border-radius:999px;white-space:nowrap}
+nav.toc a:hover{background:var(--accent);color:var(--accent-ink)}
+section{margin-top:40px}
+h2{font-size:22px;margin:0 0 14px;padding-bottom:6px;border-bottom:2px solid var(--line)}
+h3{font-size:17px;margin:22px 0 8px}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px}
+.card{background:var(--paper);border:1px solid var(--line);border-radius:12px;padding:14px 16px}
+.card b{display:block;font-size:15px;margin-bottom:4px}
+.card span{color:var(--sub);font-size:14px}
+.big{font-size:26px;font-weight:700;color:var(--accent)}
+table{width:100%;border-collapse:collapse;background:var(--paper);border:1px solid var(--line);border-radius:12px;overflow:hidden;font-size:14.5px}
+th,td{padding:9px 12px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}
+th{background:var(--chip);font-weight:600;white-space:nowrap}
+tr:last-child td{border-bottom:0}
+.tbl{overflow-x:auto}
+.tag{display:inline-block;font-size:12px;padding:1px 8px;border-radius:999px;background:var(--accent);color:var(--accent-ink);white-space:nowrap}
+.tag.no{background:var(--chip);color:var(--sub)}
+.tag.w{background:var(--warn);color:#fff}
+code{background:var(--code);padding:1px 6px;border-radius:5px;font-size:13.5px;font-family:Consolas,"D2Coding",monospace;word-break:break-all}
+ul{padding-left:20px;margin:6px 0}
+li{margin:3px 0}
+.shots{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px}
+.shots.wide{grid-template-columns:repeat(auto-fill,minmax(300px,1fr))}
+figure{margin:0;background:var(--paper);border:1px solid var(--line);border-radius:10px;overflow:hidden}
+figure a{display:block}
+figure img{display:block;width:100%;height:auto;background:#222}
+figcaption{font-size:13px;color:var(--sub);padding:6px 10px}
+.timeline{border-left:3px solid var(--line);margin-left:6px;padding-left:18px}
+.timeline .ev{position:relative;margin-bottom:16px}
+.timeline .ev:before{content:"";position:absolute;left:-26px;top:7px;width:13px;height:13px;border-radius:50%;background:var(--accent);border:3px solid var(--bg)}
+.timeline .ev b{display:block}
+.note{background:var(--paper);border-left:4px solid var(--warn);border-radius:8px;padding:10px 14px;margin:10px 0}
+.layout{display:grid;grid-template-columns:minmax(0,320px) 1fr;gap:20px;align-items:start}
+@media (max-width:720px){.layout{grid-template-columns:1fr}}
+.mock{background:var(--paper);border:1px solid var(--line);border-radius:14px;padding:10px;font-size:12.5px;font-family:Consolas,monospace;white-space:pre;overflow-x:auto;line-height:1.5}
+.theme{position:fixed;right:14px;bottom:14px;border:1px solid var(--line);background:var(--paper);color:var(--ink);border-radius:999px;padding:6px 12px;cursor:pointer;font-size:13px}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+  <h1>카치건 (좀비 키우기) 구현 정리</h1>
+  <p>2026-10-18 1차 구현 ~ 2026-10-19 작업까지 · Unity 6000.0.84f1 · 2D URP · 세로 방치형 분대 슈팅</p>
+</header>
+
+<nav class="toc">
+  <a href="#sum">한눈에</a><a href="#run">실행</a><a href="#screen">화면 구성</a><a href="#sys">게임 시스템</a>
+  <a href="#art">그림·애니메이션</a><a href="#ui">UI</a><a href="#num">수치 표</a><a href="#tool">도구·시험</a>
+  <a href="#log">변경 기록</a><a href="#todo">남은 것</a><a href="#shots">캡처</a>
+</nav>
+
+<section id="sum">
+<h2>한눈에</h2>
+<div class="cards">
+  <div class="card"><b>장르·화면</b><span>세로 화면, 왼쪽에 카피바라 3마리 고정 · 오른쪽에서 좀비가 걸어옴 (PvZ 식 가로 전장, 줄 구분 없음)</span></div>
+  <div class="card"><b>콘텐츠</b><span>스테이지 N-1~N-5 + 보스 · 도전 · 다이아 광산 · 보스 던전 · 총알 뽑기/합성 · 스킨 · 미션 · 버프</span></div>
+  <div class="card"><b>그림</b><span>원본 PNG 는 손대지 않고 도구로 잘라 씀 · 뼈대 애니메이션 · 도트 UI 팩</span></div>
+  <div class="card"><b>시험</b><span class="big">오류 0</span><span>자동 시험(배치 모드)으로 전 기능을 돌리고 화면을 찍어 확인</span></div>
+</div>
+</section>
+
+<section id="run">
+<h2>실행해 보는 법</h2>
+<ol>
+  <li>Unity Hub 에서 <code>D:\00 Final_Game\Kachi_Gun</code> 열기 (Unity 6000.0.84f1)</li>
+  <li><code>Assets/Scenes/Main.unity</code> 열기 — 씬에는 카메라와 Boot 만 있고, 맵·분대·UI 는 재생할 때 코드가 만듭니다</li>
+  <li>Game 창 해상도를 세로 <b>1080 x 2340</b> 으로 (가로면 UI 가 겹쳐 보임)</li>
+  <li>재생 ▶ — 바로 Stage 1-1 전투, "눌러서 강화!" 화살표가 공격력 카드를 가리킴</li>
+  <li>시험용 재화: 위쪽 메뉴 <b>카치건 &gt; 치트 창</b> (골드·다이아·던전 티켓) 또는 설정 창 아래 [테스트용] 버튼</li>
+</ol>
+</section>
+
+<section id="screen">
+<h2>화면 구성 (사용자 그림 <code>UI 수정.png</code> 기준 + 이후 요청 반영)</h2>
+<div class="layout">
+  <figure><a href="캡처/06_squad3.png" target="_blank"><img src="캡처/06_squad3.png" alt="전투 화면"></a><figcaption>전투 화면 (Stage 2-1, 분대 3마리)</figcaption></figure>
+  <div>
+<div class="mock">┌──────────────────────────────────┐
+│ ■■■■■■□□□□  진행 막대(%) / 보스! N초 │
+│ [톱니]   ●─●─●─●─◉     [지폐] 5.32k │
+│ [상점]    Stage 2-1     [다이아] 900 │
+│ [미션]    [⚔ 도전 1]        [공격x3] │
+│          [보스 도전]*       [골드x3] │
+│                            [절전모드]│
+│                            [자동강화]│
+│ 🐹 ·····················  ← 🧟       │
+│ 🐹 ·····················  ← 🧟       │
+│ 🐹 ·····················  ← 🧟       │
+│ [총알1]   [총알2]   [총알3]          │
+│ ┌ 공격력 ─ 공격속도 ─ 돈 획득량 ┐    │
+│ └ 강화 카드 3장 (한 판으로 묶음) ┘    │
+│ [무기] [스킨] [보급품] [보스] [광산] │
+└──────────────────────────────────┘
+* 보스 실패 뒤 반복 사냥 중에만 보임</div>
+<ul>
+  <li><b>왼쪽 위</b>: 설정 → 상점 → 미션 (나무 받침 + 아이콘)</li>
+  <li><b>가운데</b>: 챕터 마디 5개 · Stage N-M · [도전] (깰 도전이 있으면 빨간 !) · [보스 도전]</li>
+  <li><b>오른쪽</b>: 골드/다이아 → 공격 x3 → 골드 x3 → 절전모드 → 자동강화(맨 아래)</li>
+  <li><b>아래</b>: 총알 1·2·3 칸(장착 무기 등급·이름, 누르면 무기 창) → 강화 카드 묶음 → 버튼 줄</li>
+  <li><b>메시지</b>: 안내·오류·스테이지·보스 알림은 모두 판 없는 토스트(색 글자)</li>
+  <li>[메뉴] 드롭다운은 없앰 (10-19)</li>
+</ul>
+  </div>
+</div>
+</section>
+
+<section id="sys">
+<h2>게임 시스템</h2>
+<div class="tbl"><table>
+<tr><th>항목</th><th>상태</th><th>내용</th></tr>
+<tr><td>분대 전투</td><td><span class="tag">구현</span></td><td>리더(장착 1칸) + 동료(2·3칸) 최대 3마리. 사거리 안 가장 가까운 대상을 자동 사격. 총은 몸에서 떼어 낸 그림이라 <b>대상 쪽으로 돌아가며</b>(위 80°·아래 45°) 쏨, 총구 불꽃·반동 있음. 크기 1.2배</td></tr>
+<tr><td>분대 자리</td><td><span class="tag">구현</span></td><td>스테이지: 왼쪽 세로 한 줄에 고정(터치해도 안 움직임). 던전(도전·광산·보스 던전): 가까운 대상 쪽으로 AI 이동 + 화면을 누르면 그쪽으로</td></tr>
+<tr><td>좀비</td><td><span class="tag">구현</span></td><td>12종(챕터마다 새 종류). 오른쪽 화면 밖에서 나와 왼쪽으로 직진, 분대 앞 2~4.6칸에서 멈춰 꿈틀댐. <b>공격하지 않음</b>(기획서 12장, 게임오버 없음). 화면에 최대 8마리</td></tr>
+<tr><td>스테이지 · 보스</td><td><span class="tag">구현</span> <span class="tag w">표</span></td><td><code>Stage_Table</code> 750줄(150챕터): 스테이지마다 처치 수·동시 좀비 수·나오는 간격·좀비 체력/골드·N-5 보스 체력/골드/크기/제한 시간. 751번째부터는 마지막 성장률로 이어서 계산. 챕터 맵 색·이름 = <code>Chapter_Summary</code> (새 챕터 토스트에 이름)</td></tr>
+<tr><td>보스 시간 제한 · 반복 사냥</td><td><span class="tag">구현</span> <span class="tag w">10-19</span></td><td>보스 30초. 못 잡으면 보스가 오른쪽으로 물러나고(보상 없음) 토스트 "보스 실패! 강화 후 다시 도전하세요" → 지금 스테이지 <b>반복 사냥</b>(골드만, 스테이지 그대로) · 빨간 [보스 도전] 버튼 · 강화할 돈이 모이면 안내 화살표. 세이브에 남음</td></tr>
+<tr><td>골드 강화</td><td><span class="tag">구현</span> <span class="tag w">표</span></td><td>공격력·공격속도·돈 획득량 = <code>Gold_Upgrade</code> 1500레벨 (10-19 밸런스 조정: 셋 다 레벨마다 같은 비율로 곱해 오름, 150챕터 약 2달). <b>공속이 상한(0.06초)을 넘으면 넘친 만큼 공격력</b>. 길게 누르면 연속 강화</td></tr>
+<tr><td>숫자 표기</td><td><span class="tag">구현</span> <span class="tag w">10-19</span></td><td>1k · 1m · 1b · 1t, 그 위는 1aa · 1ab … (내림 표기라 999,999 = 999k)</td></tr>
+<tr><td>총알 뽑기 · 합성</td><td><span class="tag">구현</span> <span class="tag w">표</span></td><td>뽑기 100 다이아(D 100%), 5x3 인벤토리, 같은 등급 끌어 겹치면 위 등급. <b>등급 13개</b> D·C·B·A·S·SS·SSS·R·SR·SSR·U·SU·SSU (<code>Weapon_Grade_Growth</code> 이름·색) · 총알 32종 <code>Weapon_Master</code> · 총알 속도·판정 <code>Bullet_Spec</code></td></tr>
+<tr><td>총알 슬롯 강화</td><td><span class="tag">구현</span> <span class="tag w">새로</span></td><td>무기 창에서 장착 칸을 누르고 [강화]. 다이아+골드, 성공 확률(높은 레벨은 떨어짐) — <code>Weapon_Enchant</code>. 장착한 총알 등급이 최대 레벨(D +12 … SSU +150)과 효과 배율을 정함 — <code>Grade_Enchant_Multiplier</code>. 효과: 그 칸 카피바라의 공격력·공격속도·보스 피해</td></tr>
+<tr><td>총알 분해</td><td><span class="tag">구현</span> <span class="tag w">새로</span></td><td>무기 창에서 인벤토리 총알을 누르고 [분해] → 등급별 다이아 (D 15 … SSU 195)</td></tr>
+<tr><td>스킨</td><td><span class="tag">구현</span> <span class="tag w">표</span></td><td><code>Skin_Table</code> 기본 + 30종. 사면 바로 입고, 가진 스킨 효과는 입지 않아도 전부 합산. 17~30번은 그림이 없어 기본 카피 그림 + "그림 준비 중"</td></tr>
+<tr><td>도전</td><td><span class="tag">구현</span> <span class="tag w">표</span></td><td><code>Challenge</code> 챕터마다 시간·좀비 수·체력·보상(다이아 30 → 후반 100), 챕터당 1번 (광고 x3)</td></tr>
+<tr><td>다이아 광산</td><td><span class="tag">구현</span> <span class="tag w">표</span></td><td>4-1 에서 열림, 하루 2장, 60초, 모든 공격 피해 1. 광석 = <code>Mine_Ore_Spec</code> (작은 보석·큰 보석·회색 바위·<b>거대 황금 크리스탈</b>), 보상 배율 = <code>Mine_Scaling</code> 30단계(챕터가 오를수록)</td></tr>
+<tr><td>보스 던전</td><td><span class="tag">구현</span> <span class="tag w">표</span></td><td>10-1 에서 열림, 하루 3장. <code>Boss_Dungeon</code> Lv.1~150 체력·시간·크기·보상</td></tr>
+<tr><td>던전 결과</td><td><span class="tag">구현</span></td><td>성공 = 별 3개 / 실패 = 파란 X, [받기] · [광고 보고 x3]</td></tr>
+<tr><td>미션</td><td><span class="tag">구현</span> <span class="tag w">표</span></td><td>5종: 좀비 처치·스테이지 클리어·광산 플레이·<b>보스 처치·총알 합성</b>(새로) → 다이아. 목표 단계 = <code>Mission_Tier</code> 150단계, 보상은 10단계마다 증가 (<code>Mission_Master</code>)</td></tr>
+<tr><td>버프 x3</td><td><span class="tag">구현</span> <span class="tag w">표</span></td><td>공격력·골드 <b>x2</b> 5분(10-19 x3 → x2), 연속 시청 시 최대 1시간까지 쌓임 (<code>Buff_Table</code>, 광고 = 지금은 바로 지급)</td></tr>
+<tr><td>기능 열림</td><td><span class="tag">구현</span> <span class="tag w">표</span></td><td><code>Unlock_Roadmap</code>: 도전·무기·스킨·상점·미션·버프·절전·광산·보급품·보스 던전마다 열리는 스테이지 + 잠김 토스트 + 열림 알림</td></tr>
+<tr><td>절전모드</td><td><span class="tag">구현</span></td><td>화면 어둡게 + 초당 15프레임, 누르면 돌아옴</td></tr>
+<tr><td>설정</td><td><span class="tag">구현</span></td><td>배경음·효과음·진동 켜고 끄기(소리 파일은 아직 없음) · 저장 · [테스트용] 재화 버튼(출시 전 삭제)</td></tr>
+<tr><td>상점 · 결제 · 광고</td><td><span class="tag no">임시</span> <span class="tag w">표</span></td><td>목록 = <code>Shop_Products</code> 12개. 광고 버튼은 광고 없이 바로 지급, <b>다이아로 사는 골드 상자는 동작</b>, 현금 결제 상품은 "준비 중". 나중에 <code>AdService</code>·<code>Iap</code> 안만 바꾸면 됨</td></tr>
+<tr><td>환생 · 2배속</td><td><span class="tag no">폐기</span></td><td>10-18 사용자 결정으로 시스템 자체를 뺌 (다시 넣지 않음)</td></tr>
+<tr><td>보급품</td><td><span class="tag">구현</span> <span class="tag w">새로</span></td><td><code>Supply_Collection</code> 25종. 6챕터마다 하나씩 열리고 다이아로 사면 보유 효과(공격·공격속도·돈·<b>보스 피해</b>)가 계속 더해짐. 아이콘은 상자 그림에 등급 색</td></tr>
+</table></div>
+</section>
+
+<section id="art">
+<h2>그림 · 애니메이션</h2>
+<p>원본 PNG(<code>리소스/</code>·<code>스킨/</code>)는 손대지 않습니다. 도구가 잘라서 <code>Kachi_Gun/Assets/Resources/Art</code> 에 만들고, 다시 돌려도 같은 결과가 나옵니다.</p>
+<div class="tbl"><table>
+<tr><th>내용</th><th>방법</th><th>도구</th></tr>
+<tr><td>가로 전장 배경</td><td>Main_Map 조각을 이어 붙여 위·아래 숲, 가운데 흙길인 배경을 새로 만듦. 도트를 그대로 옮겨 붙여 그림체 유지. 밝기 보정(평균 64 → 95)</td><td><code>tools/side_map.py</code></td></tr>
+<tr><td>캐릭터 시트</td><td>Main_Character + 스킨 16장 → 대기 4장·사격 4장 시트, 발 기준 정렬(프레임이 바뀌어도 안 미끄러짐), 맵과 어울리는 색 톤 + 발밑 그림자</td><td><code>tools/slice_assets.py</code></td></tr>
+<tr><td>총 분리</td><td>몸에서 총을 지우고 메움 → 총은 사용자 그림 <code>총 이미지.png</code>(나무 개머리 산탄총) + 스킨별 앞발을 얹어 따로 그림. 총구 불꽃은 총에 붙음</td><td><code>tools/gun_split.py</code></td></tr>
+<tr><td>뼈대(리깅) 애니메이션</td><td>Unity 2D Animation 으로 그림에 뼈를 심음 (좀비 12종 · 카피바라 17벌)<ul>
+  <li>좀비: 두 발을 번갈아 들어 내딛는 걸음(디딘 발은 땅에 붙음), 팔·무기 흔들림, 머리 까딱, 멈추면 꿈틀·허우적. 기는 좀비는 두 팔을 번갈아 뻗고, 사신은 옷자락이 흔들림. 맞기·죽기는 원래 그림</li>
+  <li>카피바라: 숨쉬기, 쏠 때 뒤로 젖힘, 위를 겨누면 살짝 젖힘, 던전에서 걷기. 총은 몸통 뼈에 붙어 같이 움직임</li></ul></td><td><code>tools/rig_gen.py</code> → <code>Core/Rig.cs</code></td></tr>
+<tr><td>도트 UI 팩</td><td>사용자가 추가한 UI 팩(Woods Journey·Buttons·Settings·Win_loose·Levels·Main_tiles·Icons 등)에서 부품 61개를 잘라 5배로 키움. 계단진 모서리를 메우고(Scale2x) 가장자리를 부드럽게, 창의 찢긴 자국은 반듯하게 폄</td><td><code>tools/ui_kit.py</code></td></tr>
+<tr><td>직접 그린 그림</td><td>원본에 없는 것만: 폭발·불꽃·발밑 그림자·광산 회색 바위·강화 안내 화살표(날렵한 노란 화살표)</td><td><code>tools/icon_gen.py</code></td></tr>
+<tr><td>정리</td><td>안 쓰는 예전 그림 40장 삭제 (예전 아이콘 9·예전 UI 조각 30·대각선 맵 1). 도구가 다시 만들지 않게 막음, 중간 재료는 <code>tools/_build/</code></td><td>—</td></tr>
+</table></div>
+<div class="note">스킨 16(고양이 옷) 원본은 칸마다 주황/회색 고양이가 섞여 있어, 움직일 때 색이 바뀌어 보입니다. 원본 그림 문제입니다.</div>
+</section>
+
+<section id="ui">
+<h2>UI</h2>
+<ul>
+  <li><b>창</b>: 초록 제목줄 + X 가 있는 양피지 창, 창 안 글자는 진한 갈색. 줄·칸은 둥근 나무판</li>
+  <li><b>버튼</b>: 초록 버튼 / 나무 버튼, 누를 수 없을 때는 회색. 확인 창은 초록 [시작]/[확인]</li>
+  <li><b>막대</b>: 진행·미션·체력 막대 모두 UI 팩 막대 (보스 중 진행 막대는 빨강 = 남은 시간)</li>
+  <li><b>무기 칸</b>: 황토 칸 + 등급 색 테두리</li>
+  <li><b>알림</b>: 빨간 [!] 표시 · 자물쇠는 UI 팩 그림</li>
+  <li><b>토스트</b>: 판 없이 외곽선 글자, 뜰 때 살짝 튐</li>
+</ul>
+</section>
+
+<section id="num">
+<h2>수치 고치는 곳 — 기획 표 (xlsx)</h2>
+<p>원본은 <code>Kachi_Gun/Table/*.xlsx</code> 입니다. 엑셀에서 고치고 <b>저장</b>만 하면 Unity 에서 <b>재생 버튼을 누를 때 자동으로 csv 로 바뀝니다</b> (게임이 읽는 곳: <code>Assets/Resources/Tables/</code>). 바로 바꾸려면 Unity 메뉴 <b>카치건 &gt; 표 변환 (xlsx → csv)</b>.</p>
+<ul>
+  <li>시트 하나 = csv 하나. csv 이름은 시트 이름에서 뒤의 개수 표시를 뗀 것 (<code>Gold_Upgrade_1500</code> → <code>Gold_Upgrade.csv</code>)</li>
+  <li>수식 칸은 엑셀이 저장한 계산 결과를 읽습니다. 칸 이름 뒤의 <code>(초)</code> · <code>(%)</code> 같은 단위 표시는 무시합니다</li>
+  <li>칸 이름(첫 줄)을 바꾸면 게임이 그 칸을 못 읽습니다 — 값만 고쳐 주세요. 엑셀로 열어 둔 채여도 변환됩니다</li>
+  <li><code>_표기</code> 칸 · <code>Cum_</code> 누적 칸 · <code>Required_DPS</code> · <code>Impl_Status</code> · <code>Bracket_Growth_Rules</code> · <code>Chapter_Zombie_Stats</code> 는 확인용이라 게임은 안 읽습니다</li>
+</ul>
+<div class="tbl"><table>
+<tr><th>xlsx</th><th>시트 → 게임에서 쓰는 곳</th></tr>
+<tr><td><code>Config</code></td><td><code>Global_Config</code> 키·값 (뽑기 비용·던전 티켓·광산 시간 등, 표에 칸이 없을 때 쓰는 기본값) · <code>Bracket_Growth_Rules</code> 확인용</td></tr>
+<tr><td><code>Stage</code></td><td><code>Stage_Table</code> 스테이지 750줄 · <code>Chapter_Summary</code> 챕터 이름·맵 색</td></tr>
+<tr><td><code>Player</code></td><td><code>Player_Base</code> 카피바라 크기·이동 속도·최소 발사 간격·조준 각도·분대 자리 · <code>Gold_Upgrade</code> 골드 강화 1500레벨</td></tr>
+<tr><td><code>Weapon</code></td><td><code>Weapon_Grade_Growth</code> 등급 이름·색 · <code>Weapon_Master</code> 총알 32종 · <code>Bullet_Spec</code> 총알 속도·유도·판정·사거리 더하기·흔들림·그림</td></tr>
+<tr><td><code>Weapon_Enchant</code></td><td><code>Weapon_Enchant</code> 슬롯 강화 1~150 · <code>Grade_Enchant_Multiplier</code> 등급별 최대 레벨·효과 배율·분해 다이아</td></tr>
+<tr><td><code>Skin</code> · <code>Supply</code></td><td><code>Skin_Table</code> 스킨 31종 · <code>Supply_Collection</code> 보급품 25종</td></tr>
+<tr><td><code>Zombie</code></td><td><code>Zombie_Master</code> 좀비 12종 체력/골드 배율·속도 범위·멈춤 거리·크기·그림자·나오는 챕터·비율 · <code>Chapter_Zombie_Stats</code> 확인용</td></tr>
+<tr><td><code>Challenge</code> · <code>Boss_Dungeon</code> · <code>Mine</code></td><td>도전 150챕터 · 보스 던전 150레벨 · <code>Mine_Ore_Spec</code> 광석 4종 · <code>Mine_Scaling</code> 광산 보상 30단계</td></tr>
+<tr><td><code>Mission</code> · <code>Buff</code> · <code>Shop</code> · <code>Unlock</code></td><td><code>Mission_Master</code>·<code>Mission_Tier</code> 미션 · <code>Buff_Table</code> 버프 · <code>Shop_Products</code> 상점 · <code>Unlock_Roadmap</code> 기능 열림</td></tr>
+</table></div>
+<div class="note">표 끝(750 스테이지 · 강화 1500 · 도전/보스 던전/미션 150)을 넘으면 마지막 줄의 성장률로 이어서 계산합니다.</div>
+</section>
+
+<section id="tool">
+<h2>도구 · 시험</h2>
+<div class="tbl"><table>
+<tr><th>무엇</th><th>방법</th></tr>
+<tr><td>치트 창 (에디터 전용)</td><td>Unity 메뉴 <b>카치건 &gt; 치트 창</b> — 골드 +1k~+1t·x10·직접 입력·0으로 / 다이아 +100~+100,000 / 광산·보스 티켓. 빌드에는 안 들어감</td></tr>
+<tr><td>컴파일 검사</td><td><code>bash tools/compile_check.sh</code> (Unity 가 열려 있어도 됨)</td></tr>
+<tr><td>자동 시험</td><td><code>bash tools/unity_batch.sh KachiGun.EditorTools.PlayTest.Run --play</code> → <code>Kachi_Gun/Logs/PlayTest/*.png</code>. 전투·강화·보스·<b>보스 실패→반복 사냥→보스 도전</b>·버튼 줄·뽑기/합성/장착·스킨·도전·광산·보스 던전·<b>표 값·보급품·슬롯 강화·분해·골드 상자</b>·미션·상점·설정·세이브·숫자 표기</td></tr>
+<tr><td>표 변환 (xlsx → csv)</td><td>Unity 메뉴 <b>카치건 &gt; 표 변환</b> (재생할 때·에디터 열 때 자동) · 배치: <code>bash tools/unity_batch.sh KachiGun.EditorTools.TableConverter.RunBatch</code></td></tr>
+<tr><td>움직임 촬영</td><td><code>...PlayTest.RunAnim --play</code> (전투 연속) · <code>...PlayTest.RunRig --play</code> (좀비 12종 뼈대 걷기)</td></tr>
+<tr><td>그림 다시 만들기</td><td><code>python tools/slice_assets.py</code> · <code>python tools/side_map.py</code> · <code>python tools/rig_gen.py</code> · <code>python tools/ui_kit.py</code> · <code>python tools/icon_gen.py</code></td></tr>
+<tr><td>주의</td><td>Unity 에 Kachi_Gun 이 열려 있으면 자동 시험(배치 모드)이 안 됩니다 — 닫고 실행</td></tr>
+</table></div>
+<p>PixelFantasy 에셋을 넣은 뒤 프로젝트 전체 컴파일이 깨져 있어 <code>com.unity.nuget.newtonsoft-json</code> 패키지를 추가했습니다 (에셋 파일은 안 지움).</p>
+</section>
+
+<section id="log">
+<h2>변경 기록</h2>
+<div class="timeline">
+  <div class="ev"><b>10-18 · 1차 구현</b>기획서 v2.0 + 리소스로 참고 게임 배치를 따라 만듦. 스테이지·보스·강화·뽑기/합성·스킨·도전·광산·보스 던전·미션·버프·절전. 캐릭터 발 기준 정렬·좀비 걷기 4장 생성. 환생 폐기. [메뉴] 드롭다운. 카피바라 색 톤 + 발밑 그림자(C안)</div>
+  <div class="ev"><b>10-19 오전</b>분대 자리 고정(<code>캐릭터 위치.png</code>) · 총을 몸에서 떼어 대상 쪽으로 회전 · 치트 창 · 숫자 표기 k/m/b</div>
+  <div class="ev"><b>10-19 오후</b>PvZ 식 가로 전장(<code>배경 수정.png</code>): 세로 유지·줄 없음, 왼쪽 카피바라 3마리·오른쪽 좀비, 새 배경, 총 = <code>총 이미지.png</code></div>
+  <div class="ev"><b>10-19 저녁</b>UI 배치 변경(<code>UI 수정.png</code>): 드롭다운 삭제 → 아래 버튼 줄, 총알 칸, 상점·도전 위치</div>
+  <div class="ev"><b>10-19 밤</b>뼈대 애니메이션(좀비 12·카피바라 17) · 도트 UI 팩 적용 · 안 쓰는 그림 40장 삭제 · UI 테두리 매끈하게</div>
+  <div class="ev"><b>10-19 밤 (이어서)</b>알림 → 토스트(판 없음) · 강화 카드 한 판 · 절전모드·자동강화 오른쪽 아래 · 배경 밝게 · 카피바라 1.2배 · 안내 화살표 날렵하게 · <b>보스 30초 제한 + 반복 사냥 + [보스 도전]</b></div>
+  <div class="ev"><b>10-19 밤 (표)</b>기획 표 xlsx 15개 적용 + xlsx → csv 자동 변환. 스테이지 750·강화 1500·등급 13·스킨 31·도전/보스 던전 150. 새로: <b>보급품 25종 · 총알 슬롯 강화 · 분해 · 보스/합성 미션 · 골드 상자 · 거대 황금 크리스탈</b></div>
+</div>
+</section>
+
+<section id="todo">
+<h2>남은 것 · 정해 주실 것</h2>
+<h3>기획서 대비 아직 없는 것</h3>
+<ul>
+  <li>펫·탈것 · 사냥 · 시즌/VIP 패스</li>
+  <li>실제 광고·결제 SDK · 클라우드 저장 · 문의</li>
+  <li>사운드 (총소리·배경음 리소스 없음) · 다국어 (지금은 한국어만)</li>
+  <li>스킨 30종 중 그림은 16종 (17~30번은 기본 그림) · 보급품 25종 그림 (지금은 상자 아이콘)</li>
+</ul>
+<h3>결정 대기</h3>
+<ul>
+  <li>게임 이름 (지금 앱 이름 = Kachi_Gun) · 스킨 이름 16개 (임시)</li>
+  <li>다음 우선순위: 펫/탈것 · 사운드 · 광고/결제</li>
+  <li>총알 강화를 <b>장착 칸(슬롯)마다</b>로 만들었습니다 (표의 '총알 슬롯 강화' 문구 기준). 총알 하나하나에 붙이는 방식을 원하시면 알려 주세요</li>
+  <li>좀비 이동 속도 (가로 전장이라 걸어오는 거리가 짧아짐)</li>
+  <li>git 저장소로 만들지 (아직 아님)</li>
+</ul>
+<h3>알아 두실 점</h3>
+<ul>
+  <li>세이브는 기기 안(PlayerPrefs)에만 저장됩니다</li>
+  <li>설정 창의 [테스트용] 버튼은 출시 전에 지워야 합니다</li>
+  <li>자동 시험은 배치 모드라 시간이 빨리 흘러, 움직임 속도감은 실제 재생과 다릅니다</li>
+</ul>
+</section>
+
+<section id="shots">
+<h2>캡처</h2>
+<p>그림을 누르면 크게 열립니다. (이 파일과 같은 폴더의 <code>캡처/</code> 그림을 불러옵니다)</p>
+<h3>주요 화면</h3>
+<div class="shots">
+  <figure><a href="캡처/01_battle.png" target="_blank"><img loading="lazy" src="캡처/01_battle.png" alt=""></a><figcaption>시작 전투</figcaption></figure>
+  <figure><a href="캡처/03_boss.png" target="_blank"><img loading="lazy" src="캡처/03_boss.png" alt=""></a><figcaption>보스 (30초)</figcaption></figure>
+  <figure><a href="캡처/03b_boss_farm.png" target="_blank"><img loading="lazy" src="캡처/03b_boss_farm.png" alt=""></a><figcaption>보스 실패 → 반복 사냥</figcaption></figure>
+  <figure><a href="캡처/04_weapon.png" target="_blank"><img loading="lazy" src="캡처/04_weapon.png" alt=""></a><figcaption>총알(합성)</figcaption></figure>
+  <figure><a href="캡처/05_skin.png" target="_blank"><img loading="lazy" src="캡처/05_skin.png" alt=""></a><figcaption>스킨</figcaption></figure>
+  <figure><a href="캡처/07_challenge_confirm.png" target="_blank"><img loading="lazy" src="캡처/07_challenge_confirm.png" alt=""></a><figcaption>도전 확인</figcaption></figure>
+  <figure><a href="캡처/08_challenge.png" target="_blank"><img loading="lazy" src="캡처/08_challenge.png" alt=""></a><figcaption>도전</figcaption></figure>
+  <figure><a href="캡처/09_result.png" target="_blank"><img loading="lazy" src="캡처/09_result.png" alt=""></a><figcaption>결과(별)</figcaption></figure>
+  <figure><a href="캡처/10_mine.png" target="_blank"><img loading="lazy" src="캡처/10_mine.png" alt=""></a><figcaption>다이아 광산</figcaption></figure>
+  <figure><a href="캡처/14_high_weapons.png" target="_blank"><img loading="lazy" src="캡처/14_high_weapons.png" alt=""></a><figcaption>레이저·미사일</figcaption></figure>
+  <figure><a href="캡처/15_boss_raid.png" target="_blank"><img loading="lazy" src="캡처/15_boss_raid.png" alt=""></a><figcaption>보스 던전</figcaption></figure>
+  <figure><a href="캡처/16_mission.png" target="_blank"><img loading="lazy" src="캡처/16_mission.png" alt=""></a><figcaption>미션</figcaption></figure>
+  <figure><a href="캡처/17_shop.png" target="_blank"><img loading="lazy" src="캡처/17_shop.png" alt=""></a><figcaption>상점</figcaption></figure>
+  <figure><a href="캡처/18_settings.png" target="_blank"><img loading="lazy" src="캡처/18_settings.png" alt=""></a><figcaption>설정</figcaption></figure>
+</div>
+<h3>작업별 비교·움직임</h3>
+<div class="shots wide">
+  <figure><a href="캡처/뼈대_좀비걷기.gif" target="_blank"><img loading="lazy" src="캡처/뼈대_좀비걷기.gif" alt=""></a><figcaption>뼈대 — 좀비 12종 걷기 (움직이는 그림)</figcaption></figure>
+  <figure><a href="캡처/뼈대_좀비멈춤.gif" target="_blank"><img loading="lazy" src="캡처/뼈대_좀비멈춤.gif" alt=""></a><figcaption>뼈대 — 멈춰서 꿈틀</figcaption></figure>
+  <figure><a href="캡처/기획표_적용_화면들.png" target="_blank"><img loading="lazy" src="캡처/기획표_적용_화면들.png" alt=""></a><figcaption>기획 표 적용: 보급품 · 슬롯 강화 · 광산(금빛 크리스탈) · 미션 5종 · 상점</figcaption></figure>
+  <figure><a href="캡처/보스실패_반복사냥.png" target="_blank"><img loading="lazy" src="캡처/보스실패_반복사냥.png" alt=""></a><figcaption>보스 중(위) · 반복 사냥 + [보스 도전](아래)</figcaption></figure>
+  <figure><a href="캡처/배치_톤_캐릭터1.2배.png" target="_blank"><img loading="lazy" src="캡처/배치_톤_캐릭터1.2배.png" alt=""></a><figcaption>최종 배치 · 밝아진 배경 · 카피바라 1.2배</figcaption></figure>
+  <figure><a href="캡처/UI팩_적용_화면들.png" target="_blank"><img loading="lazy" src="캡처/UI팩_적용_화면들.png" alt=""></a><figcaption>UI 팩 적용 화면들</figcaption></figure>
+  <figure><a href="캡처/UI테두리_매끈.png" target="_blank"><img loading="lazy" src="캡처/UI테두리_매끈.png" alt=""></a><figcaption>테두리 매끈하게</figcaption></figure>
+  <figure><a href="캡처/가로전장_화면들.png" target="_blank"><img loading="lazy" src="캡처/가로전장_화면들.png" alt=""></a><figcaption>가로 전장 (스테이지·보스·도전·광산·보스 던전)</figcaption></figure>
+  <figure><a href="캡처/강화화살표_샤프.png" target="_blank"><img loading="lazy" src="캡처/강화화살표_샤프.png" alt=""></a><figcaption>강화 안내 화살표</figcaption></figure>
+</div>
+</section>
+</div>
+<button class="theme" id="theme" type="button">밝게/어둡게</button>
+<script>
+(function(){
+  var k='kachigun-summary-theme', r=document.documentElement;
+  try{var t=localStorage.getItem(k); if(t) r.setAttribute('data-theme',t);}catch(e){}
+  document.getElementById('theme').onclick=function(){
+    var dark=r.getAttribute('data-theme')==='dark' || (!r.getAttribute('data-theme') && matchMedia('(prefers-color-scheme: dark)').matches);
+    var n=dark?'light':'dark'; r.setAttribute('data-theme',n);
+    try{localStorage.setItem(k,n);}catch(e){}
+  };
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,11 @@
+﻿Param_Key,Value,Unit,Description
+Squad_Max_Units,3,마리,리더(슬롯0) + 동료1(슬롯1) + 동료2(슬롯2)
+Capy_Scale,1.2,배,카피바라 캐릭터 기본 크기 배율
+Move_Speed,3.4,unit/s,던전 이동 속도 (동료는 1.15배 속도로 리더 추적)
+Inventory_Size,15,칸,총알 인벤토리 크기 (5x3)
+Min_Fire_Interval,0.06,초,공격속도 증가 시 최소 발사 간격 하한
+Aim_Angle_Up,80,도,상향 최대 조준 각도
+Aim_Angle_Down,-45,도,하향 최대 조준 각도
+Leader_Screen_Pos,"0.13, 0.512",비율,스테이지 리더 고정 화면 좌표
+Sub1_Screen_Pos,"0.145, 0.385",비율,스테이지 동료1 고정 화면 좌표
+Sub2_Screen_Pos,"0.145, 0.640",비율,스테이지 동료2 고정 화면 좌표

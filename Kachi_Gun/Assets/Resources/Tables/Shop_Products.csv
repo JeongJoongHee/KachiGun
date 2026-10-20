@@ -1,0 +1,13 @@
+﻿Index,Product_Id,Category,Name,Description,Price_Type,Price_Value,Bonus_Gems,Reward_Multiplier_Or_Item,Impl_Status
+0,buff_atk,Ad_Buff,공격력 x2 (5분),광고 1편 · 연속 시청 시 시간 누적,Ad,광고,0,Atk x2 (300초),구현 완료
+1,buff_gold,Ad_Buff,돈 획득량 x2 (5분),광고 1편 · 연속 시청 시 시간 누적,Ad,광고,0,Gold x2 (300초),구현 완료
+2,remove_forced_ads,IAP_Pack,강제 광고 제거,자동 전면 광고 제거 + 돼지저금통,USD,$1.99,0,NoForcedAds,UI 구현
+3,remove_all_ads,IAP_Pack,모든 광고 제거,보상형 광고도 바로 보상,USD,$9.99,0,NoAllAds,UI 구현
+4,auto_upgrade,IAP_Pack,자동강화 패키지,하단 강화 자동 + 다이아 500,USD,$3.99,500,AutoUpgrade,UI 구현
+5,perma_buff,IAP_Pack,영구 3배 버프,"공격력·돈 x3 영구 + 다이아 1,000",USD,$7.99,1000,PermaAtkGold3x,UI 구현
+6,mine_ticket,IAP_Pack,광산 티켓 확장,하루 광산 티켓 2 → 6 + 다이아 500,USD,$3.99,500,DailyMineTickets=6,UI 구현
+7,hotdeal_laser,IAP_Pack,핫딜 레이저 총알,S 등급 레이저 건 즉시 지급,USD,$0.99,0,WeaponCode=44 (S 레이저),UI 구현
+8,gem_pack_small,Gem_Shop,다이아 한 줌 (500),다이아 500개 즉시 획득,USD,$1.99,500,Gems+500,기획 추가
+9,gem_pack_mid,Gem_Shop,"다이아 주머니 (1,800)","다이아 1,800개 즉시 획득",USD,$4.99,1800,Gems+1800,기획 추가
+10,gem_pack_large,Gem_Shop,"다이아 상자 (4,200)","다이아 4,200개 즉시 획득",USD,$9.99,4200,Gems+4200,기획 추가
+11,gold_instant_30m,Gold_Shop,30분 방치 골드 상자,현재 스테이지 기준 600마리 처치 골드,Gems,100 다이아,0,StageGold * 600,기획 추가

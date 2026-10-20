@@ -1,0 +1,7 @@
+﻿Type,Type_KR,Bullet_Kind,Base_Speed,Max_Speed,Accel,Homing_TurnRate,Hit_Radius_Bonus,Range_Bonus,Random_Angle_Jitter,Sprite_Path,Icon_Path
+single,단발,Normal,19,19,0,0,0.05,2,0,Bullet/bullet_basic,UI/icon_pistol
+shotgun,산탄,Pellet,15,15,0,0,0.05,0,3,Bullet/pellet,Bullet/shotgun_icon
+fast,속사,Small,20,20,0,0,0.05,2,4,Bullet/bullet_basic,Bullet/bullet_basic
+pierce,관통,Drill,15,15,0,0,0.05,3,0,Bullet/drill,Bullet/drill
+laser,레이저,LaserHit,999,999,0,0,0.25,2,0,Bullet/laser_beam,Bullet/laser_icon
+missile,미사일,Missile,9,18,14,6,0.15,4,0,Bullet/missile,Bullet/missile

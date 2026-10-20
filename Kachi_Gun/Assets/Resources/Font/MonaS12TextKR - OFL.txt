@@ -1,0 +1,25 @@
+MonaS12 Text KR — 글꼴 라이선스 고지
+====================================
+
+이 폴더의 MonaS12TextKR.ttf · MonaS12TextKR-Bold.ttf 에 대한 고지다.
+아래 내용은 글꼴 파일의 name 테이블에 들어 있는 것을 그대로 옮긴 것이다.
+
+  저작권    Copyright (c) 2025, Monad ABXY
+  글꼴      MonaS12 Text KR
+  버전      Version 1.0
+  제작사    Monad ABXY
+
+  라이선스  This Font Software is licensed under the SIL Open Font License,
+            Version 1.1. This license is available with a FAQ at:
+            https://openfontlicense.org
+
+SIL Open Font License 1.1 은 글꼴의 재배포와 임베딩을 허용한다.
+이 저장소는 공개이므로 글꼴 파일이 함께 공개되며, OFL 이 그것을 허용한다.
+
+⚠ OFL 전문(OFL.txt)은 아직 이 저장소에 없다.
+   OFL 1.1 은 글꼴을 배포할 때 라이선스 전문을 함께 배포하도록 요구한다.
+   제작사가 배포한 원본 OFL.txt 를 구해 이 폴더에 같이 두는 것이 완전한 준수다.
+   (위 URL 에서 받을 수 있다)
+
+빌드에 들어가는 것은 TTF 가 아니라 여기서 만든 SDF 에셋이지만,
+글꼴 자체를 담고 있으므로 같은 라이선스가 따라간다.
