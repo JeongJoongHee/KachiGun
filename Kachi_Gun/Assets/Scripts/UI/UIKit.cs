@@ -131,6 +131,18 @@ namespace KachiGun
 
         public static Text LabelOf(Button b) => b.transform.Find("Label")?.GetComponent<Text>();
 
+        /// <summary>칸보다 글자가 길면 글자 크기를 줄여 맞춤 (영어처럼 긴 글자용). 최대 = 지금 크기</summary>
+        public static Text Fit(Text t, int min = 16)
+        {
+            if (!t) return t;
+            t.horizontalOverflow = HorizontalWrapMode.Wrap;
+            t.verticalOverflow = VerticalWrapMode.Truncate;
+            t.resizeTextMaxSize = t.fontSize;
+            t.resizeTextMinSize = Mathf.Min(min, t.fontSize);
+            t.resizeTextForBestFit = true;
+            return t;
+        }
+
         // ---------- UI 팩 (Art/Kit) ----------
         public static readonly Color Off = new(0.62f, 0.62f, 0.6f);
 

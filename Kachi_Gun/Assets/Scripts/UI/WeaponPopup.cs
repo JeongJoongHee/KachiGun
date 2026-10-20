@@ -32,7 +32,7 @@ namespace KachiGun
 
         protected override void Build()
         {
-            string[] names = { "리더", "동료 1", "동료 2" };
+            string[] names = { L.T("리더"), L.T("동료 1"), L.T("동료 2") };
             for (int i = 0; i < 3; i++)
             {
                 var c = WeaponCell.Make(content, this, true, i, 230);
@@ -47,10 +47,10 @@ namespace KachiGun
             info = UIKit.Label(infoBg.transform, "", 30, Color.white, TextAnchor.MiddleLeft, 2);
             info.rectTransform.Fill(26, 8, 230, 8);
             info.resizeTextForBestFit = true; info.resizeTextMinSize = 20; info.resizeTextMaxSize = 30;
-            action = UIKit.ColorBtn(infoBg.transform, new Color(0.45f, 0.7f, 0.3f), new Vector2(190, 74), "장착", 36, DoAction);
+            action = UIKit.ColorBtn(infoBg.transform, new Color(0.45f, 0.7f, 0.3f), new Vector2(190, 74), L.T("장착"), 36, DoAction);
             ((RectTransform)action.transform).Place(1, 0.5f, new Vector2(-20, 40), new Vector2(190, 74), new Vector2(1, 0.5f));
             // 장착 칸 = 슬롯 강화, 인벤토리 = 분해
-            extra = UIKit.ColorBtn(infoBg.transform, new Color(0.95f, 0.6f, 0.15f), new Vector2(190, 74), "강화", 36, DoExtra);
+            extra = UIKit.ColorBtn(infoBg.transform, new Color(0.95f, 0.6f, 0.15f), new Vector2(190, 74), L.T("강화"), 36, DoExtra);
             ((RectTransform)extra.transform).Place(1, 0.5f, new Vector2(-20, -40), new Vector2(190, 74), new Vector2(1, 0.5f));
 
             for (int i = 0; i < SaveData.InvSize; i++)
@@ -64,13 +64,13 @@ namespace KachiGun
             var g = UIKit.ColorBtn(content, new Color(0.3f, 0.55f, 0.95f), new Vector2(460, 120), "", 40, () =>
             {
                 string e = GM.Gacha();
-                if (e != null) Msg(e); else { Refresh(); H.Toast("D 등급 총알 획득!"); }
+                if (e != null) Msg(e); else { Refresh(); H.Toast(L.T("D 등급 총알 획득!")); }
             });
             ((RectTransform)g.transform).Place(0.5f, 0, new Vector2(0, 10), new Vector2(460, 120), new Vector2(0.5f, 0));
             gachaLabel = UIKit.LabelOf(g);
             var gi = UIKit.Img(g.transform, Art.Get("UI/icon_gem"), new Vector2(60, 60), "Gem");
             gi.rectTransform.Place(0, 0.5f, new Vector2(40, 0), new Vector2(60, 60), new Vector2(0, 0.5f));
-            var hint = UIKit.Label(content, "같은 등급 두 개를 끌어다 겹치면 합성!\n장착 칸을 누르면 슬롯 강화 · 남는 총알은 분해 → 다이아", 30, UIKit.Ink, TextAnchor.MiddleCenter, 0);
+            var hint = UIKit.Label(content, L.T("같은 등급 두 개를 끌어다 겹치면 합성!\n장착 칸을 누르면 슬롯 강화 · 남는 총알은 분해 → 다이아"), 30, UIKit.Ink, TextAnchor.MiddleCenter, 0);
             hint.rectTransform.Place(0.5f, 0, new Vector2(0, 260), new Vector2(880, 80), new Vector2(0.5f, 0.5f));
 
             ghost = UIKit.Img(transform, null, new Vector2(150, 150), "Ghost").rectTransform;
@@ -82,7 +82,7 @@ namespace KachiGun
         {
             for (int i = 0; i < slots.Length; i++) slots[i].Set(S.slots[i]);
             for (int i = 0; i < inv.Length; i++) inv[i].Set(S.inv[i]);
-            gachaLabel.text = $"   뽑기  {Tables.Ci("GachaCost")}";
+            gachaLabel.text = $"   {L.T("뽑기")}  {Tables.Ci("GachaCost")}";
             ShowInfo();
         }
 
@@ -95,34 +95,34 @@ namespace KachiGun
             int code = selected ? selected.code : -1;
             if (code < 0)
             {
-                info.text = "총알을 누르면 정보가 나옵니다.\n장착 칸으로 끌어다 놓으면 장착!";
+                info.text = L.T("총알을 누르면 정보가 나옵니다.\n장착 칸으로 끌어다 놓으면 장착!");
                 action.gameObject.SetActive(false);
                 extra.gameObject.SetActive(false);
                 return;
             }
             var w = Tables.Weapon(code);
             int g = Tables.GradeOf(code);
-            string more = w.type == "shotgun" ? $" · {w.count}발" : w.type == "pierce" ? $" · {w.pierce}마리 관통" : w.type == "missile" ? $" · 범위 {w.splash:0.0}" : w.type == "laser" ? " · 일직선 전부" : "";
+            string more = w.type == "shotgun" ? " · " + L.F("{0}발", w.count) : w.type == "pierce" ? " · " + L.F("{0}마리 관통", w.pierce) : w.type == "missile" ? " · " + L.F("범위 {0}", w.splash.ToString("0.0")) : w.type == "laser" ? " · " + L.T("일직선 전부") : "";
             string line1 = $"<color=#{ColorUtility.ToHtmlStringRGB(GradeColor(g))}>{Tables.WeaponName(code)}</color>  ({Tables.TypeLabel(w.type)})";
-            string line2 = $"공격력 {Num.F(w.atk)} · 연사 {w.interval:0.##}초{more}";
+            string line2 = L.F("공격력 {0} · 연사 {1}초", Num.F(w.atk), w.interval.ToString("0.##")) + more;
             double ov = Stats.SpeedOverflow(w, selected.isSlot ? selected.index : -1);
-            if (ov > 1.005) line2 += $" · <color=#FFD966>넘친 공속 → 공격 x{(ov < 1000 ? ov.ToString("0.##") : Num.F(ov))}</color>";
+            if (ov > 1.005) line2 += $" · <color=#FFD966>{L.F("넘친 공속 → 공격 x{0}", ov < 1000 ? ov.ToString("0.##") : Num.F(ov))}</color>";
             if (selected.isSlot)
             {
                 int i = selected.index, lv = Stats.SlotLvEff(i);
-                string cap = S.slotLv[i] > lv ? $" (칸 +{S.slotLv[i]}, 이 등급은 +{lv}까지)" : $" / 최대 +{Stats.SlotMax(i)}";
-                info.text = $"{line1}\n<color=#FFD966>슬롯 강화 +{lv}</color>{cap}\n" +
-                            (lv > 0 ? $"공격 +{Stats.SlotAtkPct(i):0.#}% · 속도 +{Stats.SlotSpdPct(i):0.#}% · 보스 +{Stats.SlotBossPct(i):0.#}%" : line2);
-                UIKit.LabelOf(extra).text = "강화";
+                string cap = S.slotLv[i] > lv ? " " + L.F("(칸 +{0}, 이 등급은 +{1}까지)", S.slotLv[i], lv) : " / " + L.F("최대 +{0}", Stats.SlotMax(i));
+                info.text = $"{line1}\n<color=#FFD966>{L.F("슬롯 강화 +{0}", lv)}</color>{cap}\n" +
+                            (lv > 0 ? L.F("공격 +{0}% · 속도 +{1}% · 보스 +{2}%", Stats.SlotAtkPct(i).ToString("0.#"), Stats.SlotSpdPct(i).ToString("0.#"), Stats.SlotBossPct(i).ToString("0.#")) : line2);
+                UIKit.LabelOf(extra).text = L.T("강화");
             }
             else
             {
                 info.text = $"{line1}\n{line2}";
-                UIKit.LabelOf(extra).text = $"분해 +{Tables.Grade(g).salvage:0}";
+                UIKit.LabelOf(extra).text = L.T("분해") + $" +{Tables.Grade(g).salvage:0}";
             }
             action.gameObject.SetActive(true);
             extra.gameObject.SetActive(true);
-            UIKit.LabelOf(action).text = selected.isSlot ? "해제" : "장착";
+            UIKit.LabelOf(action).text = L.T(selected.isSlot ? "해제" : "장착");
         }
 
         void DoAction()
@@ -150,7 +150,7 @@ namespace KachiGun
             {
                 int g = Tables.GradeOf(cell.code);
                 string nm = Tables.WeaponName(cell.code);
-                ConfirmPopup.Ask($"<size=46>분해</size>\n\n<color=#{ColorUtility.ToHtmlStringRGB(GradeColor(g))}>{nm}</color> 을(를) 분해할까요?\n\n다이아 +{Tables.Grade(g).salvage:0}", () =>
+                ConfirmPopup.Ask($"<size=46>{L.T("분해")}</size>\n\n" + L.F("{0} 을(를) 분해할까요?", $"<color=#{ColorUtility.ToHtmlStringRGB(GradeColor(g))}>{nm}</color>") + $"\n\n{L.T("다이아")} +{Tables.Grade(g).salvage:0}", () =>
                 {
                     Msg(GM.Salvage(cell.index));
                     selected = null;
@@ -163,12 +163,12 @@ namespace KachiGun
             var e = Tables.Enchant(lv + 1);
             double gm = Tables.Grade(Tables.GradeOf(cell.code)).enchantMul;
             var now = Tables.Enchant(lv);
-            ConfirmPopup.Ask($"<size=46>슬롯 강화 +{lv} → +{lv + 1}</size>\n\n다이아 {Num.Gem(e.gems)} · 골드 {Num.F(e.gold)}\n성공 확률 {e.rate:0}%\n\n" +
-                             $"공격력 +{now.atk * gm:0.#}% → <color=#3F8A2E>+{e.atk * gm:0.#}%</color>\n공격속도 +{e.spd * gm:0.#}% · 보스 피해 +{e.boss * gm:0.#}%", () =>
+            ConfirmPopup.Ask($"<size=46>{L.T("슬롯 강화")} +{lv} → +{lv + 1}</size>\n\n{L.T("다이아")} {Num.Gem(e.gems)} · {L.T("골드")} {Num.F(e.gold)}\n{L.F("성공 확률 {0}%", e.rate.ToString("0"))}\n\n" +
+                             $"{L.T("공격력")} +{now.atk * gm:0.#}% → <color=#3F8A2E>+{e.atk * gm:0.#}%</color>\n" + L.F("공격속도 +{0}% · 보스 피해 +{1}%", (e.spd * gm).ToString("0.#"), (e.boss * gm).ToString("0.#")), () =>
             {
                 string err = GM.EnchantSlot(i, out bool ok);
                 if (err != null) Msg(err);
-                else { H.Toast(ok ? $"강화 성공! +{S.slotLv[i]}" : "강화 실패… (재료만 사라짐)"); if (ok) slots[i].Pop(); }
+                else { H.Toast(ok ? L.T("강화 성공!") + $" +{S.slotLv[i]}" : L.T("강화 실패… (재료만 사라짐)")); if (ok) slots[i].Pop(); }
                 Squad.I.Rebuild();
                 Refresh();
             }, "슬롯 강화");
@@ -184,13 +184,13 @@ namespace KachiGun
             {
                 bool merge = to.code >= 0 && Tables.GradeOf(to.code) == Tables.GradeOf(from.code);
                 e = GM.Merge(from.index, to.index);
-                if (merge && string.IsNullOrEmpty(e)) { H.Toast("합성! " + Tables.WeaponName(S.inv[to.index])); to.Pop(); }
+                if (merge && string.IsNullOrEmpty(e)) { H.Toast(L.T("합성!") + " " + Tables.WeaponName(S.inv[to.index])); to.Pop(); }
             }
             else if (!from.isSlot && to.isSlot) e = GM.Equip(from.index, to.index);
             else if (from.isSlot && !to.isSlot)
             {
                 if (to.code < 0) e = GM.Unequip(from.index, to.index);
-                else if (beforeGrade == Tables.GradeOf(from.code)) e = "장착 중인 총알은 해제한 뒤 합성할 수 있습니다";
+                else if (beforeGrade == Tables.GradeOf(from.code)) e = L.T("장착 중인 총알은 해제한 뒤 합성할 수 있습니다");
                 else e = GM.Equip(to.index, from.index);
             }
             else GM.SwapSlots(from.index, to.index);

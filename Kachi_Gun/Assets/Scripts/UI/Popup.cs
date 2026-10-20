@@ -34,7 +34,7 @@ namespace KachiGun
             p.panel = pan.rectTransform;
 
             // 제목 = 초록 제목줄 위 (창 그림 위쪽 14칸 x 5px = 70)
-            p.title = UIKit.Label(p.panel, p.Title, 46, Color.white, TextAnchor.MiddleCenter, 4);
+            p.title = UIKit.Label(p.panel, L.T(p.Title), 46, Color.white, TextAnchor.MiddleCenter, 4);
             p.title.rectTransform.Place(0.5f, 1, new Vector2(0, -36), new Vector2(p.Size.x - 260, 70), new Vector2(0.5f, 0.5f));
             // 닫기 = 제목줄 오른쪽의 X 칸 위에 투명 버튼(누르기 쉽게 넓게)
             var xb = UIKit.Rect(p.panel, "Close").Place(1, 1, new Vector2(4, 4), new Vector2(120, 100), new Vector2(1, 1));
@@ -90,17 +90,18 @@ namespace KachiGun
             body = UIKit.Label(content, "", 38, UIKit.Ink, TextAnchor.MiddleCenter, 0);
             body.rectTransform.Fill(0, 140, 0, 20);
             body.horizontalOverflow = HorizontalWrapMode.Wrap;
-            ok = UIKit.KitBtn(content, "btn_green", new Vector2(330, 110), "시작", 44, () => { var a = onOk; Close(); a?.Invoke(); });
+            ok = UIKit.KitBtn(content, "btn_green", new Vector2(330, 110), L.T("시작"), 44, () => { var a = onOk; Close(); a?.Invoke(); });
             ((RectTransform)ok.transform).Place(0.5f, 0, new Vector2(0, 10), new Vector2(330, 110), new Vector2(0.5f, 0));
         }
 
+        /// <summary>titleText 는 한국어 그대로 주면 지금 언어로 바뀜</summary>
         public static void Ask(string text, Action yes, string titleText = "확인")
         {
             var p = HUD.I.Open<ConfirmPopup>();
-            p.title.text = titleText;
+            p.title.text = L.T(titleText);
             p.body.text = text;
             p.onOk = yes;
-            UIKit.LabelOf(p.ok).text = "확인";
+            UIKit.LabelOf(p.ok).text = L.T("확인");
         }
 
         public static void Dungeon(Kind k)
@@ -111,31 +112,31 @@ namespace KachiGun
             {
                 case Kind.Challenge:
                     int ch = gm.ChallengeChapter;
-                    if (ch == 0) { HUD.I.Toast("다음 챕터에서 새 도전이 열립니다"); return; }
+                    if (ch == 0) { HUD.I.Toast(L.T("다음 챕터에서 새 도전이 열립니다")); return; }
                     var cr = Tables.Challenge(ch);
-                    text = $"<size=48>도전 {ch}</size>\n\n{cr.time:0}초 안에 좀비 {cr.count}마리를 모두 처치!\n화면을 눌러 분대를 직접 움직이면 빨라요\n\n보상: 다이아 {cr.reward:0} (챕터당 1번)";
+                    text = $"<size=48>{L.F("도전 {0}", ch)}</size>\n\n" + L.F("{0}초 안에 좀비 {1}마리를 모두 처치!", cr.time.ToString("0"), cr.count) + "\n" + L.T("화면을 눌러 분대를 직접 움직이면 빨라요") + "\n\n" + L.F("보상: 다이아 {0} (챕터당 1번)", cr.reward.ToString("0"));
                     go = () => HUD.I.Msg(gm.StartChallenge());
                     break;
                 case Kind.Mine:
                     s.RefreshDaily();
                     double mm = Tables.MineMul(s.Chapter);
                     var ores = new System.Text.StringBuilder();
-                    foreach (var o in Tables.Ores) if (o.count > 0) ores.Append(o.reward > 0 ? $"{o.name} = 다이아 {o.reward * mm:0.##}\n" : $"{o.name} = 보상 없음\n");
-                    text = $"<size=48>다이아 광산 {Tables.MineTier(s.Chapter)}단계</size>\n\n모든 공격이 1 피해로 고정!\n{ores}\n오늘 티켓 {s.mineTickets}/{Tables.Ci("MineTickets")}";
+                    foreach (var o in Tables.Ores) if (o.count > 0) ores.Append(o.reward > 0 ? $"{L.T(o.name)} = {L.T("다이아")} {o.reward * mm:0.##}\n" : $"{L.T(o.name)} = {L.T("보상 없음")}\n");
+                    text = $"<size=48>{L.F("다이아 광산 {0}단계", Tables.MineTier(s.Chapter))}</size>\n\n{L.T("모든 공격이 1 피해로 고정!")}\n{ores}\n{L.T("오늘 티켓")} {s.mineTickets}/{Tables.Ci("MineTickets")}";
                     go = () => HUD.I.Msg(gm.StartMine());
                     break;
                 default:
                     s.RefreshDaily();
                     var br = Tables.BossRaid(s.bossLv);
-                    text = $"<size=48>보스 던전 Lv.{s.bossLv + 1}</size>\n\n{br.time:0}초 안에 {Tables.Zombie(br.bossId).name}를 처치!\n체력 {Num.F(br.hp)} · 보상: 다이아 {br.reward:0}\n\n오늘 티켓 {s.bossTickets}/{Tables.Ci("BossRaidTickets")}";
+                    text = $"<size=48>{L.F("보스 던전 Lv.{0}", s.bossLv + 1)}</size>\n\n{L.F("{0}초 안에 {1}를 처치!", br.time.ToString("0"), L.T(Tables.Zombie(br.bossId).name))}\n{L.T("체력")} {Num.F(br.hp)} · {L.F("보상: 다이아 {0}", br.reward.ToString("0"))}\n\n{L.T("오늘 티켓")} {s.bossTickets}/{Tables.Ci("BossRaidTickets")}";
                     go = () => HUD.I.Msg(gm.StartBossRaid());
                     break;
             }
             var p = HUD.I.Open<ConfirmPopup>();
-            p.title.text = k == Kind.Challenge ? "도전" : k == Kind.Mine ? "광산" : "보스";
+            p.title.text = L.T(k == Kind.Challenge ? "도전" : k == Kind.Mine ? "광산" : "보스");
             p.body.text = text;
             p.onOk = go;
-            UIKit.LabelOf(p.ok).text = "시작";
+            UIKit.LabelOf(p.ok).text = L.T("시작");
         }
     }
 
@@ -169,9 +170,9 @@ namespace KachiGun
             var gem = UIKit.Img(content, Art.Get("UI/icon_gem"), new Vector2(90, 90), "Gem");
             gem.rectTransform.Place(0.5f, 0.5f, new Vector2(-160, -40), new Vector2(90, 90), new Vector2(0.5f, 0.5f));
             gemIcon = gem;
-            take = UIKit.ColorBtn(content, new Color(0.45f, 0.7f, 0.3f), new Vector2(330, 110), "받기", 42, () => Claim(1));
+            take = UIKit.ColorBtn(content, new Color(0.45f, 0.7f, 0.3f), new Vector2(330, 110), L.T("받기"), 42, () => Claim(1));
             ((RectTransform)take.transform).Place(0.5f, 0, new Vector2(-180, 10), new Vector2(330, 110), new Vector2(0.5f, 0));
-            ad = UIKit.ColorBtn(content, new Color(0.95f, 0.6f, 0.15f), new Vector2(330, 110), "광고 보고 x" + Tables.Buff("dungeon_ad_x3").mul.ToString("0.#"), 40, () =>
+            ad = UIKit.ColorBtn(content, new Color(0.95f, 0.6f, 0.15f), new Vector2(330, 110), L.T("광고 보고") + " x" + Tables.Buff("dungeon_ad_x3").mul.ToString("0.#"), 40, () =>
                 AdService.Show("dungeon", () => Claim(Tables.Buff("dungeon_ad_x3").mul)));
             ((RectTransform)ad.transform).Place(0.5f, 0, new Vector2(180, 10), new Vector2(330, 110), new Vector2(0.5f, 0));
         }
@@ -181,14 +182,14 @@ namespace KachiGun
             var p = HUD.I.Open<ResultPopup>();
             p.title.text = t;
             p.win = win; p.reward = reward;
-            p.body.text = reward > 0 ? $"다이아 +{reward:0.#}" : "보상 없음";
+            p.body.text = reward > 0 ? L.T("다이아") + $" +{reward:0.#}" : L.T("보상 없음");
             p.gemIcon.gameObject.SetActive(reward > 0);
             ((RectTransform)p.body.transform).anchoredPosition = new Vector2(reward > 0 ? 60 : 0, -40);
             // 성공(또는 광산 정상 종료) = 별, 실패 = X
             foreach (var st in p.stars) st.gameObject.SetActive(win);
             p.lose.gameObject.SetActive(!win);
             p.ad.gameObject.SetActive(reward > 0);
-            UIKit.LabelOf(p.take).text = reward > 0 ? "받기" : "돌아가기";
+            UIKit.LabelOf(p.take).text = L.T(reward > 0 ? "받기" : "돌아가기");
             ((RectTransform)p.take.transform).anchoredPosition = new Vector2(reward > 0 ? -180 : 0, 10);
         }
 
@@ -200,7 +201,7 @@ namespace KachiGun
             claimed = true;
             base.Close();
             GM.ClaimDungeon(reward * mul, win);
-            if (reward > 0) H.Toast($"다이아 +{reward * mul:0.#}");
+            if (reward > 0) H.Toast(L.T("다이아") + $" +{reward * mul:0.#}");
         }
 
         public override void Open() { claimed = false; base.Open(); }

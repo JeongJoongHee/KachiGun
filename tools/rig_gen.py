@@ -442,7 +442,7 @@ def preview(rig, p, frames=8):
 
 
 if __name__ == '__main__':
-    names = sys.argv[1:] or (list(ZOMBIE_RIG) + list(CRAWL_RIG) + ['capy%02d' % i for i in range(17)])
+    names = sys.argv[1:] or (list(ZOMBIE_RIG) + list(CRAWL_RIG) + ['capy%02d' % i for i in range(18)])
     for n in names:
         if n in ZOMBIE_RIG:
             rig, p = zombie_rig(n)

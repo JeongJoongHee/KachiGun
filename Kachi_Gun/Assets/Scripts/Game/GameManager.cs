@@ -128,7 +128,7 @@ namespace KachiGun
             S.bossFarm = true;
             upgradeHint = true;
             S.Save();
-            HUD.I?.Banner("보스 실패! 강화 후 다시 도전하세요", new Color(1f, 0.55f, 0.45f));
+            HUD.I?.Banner(L.T("보스 실패! 강화 후 다시 도전하세요"), new Color(1f, 0.55f, 0.45f));
             StageChanged?.Invoke();
             Notify();
         }
@@ -137,7 +137,7 @@ namespace KachiGun
         public string ChallengeBoss()
         {
             if (mode != Mode.Stage || bossPhase) return null;
-            if (!S.bossFarm) return "아직 보스를 만날 때가 아닙니다";
+            if (!S.bossFarm) return L.T("아직 보스를 만날 때가 아닙니다");
             S.bossFarm = false;
             StartBoss();
             return null;
@@ -153,7 +153,7 @@ namespace KachiGun
             double hp = st.bossHp > 0 ? st.bossHp : st.hp * Tables.C("BossHpMul");
             double gold = st.bossGold > 0 ? st.bossGold : st.gold * Tables.C("BossGoldMul");
             boss = Zombie.Spawn(r, p, hp, gold, st.bossScale > 0 ? st.bossScale : Tables.Cf("BossScale"), true);
-            HUD.I?.Banner("보스 등장!", new Color(1f, 0.4f, 0.3f));
+            HUD.I?.Banner(L.T("보스 등장!"), new Color(1f, 0.4f, 0.3f));
             StageChanged?.Invoke();
         }
 
@@ -170,7 +170,7 @@ namespace KachiGun
             S.bestEver = Math.Max(S.bestEver, S.stage);
             bool newChapter = S.stage / 5 != before / 5;
             if (newChapter) ApplyTint();
-            string biome = Tables.Chapter(S.Chapter).biome;
+            string biome = L.T(Tables.Chapter(S.Chapter).biome);
             HUD.I?.Banner("Stage " + SaveData.StageName(S.stage) + (newChapter && biome.Length > 0 ? "\n<size=34>" + biome + "</size>" : ""), Color.white);
             CheckUnlocks(before, S.stage);
             S.Save();
@@ -184,7 +184,7 @@ namespace KachiGun
             foreach (var u in Tables.Unlocks)
             {
                 if (u.type != "Stage" || string.IsNullOrEmpty(u.bannerMsg) || u.bannerMsg == "-") continue;
-                if (before < u.stageIdx && now >= u.stageIdx) HUD.I?.Toast(u.bannerMsg);
+                if (before < u.stageIdx && now >= u.stageIdx) HUD.I?.Toast(L.T(u.bannerMsg));
             }
         }
 
@@ -271,7 +271,7 @@ namespace KachiGun
             return S.bestEver >= u.stageIdx;
         }
         /// <summary>잠겨 있을 때 토스트 글</summary>
-        public string LockMsg(string id) { var u = Tables.Unlock(id); return u != null && u.lockMsg.Length > 0 ? u.lockMsg : "아직 열리지 않았습니다"; }
+        public string LockMsg(string id) { var u = Tables.Unlock(id); return u != null && u.lockMsg.Length > 0 ? L.T(u.lockMsg) : L.T("아직 열리지 않았습니다"); }
 
         public bool WeaponOpen => Unlocked("weapon");
         public bool SkinOpen => Unlocked("skin");
@@ -286,9 +286,9 @@ namespace KachiGun
         public string Gacha()
         {
             double cost = Tables.C("GachaCost");
-            if (S.gems < cost) return "다이아가 부족합니다";
+            if (S.gems < cost) return L.T("다이아가 부족합니다");
             int empty = S.inv.IndexOf(-1);
-            if (empty < 0) return "인벤토리가 가득 찼습니다";
+            if (empty < 0) return L.T("인벤토리가 가득 찼습니다");
             S.gems -= cost;
             var types = Tables.TypesOfGrade(0);
             S.inv[empty] = Tables.Code(0, types[Random.Range(0, types.Count)]);
@@ -306,7 +306,7 @@ namespace KachiGun
             if (cb < 0) { S.inv[b] = ca; S.inv[a] = -1; Notify(); return null; }   // 빈칸으로 옮기기
             int g = Tables.GradeOf(ca);
             if (g != Tables.GradeOf(cb)) { S.inv[a] = cb; S.inv[b] = ca; Notify(); return null; }  // 등급 다르면 자리 바꾸기
-            if (g >= Tables.MaxGrade) return "최고 등급입니다";
+            if (g >= Tables.MaxGrade) return L.T("최고 등급입니다");
             var types = Tables.TypesOfGrade(g + 1);
             S.inv[a] = -1;
             S.inv[b] = Tables.Code(g + 1, types[Random.Range(0, types.Count)]);
@@ -336,13 +336,13 @@ namespace KachiGun
         {
             ok = false;
             int code = S.slots[slot];
-            if (code < 0) return "총알을 장착한 칸만 강화할 수 있습니다";
+            if (code < 0) return L.T("총알을 장착한 칸만 강화할 수 있습니다");
             int lv = S.slotLv[slot], max = Stats.SlotMax(slot);
-            if (lv >= Tables.EnchantTop) return "최고 강화입니다";
-            if (lv >= max) return $"{Tables.GradeName(Tables.GradeOf(code))} 등급 총알은 +{max} 까지 — 더 높은 등급을 장착하세요";
+            if (lv >= Tables.EnchantTop) return L.T("최고 강화입니다");
+            if (lv >= max) return L.F("{0} 등급 총알은 +{1} 까지 — 더 높은 등급을 장착하세요", Tables.GradeName(Tables.GradeOf(code)), max);
             var e = Tables.Enchant(lv + 1);
-            if (S.gems < e.gems) return "다이아가 부족합니다";
-            if (S.gold < e.gold) return "골드가 부족합니다";
+            if (S.gems < e.gems) return L.T("다이아가 부족합니다");
+            if (S.gold < e.gold) return L.T("골드가 부족합니다");
             S.gems -= e.gems;
             S.gold -= e.gold;
             ok = Random.value * 100 < e.rate;
@@ -359,9 +359,9 @@ namespace KachiGun
         {
             var r = Tables.Supplies.Find(x => x.id == id);
             if (r == null) return "";
-            if (S.supplies.Contains(id)) return "이미 가진 보급품입니다";
-            if (BestChapter < r.unlockChapter) return $"챕터 {r.unlockChapter} 에서 열립니다";
-            if (S.gems < r.cost) return "다이아가 부족합니다";
+            if (S.supplies.Contains(id)) return L.T("이미 가진 보급품입니다");
+            if (BestChapter < r.unlockChapter) return L.F("챕터 {0} 에서 열립니다", r.unlockChapter);
+            if (S.gems < r.cost) return L.T("다이아가 부족합니다");
             S.gems -= r.cost;
             S.supplies.Add(id);
             Notify();
@@ -374,14 +374,14 @@ namespace KachiGun
         public string BuyShop(ShopRow r)
         {
             double price = Digits(r.priceValue);
-            if (S.gems < price) return "다이아가 부족합니다";
+            if (S.gems < price) return L.T("다이아가 부족합니다");
             int k = r.reward.IndexOf('*');
             double n = k >= 0 ? Digits(r.reward.Substring(k + 1)) : 600;
             double g = Stats.ZombieGold(S.stage) * n * Stats.GoldMul;
             S.gems -= price;
             S.gold += g;
             HUD.I?.Bump(false);
-            HUD.I?.Toast("골드 +" + Num.F(g));
+            HUD.I?.Toast(L.T("골드") + " +" + Num.F(g));
             Notify();
             return null;
         }
@@ -417,10 +417,10 @@ namespace KachiGun
         {
             if (S.slots[slot] < 0) return "";
             int n = 0; foreach (var s in S.slots) if (s >= 0) n++;
-            if (n <= 1) return "최소 1개의 총알을 장착해야 합니다";
+            if (n <= 1) return L.T("최소 1개의 총알을 장착해야 합니다");
             if (toInv < 0) toInv = S.inv.IndexOf(-1);
-            if (toInv < 0) return "인벤토리가 가득 찼습니다";
-            if (S.inv[toInv] >= 0) return "빈 칸에만 놓을 수 있습니다";
+            if (toInv < 0) return L.T("인벤토리가 가득 찼습니다");
+            if (S.inv[toInv] >= 0) return L.T("빈 칸에만 놓을 수 있습니다");
             S.inv[toInv] = S.slots[slot];
             S.slots[slot] = -1;
             CompactSlots();
@@ -453,7 +453,7 @@ namespace KachiGun
             var r = Tables.Skins.Find(x => x.id == id);
             if (r == null) return "";
             if (S.skins.Contains(id)) { S.skin = id; Squad.I.SetSkin(id); Notify(); return null; }
-            if (S.gems < r.price) return "다이아가 부족합니다";
+            if (S.gems < r.price) return L.T("다이아가 부족합니다");
             S.gems -= r.price;
             S.skins.Add(id);
             S.skin = id;
@@ -469,7 +469,7 @@ namespace KachiGun
         {
             double now = SaveData.NowD;
             double cool = atk ? S.buffAtkCool : S.buffGoldCool;
-            if (cool > now) return $"{Math.Ceiling(cool - now)}초 뒤에 다시 볼 수 있습니다";
+            if (cool > now) return L.F("{0}초 뒤에 다시 볼 수 있습니다", Math.Ceiling(cool - now));
             var b = Tables.Buff(atk ? "buff_atk" : "buff_gold");
             AdService.Show(b.id, () =>
             {
@@ -494,16 +494,48 @@ namespace KachiGun
         };
 
         public long MissionTarget(int i) => Tables.MissionTarget(i, S.missionTier[i]);
-        public double MissionReward(int i) => Tables.MissionReward(i, S.missionTier[i]);
+        public bool MissionDone(int i) => Tables.MissionDone(i, S.missionTier[i]);
 
-        public bool MissionReady(int i) => MissionValue(i) >= MissionTarget(i);
+        // 보상 = 다이아로 친 값(Mission_Master)을 다이아 Mission_Gem_Ratio(30%) + 골드(나머지 70%)로 나눔.
+        // 골드 1다이아어치 = 지금 스테이지 좀비 Gem_Gold_Kills(6)마리 골드 x 돈 배율 (상점 골드 상자 100다이아 = 600마리와 같은 비율)
+        static double GemRatio => Tables.C("Mission_Gem_Ratio", 0.3);
+        public double MissionGems(int i) => Math.Round(Tables.MissionReward(i, S.missionTier[i]) * GemRatio);
+        public double MissionGold(int i) => Tables.MissionReward(i, S.missionTier[i]) * (1 - GemRatio) * Tables.C("Gem_Gold_Kills", 6) * Stats.ZombieGold(S.stage) * Stats.GoldMul;
+
+        public bool MissionReady(int i) => !MissionDone(i) && MissionValue(i) >= MissionTarget(i);
 
         public string ClaimMission(int i)
         {
-            if (!MissionReady(i)) return "아직 달성하지 못했습니다";
-            S.gems += MissionReward(i);
+            if (MissionDone(i)) return L.T("모든 단계를 끝냈습니다");
+            if (!MissionReady(i)) return L.T("아직 달성하지 못했습니다");
+            double gems = MissionGems(i), gold = MissionGold(i);
+            S.gems += gems;
+            S.gold += gold;
             S.missionTier[i]++;
+            HUD.I?.Bump(true); HUD.I?.Bump(false);
+            HUD.I?.Toast(L.T("다이아") + " +" + Num.Gem(gems) + " · " + L.T("골드") + " +" + Num.F(gold));
             Notify();
+            return null;
+        }
+
+        // =====================================================================
+        // 광고 무료 다이아 (상점 · 하루 AdGems_Daily 번, 한 번에 AdGems_Amount)
+        // =====================================================================
+        public int AdGemsLeft { get { S.RefreshDaily(); return Math.Max(0, (int)Tables.C("AdGems_Daily", 3) - S.adGemUsed); } }
+
+        public string AdGems()
+        {
+            if (AdGemsLeft <= 0) return L.T("오늘은 다 받았습니다 (내일 다시)");
+            AdService.Show("free_gems", () =>
+            {
+                double g = Tables.C("AdGems_Amount", 40);
+                S.adGemUsed++;
+                S.gems += g;
+                HUD.I?.Bump(true);
+                HUD.I?.Toast(L.T("다이아") + " +" + Num.Gem(g));
+                S.Save();
+                Notify();
+            });
             return null;
         }
 
@@ -525,7 +557,7 @@ namespace KachiGun
         public string StartChallenge()
         {
             int ch = ChallengeChapter;
-            if (ch == 0) return "다음 챕터에서 새 도전이 열립니다";
+            if (ch == 0) return L.T("다음 챕터에서 새 도전이 열립니다");
             var row = Tables.Challenge(ch);
             BeginDungeon(Mode.Challenge, row.time);
             dungeonChapter = ch;
@@ -540,7 +572,7 @@ namespace KachiGun
                 z.standStill = true;
             }
             dungeonTotal = n;
-            HUD.I?.Banner($"도전 {ch} — 모두 처치!", new Color(1f, 0.85f, 0.4f));
+            HUD.I?.Banner(L.F("도전 {0} — 모두 처치!", ch), new Color(1f, 0.85f, 0.4f));
             return null;
         }
 
@@ -548,7 +580,7 @@ namespace KachiGun
         {
             if (!MineOpen) return LockMsg("mine");
             S.RefreshDaily();
-            if (S.mineTickets <= 0) return "오늘 티켓을 다 썼습니다";
+            if (S.mineTickets <= 0) return L.T("오늘 티켓을 다 썼습니다");
             S.mineTickets--;
             S.statMines++;
             BeginDungeon(Mode.Mine, Tables.Cf("MineTime"));
@@ -558,7 +590,7 @@ namespace KachiGun
             double mul = Tables.MineMul(S.Chapter);
             foreach (var o in Tables.Ores)
                 for (int i = 0; i < o.count; i++) Ore.Spawn(o, Field.I.RandomRoad(o.near, o.far, o.scale >= 1 ? 0.7f : 0.6f), mul);
-            HUD.I?.Banner("다이아 광산", new Color(0.5f, 0.85f, 1f));
+            HUD.I?.Banner(L.T("다이아 광산"), new Color(0.5f, 0.85f, 1f));
             return null;
         }
 
@@ -566,7 +598,7 @@ namespace KachiGun
         {
             if (!BossRaidOpen) return LockMsg("boss_raid");
             S.RefreshDaily();
-            if (S.bossTickets <= 0) return "오늘 티켓을 다 썼습니다";
+            if (S.bossTickets <= 0) return L.T("오늘 티켓을 다 썼습니다");
             S.bossTickets--;
             var row = Tables.BossRaid(S.bossLv);
             BeginDungeon(Mode.Boss, row.time);
@@ -574,7 +606,7 @@ namespace KachiGun
             var z = Zombie.Spawn(r, Field.I.RandomRoad(0.5f, 0.62f, 1.4f), row.hp, 0, row.scale, true);
             z.standStill = true;
             dungeonTotal = 1;
-            HUD.I?.Banner($"보스 던전 Lv.{S.bossLv + 1}", new Color(1f, 0.4f, 0.3f));
+            HUD.I?.Banner(L.F("보스 던전 Lv.{0}", S.bossLv + 1), new Color(1f, 0.4f, 0.3f));
             return null;
         }
 
@@ -610,9 +642,9 @@ namespace KachiGun
             dungeonOver = true;
             double reward = 0;
             string title;
-            if (mode == Mode.Challenge) { title = win ? $"도전 {dungeonChapter} 성공!" : "시간 초과"; if (win) reward = Tables.Challenge(dungeonChapter).reward; }
-            else if (mode == Mode.Mine) { title = "채굴 끝!"; reward = Math.Round(dungeonGems, 1); }
-            else { title = win ? "보스 처치!" : "시간 초과"; if (win) reward = Tables.BossRaid(S.bossLv).reward; }
+            if (mode == Mode.Challenge) { title = win ? L.F("도전 {0} 성공!", dungeonChapter) : L.T("시간 초과"); if (win) reward = Tables.Challenge(dungeonChapter).reward; }
+            else if (mode == Mode.Mine) { title = L.T("채굴 끝!"); reward = Math.Round(dungeonGems, 1); }
+            else { title = win ? L.T("보스 처치!") : L.T("시간 초과"); if (win) reward = Tables.BossRaid(S.bossLv).reward; }
             HUD.I?.ShowResult(title, win, reward);
         }
 

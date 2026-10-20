@@ -1,6 +1,6 @@
-﻿Mission_Id,Mission_Name,Save_Stat_Key,Base_Reward_Gems,Reward_Add_Per_10Tier,Tier_1_7_Preset,Default_Growth_Rate,Impl_Status
-kill,좀비 처치하기,statKills,30,5,100|300|700|2000|10000|20000|500000,1.35,구현 완료 (Mission.csv)
-stage,스테이지 클리어하기,statStages,30,5,5|25|50|100|200|400,1.12,"구현 완료 (Mission.csv, 750스테이지 맞춤 성장)"
-mine,광산 플레이하기,statMines,30,5,1|2|5|10|20|50,1.1,구현 완료 (Mission.csv)
-boss,보스 처치하기,statBossKills,40,10,1|3|5|10|20|35|50,1.12,확장 기획 (챕터 보스 및 보스던전 처치)
-merge,총알 합성하기,statMerges,25,5,3|10|25|50|100|200|400,1.15,확장 기획 (총알 드래그 합성 횟수)
+﻿Mission_Id,Mission_Name,Save_Stat_Key,Base_Reward_Value,Reward_Add_Per_10Tier,Tier_1_7_Preset,Default_Growth_Rate,Impl_Status,Max_Tier
+kill,좀비 처치하기,statKills,17,3,100|300|700|2000|10000|20000|500000,1.35,10-20: 1단계 ≈ 1.5챕터 처치 수 (Mission_Tier Kill_Target),
+stage,스테이지 클리어하기,statStages,17,3,5|25|50|100|200|400,1.12,"10-20: 5스테이지마다 1단계, 750(150단계)에서 끝",150
+mine,광산 플레이하기,statMines,17,3,1|2|5|10|20|50,1.1,구현 완료 (Mission.csv),
+boss,보스 처치하기,statBossKills,23,6,1|3|5|10|20|35|50,1.12,확장 기획 (챕터 보스 및 보스던전 처치),
+merge,총알 합성하기,statMerges,14,3,1|2|4|8|16|32|64,2,10-20: 1·2·4·8… (두 배씩),

@@ -38,7 +38,7 @@ namespace KachiGun
         {
             if (sec < 0) sec = 0;
             int s = (int)Math.Ceiling(sec);
-            return s >= 60 ? $"{s / 60}:{s % 60:00}" : $"{s}초";
+            return s >= 60 ? $"{s / 60}:{s % 60:00}" : L.F("{0}초", s);
         }
     }
 }

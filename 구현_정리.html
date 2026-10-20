@@ -146,18 +146,20 @@ figcaption{font-size:13px;color:var(--sub);padding:6px 10px}
 <tr><td>총알 뽑기 · 합성</td><td><span class="tag">구현</span> <span class="tag w">표</span></td><td>뽑기 100 다이아(D 100%), 5x3 인벤토리, 같은 등급 끌어 겹치면 위 등급. <b>등급 13개</b> D·C·B·A·S·SS·SSS·R·SR·SSR·U·SU·SSU (<code>Weapon_Grade_Growth</code> 이름·색) · 총알 32종 <code>Weapon_Master</code> · 총알 속도·판정 <code>Bullet_Spec</code></td></tr>
 <tr><td>총알 슬롯 강화</td><td><span class="tag">구현</span> <span class="tag w">새로</span></td><td>무기 창에서 장착 칸을 누르고 [강화]. 다이아+골드, 성공 확률(높은 레벨은 떨어짐) — <code>Weapon_Enchant</code>. 장착한 총알 등급이 최대 레벨(D +12 … SSU +150)과 효과 배율을 정함 — <code>Grade_Enchant_Multiplier</code>. 효과: 그 칸 카피바라의 공격력·공격속도·보스 피해</td></tr>
 <tr><td>총알 분해</td><td><span class="tag">구현</span> <span class="tag w">새로</span></td><td>무기 창에서 인벤토리 총알을 누르고 [분해] → 등급별 다이아 (D 15 … SSU 195)</td></tr>
-<tr><td>스킨</td><td><span class="tag">구현</span> <span class="tag w">표</span></td><td><code>Skin_Table</code> 기본 + 30종. 사면 바로 입고, 가진 스킨 효과는 입지 않아도 전부 합산. 17~30번은 그림이 없어 기본 카피 그림 + "그림 준비 중"</td></tr>
-<tr><td>도전</td><td><span class="tag">구현</span> <span class="tag w">표</span></td><td><code>Challenge</code> 챕터마다 시간·좀비 수·체력·보상(다이아 30 → 후반 100), 챕터당 1번 (광고 x3)</td></tr>
-<tr><td>다이아 광산</td><td><span class="tag">구현</span> <span class="tag w">표</span></td><td>4-1 에서 열림, 하루 2장, 60초, 모든 공격 피해 1. 광석 = <code>Mine_Ore_Spec</code> (작은 보석·큰 보석·회색 바위·<b>거대 황금 크리스탈</b>), 보상 배율 = <code>Mine_Scaling</code> 30단계(챕터가 오를수록)</td></tr>
+<tr><td>스킨</td><td><span class="tag">구현</span> <span class="tag w">표</span></td><td><code>Skin_Table</code> 기본 + <b>17종</b>(10-20: 17번 해적 선장 그림 넣음, 18~30 삭제). 사면 바로 입고, 가진 스킨 효과는 입지 않아도 전부 합산</td></tr>
+<tr><td>도전</td><td><span class="tag">구현</span> <span class="tag w">표</span></td><td><code>Challenge</code> 챕터마다 시간·좀비 수·체력·보상(다이아 30 → 후반 100), 챕터당 1번 (광고 x2)</td></tr>
+<tr><td>다이아 광산</td><td><span class="tag">구현</span> <span class="tag w">표</span></td><td>4-1 에서 열림, 하루 2장, 60초, 모든 공격 피해 1. 광석 = <code>Mine_Ore_Spec</code> (작은 보석·큰 보석·회색 바위·<b>거대 황금 크리스탈</b>), 보상 배율 = <code>Mine_Scaling</code> 30단계 — <b>10-20: 티켓 1장 = 같은 챕터 보스 던전 1회 보상</b></td></tr>
 <tr><td>보스 던전</td><td><span class="tag">구현</span> <span class="tag w">표</span></td><td>10-1 에서 열림, 하루 3장. <code>Boss_Dungeon</code> Lv.1~150 체력·시간·크기·보상</td></tr>
-<tr><td>던전 결과</td><td><span class="tag">구현</span></td><td>성공 = 별 3개 / 실패 = 파란 X, [받기] · [광고 보고 x3]</td></tr>
-<tr><td>미션</td><td><span class="tag">구현</span> <span class="tag w">표</span></td><td>5종: 좀비 처치·스테이지 클리어·광산 플레이·<b>보스 처치·총알 합성</b>(새로) → 다이아. 목표 단계 = <code>Mission_Tier</code> 150단계, 보상은 10단계마다 증가 (<code>Mission_Master</code>)</td></tr>
+<tr><td>던전 결과</td><td><span class="tag">구현</span></td><td>성공 = 별 3개 / 실패 = 파란 X, [받기] · [광고 보고 x2]</td></tr>
+<tr><td>미션</td><td><span class="tag">구현</span> <span class="tag w">표</span></td><td>5종: 좀비 처치·스테이지 클리어·광산 플레이·보스 처치·총알 합성. <b>10-20: 보상 = 다이아 30% + 골드 70%</b>(<code>Mission_Gem_Ratio</code>, 1다이아 = 좀비 6마리 골드) · 처치 1단계 ≈ 1.5챕터 · 스테이지 미션은 750(150단계)에서 끝(<code>Max_Tier</code>) · 합성 1·2·4·8… (<code>Mission_Master</code>·<code>Mission_Tier</code>)</td></tr>
 <tr><td>버프 x3</td><td><span class="tag">구현</span> <span class="tag w">표</span></td><td>공격력·골드 <b>x2</b> 5분(10-19 x3 → x2), 연속 시청 시 최대 1시간까지 쌓임 (<code>Buff_Table</code>, 광고 = 지금은 바로 지급)</td></tr>
 <tr><td>기능 열림</td><td><span class="tag">구현</span> <span class="tag w">표</span></td><td><code>Unlock_Roadmap</code>: 도전·무기·스킨·상점·미션·버프·절전·광산·보급품·보스 던전마다 열리는 스테이지 + 잠김 토스트 + 열림 알림</td></tr>
 <tr><td>절전모드</td><td><span class="tag">구현</span></td><td>화면 어둡게 + 초당 15프레임, 누르면 돌아옴</td></tr>
-<tr><td>설정</td><td><span class="tag">구현</span></td><td>배경음·효과음·진동 켜고 끄기(소리 파일은 아직 없음) · 저장 · [테스트용] 재화 버튼(출시 전 삭제)</td></tr>
-<tr><td>상점 · 결제 · 광고</td><td><span class="tag no">임시</span> <span class="tag w">표</span></td><td>목록 = <code>Shop_Products</code> 12개. 광고 버튼은 광고 없이 바로 지급, <b>다이아로 사는 골드 상자는 동작</b>, 현금 결제 상품은 "준비 중". 나중에 <code>AdService</code>·<code>Iap</code> 안만 바꾸면 됨</td></tr>
+<tr><td>설정</td><td><span class="tag">구현</span></td><td>배경음·효과음·진동 켜고 끄기(소리 파일은 아직 없음) · <b>언어 · Language (한국어/English, 10-20)</b> · 저장 · [테스트용] 재화 버튼(출시 전 삭제)</td></tr>
+<tr><td>상점 · 결제 · 광고</td><td><span class="tag no">임시</span> <span class="tag w">표</span></td><td>목록 = <code>Shop_Products</code> 13개. 광고 버튼은 광고 없이 바로 지급, <b>10-20: [무료 다이아] 광고 1번 40 · 하루 3번</b>(남으면 상점 빨간 점), 다이아로 사는 골드 상자는 동작, 현금 결제 상품은 "준비 중". 나중에 <code>AdService</code>·<code>Iap</code> 안만 바꾸면 됨</td></tr>
 <tr><td>환생 · 2배속</td><td><span class="tag no">폐기</span></td><td>10-18 사용자 결정으로 시스템 자체를 뺌 (다시 넣지 않음)</td></tr>
+<tr><td>펫 · 탈것 · 시즌/VIP 패스</td><td><span class="tag no">폐기</span></td><td>10-20 사용자 결정 (만들지 않음)</td></tr>
+<tr><td>다국어</td><td><span class="tag">구현</span> <span class="tag w">10-20</span></td><td>한국어 · English. 글자 표 <code>Table/String.xlsx</code> (Key = 한국어 그대로 · EN). 코드는 <code>L.T("한국어")</code>·<code>L.F(…)</code>, 새 글자는 <code>python tools/strings_collect.py</code> 가 표에 줄을 더함(이미 쓴 영어는 그대로)</td></tr>
 <tr><td>보급품</td><td><span class="tag">구현</span> <span class="tag w">새로</span></td><td><code>Supply_Collection</code> 25종. 6챕터마다 하나씩 열리고 다이아로 사면 보유 효과(공격·공격속도·돈·<b>보스 피해</b>)가 계속 더해짐. 아이콘은 상자 그림에 등급 색</td></tr>
 </table></div>
 </section>
@@ -208,7 +210,8 @@ figcaption{font-size:13px;color:var(--sub);padding:6px 10px}
 <tr><td><code>Player</code></td><td><code>Player_Base</code> 카피바라 크기·이동 속도·최소 발사 간격·조준 각도·분대 자리 · <code>Gold_Upgrade</code> 골드 강화 1500레벨</td></tr>
 <tr><td><code>Weapon</code></td><td><code>Weapon_Grade_Growth</code> 등급 이름·색 · <code>Weapon_Master</code> 총알 32종 · <code>Bullet_Spec</code> 총알 속도·유도·판정·사거리 더하기·흔들림·그림</td></tr>
 <tr><td><code>Weapon_Enchant</code></td><td><code>Weapon_Enchant</code> 슬롯 강화 1~150 · <code>Grade_Enchant_Multiplier</code> 등급별 최대 레벨·효과 배율·분해 다이아</td></tr>
-<tr><td><code>Skin</code> · <code>Supply</code></td><td><code>Skin_Table</code> 스킨 31종 · <code>Supply_Collection</code> 보급품 25종</td></tr>
+<tr><td><code>Skin</code> · <code>Supply</code></td><td><code>Skin_Table</code> 스킨 18줄(기본 + 17종) · <code>Supply_Collection</code> 보급품 25종</td></tr>
+<tr><td><code>String</code></td><td>다국어 글자 (Key 한국어 · EN 영어 · Where 나오는 곳). 영어 칸이 비면 한국어로 보임</td></tr>
 <tr><td><code>Zombie</code></td><td><code>Zombie_Master</code> 좀비 12종 체력/골드 배율·속도 범위·멈춤 거리·크기·그림자·나오는 챕터·비율 · <code>Chapter_Zombie_Stats</code> 확인용</td></tr>
 <tr><td><code>Challenge</code> · <code>Boss_Dungeon</code> · <code>Mine</code></td><td>도전 150챕터 · 보스 던전 150레벨 · <code>Mine_Ore_Spec</code> 광석 4종 · <code>Mine_Scaling</code> 광산 보상 30단계</td></tr>
 <tr><td><code>Mission</code> · <code>Buff</code> · <code>Shop</code> · <code>Unlock</code></td><td><code>Mission_Master</code>·<code>Mission_Tier</code> 미션 · <code>Buff_Table</code> 버프 · <code>Shop_Products</code> 상점 · <code>Unlock_Roadmap</code> 기능 열림</td></tr>
@@ -240,26 +243,22 @@ figcaption{font-size:13px;color:var(--sub);padding:6px 10px}
   <div class="ev"><b>10-19 저녁</b>UI 배치 변경(<code>UI 수정.png</code>): 드롭다운 삭제 → 아래 버튼 줄, 총알 칸, 상점·도전 위치</div>
   <div class="ev"><b>10-19 밤</b>뼈대 애니메이션(좀비 12·카피바라 17) · 도트 UI 팩 적용 · 안 쓰는 그림 40장 삭제 · UI 테두리 매끈하게</div>
   <div class="ev"><b>10-19 밤 (이어서)</b>알림 → 토스트(판 없음) · 강화 카드 한 판 · 절전모드·자동강화 오른쪽 아래 · 배경 밝게 · 카피바라 1.2배 · 안내 화살표 날렵하게 · <b>보스 30초 제한 + 반복 사냥 + [보스 도전]</b></div>
+  <div class="ev"><b>10-20 · 남은 작업 의견 반영</b>밸런스 다시 맞춤(광고 최대·하루 4시간 = 50챕터 3주·100챕터 9주·150챕터 21주, 골드 1/2, 무료 다이아 30%, 미션 다이아+골드, 광산 = 보스 던전 수준, 슬롯 강화 골드 = 수입 10분) · 상점 광고 다이아 · 스킨 17개(해적 선장) · 펫/탈것·패스 폐기 · 영어(설정 언어 버튼, <code>String.xlsx</code>) · 앱 이름 카피바라vs좀비 · git 저장소</div>
   <div class="ev"><b>10-19 밤 (표)</b>기획 표 xlsx 15개 적용 + xlsx → csv 자동 변환. 스테이지 750·강화 1500·등급 13·스킨 31·도전/보스 던전 150. 새로: <b>보급품 25종 · 총알 슬롯 강화 · 분해 · 보스/합성 미션 · 골드 상자 · 거대 황금 크리스탈</b></div>
 </div>
 </section>
 
 <section id="todo">
 <h2>남은 것 · 정해 주실 것</h2>
-<h3>기획서 대비 아직 없는 것</h3>
+<p class="note">10-20 부터 남은 일·결정은 <code>남은_작업_정리.html</code> 에서 체크·의견으로 관리합니다. 아래는 요약.</p>
+<h3>아직 없는 것</h3>
 <ul>
-  <li>펫·탈것 · 사냥 · 시즌/VIP 패스</li>
-  <li>실제 광고·결제 SDK · 클라우드 저장 · 문의</li>
-  <li>사운드 (총소리·배경음 리소스 없음) · 다국어 (지금은 한국어만)</li>
-  <li>스킨 30종 중 그림은 16종 (17~30번은 기본 그림) · 보급품 25종 그림 (지금은 상자 아이콘)</li>
+  <li>사냥(기획서엔 한 줄뿐 — 만들지 결정 대기) · 실제 광고·결제 SDK · 클라우드 저장 · 문의</li>
+  <li>사운드 (총소리·배경음 리소스 없음) · 보급품 25종 그림 (지금은 상자 아이콘)</li>
 </ul>
-<h3>결정 대기</h3>
+<h3>정해진 것 (10-20)</h3>
 <ul>
-  <li>게임 이름 (지금 앱 이름 = Kachi_Gun) · 스킨 이름 16개 (임시)</li>
-  <li>다음 우선순위: 펫/탈것 · 사운드 · 광고/결제</li>
-  <li>총알 강화를 <b>장착 칸(슬롯)마다</b>로 만들었습니다 (표의 '총알 슬롯 강화' 문구 기준). 총알 하나하나에 붙이는 방식을 원하시면 알려 주세요</li>
-  <li>좀비 이동 속도 (가로 전장이라 걸어오는 거리가 짧아짐)</li>
-  <li>git 저장소로 만들지 (아직 아님)</li>
+  <li>앱 이름 <b>카피바라vs좀비</b> · 스킨 17개(이름·값은 <code>Skin.xlsx</code>) · 총알 슬롯 강화 = 칸마다 그대로 · 좀비 속도는 <code>Zombie.xlsx</code> 로 직접 조절 · 펫/탈것·패스 폐기 · git 저장소(GitHub <code>JeongJoongHee/KachiGun</code>, push 는 직접)</li>
 </ul>
 <h3>알아 두실 점</h3>
 <ul>

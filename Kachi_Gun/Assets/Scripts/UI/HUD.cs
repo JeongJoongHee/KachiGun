@@ -107,7 +107,7 @@ namespace KachiGun
             // 절전모드 (오른쪽, 골드 x3 밑)
             ecoBtn = UIKit.TileBtn(root, Art.Kit("i_pause_w"), new Vector2(88, 94), 0.5f, ToggleEco, "Eco");
             ((RectTransform)ecoBtn.transform).Place(1, 1, new Vector2(-38, -554), new Vector2(88, 94), new Vector2(1, 1));
-            var el = UIKit.Label(ecoBtn.transform, "절전모드", 28, Color.white, TextAnchor.MiddleCenter, 2);
+            var el = UIKit.Label(ecoBtn.transform, L.T("절전모드"), 28, Color.white, TextAnchor.MiddleCenter, 2);
             el.rectTransform.Place(0.5f, 0, new Vector2(0, -14), new Vector2(160, 34), new Vector2(0.5f, 0.5f));
 
             // 골드·다이아
@@ -115,10 +115,10 @@ namespace KachiGun
             gemText = Pill(new Vector2(-20, -194), "UI/icon_gem", new Vector2(62, 62), out gemIcon);
 
             // 상점 (설정 아래) · 미션 (상점 아래)
-            IconBtn("shop", "UI/icon_shop", "상점", new Vector2(88, 80), 0, -232, () => GM.Unlocked("shop"), "shop", () => Open<ShopPopup>());
+            IconBtn("shop", "UI/icon_shop", L.T("상점"), new Vector2(88, 80), 0, -232, () => GM.Unlocked("shop"), "shop", () => Open<ShopPopup>());
             missionBtn = UIKit.TileBtn(root, Art.Kit("i_trophy_w"), new Vector2(88, 94), 0.6f, () => Open<MissionPopup>(), "Mission");
             ((RectTransform)missionBtn.transform).Place(0, 1, new Vector2(24, -372), new Vector2(88, 94), new Vector2(0, 1));
-            var ml = UIKit.Label(missionBtn.transform, "미션", 28, Color.white, TextAnchor.MiddleCenter, 2);
+            var ml = UIKit.Fit(UIKit.Label(missionBtn.transform, L.T("미션"), 28, Color.white, TextAnchor.MiddleCenter, 2), 18);
             ml.rectTransform.Place(0.5f, 0, new Vector2(0, -12), new Vector2(120, 34), new Vector2(0.5f, 0.5f));
             var dot = UIKit.KitImg(missionBtn.transform, "badge", new Vector2(34, 34), "Dot");
             dot.rectTransform.Place(1, 1, new Vector2(8, 8), new Vector2(34, 34), new Vector2(1, 1));
@@ -127,20 +127,21 @@ namespace KachiGun
             // 자동강화 (오른쪽 맨 아래 = 절전모드 밑, [임시] 결제 전이라 상점 결제 안내)
             autoBtn = UIKit.Btn(root, Art.Kit("btn_play"), new Vector2(84, 84), null, 0, () => Iap.Buy("auto_upgrade"), "AutoUpgrade");
             ((RectTransform)autoBtn.transform).Place(1, 1, new Vector2(-40, -694), new Vector2(84, 84), new Vector2(1, 1));
-            var al = UIKit.Label(autoBtn.transform, "자동강화", 28, Color.white, TextAnchor.MiddleCenter, 2);
+            var al = UIKit.Label(autoBtn.transform, L.T("자동강화"), 28, Color.white, TextAnchor.MiddleCenter, 2);
             al.rectTransform.Place(0.5f, 0, new Vector2(0, -16), new Vector2(160, 34), new Vector2(0.5f, 0.5f));
 
             // 광고 버프 (오른쪽, 다이아 아래) — 배율 = Buff_Table
-            buffAtk = BuffBtn(new Vector2(-38, -282), "UI/stat_atk", "공격 " + BuffX(true), true, out buffAtkT);
-            buffGold = BuffBtn(new Vector2(-38, -418), "UI/stat_gold", "골드 " + BuffX(false), false, out buffGoldT);
+            buffAtk = BuffBtn(new Vector2(-38, -282), "UI/stat_atk", L.T("공격") + " " + BuffX(true), true, out buffAtkT);
+            buffGold = BuffBtn(new Vector2(-38, -418), "UI/stat_gold", L.T("골드") + " " + BuffX(false), false, out buffGoldT);
 
             // 보스 도전 (보스 실패 뒤 반복 사냥 중에만, 도전 버튼 아래)
-            bossBtn = UIKit.ColorBtn(stageGroup, new Color(0.85f, 0.3f, 0.25f), new Vector2(250, 66), "보스 도전", 34, () => Msg(GM.ChallengeBoss()));
+            bossBtn = UIKit.ColorBtn(stageGroup, new Color(0.85f, 0.3f, 0.25f), new Vector2(250, 66), L.T("보스 도전"), 34, () => Msg(GM.ChallengeBoss()));
             ((RectTransform)bossBtn.transform).Place(0.5f, 1f, new Vector2(0, -236), new Vector2(250, 66), new Vector2(0.5f, 0.5f));
             var bi = UIKit.Img(bossBtn.transform, Art.Zombie("ogre")[0], new Vector2(60, 58), "Icon");
             bi.rectTransform.Place(0, 0.5f, new Vector2(36, 4), new Vector2(60, 58), new Vector2(0.5f, 0.5f));
             bi.raycastTarget = false;
             UIKit.LabelOf(bossBtn).rectTransform.offsetMin = new Vector2(62, 4);
+            UIKit.Fit(UIKit.LabelOf(bossBtn), 18);
             bossBtn.gameObject.SetActive(false);
 
             // 도전 (Stage 글자 아래)
@@ -148,8 +149,9 @@ namespace KachiGun
             var chr = ((RectTransform)chb.transform).Place(0.5f, 1f, new Vector2(0, -160), new Vector2(230, 70), new Vector2(0.5f, 0.5f));
             var chi = UIKit.Img(chr, Art.Get("UI/icon_swords"), new Vector2(50, 46), "Icon");
             chi.rectTransform.Place(0, 0.5f, new Vector2(44, 2), new Vector2(50, 46), new Vector2(0.5f, 0.5f));
-            var chl = UIKit.Label(chr, "도전", 34, Color.white, TextAnchor.MiddleCenter, 3);
+            var chl = UIKit.Label(chr, L.T("도전"), 34, Color.white, TextAnchor.MiddleCenter, 3);
             chl.rectTransform.Fill(70, 4, 14, 0);
+            UIKit.Fit(chl, 18);
             challengeDot = UIKit.KitImg(chr, "badge", new Vector2(34, 34), "Dot").gameObject;
             ((RectTransform)challengeDot.transform).Place(1, 1, new Vector2(8, 8), new Vector2(34, 34), new Vector2(1, 1));
             var noLock = new GameObject("NoLock");
@@ -194,7 +196,7 @@ namespace KachiGun
 
         void BuildBottom()
         {
-            string[] names = { "공격력", "공격속도", "돈 획득량" };
+            string[] names = { L.T("공격력"), L.T("공격속도"), L.T("돈 획득량") };
             string[] imgs = { "UI/card_atk", "UI/card_spd", "UI/card_gold" };
             // 세 카드를 묶는 판 (카드 아래 8 ~ 이름 위 8)
             upgradePanel = UIKit.KitImg(root, "panel_brown", new Vector2(CardStep * 3 + 24, 254 * CardScale + 66), "UpgradePanel");
@@ -214,7 +216,7 @@ namespace KachiGun
                 c.holder = holder;
                 var hb = im.gameObject.AddComponent<HoldButton>();
                 hb.action = () => { bool ok = GM.TryUpgrade(which); if (ok) { Refresh(); PopCard(which); } return ok; };
-                c.name = UIKit.Label(root, names[i], 34, Color.white, TextAnchor.MiddleCenter, 3);
+                c.name = UIKit.Fit(UIKit.Label(root, names[i], 34, Color.white, TextAnchor.MiddleCenter, 3), 20);
                 c.name.rectTransform.Place(0.5f, 0, new Vector2(-CardStep + i * CardStep, CardY + 254 * CardScale - 2), new Vector2(300, 44), new Vector2(0.5f, 0));
                 c.lv = UIKit.Label(c.rt, "Lv.0", 32, Color.white, TextAnchor.MiddleRight, 2);
                 c.lv.rectTransform.Place(1, 1, new Vector2(-32, -60), new Vector2(170, 40), new Vector2(1, 0.5f));
@@ -275,7 +277,7 @@ namespace KachiGun
                     v.frame.color = gc;
                     v.bg.color = Color.Lerp(Color.white, gc, 0.25f);
                     int lv = Stats.SlotLvEff(i);
-                    v.name.text = $"<color=#{ColorUtility.ToHtmlStringRGB(gc)}>{Tables.GradeName(Tables.GradeOf(code))}</color> {Tables.Weapon(code).name}" + (lv > 0 ? $" <color=#FFD966>+{lv}</color>" : "");
+                    v.name.text = $"<color=#{ColorUtility.ToHtmlStringRGB(gc)}>{Tables.GradeName(Tables.GradeOf(code))}</color> {L.T(Tables.Weapon(code).name)}" + (lv > 0 ? $" <color=#FFD966>+{lv}</color>" : "");
                     v.name.rectTransform.offsetMin = new Vector2(108, 4);
                     v.name.alignment = TextAnchor.MiddleLeft;
                 }
@@ -283,7 +285,7 @@ namespace KachiGun
                 {
                     v.frame.color = new Color(1, 1, 1, 0f);
                     v.bg.color = new Color(1, 1, 1, 0.75f);
-                    v.name.text = $"총알 {i + 1}\n<size=24>비어 있음</size>";
+                    v.name.text = L.F("총알 {0}", i + 1) + "\n<size=24>" + L.T("비어 있음") + "</size>";
                     v.name.rectTransform.offsetMin = new Vector2(10, 4);
                     v.name.alignment = TextAnchor.MiddleCenter;
                 }
@@ -300,11 +302,11 @@ namespace KachiGun
         {
             navBar = UIKit.Rect(root, "NavBar").Place(0.5f, 0, new Vector2(0, NavY), new Vector2(NavStep * 5, NavH), new Vector2(0.5f, 0));
             // 잠금 글 = Unlock_Roadmap 의 Lock_Toast_Message
-            NavBtn(0, "weapon", "UI/icon_pistol", "무기", () => GM.WeaponOpen, "weapon", () => Open<WeaponPopup>());
-            NavBtn(1, "skin", "Gen/capy_head", "스킨", () => GM.SkinOpen, "skin", () => Open<SkinPopup>());
-            NavBtn(2, "fish", "Kit/i_chest_w", "보급품", () => GM.FishOpen, "supply", () => Open<SupplyPopup>());
-            NavBtn(3, "boss", null, "보스", () => GM.BossRaidOpen, "boss_raid", () => Confirm(ConfirmPopup.Kind.Boss));
-            NavBtn(4, "mine", "UI/icon_gem", "광산", () => GM.MineOpen, "mine", () => Confirm(ConfirmPopup.Kind.Mine));
+            NavBtn(0, "weapon", "UI/icon_pistol", L.T("무기"), () => GM.WeaponOpen, "weapon", () => Open<WeaponPopup>());
+            NavBtn(1, "skin", "Gen/capy_head", L.T("스킨"), () => GM.SkinOpen, "skin", () => Open<SkinPopup>());
+            NavBtn(2, "fish", "Kit/i_chest_w", L.T("보급품"), () => GM.FishOpen, "supply", () => Open<SupplyPopup>());
+            NavBtn(3, "boss", null, L.T("보스"), () => GM.BossRaidOpen, "boss_raid", () => Confirm(ConfirmPopup.Kind.Boss));
+            NavBtn(4, "mine", "UI/icon_gem", L.T("광산"), () => GM.MineOpen, "mine", () => Confirm(ConfirmPopup.Kind.Mine));
         }
 
         void NavBtn(int i, string id, string icon, string label, Func<bool> open, string lockText, Action click)
@@ -321,7 +323,7 @@ namespace KachiGun
             Image ic = UIKit.Img(rt, icon != null ? Art.Get(icon) : Art.Zombie("ogre")[0], isz, "Icon");
             ic.rectTransform.Place(0.5f, 1, new Vector2(0, icon != null ? -50 : -48), isz, new Vector2(0.5f, 0.5f));
             sb.icon = ic;
-            sb.label = UIKit.Label(rt, label, 30, Color.white, TextAnchor.MiddleCenter, 3);
+            sb.label = UIKit.Fit(UIKit.Label(rt, label, 30, Color.white, TextAnchor.MiddleCenter, 3), 18);
             sb.label.rectTransform.Place(0.5f, 0, new Vector2(0, 28), new Vector2(NavW - 10, 38), new Vector2(0.5f, 0.5f));
             var lk = UIKit.KitImg(rt, "lock", new Vector2(30, 43), "Lock");
             lk.rectTransform.Place(0.5f, 1, new Vector2(34, -66), new Vector2(30, 43), new Vector2(0.5f, 0.5f));
@@ -344,11 +346,14 @@ namespace KachiGun
             }, "Top_" + id);
             var rt = ((RectTransform)sb.b.transform).Place(0, 1, new Vector2(24 + x, y), size, new Vector2(0, 1));
             sb.icon = rt.Find("Icon").GetComponent<Image>();
-            sb.label = UIKit.Label(rt, label, 28, Color.white, TextAnchor.MiddleCenter, 2);
+            sb.label = UIKit.Fit(UIKit.Label(rt, label, 28, Color.white, TextAnchor.MiddleCenter, 2), 18);
             sb.label.rectTransform.Place(0.5f, 0, new Vector2(0, -14), new Vector2(120, 34), new Vector2(0.5f, 0.5f));
             var lk = UIKit.KitImg(rt, "lock", new Vector2(27, 39), "Lock");
             lk.rectTransform.Place(1, 0, new Vector2(-6, 18), new Vector2(27, 39), new Vector2(0.5f, 0.5f));
             sb.lockIcon = lk.gameObject;
+            sb.dot = UIKit.KitImg(rt, "badge", new Vector2(34, 34), "Dot").gameObject;   // 상점: 오늘 광고 다이아가 남았으면 빨간 점
+            ((RectTransform)sb.dot.transform).Place(1, 1, new Vector2(8, 8), new Vector2(34, 34), new Vector2(1, 1));
+            sb.dot.SetActive(false);
             side[id] = sb;
         }
 
@@ -365,9 +370,9 @@ namespace KachiGun
             timerText.rectTransform.Place(0.5f, 1, new Vector2(0, -60), new Vector2(400, 100), new Vector2(0.5f, 0.5f));
             leftText = UIKit.Label(dungeonGroup, "", 40, UIKit.Gold, TextAnchor.MiddleCenter, 3);
             leftText.rectTransform.Place(0.5f, 1, new Vector2(0, -140), new Vector2(520, 50), new Vector2(0.5f, 0.5f));
-            quitBtn = UIKit.ColorBtn(dungeonGroup, new Color(0.6f, 0.2f, 0.15f, 0.9f), new Vector2(160, 56), "포기", 30, () =>
+            quitBtn = UIKit.ColorBtn(dungeonGroup, new Color(0.6f, 0.2f, 0.15f, 0.9f), new Vector2(160, 56), L.T("포기"), 30, () =>
             {
-                ConfirmPopup.Ask("던전을 포기할까요?\n(사용한 티켓은 돌아오지 않습니다)", () => GM.ExitDungeon());
+                ConfirmPopup.Ask(L.T("던전을 포기할까요?\n(사용한 티켓은 돌아오지 않습니다)"), () => GM.ExitDungeon());
             });
             ((RectTransform)quitBtn.transform).Place(0.5f, 0, new Vector2(0, 20), new Vector2(160, 56), new Vector2(0.5f, 0.5f));
             dungeonGroup.gameObject.SetActive(false);
@@ -380,7 +385,7 @@ namespace KachiGun
             paw = p.rectTransform;
             paw.Place(0.5f, 0, new Vector2(-300, 150), new Vector2(120, 120), new Vector2(0.5f, 0.5f));
             p.raycastTarget = false;
-            var t = UIKit.Label(paw, "눌러서 강화!", 38, UIKit.Gold, TextAnchor.MiddleCenter, 3);
+            var t = UIKit.Label(paw, L.T("눌러서 강화!"), 38, UIKit.Gold, TextAnchor.MiddleCenter, 3);
             t.rectTransform.Place(0.5f, 1, new Vector2(0, 0), new Vector2(300, 50), new Vector2(0.5f, 0));
         }
 
@@ -392,7 +397,7 @@ namespace KachiGun
             var b = o.gameObject.AddComponent<Button>();
             b.transition = Selectable.Transition.None;
             b.onClick.AddListener(ToggleEco);
-            var t = UIKit.Label(o.transform, "절전 모드\n\n화면을 누르면 돌아옵니다", 44, new Color(1, 1, 1, 0.75f), TextAnchor.MiddleCenter, 0);
+            var t = UIKit.Label(o.transform, L.T("절전 모드\n\n화면을 누르면 돌아옵니다"), 44, new Color(1, 1, 1, 0.75f), TextAnchor.MiddleCenter, 0);
             t.rectTransform.Fill();
             ecoInfo = UIKit.Label(o.transform, "", 40, new Color(1f, 0.9f, 0.5f, 0.8f), TextAnchor.MiddleCenter, 0);
             ecoInfo.rectTransform.Place(0.5f, 0.5f, new Vector2(0, -260), new Vector2(900, 160), new Vector2(0.5f, 0.5f));
@@ -437,7 +442,7 @@ namespace KachiGun
             {
                 timerText.text = Mathf.CeilToInt(GM.dungeonTime).ToString();
                 timerText.color = GM.dungeonTime < 10 ? UIKit.Red : Color.white;
-                leftText.text = GM.mode == GameManager.Mode.Mine ? $"다이아 +{GM.dungeonGems:0.0}" : $"남은 좀비 {GM.DungeonLeft}";
+                leftText.text = GM.mode == GameManager.Mode.Mine ? L.T("다이아") + $" +{GM.dungeonGems:0.0}" : L.F("남은 좀비 {0}", GM.DungeonLeft);
             }
         }
 
@@ -474,8 +479,8 @@ namespace KachiGun
             buffAtk.gameObject.SetActive(buffOpen);
             buffGold.gameObject.SetActive(buffOpen);
             double now = SaveData.NowD;
-            buffAtkT.text = Stats.BuffAtk ? Num.Time(S.buffAtkEnd - now) : "공격 " + BuffX(true);
-            buffGoldT.text = Stats.BuffGold ? Num.Time(S.buffGoldEnd - now) : "골드 " + BuffX(false);
+            buffAtkT.text = Stats.BuffAtk ? Num.Time(S.buffAtkEnd - now) : L.T("공격") + " " + BuffX(true);
+            buffGoldT.text = Stats.BuffGold ? Num.Time(S.buffGoldEnd - now) : L.T("골드") + " " + BuffX(false);
             buffAtkT.color = Stats.BuffAtk ? UIKit.Gold : Color.white;
             buffGoldT.color = Stats.BuffGold ? UIKit.Gold : Color.white;
 
@@ -487,22 +492,23 @@ namespace KachiGun
             }
             var ch = side["challenge"];
             int cc = GM.ChallengeChapter;
-            ch.label.text = cc > 0 ? $"도전 {cc}" : "도전";
+            ch.label.text = cc > 0 ? L.F("도전 {0}", cc) : L.T("도전");
             ch.icon.color = cc > 0 ? Color.white : new Color(0.5f, 0.5f, 0.5f);
             challengeDot.SetActive(cc > 0);
             S.RefreshDaily();
-            side["mine"].label.text = GM.MineOpen ? $"광산 {S.mineTickets}/{Tables.Ci("MineTickets")}" : "광산";
-            side["boss"].label.text = GM.BossRaidOpen ? $"보스 {S.bossTickets}/{Tables.Ci("BossRaidTickets")}" : "보스";
+            side["mine"].label.text = GM.MineOpen ? $"{L.T("광산")} {S.mineTickets}/{Tables.Ci("MineTickets")}" : L.T("광산");
+            side["boss"].label.text = GM.BossRaidOpen ? $"{L.T("보스")} {S.bossTickets}/{Tables.Ci("BossRaidTickets")}" : L.T("보스");
             side["mine"].dot.SetActive(GM.MineOpen && S.mineTickets > 0);
             side["boss"].dot.SetActive(GM.BossRaidOpen && S.bossTickets > 0);
+            side["shop"].dot.SetActive(GM.Unlocked("shop") && GM.AdGemsLeft > 0);
             RefreshSlots();
 
             pctFill.rectTransform.anchorMax = new Vector2(Mathf.Max(0.03f, GM.StageProgress), 1);
             pctFill.sprite = Art.Kit(GM.bossPhase ? "bar_red" : "bar_green");
-            pctText.text = GM.bossPhase ? $"보스! {Mathf.CeilToInt(GM.bossTime)}초" : GM.BossFarm ? "반복 사냥 중 — 강화 후 보스 도전!" : Mathf.FloorToInt(GM.StageProgress * 100) + "%";
+            pctText.text = GM.bossPhase ? L.F("보스! {0}초", Mathf.CeilToInt(GM.bossTime)) : GM.BossFarm ? L.T("반복 사냥 중 — 강화 후 보스 도전!") : Mathf.FloorToInt(GM.StageProgress * 100) + "%";
             bool showBoss = GM.mode == GameManager.Mode.Stage && GM.BossFarm && !GM.bossPhase;
             if (bossBtn.gameObject.activeSelf != showBoss) bossBtn.gameObject.SetActive(showBoss);
-            if (GM.eco && ecoInfo) ecoInfo.text = $"Stage {SaveData.StageName(S.stage)}\n골드 {Num.F(S.gold)}";
+            if (GM.eco && ecoInfo) ecoInfo.text = $"Stage {SaveData.StageName(S.stage)}\n{L.T("골드")} {Num.F(S.gold)}";
 
             foreach (var p in openPopups) p.Tick();
         }

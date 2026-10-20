@@ -210,7 +210,7 @@ namespace KachiGun.EditorTools
             rp?.Close();
             yield return Wait(0.3f);
             Log($"도전 보상: 다이아 {g0} → {S.gems}, 깬 챕터 {string.Join(",", S.challengeCleared)}");
-            Check(S.gems - g0 >= 29.9 && S.challengeCleared.Contains(1) && GM.mode == GameManager.Mode.Stage, "도전 보상·기록");
+            Check(S.gems - g0 >= Tables.Challenge(1).reward - 0.1 && S.challengeCleared.Contains(1) && GM.mode == GameManager.Mode.Stage, "도전 보상·기록");
 
             // 7) 광산
             S.bestEver = 16; S.stage = 16; GM.AdvanceStage();
@@ -262,7 +262,7 @@ namespace KachiGun.EditorTools
                 Check(Stats.Interval(w0) <= 0.0601f && System.Math.Abs(d1 / d0 / want - 1) < 0.01, "공속 넘침 → 공격력 1:1");
                 S.lvSpd = sv;
             }
-            Check(Tables.Missions.Count == 5 && Tables.Supplies.Count == 25 && Tables.Skins.Count == 31 && Tables.Ores.Count == 4, "표: 미션·보급품·스킨·광석");
+            Check(Tables.Missions.Count == 5 && Tables.Supplies.Count == 25 && Tables.Skins.Count == 18 && Tables.Ores.Count == 4, "표: 미션·보급품·스킨·광석");
             Check(Tables.Stage(800).hp > Tables.Stage(749).hp && Tables.Upgrade(1600).cost > Tables.Upgrade(1500).cost, "표 끝 너머 이어서 계산");
             Check(GM.LockMsg("mine").Contains("4-1") && GM.Unlocked("boss_raid"), "표: 기능 열림");
 
@@ -306,6 +306,37 @@ namespace KachiGun.EditorTools
             {
                 double gb = S.gold, db = S.gems;
                 Check(GM.BuyShop(box) == null && S.gold > gb && S.gems == db - 100, "상점 골드 상자");
+            }
+            // 10-5) 10-20: 광고 무료 다이아 (하루 AdGems_Daily 번)
+            {
+                S.adGemUsed = 0;
+                int n = (int)Tables.C("AdGems_Daily", 3);
+                double g0a = S.gems;
+                for (int i = 0; i < n; i++) GM.AdGems();
+                Check(System.Math.Abs(S.gems - g0a - n * Tables.C("AdGems_Amount", 40)) < 0.01 && GM.AdGemsLeft == 0 && GM.AdGems() != null, $"광고 다이아 {n}번 x {Tables.C("AdGems_Amount", 40)}");
+            }
+            // 10-6) 미션 보상 = 다이아 30% + 골드 70%, 스테이지 미션은 Max_Tier 에서 끝
+            {
+                int mi = Tables.Missions.FindIndex(m => m.id == "kill");
+                long keep = S.statKills;
+                S.statKills = GM.MissionTarget(mi);
+                double gg = S.gems, go = S.gold, eg = GM.MissionGems(mi), eo = GM.MissionGold(mi);
+                Check(GM.ClaimMission(mi) == null && System.Math.Abs(S.gems - gg - eg) < 0.01 && S.gold - go > eo * 0.99 && eo > 0, $"미션 보상 다이아 {eg} + 골드 {Num.F(eo)}");
+                S.statKills = keep;
+                int si = Tables.Missions.FindIndex(m => m.id == "stage");
+                int tier = S.missionTier[si];
+                S.missionTier[si] = Tables.Missions[si].maxTier;
+                Check(Tables.Missions[si].maxTier == 150 && GM.MissionDone(si) && !GM.MissionReady(si) && GM.ClaimMission(si) != null, "스테이지 미션 150단계에서 끝");
+                S.missionTier[si] = tier;
+            }
+            // 10-7) 영어 글자 표 (화면은 다시 만들지 않고 글자만 확인)
+            {
+                string keepLang = S.lang;
+                S.lang = L.En;
+                string shop = L.T("상점"), f = L.F("챕터 {0} 에서 열립니다", 3), skin = L.T(Tables.Skins[17].name);
+                S.lang = L.Ko;
+                Check(shop == "Shop" && f == "Unlocks at chapter 3" && skin == "Pirate Captain" && L.T("상점") == "상점", $"영어 글자 {shop} · {f} · {skin}");
+                S.lang = keepLang;
             }
             Log($"미션 진행: 합성 {S.statMerges}, 보스 {S.statBossKills}");
             Check(S.statMerges > 0 && S.statBossKills >= 2, "합성·보스 미션 기록");

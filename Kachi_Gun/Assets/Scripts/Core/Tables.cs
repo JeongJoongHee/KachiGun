@@ -22,7 +22,8 @@ namespace KachiGun
     }
     public class MissionRow
     {
-        public string id, name, statKey; public double baseReward, addPer10;
+        public string id, name, statKey; public double baseReward, addPer10;   // 보상 = 다이아로 친 값 (다이아 Mission_Gem_Ratio + 나머지는 골드)
+        public int maxTier;                     // 0 = 끝없이, N = N단계까지 (스테이지 미션은 750 에서 끝)
         public long[] targets;                  // 단계별 목표 (Mission_Tier 표에 칸이 있으면 그것, 없으면 Mission_Master 미리 정한 값)
         public double extraMul = 2; public long extraAdd;   // 표 끝 너머 단계
     }
@@ -185,7 +186,8 @@ namespace KachiGun
                 var m = new MissionRow
                 {
                     id = r.S("Mission_Id"), name = r.S("Mission_Name"), statKey = r.S("Save_Stat_Key"),
-                    baseReward = r.D("Base_Reward_Gems"), addPer10 = r.D("Reward_Add_Per_10Tier"), extraMul = r.D("Default_Growth_Rate", 2)
+                    baseReward = r.Has("Base_Reward_Value") ? r.D("Base_Reward_Value") : r.D("Base_Reward_Gems"), addPer10 = r.D("Reward_Add_Per_10Tier"),
+                    extraMul = r.D("Default_Growth_Rate", 2), maxTier = r.I("Max_Tier")
                 };
                 string col = Title(m.id) + "_Target";        // kill → Kill_Target
                 if (tierRows.Count > 0 && tierRows[0].Has(col))
@@ -244,6 +246,8 @@ namespace KachiGun
             Debug.LogError("Global_Config 에 없는 키: " + key);
             return 0;
         }
+        /// <summary>없으면 def (새로 더한 키)</summary>
+        public static double C(string key, double def) { Load(); return config.TryGetValue(key, out var v) ? v : def; }
         public static float Cf(string key) => (float)C(key);
         public static int Ci(string key) => (int)Math.Round(C(key));
 
@@ -391,6 +395,9 @@ namespace KachiGun
         /// <summary>보상 = 기본 + 10단계마다 더하기 (1~10단계 = 기본)</summary>
         public static double MissionReward(int i, int tier) => Missions[i].baseReward + Missions[i].addPer10 * (tier / 10);
 
+        /// <summary>모든 단계를 끝낸 미션 (Max_Tier 가 있는 것만)</summary>
+        public static bool MissionDone(int i, int tier) => Missions[i].maxTier > 0 && tier >= Missions[i].maxTier;
+
         // =====================================================================
         // 총알 (코드 = 등급 x 10 + 종류 번호)
         // =====================================================================
@@ -438,13 +445,13 @@ namespace KachiGun
         public static string WeaponName(int code)
         {
             var w = Weapon(code);
-            return w == null ? "?" : $"{GradeName(GradeOf(code))} {w.name}";
+            return w == null ? "?" : $"{GradeName(GradeOf(code))} {L.T(w.name)}";
         }
 
-        public static string TypeLabel(string t) => t switch
+        public static string TypeLabel(string t) => L.T(t switch
         {
             "single" => "단발", "shotgun" => "산탄", "fast" => "속사", "pierce" => "관통", "laser" => "레이저", "missile" => "미사일", _ => t
-        };
+        });
 
         public static BulletRow Bullet(string type)
         {
@@ -490,6 +497,9 @@ namespace KachiGun
         /// <summary>칸 이름 정리: "Time_Limit (초)" → "Time_Limit"</summary>
         static readonly Regex unitSuffix = new(@"\s*\(.*\)\s*$");
         static string Head(string h) => unitSuffix.Replace(h.Trim(), "").Trim();
+
+        /// <summary>다른 곳(다국어 L)에서 표 읽기</summary>
+        public static List<Row> ReadTable(string name) => Read(name);
 
         static List<Row> Read(string name)
         {

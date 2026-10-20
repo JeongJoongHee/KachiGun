@@ -1,7 +1,7 @@
 ﻿Key,Value,Unit,Category,Control_Table,Description
 HpBase,150,HP,스테이지,Stage.xlsx,Stage 1-1 (idx=0) 기본 좀비 체력
 HpGrowth,1.28,배율,스테이지,Stage.xlsx,초반(Ch.1~8) 기본 체력 성장률 (이후 구간은 테이블 제어)
-GoldBase,30,골드,스테이지,Stage.xlsx,Stage 1-1 (idx=0) 기본 좀비 처치 골드
+GoldBase,15,골드,스테이지,Stage.xlsx,Stage 1-1 (idx=0) 기본 좀비 처치 골드 (10-20 골드 1/2)
 GoldGrowth,1.25,배율,스테이지,Stage.xlsx,초반(Ch.1~8) 기본 골드 성장률 (이후 구간은 테이블 제어)
 KillsPerStage,20,마리,스테이지,Stage.xlsx,서브 스테이지 클리어 필요 처치 수
 MaxAlive,8,마리,스테이지,Stage.xlsx,화면 내 동시 존재 최대 일반 좀비 수
@@ -45,3 +45,8 @@ BossRaidTime,60,초,보스던전,Boss_Dungeon.xlsx,보스 던전 제한 시간(�
 BossRaidHpMul,25,배,보스던전,Boss_Dungeon.xlsx,보스 던전 기본 체력 배율
 BossRaidReward,50,다이아,보스던전,Boss_Dungeon.xlsx,보스 던전 Lv.1 기본 보상 다이아
 MoveSpeed,3.4,unit/s,분대,Player.xlsx,던전 수동/AI 분대 이동 속도
+AdGems_Daily,3,회/일,광고,Shop.xlsx,상점 [무료 다이아] 광고 하루 횟수
+AdGems_Amount,40,다이아,광고,Shop.xlsx,상점 [무료 다이아] 광고 1번에 받는 다이아
+Mission_Gem_Ratio,0.3,비율,미션,Mission.xlsx,미션 보상(다이아로 친 값) 중 다이아로 주는 비율 — 나머지는 골드
+Gem_Gold_Kills,6,마리,미션,Mission.xlsx,골드 1다이아어치 = 지금 스테이지 좀비 N마리 골드 x 돈 배율 (상점 골드 상자 100다이아 = 600마리와 같은 비율)
+Free_Gem_Share,0.3,비율,밸런스,-,참고값 (게임은 안 읽음): 150챕터까지 무료로 버는 다이아 ÷ 다이아로 살 수 있는 것 전부 = 무료 3 : 결제 7

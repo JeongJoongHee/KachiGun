@@ -115,7 +115,9 @@ def _load_new_gun():
     import os
     from PIL import Image
     root = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
-    im = Image.open(os.path.join(root, NEW_GUN)).convert('RGBA')
+    path = os.path.join(root, NEW_GUN)
+    if not os.path.exists(path): path = os.path.join(root, '리소스', NEW_GUN)   # 원본은 리소스 폴더로 옮겨짐
+    im = Image.open(path).convert('RGBA')
     w, h = im.size
     big = im.resize((round(w * NEW_GUN_SCALE), round(h * NEW_GUN_SCALE)), Image.NEAREST)
     return np.array(big)

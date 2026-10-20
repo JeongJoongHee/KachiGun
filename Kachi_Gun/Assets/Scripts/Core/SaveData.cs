@@ -36,6 +36,8 @@ namespace KachiGun
         public List<int> missionTier = new();   // Mission_Master 줄 순서
 
         public bool bgm = true, sfx = true, vibe = true;
+        public string lang = "ko";              // 화면 언어 (L.Ko · L.En)
+        public int adGemUsed;                   // 오늘 광고로 받은 무료 다이아 횟수 (상점, Global_Config AdGems_Daily)
         public bool tutorialDone;
         public long firstPlay;
 
@@ -68,6 +70,7 @@ namespace KachiGun
             if (!any) slots[0] = Tables.Code(0, "single");   // 처음 = D 리볼버 하나
             while (missionTier.Count < 8) missionTier.Add(0);
             if (firstPlay == 0) firstPlay = Now;
+            if (lang != L.Ko && lang != L.En) lang = L.Ko;
         }
 
         public void Save()
@@ -92,6 +95,7 @@ namespace KachiGun
             string today = DateTime.Now.ToString("yyyyMMdd");
             if (ticketDay == today) return;
             ticketDay = today;
+            adGemUsed = 0;
             mineTickets = Math.Max(mineTickets, Tables.Ci("MineTickets"));
             bossTickets = Math.Max(bossTickets, Tables.Ci("BossRaidTickets"));
         }

@@ -21,7 +21,29 @@ ol li,ul li{margin:4px 0}
 <button class="theme" onclick="var r=document.documentElement;r.dataset.theme=(r.dataset.theme==='dark'||(!r.dataset.theme&&matchMedia('(prefers-color-scheme: dark)').matches))?'light':'dark'">밝게/어둡게</button>
 <main>
 <h1>카치건 밸런스 점검</h1>
-<p class="sub">2026-10-19 · 지금 기획 표(<code>Kachi_Gun/Table/*.xlsx</code>)를 게임 코드와 같은 식으로 계산하는 시뮬레이터(<code>tools/balance_sim.py</code>)로 1-1 부터 150-5 까지 돌려 본 결과</p>
+<p class="sub">2026-10-20 갱신 (맨 위 절) · 아래는 10-19 기록 · 지금 기획 표(<code>Kachi_Gun/Table/*.xlsx</code>)를 게임 코드와 같은 식으로 계산하는 시뮬레이터(<code>tools/balance_sim.py</code>)로 1-1 부터 150-5 까지 돌려 본 결과</p>
+
+<div class="card" style="border-left:6px solid var(--good)">
+<h2 style="margin-top:0;border:0;padding:0">10-20 다시 맞춤 — 광고 최대 · 무과금 · 하루 4시간 = 150챕터 146일</h2>
+<p class="sub">남은_작업_정리 의견 반영: 목표 1~50챕터 3주 · 51~100 6주 · 101~150 12주 (= 21 · 63 · 147일) · 골드 1/2 · 무료 다이아 = 살 수 있는 것 전부의 30% · 미션 다이아 30%+골드 70% · 광산 = 보스 던전 수준 · 슬롯 강화 골드 = 그 챕터 수입 10분 · 스킨 17개 · 상점 광고 다이아 40 x 3. 도구 <code>tools/balance_apply_1020.py</code> (결과 <code>tools/balance_1020.json</code>)</p>
+<div class="tl">
+<div class="g"><b>목표대로</b>: 50챕터 21일 · 100챕터 63일 · 150챕터 146일 (광고 최대 = 공격·골드 버프 늘 켜짐 + 던전 결과 광고 x2 + 상점 광고 다이아 하루 3번)</div>
+<div class="g"><b>무료 다이아 646,359</b> = 다이아로 살 수 있는 것 전부 2,141,054 의 <b>30%</b> (무료 3 : 결제 7)</div>
+<div class="w"><b>광고를 안 보면 150챕터까지 452일 (1.2년)</b> — 광고 최대의 약 3배. 광고 x2 가 공격력·골드 둘 다라 차이가 큽니다 (남은_작업_정리 ① 첫 결정).</div>
+<div class="w">하루 2시간·10시간도 거의 같은 날에 끝남 (168일 · 121일) — 다이아(보스 던전·광산 = 하루 횟수 제한)가 진행을 끌고 가서, 오래 켜 둬도 크게 빨라지지 않습니다.</div>
+</div>
+<h3>며칠에 몇 챕터</h3>
+<div class="tbl"><table><tr><th>도달</th><th>광고 최대<br>하루 4시간</th><th>광고 최대<br>하루 2시간</th><th>광고 최대<br>하루 10시간</th><th>광고 안 봄<br>하루 4시간</th></tr><tr><td>5챕터</td><td class='n'><b>0.3일</b></td><td class='n'>0.6일</td><td class='n'>0.1일</td><td class='n'>1일</td></tr><tr><td>10챕터</td><td class='n'><b>3일</b></td><td class='n'>4일</td><td class='n'>2일</td><td class='n'>14일</td></tr><tr><td>20챕터</td><td class='n'><b>8일</b></td><td class='n'>9일</td><td class='n'>6일</td><td class='n'>33일</td></tr><tr><td>30챕터</td><td class='n'><b>13일</b></td><td class='n'>15일</td><td class='n'>10일</td><td class='n'>51일</td></tr><tr><td>50챕터</td><td class='n'><b>21일</b></td><td class='n'>24일</td><td class='n'>17일</td><td class='n'>82일</td></tr><tr><td>75챕터</td><td class='n'><b>29일</b></td><td class='n'>33일</td><td class='n'>26일</td><td class='n'>118일</td></tr><tr><td>100챕터</td><td class='n'><b>63일</b></td><td class='n'>73일</td><td class='n'>53일</td><td class='n'>219일</td></tr><tr><td>125챕터</td><td class='n'><b>102일</b></td><td class='n'>116일</td><td class='n'>83일</td><td class='n'>327일</td></tr><tr><td>150챕터</td><td class='n'><b>146일</b></td><td class='n'>168일</td><td class='n'>121일</td><td class='n'>452일 (1.2년)</td></tr></table></div>
+<h3>광고 최대 · 하루 4시간일 때 그 챕터의 모습</h3>
+<div class="tbl"><table><tr><th>챕터</th><th>날</th><th>총알 등급 (3칸)</th><th>슬롯 강화</th><th>스킨 / 보급품</th><th>보스 던전</th><th>골드 강화 Lv</th><th>반복 사냥 비율</th></tr><tr><td>10챕터</td><td class='n'>3일</td><td>C·C·D</td><td class='n'>+1</td><td class='n'>3 / 1</td><td class='n'>Lv 1</td><td class='n'>168</td><td class='n'>94%</td></tr><tr><td>25챕터</td><td class='n'>10일</td><td>A·B·B</td><td class='n'>+25</td><td class='n'>8 / 4</td><td class='n'>Lv 16</td><td class='n'>354</td><td class='n'>95%</td></tr><tr><td>50챕터</td><td class='n'>21일</td><td>S·S·A</td><td class='n'>+49</td><td class='n'>17 / 8</td><td class='n'>Lv 44</td><td class='n'>647</td><td class='n'>93%</td></tr><tr><td>75챕터</td><td class='n'>29일</td><td>SSS·SSS·SS</td><td class='n'>+72</td><td class='n'>17 / 12</td><td class='n'>Lv 67</td><td class='n'>886</td><td class='n'>91%</td></tr><tr><td>100챕터</td><td class='n'>63일</td><td>SR·SR·R</td><td class='n'>+101</td><td class='n'>17 / 16</td><td class='n'>Lv 98</td><td class='n'>1201</td><td class='n'>93%</td></tr><tr><td>125챕터</td><td class='n'>102일</td><td>SSR·SSR·SSR</td><td class='n'>+115</td><td class='n'>17 / 20</td><td class='n'>Lv 124</td><td class='n'>1474</td><td class='n'>93%</td></tr><tr><td>150챕터</td><td class='n'>146일</td><td>U·U·U</td><td class='n'>+127</td><td class='n'>17 / 25</td><td class='n'>Lv 149</td><td class='n'>1746</td><td class='n'>93%</td></tr></table></div>
+<h3>다이아 — 150챕터까지 무료로 버는 곳 · 살 수 있는 것 전부</h3>
+<div class="tbl"><table><tr><th>버는 곳 (광고 최대)</th><th class="n">다이아</th><th class="n">비율</th></tr><tr><td>광산</td><td class='n'>443,553</td><td class='n'>69%</td></tr><tr><td>보스 던전</td><td class='n'>171,466</td><td class='n'>27%</td></tr><tr><td>상점 광고 다이아</td><td class='n'>17,520</td><td class='n'>3%</td></tr><tr><td>도전</td><td class='n'>9,880</td><td class='n'>2%</td></tr><tr><td>미션 (30%)</td><td class='n'>3,939</td><td class='n'>1%</td></tr><tr><th>합계</th><th class="n">646,359</th><th class="n">30% of 전부</th></tr></table></div>
+<div class="tbl" style="margin-top:8px"><table><tr><th>살 수 있는 것 전부</th><th class="n">다이아</th></tr><tr><td>총알 SSU x 3칸 (뽑기 100 x 4096 x 3)</td><td class='n'>1,228,800</td></tr><tr><td>슬롯 강화 +150 x 3칸 (실패 확률 포함)</td><td class='n'>879,404</td></tr><tr><td>보급품 25종</td><td class='n'>17,500</td></tr><tr><td>스킨 17종</td><td class='n'>15,350</td></tr><tr><th>합계</th><th class="n">2,141,054</th></tr></table></div>
+<p class="sub">도전·보스 던전·광산·미션 보상에 같은 배율 <b>x0.577</b> 을 곱해 30% 에 맞춤. 광산 티켓 1장 = 같은 챕터 보스 던전 1회 보상.</p>
+<h3>골드 강화 표 (Player.xlsx Gold_Upgrade) — 구간별 K</h3>
+<div class="tbl"><table><tr><th>구간</th><th class="n">K (공격력+공속 성장 = 좀비 체력 성장^K)</th></tr><tr><td>Lv 0 ~ 80</td><td class='n'>0.441</td></tr><tr><td>Lv 81 ~ 250</td><td class='n'>0.441</td></tr><tr><td>Lv 251 ~ 637</td><td class='n'>0.441</td></tr><tr><td>Lv 638 ~ 1203</td><td class='n'>0.287</td></tr><tr><td>Lv 1204 ~ 1500</td><td class='n'>0.456</td></tr></table></div>
+<p class="sub">구간 경계 = 50·100챕터에 도착할 때의 강화 레벨. 다시 만들 때: <code>python tools/balance_apply_1020.py</code>(맞추기부터) 또는 <code>--apply</code>(저장한 값으로 표만 다시 씀). 항상 <code>Table/_backup_1020/</code>(10-20 시작 전 표)에서 다시 만듦.</p>
+</div>
 
 <h2>한눈에</h2>
 <div class="tl">

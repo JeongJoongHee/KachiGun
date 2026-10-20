@@ -1,11 +1,13 @@
 # -*- coding: utf-8 -*-
-"""카치건 밸런스 시뮬레이터 (10-19 밸런스_점검.html) — 사용: python tools/balance_sim.py [최대 날 수] [결과 json]
- — Resources/Tables/*.csv 를 게임 코드와 같은 식으로 계산.
-가정: 한 번에 하루 H 시간 켜 둠(오프라인 보상 없음), 플레이어는 '가장 효율 좋은 것부터' 산다.
+"""카치건 밸런스 시뮬레이터 — 사용: python tools/balance_sim.py [최대 날 수] [결과 json]
+ — Resources/Tables/*.csv 를 게임 코드와 같은 식으로 계산 (10-19 처음, 10-20 규칙 추가).
+가정: 하루 H 시간 켜 둠(오프라인 보상 없음), 플레이어는 '가장 효율 좋은 것부터' 산다.
+ads=True = 광고를 최대로 봄: 공격·골드 버프 늘 켜짐 · 던전 결과 광고 x2 · 상점 광고 다이아 하루 AdGems_Daily 번.
+10-20: 미션 보상 = 다이아 Mission_Gem_Ratio + 골드(나머지, 1다이아 = 좀비 Gem_Gold_Kills 마리 골드) · Max_Tier 에서 끝
+       광산 = Mine_Ore_Spec 보석 전부 x Mine_Scaling 배율 · 슬롯 강화 골드는 모아서 삼(30분 수입 이하일 때)
 """
-import csv, io, math, json, sys, re
+import csv, io, math, json, sys, re, os
 
-import os
 T = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'Kachi_Gun', 'Assets', 'Resources', 'Tables') + os.sep
 
 
@@ -22,27 +24,40 @@ def rd(n):
     return out
 
 
-CFG = {r['Key']: r['Value'] for r in rd('Global_Config')}
-STAGE = rd('Stage_Table')
-UPG = rd('Gold_Upgrade')
-WEAP = rd('Weapon_Master')
-GRADE = rd('Weapon_Grade_Growth')
-GENCH = {int(r['Grade_Idx']): r for r in rd('Grade_Enchant_Multiplier')}
-ENCH = rd('Weapon_Enchant')
-SKIN = rd('Skin_Table')
-SUP = rd('Supply_Collection')
-ZOM = rd('Zombie_Master')
-CHAL = {int(r['Challenge_Chapter']): r for r in rd('Challenge')}
-BOSS = rd('Boss_Dungeon')
-MINE = rd('Mine_Scaling')
-MM = rd('Mission_Master')
-MT = rd('Mission_Tier')
-CHS = rd('Chapter_Summary')
-BUFF = {r['Buff_Id']: r for r in rd('Buff_Table')}
-AD = BUFF['buff_atk']['Multiplier'] if 'buff_atk' in BUFF else 3      # 광고 버프 배율 (표)
-ADD = BUFF['dungeon_ad_x3']['Multiplier'] if 'dungeon_ad_x3' in BUFF else 3
+def load():
+    """csv 다시 읽기 (표를 바꾼 뒤)"""
+    global CFG, STAGE, UPG, WEAP, GRADE, GENCH, ENCH, SKIN, SUP, ZOM, CHAL, BOSS, MINE, ORE, MM, MT, BUFF, AD, ADD, MAXG, TYPES
+    CFG = {r['Key']: r['Value'] for r in rd('Global_Config')}
+    STAGE = rd('Stage_Table')
+    UPG = rd('Gold_Upgrade')
+    WEAP = rd('Weapon_Master')
+    GRADE = rd('Weapon_Grade_Growth')
+    GENCH = {int(r['Grade_Idx']): r for r in rd('Grade_Enchant_Multiplier')}
+    ENCH = rd('Weapon_Enchant')
+    SKIN = rd('Skin_Table')
+    SUP = rd('Supply_Collection')
+    ZOM = rd('Zombie_Master')
+    CHAL = {int(r['Challenge_Chapter']): r for r in rd('Challenge')}
+    BOSS = rd('Boss_Dungeon')
+    MINE = rd('Mine_Scaling')
+    ORE = rd('Mine_Ore_Spec')
+    MM = rd('Mission_Master')
+    MT = rd('Mission_Tier')
+    BUFF = {r['Buff_Id']: r for r in rd('Buff_Table')}
+    AD = BUFF['buff_atk']['Multiplier'] if 'buff_atk' in BUFF else 3      # 광고 버프 배율 (표)
+    ADD = BUFF['dungeon_ad_x3']['Multiplier'] if 'dungeon_ad_x3' in BUFF else 3
+    MAXG = len(GRADE) - 1
+    TYPES = {}
+    for w in WEAP: TYPES.setdefault(int(w['Grade_Idx']), []).append(w)
+
+
+load()
 MIN_IV = 0.06
-MAXG = len(GRADE) - 1
+
+
+def cfg(k, d):
+    v = CFG.get(k, d)
+    return v if isinstance(v, float) else d
 
 
 def upg(lv):
@@ -52,15 +67,14 @@ def upg(lv):
             'Atk_Speed': L['Atk_Speed'] * L['Spd_Growth_Rate'] ** n if 'Spd_Growth_Rate' in L else L['Atk_Speed'] + L['Spd_Add_Per_Lv'] * n, 'Money_Gain': L['Money_Gain'] * L['Gold_Growth_Rate'] ** n}
 
 
-# 등급별 종류들
-TYPES = {}
-for w in WEAP: TYPES.setdefault(int(w['Grade_Idx']), []).append(w)
-
-
 def mix(ch):
     ws = [z for z in ZOM if z['MinChapter'] <= ch and z['Base_Weight'] > 0]
     s = sum(z['Base_Weight'] for z in ws)
     return sum(z['Base_Weight'] * z['HpMul'] for z in ws) / s, sum(z['Base_Weight'] * z['GoldMul'] for z in ws) / s
+
+
+def mission_value(m):
+    return m['Base_Reward_Value'] if 'Base_Reward_Value' in m else m['Base_Reward_Gems']
 
 
 class P:
@@ -73,13 +87,16 @@ class P:
         s.skins = {0}; s.sup = set(); s.chal = set(); s.bossLv = 0
         s.stat = dict(kill=0, stage=0, mine=0, boss=0, merge=0)
         s.mtier = [0] * len(MM)
-        s.gem_src = dict(mission=0, challenge=0, mine=0, raid=0)
+        s.gem_src = dict(mission=0, challenge=0, mine=0, raid=0, ad=0)
         s.gem_use = dict(weapon=0, skin=0, supply=0, enchant=0)
         s.gold_use = dict(atk=0, spd=0, gold=0, enchant=0)
+        s.gold_src = dict(stage=0, mission=0)
         s.farm = 0.0; s.log = []; s.spd_cap_t = None
+        s.reserve = 0.0           # 슬롯 강화 골드를 모으는 중 (강화에 안 씀)
+        s.grate = 1.0             # 최근 골드 수입 (초당)
 
     # ---------- 능력치 ----------
-    def skin_sum(s, k): return sum(SKIN[i][k] for i in s.skins)
+    def skin_sum(s, k): return sum(SKIN[i][k] for i in s.skins if i < len(SKIN))
     def sup_sum(s, k): return sum(SUP[i - 1][k] for i in s.sup)
 
     def atkmul(s):
@@ -125,35 +142,59 @@ class P:
 
     def daily(s):
         ch = s.stage // 5 + 1
-        # 광산 2장
+        # 광고 무료 다이아 (상점)
+        if s.ads:
+            g = cfg('AdGems_Daily', 0) * cfg('AdGems_Amount', 0)
+            s.gems += g; s.gem_src['ad'] += g
+        # 광산 MineTickets 장: 보석 전부 x 단계 배율, 60초 동안 때린 만큼
         tier = [r for r in MINE if r['Unlock_Chapter'] <= ch]
         if s.stage >= 15 and tier:
+            full = sum(o['Base_Reward_Gems'] * o['Spawn_Count'] for o in ORE) * tier[-1]['Reward_Multiplier']
+            need = sum(o['Hit_HP'] * o['Spawn_Count'] for o in ORE)
             hits = 60 * sum(len(TYPES[g]) and sum(w['Count'] / max(MIN_IV, w['Interval'] / s.spdmul()) for w in TYPES[g]) / len(TYPES[g]) for g in s.slot if g >= 0) * 0.7
-            g = tier[-1]['Max_Gems_Per_Ticket'] * min(1, hits / 425) * 2 * (ADD if s.ads else 1)
-            s.gems += g; s.gem_src['mine'] += g; s.stat['mine'] += 2
-        # 보스 던전 3장
+            n = cfg('MineTickets', 2)
+            g = full * min(1, hits / need) * n * (ADD if s.ads else 1)
+            s.gems += g; s.gem_src['mine'] += g; s.stat['mine'] += n
+        # 보스 던전 BossRaidTickets 장 (이길 때만 보상·다음 단계)
         if s.stage >= 45:
-            for _ in range(3):
+            for _ in range(int(cfg('BossRaidTickets', 3))):
                 b = BOSS[min(s.bossLv, len(BOSS) - 1)]
                 if s.dps(True) * b['Time_Limit'] >= b['Boss_HP']:
                     r = b['Reward_Gems'] * (ADD if s.ads else 1)
                     s.gems += r; s.gem_src['raid'] += r; s.bossLv += 1; s.stat['boss'] += 1
 
     # ---------- 쓰기 ----------
+    def mission_target(s, i, tr):
+        m = MM[i]
+        k = m['Save_Stat_Key']
+        col = {'statKills': 'Kill', 'statStages': 'Stage', 'statMines': 'Mine', 'statBossKills': 'Boss', 'statMerges': 'Merge'}[k] + '_Target'
+        if col in MT[0]:
+            if tr < len(MT): return MT[tr][col]
+            L = MT[-1]; n = tr - len(MT) + 1
+            pre = col.split('_')[0]
+            if pre + '_Growth_Rate' in L and isinstance(L[pre + '_Growth_Rate'], float): return L[col] * max(1.01, L[pre + '_Growth_Rate']) ** n
+            if pre + '_Add_Step' in L and isinstance(L[pre + '_Add_Step'], float): return L[col] + max(1, L[pre + '_Add_Step']) * n
+            return L[col] * max(1.01, m['Default_Growth_Rate']) ** n
+        pre = [float(x) for x in str(m['Tier_1_7_Preset']).split('|')]
+        return pre[tr] if tr < len(pre) else pre[-1] * max(1.01, m['Default_Growth_Rate']) ** (tr - len(pre) + 1)
+
     def missions(s):
         keys = {'statKills': 'kill', 'statStages': 'stage', 'statMines': 'mine', 'statBossKills': 'boss', 'statMerges': 'merge'}
+        ratio = cfg('Mission_Gem_Ratio', 1.0)
+        kills = cfg('Gem_Gold_Kills', 6)
         for i, m in enumerate(MM):
             k = keys[m['Save_Stat_Key']]
-            col = k.capitalize() + '_Target'
-            while True:
+            mx = m.get('Max_Tier', 0)
+            mx = int(mx) if isinstance(mx, float) else 0
+            for _ in range(500):
                 tr = s.mtier[i]
-                if col in MT[0]: tgt = MT[min(tr, len(MT) - 1)][col]
-                else:
-                    pre = [float(x) for x in str(m['Tier_1_7_Preset']).split('|')]
-                    tgt = pre[tr] if tr < len(pre) else pre[-1] * m['Default_Growth_Rate'] ** (tr - len(pre) + 1)
-                if s.stat[k] < tgt: break
-                r = m['Base_Reward_Gems'] + m['Reward_Add_Per_10Tier'] * (tr // 10)
-                s.gems += r; s.gem_src['mission'] += r; s.mtier[i] += 1
+                if mx and tr >= mx: break
+                if s.stat[k] < s.mission_target(i, tr): break
+                v = mission_value(m) + m['Reward_Add_Per_10Tier'] * (tr // 10)
+                s.gems += v * ratio; s.gem_src['mission'] += v * ratio
+                g = v * (1 - ratio) * kills * s.stage_row(s.stage)['Base_Zombie_Gold'] * s.goldmul()
+                s.gold += g; s.gold_src['mission'] += g
+                s.mtier[i] += 1
 
     def gem_options(s):
         base_b, base_g = s.dps(True), s.goldmul()
@@ -170,6 +211,7 @@ class P:
             if g >= 0 and s.ench[i] < min(int(GENCH[g]['Max_Enchant_Lv']), len(ENCH)):
                 e = ENCH[s.ench[i]]
                 rate = e['Success_Rate'] / 100
+                if e['Cost_Gold'] / rate > s.grate * 1800: continue      # 골드 30분 수입보다 비싸면 아직 안 함
                 old = s.ench[i]; s.ench[i] += 1; nb = s.dps(True); s.ench[i] = old
                 opts.append((val(nb, base_g) / (e['Cost_Gems'] / rate), e['Cost_Gems'] / rate, e['Cost_Gold'] / rate, 'enchant', i))
         for sk in SKIN:
@@ -184,16 +226,16 @@ class P:
         return sorted(opts, reverse=True)
 
     def spend_gems(s):
+        s.reserve = 0.0
         for _ in range(200):
             o = s.gem_options()
             if not o: return
-            o = [x for x in o if s.gold >= x[2]]          # 골드가 모자란 강화는 건너뜀
-            if not o: return
             v, cost, gcost, kind, arg = o[0]
-            if s.gems < cost: return                       # 가장 좋은 것을 위해 모음
+            if s.gems < cost: return                       # 가장 좋은 것을 위해 다이아를 모음
+            if s.gold < gcost: s.reserve = gcost; return   # 슬롯 강화 골드를 모음 (골드 강화를 잠시 멈춤)
             s.gems -= cost; s.gold -= gcost; s.gem_use[kind] += cost
             if kind == 'weapon':
-                if s.slot[arg] >= 0: s.stat['merge'] += 1
+                if s.slot[arg] >= 0: s.stat['merge'] += 2 ** max(0, s.slot[arg])   # 한 등급 올리려면 아래 등급 합성이 2^g 번
                 s.slot[arg] += 1
             elif kind == 'enchant': s.ench[arg] += 1; s.gold_use['enchant'] += gcost
             elif kind == 'skin': s.skins.add(arg)
@@ -204,9 +246,10 @@ class P:
         return min(c)
 
     def spend_gold(s):
-        while True:
+        for _ in range(100000):
             cost, k = s.next_upg()
-            if s.gold < cost: return
+            if not (cost > 0 and math.isfinite(cost)) or not math.isfinite(s.gold): return   # 무한 반복 방지
+            if s.gold - s.reserve < cost: return
             s.gold -= cost; s.lv[k] += 1; s.gold_use[['atk', 'spd', 'gold'][k]] += cost
 
     # ---------- 스테이지 ----------
@@ -220,7 +263,7 @@ class P:
     def rate(s, row):
         hm, gm = mix(s.stage // 5 + 1)
         hp = row['Base_Zombie_HP'] * hm
-        return min(s.dps() / hp, 1 / row['Spawn_Interval']), row['Base_Zombie_GOLD'] if False else row['Base_Zombie_Gold'] * gm
+        return min(s.dps() / hp, 1 / row['Spawn_Interval']), row['Base_Zombie_Gold'] * gm
 
     def challenge(s):
         ch = s.stage // 5 + 1
@@ -239,42 +282,44 @@ class P:
             if s.spd_cap_t is None and s.spd_capped() and s.slot[0] >= 0: s.spd_cap_t = s.stage
             row = s.stage_row(s.stage)
             kr, gpk = s.rate(row)
+            s.grate = kr * gpk * s.goldmul()
             boss = row['Is_Boss_Stage'] == 'Y'
             if not boss:
                 dt = row['Kills_Quota'] / kr + 3
-                s.advance(dt); s.gold += row['Kills_Quota'] * gpk * s.goldmul(); s.stat['kill'] += row['Kills_Quota']
+                g = row['Kills_Quota'] * gpk * s.goldmul()
+                s.advance(dt); s.gold += g; s.gold_src['stage'] += g; s.stat['kill'] += row['Kills_Quota']
                 s.stage += 1; s.stat['stage'] += 1
                 continue
             bd = s.dps(True)
             if bd * row['Boss_Time_Sec'] >= row['Boss_HP']:
                 dt = row['Kills_Quota'] / kr + row['Boss_HP'] / bd + 3
-                s.advance(dt); s.gold += (row['Kills_Quota'] * gpk + row['Boss_Gold']) * s.goldmul()
+                g = (row['Kills_Quota'] * gpk + row['Boss_Gold']) * s.goldmul()
+                s.advance(dt); s.gold += g; s.gold_src['stage'] += g
                 s.stat['kill'] += row['Kills_Quota'] + 1; s.stat['boss'] += 1
                 s.stage += 1; s.stat['stage'] += 1
                 ch = s.stage // 5
                 chap_log[ch] = s.snap()
                 continue
             # 보스 실패 → 반복 사냥 (다음 강화 살 때까지 또는 다음 날까지)
-            grate = kr * gpk * s.goldmul()
             cost, _ = s.next_upg()
-            need = max(1.0, (cost - s.gold) / grate)
+            need = max(1.0, (cost + s.reserve - s.gold) / s.grate)
             to_day = (s.day + 1) * s.hours * 3600 - s.t + 1
             dt = min(max(need, 1800.0), to_day)     # 반복 사냥은 최소 30분 단위로 (계산 빠르게)
-            s.advance(dt); s.farm += dt; s.gold += grate * dt; s.stat['kill'] += kr * dt
+            s.advance(dt); s.farm += dt; s.gold += s.grate * dt; s.gold_src['stage'] += s.grate * dt; s.stat['kill'] += kr * dt
         return chap_log
 
     def snap(s):
         return dict(day=s.day, hours=s.t / 3600, farm_h=s.farm / 3600, lv=list(s.lv), slot=list(s.slot), ench=list(s.ench),
-                    skins=len(s.skins) - 1, sup=len(s.sup), boss_lv=s.bossLv, gems=s.gems, dps=s.dps(True),
-                    gem_src=dict(s.gem_src), gem_use=dict(s.gem_use), gold_use=dict(s.gold_use))
+                    skins=len(s.skins) - 1, sup=len(s.sup), boss_lv=s.bossLv, gems=s.gems, dps=s.dps(True), kills=s.stat['kill'],
+                    merges=s.stat['merge'], mines=s.stat['mine'], boss_kills=s.stat['boss'], grate=s.grate, goldmul=s.goldmul(),
+                    gem_src=dict(s.gem_src), gem_use=dict(s.gem_use), gold_use=dict(s.gold_use), gold_src=dict(s.gold_src))
 
 
 if __name__ == '__main__':
     out = {}
-    for name, kw in [('base', dict()), ('ads', dict(ads=True)), ('heavy', dict(hours=10)), ('dumb_spd', dict(spd_smart=False))]:
+    for name, kw in [('base', dict()), ('ads', dict(ads=True)), ('heavy', dict(hours=10)), ('ads2h', dict(ads=True, hours=2))]:
         p = P(**kw)
         log = p.run(max_days=int(sys.argv[1]) if len(sys.argv) > 1 else 365)
         out[name] = dict(log=log, end=p.snap(), stage=p.stage, spd_cap=p.spd_cap_t)
-        e = out[name]
-        print(name, 'stage', p.stage, 'ch', p.stage // 5 + 1, 'day', p.day, 'spdcap@', p.spd_cap_t, 'lv', p.lv, 'slot', p.slot, 'ench', p.ench, 'skins', len(p.skins) - 1, 'sup', len(p.sup))
+        print(name, 'stage', p.stage, 'ch', p.stage // 5 + 1, 'day', p.day, 'lv', p.lv, 'slot', p.slot, 'ench', p.ench, 'skins', len(p.skins) - 1, 'sup', len(p.sup))
     json.dump(out, io.open(sys.argv[2] if len(sys.argv) > 2 else 'sim.json', 'w'), default=float)
