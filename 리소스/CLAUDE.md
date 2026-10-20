@@ -1,5 +1,14 @@
 # 카치건 (좀비 키우기) — 세로 방치형 분대 슈팅, Unity 6000.0.84f1 · 2D URP
 
+## ▶ 재개 메모 (2026-10-20 밤 마무리 — 사용자 "다음에 작업할 수 있게")
+
+**재개하면 이 순서로**
+1. `Get-Process Unity` — Kachi_Gun 이 닫혀 있으면 먼저 자동 시험: `bash tools/unity_batch.sh KachiGun.EditorTools.PlayTest.Run --play` (10-5~10-7 = 광고 다이아·미션 다이아+골드·영어, 아직 한 번도 안 돌림) → 영어 화면 캡처 → Unity 가 만든 `.meta`(Loc.cs·ProjectInfo.cs·skin_17/gun_17·String.csv·c_17.txt) 커밋. 열려 있으면 `bash tools/compile_check.sh` 만
+2. `PYTHONUTF8=1 python tools/todo_checks.py` (키 **`kachigun-todo-1021`**, 28항목) → 체크·의견 반영. 문서 = `남은_작업_정리.html` (10-20 밤 새로 짬: ① 지금 바로 `u-priority`·`u-close` ② 재생 확인 `s2-*` ③ 리소스 `a2-supply`(supply_01~25.png 규격)·`a2-sound` ④ 스토어 `st-pkg`(추천 com.zkfpf.capybaravszombie)·`st-enname`·`st-iap`(9상품)·`st-ads`(전면 광고 여부)·`st-console`·`st-admob`(→ `키 보관/admob.txt`)·`st-pay`·`st-keybak`·`st-check-assets`·`st-privacy`(추천 서바이벌 랭킹 서버 /kachigun-privacy)·`st-closed` ⑤ 내 몫 `d2-ad/iap/store/sound/cloud` ⑥ `r2-*`). 이전 페이지 백업 = 스크래치 todo_backup_1020b.html
+3. 사용자 우선순위(`u-priority`) 답에 따라 진행. 추천 = 광고·결제 + 스토어 준비 (서바이벌 `D:/00 Survival/스토어 등록/`·`게시 과정` 흐름 참고, 개발자 FIBE · jjhfibe@gmail.com)
+- git: 커밋·push 는 내가 함 (origin = GitHub JeongJoongHee/KachiGun, main)
+- 밸런스 다시 돌릴 땐 `python tools/balance_apply_1020.py --apply`(저장 값) / `--retune`(저장 값에서 다시 맞춤) — 항상 `Table/_backup_1020/` 에서 다시 씀. 사용자가 xlsx 를 직접 고쳤으면 먼저 확인할 것
+
 ## ▶ 재개 메모 (2026-10-20 — 남은 작업 의견 23개 반영)
 
 **10-20 2차 결정**: 광산 = 보스 던전 1회의 **절반**(`MINE_RATIO` 0.5) → `--retune` 으로 다시 맞춤: M 0.880, 광고 최대 150챕터 149일(2h 175·10h 119), **광고 안 봄 538일 = 그대로**(사용자: 광고를 봐야 하는 구조), 무료 다이아 31%(광산 54%·보스 40%) · "무료3:결제7" 해석 맞음 · 슬롯 골드·미션 골드 그대로 · **사냥 안 만듦**(스테이지 늘리는 방향, 표 끝 너머 자동 계산) · 앱 이름 확정. 남은 결정 = 우선순위(g2-priority)

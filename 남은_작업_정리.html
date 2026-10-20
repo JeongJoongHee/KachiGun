@@ -61,39 +61,32 @@
   .bar button{border:0;border-radius:8px;padding:9px 16px;background:var(--orange);color:#fff;font:bold 15px/1.4 inherit;cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,.18)}
   .bar span{color:var(--soft);font-size:14px;background:var(--card);border-radius:6px;padding:2px 8px}
   footer{margin-top:40px;color:var(--soft);font-size:14px}
+  details{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:10px 16px}
+  summary{cursor:pointer}
 </style>
 </head>
 <body>
 <main>
 <h1>남은 작업 정리</h1>
-<p class="sub">카치건 (카피바라vs좀비) · <b>2026-10-20 기준 — 남은 일만</b> (끝난 일 기록은 <code>리소스/CLAUDE.md</code>, 전체 정리는 <code>구현_정리.html</code>, 밸런스 숫자는 <code>밸런스_점검.html</code> 맨 위) · 체크와 의견은 이 브라우저에 저장되고, 다음 작업 때 제가 읽어서 반영합니다</p>
+<p class="sub">카치건 (카피바라vs좀비) · <b>2026-10-20 밤 기준 — 남은 일만</b> (끝난 일 기록은 <code>리소스/CLAUDE.md</code>, 전체 정리는 <code>구현_정리.html</code>, 밸런스 숫자는 <code>밸런스_점검.html</code> 맨 위) · 체크와 의견은 이 브라우저에 저장되고, 다음 작업 때 제가 읽어서 반영합니다</p>
 
 <div class="tip" style="background:var(--green-bg);border-color:var(--green)">
-  <b>10-20 반영한 것 (지난 체크·의견 23개)</b>
+  <b>10-20 한 것 (체크·의견 30개 반영 · GitHub 올림 끝)</b>
   <ol>
-    <li><b>밸런스 다시 맞춤</b> — 광고 최대·무과금·하루 4시간 = 50챕터 21일 · 100챕터 63일 · 150챕터 <b>146일</b> (목표 3주·+6주·+12주)</li>
-    <li><b>무료 다이아 = 다이아로 살 수 있는 것 전부의 30%</b> (무료 3 : 결제 7) · 상점 <b>광고 무료 다이아 40 x 하루 3번</b></li>
-    <li><b>미션 보상 = 다이아 30% + 골드 70%</b> · 처치 1단계 ≈ 1.5챕터 · 스테이지 미션 750(150단계)에서 끝 · 합성 1·2·4·8…</li>
-    <li><b>광산 보상 = 같은 챕터 보스 던전 1회 보상</b> · <b>슬롯 강화 골드 = 그 챕터 골드 수입 10분</b> · <b>골드 획득량 1/2</b></li>
-    <li><b>스킨 17개</b>(17번 해적 선장 그림 넣음, 18~30 삭제) · <b>펫·탈것·패스 폐기</b>(미션 창 패스 문구 삭제) · 앱 이름 <b>카피바라vs좀비</b></li>
-    <li><b>영어</b> — 설정 → <b>언어 · Language</b> 버튼. 글자 표 <code>Table/String.xlsx</code>(한국어 → 영어 285줄)</li>
-    <li><b>git 저장소</b> — <code>D:\00 Final_Game</code> 전체, GitHub 주소 연결까지 (push 는 직접, ② 맨 아래)</li>
+    <li><b>밸런스</b> — 광고 최대·무과금·하루 4시간 = 50챕터 20일 · 100챕터 62일 · 150챕터 <b>149일</b> · 광고 안 봄 538일(그대로 — 광고를 봐야 진행되는 구조)</li>
+    <li><b>무료 다이아 = 살 수 있는 것 전부의 31%</b> (무료 3 : 결제 7) · 상점 광고 다이아 40 x 하루 3번 · 미션 보상 다이아 30% + 골드 70%</li>
+    <li><b>광산 = 보스 던전 1회 보상의 절반</b> · 슬롯 강화 골드 = 그 챕터 수입 10분 · 골드 1/2</li>
+    <li><b>스킨 17개</b>(해적 선장) · 펫·탈것·패스·<b>사냥</b> 폐기 · 앱 이름 <b>카피바라vs좀비</b> · <b>영어</b>(설정 → 언어)</li>
+    <li><b>GitHub</b> <code>JeongJoongHee/KachiGun</code> — 앞으로 커밋·올리기는 제가 함</li>
   </ol>
 </div>
 
-<div class="sum">
-  <a href="#bal"><b>5</b><span>① 밸런스 — 확인·결정</span></a>
-  <a href="#game"><b>3</b><span>② 게임 방향 — 정해 주실 것</span></a>
-  <a href="#see"><b>6</b><span>③ 재생해 보고 확인</span></a>
-  <a href="#art"><b>2</b><span>④ 그림·소리 (리소스 필요)</span></a>
-  <a href="#dev"><b>5</b><span>⑤ 아직 없는 시스템</span></a>
-  <a href="#rel"><b>4</b><span>⑥ 출시 전 정리</span></a>
-</div>
 <div class="tip">
-  <b>쓰는 법</b>
+  <b>다음에 시작할 때 (이 순서로)</b>
   <ol>
-    <li><span class="tag t-pick">결정</span> 항목은 글자를 누르면 의견 칸이 열립니다 — 번호나 "추천대로"만 적어도 됩니다. 끝났거나 괜찮으면 <b>체크 칸</b>.</li>
-    <li>다 하셨으면 대화창에 <b>"남은 작업 반영해 줘"</b> — 못 읽을 때는 맨 아래 <b>[의견 모아 복사]</b> → 대화창에 붙여 넣기.</li>
+    <li>가능하면 <b>Unity 를 닫아 둔 채</b> 시작 — 닫혀 있어야 제가 자동 시험을 돌릴 수 있습니다 (열려 있어도 다른 작업은 됨)</li>
+    <li>이 페이지에서 한 것은 <b>체크</b>, 정할 것·고칠 것은 <b>✎ 의견</b> (결정 항목은 글자를 누르면 의견 칸이 열림 — 번호나 "추천대로"만 적어도 됨)</li>
+    <li>Claude Code 대화창에 <b>"카치건 남은 작업 반영해 줘"</b> — 제가 체크·의견을 읽고 이어서 합니다. 못 읽을 때는 맨 아래 <b>[의견 모아 복사]</b> → 대화창에 붙여 넣기</li>
   </ol>
 </div>
 <p class="note">
@@ -103,66 +96,153 @@
   <span class="tag t-me">개발</span>말씀하시면 제가 만듦
 </p>
 
-<h2 id="bal">① 밸런스 — 확인·결정 <small>숫자는 <code>밸런스_점검.html</code> 맨 위 "10-20"</small></h2>
+<div class="sum"><a href="#now"><b>2</b><span>① 지금 바로</span></a><a href="#see"><b>6</b><span>② Unity 재생 확인</span></a><a href="#art"><b>2</b><span>③ 그림·소리 준비</span></a><a href="#store"><b>11</b><span>④ 스토어 출시 준비</span></a><a href="#dev"><b>5</b><span>⑤ 제가 만들 것</span></a><a href="#rel"><b>2</b><span>⑥ 출시 전 정리</span></a></div>
+
+<h2 id="now">① 지금 바로 <small>10분 — 다음 작업 방향이 여기서 정해짐</small></h2>
 <ul class="todo">
-  <li data-id="b2-noad"><label><input type="checkbox" checked disabled><span><span class="tag t-you">끝</span><b>광고 안 보는 무과금 — 그대로 (10-20 결정)</b> — 광고를 봐야 진행되는 구조로 둠. 광산 조정 뒤 광고 안 봄 = 150챕터 <b>538일</b> (광고 최대 149일의 약 3.6배)</span></label></li>
-  <li data-id="b2-share"><label><input type="checkbox" checked disabled><span><span class="tag t-you">끝</span><b>"무료 3 : 결제 7" — 맞음 (10-20 결정)</b> — 다이아로 살 수 있는 것 전부 약 214만 중 무료로 150챕터까지 약 66만 = <b>31%</b></span></label></li>
-  <li data-id="b2-mine"><label><input type="checkbox" checked disabled><span><span class="tag t-you">끝</span><b>광산 = 보스 던전의 절반 — 반영 (10-20)</b> — 광산 티켓 1장 = 같은 챕터 보스 던전 1회 보상의 절반. 줄어든 만큼 보상 배율을 다시 맞춰 30% 유지 → 무료 다이아 광산 36만(54%) · 보스 던전 26만(40%) · 도전 1.5만 · 상점 광고 1.8만 · 미션 0.6만. 날짜: 50챕터 20일 · 100챕터 62일 · 150챕터 149일 <span class="f">(광산은 매일 2장이라 절반이어도 가장 큼 · <code>tools/balance_apply_1020.py</code> 의 MINE_RATIO)</span></span></label></li>
-  <li data-id="b2-slot"><label><input type="checkbox" checked disabled><span><span class="tag t-you">끝</span><b>슬롯 강화 골드 = 그 챕터 수입 10분 — 그대로 (10-20 결정)</b> — <code>tools/balance_apply_1020.py</code> 의 ENCH_MIN</span></label></li>
-  <li data-id="b2-mgold"><label><input type="checkbox" checked disabled><span><span class="tag t-you">끝</span><b>미션 골드 환산 — 그대로 (10-20 결정)</b> — 다이아 1 = 좀비 6마리 골드, 미션 보상 다이아 30% + 골드 70%</span></label></li>
+  <li data-id="u-priority"><label><input type="checkbox"><span><span class="tag t-pick">결정</span><span class="txt"><b>다음에 만들 것 순서</b> — 남은 큰 일은 광고·결제 연결 · 소리 · 클라우드 저장 · 스토어 등록입니다. 무엇부터 할까요?
+    <ol class="opts">
+      <li><b>광고·결제 연결 + 스토어 준비</b>(⑤) → 소리 → 클라우드 저장 <span class="rec">추천 — 비공개 테스트 14일을 빨리 시작할수록 출시가 당겨짐 (서바이벌 때와 같은 흐름)</span></li>
+      <li>소리 먼저 (④ 리소스를 먼저 구하셔야 함) → 광고·결제 → 스토어</li>
+      <li>게임 내용 더 다듬기 먼저 (③ 재생 확인 의견 위주) → 그다음 스토어</li>
+    </ol></span></span></label></li>
+  <li data-id="u-close"><label><input type="checkbox"><span><span class="tag t-you">직접</span><b>Unity 닫기 → "시험 돌려 줘"</b> — 10-20 에 새로 넣은 것(광고 다이아 · 미션 다이아+골드 · 영어 글자) 자동 시험이 아직 안 돌았습니다. Unity 가 열려 있으면 시험을 못 돌려서 지금까지는 코드 검사만 했습니다.
+    <ol class="opts">
+      <li>Unity 에서 저장(Ctrl+S) 후 창 닫기</li>
+      <li>대화창에 "시험 돌려 줘" → 제가 자동 시험 + 영어 화면 캡처 + Unity 가 만드는 <code>.meta</code> 파일까지 커밋 (5~10분)</li>
+      <li>제가 "끝났다"고 하면 Unity 다시 열기</li>
+    </ol></span></label></li>
 </ul>
 
-<h2 id="game">② 게임 방향 — 정해 주실 것</h2>
+<h2 id="see">② Unity 재생 확인 <small>30분쯤 — 이상하면 ✎ 의견에 "어디서 · 무엇이"</small></h2>
 <ul class="todo">
-  <li data-id="g2-hunt"><label><input type="checkbox" checked disabled><span><span class="tag t-you">끝</span><b>사냥 — 만들지 않음 (10-20 결정)</b> — 환생이 폐기돼서 스테이지를 늘리는 방향. 지금도 표 끝(750 = 150챕터) 너머는 좀비 체력·골드를 이어서 계산해 계속 진행됨 <span class="f">(Stage.xlsx 에 줄을 더하면 그 값이 우선)</span></span></label></li>
-  <li data-id="g2-priority"><label><input type="checkbox"><span><span class="tag t-pick">결정</span><span class="txt"><b>다음에 만들 것 우선순위</b> (펫·탈것·패스 폐기 반영) — 광고/결제 SDK · 소리 · 클라우드 저장 · 스토어 등록 <span class="f">(사냥은 만들지 않음)</span> <span class="rec">추천: 광고/결제 SDK + 스토어 준비(아이콘·AAB) → 소리 → 클라우드 저장</span></span></span></label></li>
-  <li data-id="g2-push"><label><input type="checkbox" checked disabled><span><span class="tag t-you">끝</span><b>GitHub 에 올리기 — 10-20 올림 완료</b> — 저장소(<code>JeongJoongHee/KachiGun</code>, 비공개)를 GitHub 에서 만든 뒤, 대화창에 <code>! git -C "D:\00 Final_Game" push -u origin main</code> <span class="f">(처음엔 약 135MB 라 몇 분 걸림 · 미리보기·캡처·Unity 임시 폴더는 안 올라감)</span></span></label></li>
+  <li data-id="s2-lang"><label><input type="checkbox"><span><span class="tag t-see">보기</span><b>영어 화면</b>
+    <ol class="opts">
+      <li>재생 → 설정 창 → <b>언어 · Language</b> → English (화면이 다시 만들어짐 · 던전 중엔 안 바뀜)</li>
+      <li>메인 화면 · 아래 메뉴 5개 · 상점 · 미션 · 스킨 · 보급품 · 총알 창 · 보스 던전/광산 결과 창을 차례로 열어 보기</li>
+      <li>볼 것: <b>글자가 칸을 넘치거나 잘림</b> · 한국어가 그대로 남은 곳 · 어색한 번역</li>
+      <li>번역은 <code>Kachi_Gun/Table/String.xlsx</code> 의 <b>EN 칸</b>을 직접 고쳐도 됩니다 (Key 칸 = 한국어 원문, 고치지 말 것) → 저장 → 재생하면 바로 반영</li>
+      <li>끝나면 설정에서 <b>한국어</b>로 되돌리기</li>
+    </ol></span></label></li>
+  <li data-id="s2-shop"><label><input type="checkbox"><span><span class="tag t-see">보기</span><b>상점 [무료 다이아]</b> — 상점 버튼에 <b>빨간 점</b> → 상점 열기 → [무료 다이아] 3번 누르기 (지금은 광고 없이 바로 지급). 볼 것: 누를 때마다 다이아 +40 · 버튼 글자 "광고 1/3 → 3/3" · 3번 뒤 빨간 점 사라짐 <span class="f">(날짜가 바뀌면 다시 3번)</span></span></label></li>
+  <li data-id="s2-mission"><label><input type="checkbox"><span><span class="tag t-see">보기</span><b>미션 보상</b> — 미션 창 [받기] 버튼에 <b>다이아 N · 골드 M</b> 둘 다 보이는지 · 받으면 둘 다 들어오는지 (골드가 너무 많거나 적어 보이면 의견에)</span></label></li>
+  <li data-id="s2-mine"><label><input type="checkbox"><span><span class="tag t-see">보기</span><b>광산 보상</b> (10-20 2차) — 광산 한 판 끝난 다이아가 <b>같은 챕터 보스 던전 1번 보상의 절반쯤</b>인지 (광산은 4-1 부터 · 하루 2장)</span></label></li>
+  <li data-id="s2-skin"><label><input type="checkbox"><span><span class="tag t-see">보기</span><b>스킨 17 해적 선장</b> — 스킨 창 맨 끝. 그림·움직임이 다른 스킨과 어울리는지. 이름·가격·효과는 <code>Skin.xlsx</code> 에서 직접 고쳐도 됨</span></label></li>
+  <li data-id="s2-feel"><label><input type="checkbox"><span><span class="tag t-see">보기</span><b>새 밸런스 손맛 (1~10챕터)</b> — 목표는 하루 4시간 기준 <b>10챕터 = 3일째</b>. 처음부터 해 보시려면 대화창에 "세이브 지워 줘" (지금 세이브를 백업한 뒤 지워 드림). 볼 것: 강화 버튼을 누를 골드가 너무 안 모이거나 · 보스가 너무 쉽거나 어려운 곳 → 의견에 "몇 챕터에서 · 무엇이"</span></label></li>
 </ul>
 
-<h2 id="see">③ 재생해 보고 확인 <small>10-20 바뀐 것 — Unity 에서 재생</small></h2>
+<h2 id="art">③ 그림·소리 준비 <small><code>D:\00 Final_Game\리소스\</code> 에 넣고 말씀해 주시면 제가 붙임</small></h2>
 <ul class="todo">
-  <li data-id="s2-lang"><label><input type="checkbox"><span><span class="tag t-see">보기</span><b>영어</b> — 설정 → <b>언어 · Language</b> → English (화면이 다시 만들어짐, 던전 중엔 안 됨). 어색한 번역·넘치는 글자는 ✎ 의견에, 또는 <code>Table/String.xlsx</code> EN 칸을 직접 고치면 바로 반영</span></label></li>
-  <li data-id="s2-shop"><label><input type="checkbox"><span><span class="tag t-see">보기</span><b>상점 [무료 다이아]</b> — 광고 1번 = 다이아 40, 하루 3번 (버튼에 "광고 2/3"). 남아 있으면 상점 버튼에 빨간 점</span></label></li>
-  <li data-id="s2-mission"><label><input type="checkbox"><span><span class="tag t-see">보기</span><b>미션</b> — [받기] 버튼에 다이아·골드 둘 다 표시, 스테이지 미션은 150단계 뒤 "모든 단계 완료"</span></label></li>
-  <li data-id="s2-skin"><label><input type="checkbox"><span><span class="tag t-see">보기</span><b>스킨 17 해적 선장</b> — 그림·뼈대 넣음 (18~30 삭제). 이름·가격·효과는 <code>Skin.xlsx</code></span></label></li>
-  <li data-id="s2-feel"><label><input type="checkbox"><span><span class="tag t-see">보기</span><b>새 밸런스 손맛</b> — 골드 1/2 · 강화 표 새로 · 광산 = 보스 던전 절반. 초반 1~10챕터가 너무 느리거나 빠르면 ✎ 의견에</span></label></li>
-  <li data-id="s2-name"><label><input type="checkbox" checked disabled><span><span class="tag t-you">끝</span><b>앱 이름 카피바라vs좀비 — 이걸로 진행 (10-20 결정)</b> — Player Settings 의 Product Name (<code>Editor/ProjectInfo.cs</code>)</span></label></li>
+  <li data-id="a2-supply"><label><input type="checkbox"><span><span class="tag t-you">직접</span><b>보급품 아이콘 25개</b> — 지금은 상자 + 등급 색 임시
+    <ol class="opts">
+      <li>형식: <b>PNG · 투명 배경 · 정사각형 256x256 이상</b> (테두리·등급 색은 게임이 입힘 — 물건만)</li>
+      <li>이름: <code>supply_01.png</code> ~ <code>supply_25.png</code> (아래 번호대로) · 넣을 곳: <code>리소스\보급품\</code> (새 폴더)</li>
+      <li>목록: 01 비상 건빵 · 02 통조림 캔 · 03 정수 필터 (일반) / 04 야전 반합 · 05 에너지 바 · 06 구급 상자 (고급) / 07 아드레날린 주사 · 08 군용 무전기 · 09 야간 투시경 (희귀) / 10 방탄 조끼 · 11 전술 탄띠 · 12 고농축 스팀팩 (영웅) / 13 열화우라늄 탄심 · 14 냉각 모듈 · 15 플라즈마 배터리 (전설) / 16 양자 증폭기 · 17 중력 제어 코어 · 18 나노 수복 혈청 (신화) / 19 바이오 리액터 · 20 초전도 코일 · 21 암흑물질 셀 (초월) / 22 차원 도약 엔진 · 23 항성 에너지 핵 · 24 영구기관 모듈 (불멸) / 25 카피바라의 성배 (태초)</li>
+      <li>구하기 어려우시면: ✎ 의견에 <b>"그려 줘"</b>(제가 게임 화풍에 맞춰 간단히 그림) 또는 <b>"AI 프롬프트 줘"</b>(이미지 AI 에 넣을 문장 25개를 HTML 로)</li>
+    </ol></span></label></li>
+  <li data-id="a2-sound"><label><input type="checkbox"><span><span class="tag t-you">직접</span><b>소리</b> — 지금 게임에 소리가 하나도 없습니다
+    <ol class="opts">
+      <li>효과음(1초 안팎): 총 발사(가벼운 것 1~3종) · 좀비 맞음 · 좀비 죽음 · 보스 등장 경고 · 보스 죽음 · 버튼 누름 · 강화 성공 · 강화 실패 · 총알 합성 · 보상·코인 받기 · 승리 · 패배</li>
+      <li>배경음(1~3분, 끊김 없이 반복): 메인 전투 · 보스전 · 던전(보스 던전·광산·도전)</li>
+      <li>형식: <b>wav 또는 ogg</b> · 파일 이름은 무엇인지 알 수 있게(예: <code>총_발사_01.wav</code>) · 넣을 곳: <code>리소스\소리\</code> (새 폴더)</li>
+      <li><b>상업 이용 가능한 라이선스</b>인지 꼭 확인 (출처·라이선스를 <code>리소스\소리\출처.txt</code> 에 적어 두시면 스토어 등록 때 씀)</li>
+      <li>후보가 많으면: ✎ 의견에 "미리듣기 만들어 줘" — 서바이벌 때처럼 들어 보고 고르는 페이지를 만들어 드림</li>
+    </ol></span></label></li>
 </ul>
 
-<h2 id="art">④ 그림·소리 — 리소스가 필요한 것 <small><code>리소스\</code> 폴더에 넣고 말씀해 주시면 적용</small></h2>
+<h2 id="store">④ 스토어 출시 준비 <small>① 에서 순서를 정하신 뒤 — 서바이벌(불도깨비)과 같은 흐름</small></h2>
+<p class="note">개인 개발자 계정이라 <b>비공개 테스트 12명 이상 · 14일</b>을 거쳐야 프로덕션(정식 출시) 신청이 됩니다. 아래 "직접" 항목은 구글 계정으로 로그인해야 해서 제가 대신 못 하는 것들이고, 화면이 막히면 캡처를 <code>D:\00 Final_Game\게시 과정\</code>(새 폴더)에 넣고 말씀해 주세요.</p>
+<h3>먼저 정할 것</h3>
 <ul class="todo">
-  <li data-id="a2-supply"><label><input type="checkbox"><span><span class="tag t-you">직접</span><b>보급품 25종 아이콘</b> — 지금은 상자 + 등급 색 임시. 그림이 없으면 제가 간단히 그려 드릴 수도 있음 (✎ 의견에 "그려 줘")</span></label></li>
-  <li data-id="a2-sound"><label><input type="checkbox"><span><span class="tag t-you">직접</span><b>소리</b> — 총소리·좀비·보스·버튼·배경음 리소스가 아직 없음</span></label></li>
+  <li data-id="st-pkg"><label><input type="checkbox"><span><span class="tag t-pick">결정</span><span class="txt"><b>패키지 이름 (앱 ID)</b> — 스토어에 한 번 올리면 <b>영원히 못 바꿉니다</b>. 지금은 Unity 기본값(<code>com.DefaultCompany.2D-URP</code>)이라 꼭 정해야 함. <span class="rec">추천: <code>com.zkfpf.capybaravszombie</code></span> <span class="f">(불도깨비 = com.zkfpf.buldokkaebi 와 같은 형식 · 영어 소문자·숫자·점만)</span></span></span></label></li>
+  <li data-id="st-enname"><label><input type="checkbox"><span><span class="tag t-pick">결정</span><span class="txt"><b>영어 앱 이름</b> — 폰 언어가 영어일 때 아이콘 아래 이름 · 스토어 영어 페이지 제목. <span class="rec">추천: Capybara vs Zombies</span> <span class="f">(30자 이내 · 한국어 폰에선 "카피바라vs좀비")</span></span></span></label></li>
+  <li data-id="st-iap"><label><input type="checkbox"><span><span class="tag t-pick">결정</span><span class="txt"><b>결제 상품 9개 · 가격</b> — 기획 표(<code>Shop.xlsx</code>) 그대로면 "그대로", 바꾸실 것은 의견에. 구글은 달러로 정하면 원화를 자동으로 붙이고, 원화를 직접 정할 수도 있음
+    <ol class="opts">
+      <li>강제 광고 제거 $1.99 · 모든 광고 제거 $9.99</li>
+      <li>자동강화 패키지 $3.99 · 영구 3배 버프 $7.99 · 광산 티켓 확장 $3.99 · 핫딜 레이저 총알 $0.99</li>
+      <li>다이아 500 $1.99 · 1,800 $4.99 · 4,200 $9.99</li>
+    </ol></span></span></label></li>
+  <li data-id="st-ads"><label><input type="checkbox"><span><span class="tag t-pick">결정</span><span class="txt"><b>광고 종류</b> — 지금 게임에 있는 광고는 전부 <b>보상형</b>(버프 2개 · 던전 x2 · 무료 다이아). 기획의 "강제 광고 제거" 상품은 <b>전면 광고</b>(몇 판마다 자동으로 뜨는 광고)가 있어야 의미가 있습니다.
+    <ol class="opts">
+      <li>보상형 + 전면 광고(예: 스테이지 5개 깰 때마다 1번, 처음 10챕터는 안 뜸) <span class="rec">추천 — 기획 상품 그대로 살림</span></li>
+      <li>보상형만 — "강제 광고 제거" 상품은 뺌</li>
+    </ol></span></span></label></li>
+</ul>
+<h3>직접 하실 것 (순서대로)</h3>
+<ul class="todo">
+  <li data-id="st-console"><label><input type="checkbox"><span><span class="tag t-you">직접</span><b>Play Console 에 새 앱 만들기</b> (5분)
+    <ol class="opts">
+      <li><code>play.google.com/console</code> → 모든 앱 → <b>[앱 만들기]</b></li>
+      <li>앱 이름 <b>카피바라vs좀비</b> · 기본 언어 <b>한국어</b> · 앱 또는 게임 = <b>게임</b> · 유료/무료 = <b>무료</b> · 선언 2개 체크 → [앱 만들기]</li>
+      <li>만들어진 대시보드 화면을 캡처해서 <code>게시 과정\</code> 에 넣고 "앱 만들었어" — 다음 칸들(게임 설정·스토어 등록정보)은 제가 표로 답을 만들어 드림</li>
+    </ol></span></label></li>
+  <li data-id="st-admob"><label><input type="checkbox"><span><span class="tag t-you">직접</span><b>AdMob 에 앱·광고 단위 만들기</b> (10분 — 광고 SDK 연결 전에 필요)
+    <ol class="opts">
+      <li><code>admob.google.com</code> → 앱 → <b>[앱 추가]</b> → Android · "지원되는 앱 스토어에 등록되었나요?" = <b>아니요</b> → 앱 이름 카피바라vs좀비 → 추가</li>
+      <li>그 앱 → 광고 단위 → <b>보상형</b> 1개 (이름 예: reward_all) · ① 에서 전면 광고를 고르셨으면 <b>전면</b> 1개 더 (interstitial)</li>
+      <li><b>앱 ID</b>(<code>ca-app-pub-…~…</code>)와 <b>광고 단위 ID</b>(<code>ca-app-pub-…/…</code>)를 메모장에 붙여 <code>D:\00 Final_Game\키 보관\admob.txt</code> 로 저장 → "애드몹 만들었어" <span class="f">(키 보관 폴더는 GitHub 에 안 올라감)</span></li>
+      <li>스토어에 출시된 뒤에 "앱 스토어 연결"을 한 번 더 함 (심심할 때 하는 게임 때처럼 — 그때 안내)</li>
+    </ol></span></label></li>
+  <li data-id="st-pay"><label><input type="checkbox"><span><span class="tag t-you">직접</span><b>결제 상품 등록</b> (첫 AAB 를 올린 뒤에만 가능 — 그때 제가 상품 ID·이름·가격 표를 드림)
+    <ol class="opts">
+      <li>Play Console → 앱 → 수익 창출 → 제품 → <b>인앱 상품</b> → [상품 만들기] — 표의 9줄을 그대로 입력 · 활성화</li>
+      <li>판매자 계정(결제 프로필)이 이미 있는지 확인 — 없으면 Play Console → 설정 → 결제 프로필에서 만들어야 상품 등록 가능</li>
+    </ol></span></label></li>
+  <li data-id="st-keybak"><label><input type="checkbox"><span><span class="tag t-you">직접</span><b>서명 키 백업</b> — 첫 AAB 때 제가 업로드 키를 만들어 <code>키 보관\</code> 에 넣습니다(비밀번호는 화면에 안 띄움). 그 폴더를 <b>USB·클라우드에 한 부 더 복사</b>해 두세요 — 잃어버리면 업데이트를 올리기 번거로워집니다</span></label></li>
+  <li data-id="st-check-assets"><label><input type="checkbox"><span><span class="tag t-see">보기</span><b>스토어 그림·글 확인</b> — 제가 만들어 드리는 것을 보고 의견만: 앱 아이콘 512x512 · 그래픽 이미지 1024x500 · 스크린샷 6~8장(게임 캡처) · 짧은 설명(80자) · 자세한 설명(4000자) · 영어판. 아이콘을 직접 그리실 거면 의견에</span></label></li>
+  <li data-id="st-privacy"><label><input type="checkbox"><span><span class="tag t-pick">결정</span><span class="txt"><b>개인정보처리방침 올릴 곳</b> — 광고 SDK 가 기기 광고 ID 를 쓰므로 필수. 내용은 서바이벌 것(개발자 FIBE · jjhfibe@gmail.com)을 이 게임에 맞게 고침
+    <ol class="opts">
+      <li>서바이벌 랭킹 서버에 <code>/kachigun-privacy</code> 주소 하나 더 <span class="rec">추천 — 이미 있는 서버라 돈·관리 추가 없음</span></li>
+      <li>GitHub Pages 등 다른 곳</li>
+    </ol></span></span></label></li>
+  <li data-id="st-closed"><label><input type="checkbox"><span><span class="tag t-you">직접</span><b>테스트 → 출시</b> (AAB 가 나온 뒤)
+    <ol class="opts">
+      <li><b>내부 테스트</b>: 본인 폰에 설치해 광고·결제·저장 확인 (결제는 테스트 계정 = Play Console → 설정 → 라이선스 테스트에 본인 Gmail)</li>
+      <li><b>비공개 테스트</b>: 규랩스 테스터 목록 체크 · 대행사에 새 참여 링크로 요청 (요청 글은 제가 써 드림) · <b>14일</b> 동안 12명 이상 유지</li>
+      <li><b>프로덕션 신청</b>: 질문 답안은 제가 받은 의견 기준으로 써 드림 → 승인되면 출시</li>
+    </ol></span></label></li>
 </ul>
 
-<h2 id="dev">⑤ 아직 없는 시스템 <small>말씀하시면 만듦</small></h2>
+<h2 id="dev">⑤ 제가 만들 것 <small>① 순서대로 — 말씀하시면 시작</small></h2>
 <ul class="todo">
-  <li data-id="d2-ad"><label><input type="checkbox"><span><span class="tag t-me">개발</span><b>실제 광고 SDK</b> — 지금 광고는 [임시]로 누르면 바로 보상</span></label></li>
-  <li data-id="d2-iap"><label><input type="checkbox"><span><span class="tag t-me">개발</span><b>실제 결제</b> — 지금 원 상품은 "준비 중"</span></label></li>
-  <li data-id="d2-cloud"><label><input type="checkbox"><span><span class="tag t-me">개발</span><b>클라우드 저장 · 문의</b> — 지금 세이브는 기기 안에만</span></label></li>
-  <li data-id="d2-sound"><label><input type="checkbox"><span><span class="tag t-me">개발</span><b>소리 연결</b> — ④ 의 소리가 오면 효과음·배경음·설정 창 소리 크기</span></label></li>
+  <li data-id="d2-ad"><label><input type="checkbox"><span><span class="tag t-me">개발</span><b>실제 광고</b> (Google Mobile Ads) — ④ AdMob ID 를 받으면. 지금 광고는 [임시]로 누르면 바로 보상 · 전면 광고는 ④ 결정대로 · "모든 광고 제거" 산 사람은 보상형도 바로 보상</span></label></li>
+  <li data-id="d2-iap"><label><input type="checkbox"><span><span class="tag t-me">개발</span><b>실제 결제</b> (Unity IAP) — 지금 원 상품은 "준비 중". 산 것 복원 · 앱 안 확인</span></label></li>
+  <li data-id="d2-store"><label><input type="checkbox"><span><span class="tag t-me">개발</span><b>AAB 빌드 준비</b> — 패키지 이름 · 버전 · 업로드 키 · 앱 아이콘 · 대상 API · 빌드 도구(서바이벌 것 가져옴) → 빌드는 Unity 에서 직접 누르시게 안내</span></label></li>
+  <li data-id="d2-sound"><label><input type="checkbox"><span><span class="tag t-me">개발</span><b>소리 연결</b> — ③ 소리가 오면 효과음·배경음 + 설정 창 소리 크기 (지금 설정의 소리 켜고 끄기는 값만 있음)</span></label></li>
+  <li data-id="d2-cloud"><label><input type="checkbox"><span><span class="tag t-me">개발</span><b>클라우드 저장 · 문의</b> — 지금 세이브는 기기 안에만 (폰 바꾸면 사라짐). 서바이벌처럼 구글 계정 연동 저장</span></label></li>
 </ul>
 
-<h2 id="rel">⑥ 출시 전 정리 <small>나중에 — 잊지 않게 적어 둠</small></h2>
+<h2 id="rel">⑥ 출시 전 정리 <small>잊지 않게 — 마지막에 제가 함</small></h2>
 <ul class="todo">
-  <li data-id="r2-testbtn"><label><input type="checkbox"><span><span class="tag t-me">개발</span>설정 창의 <b>[테스트용] 버튼 지우기</b> <span class="f">(치트 창은 에디터 전용이라 빌드엔 안 들어감)</span></span></label></li>
-  <li data-id="r2-temp"><label><input type="checkbox"><span><span class="tag t-me">개발</span><b>[임시] 표시된 것 바꾸기</b> — 광고·결제(⑤), 보급품 아이콘(④)</span></label></li>
-  <li data-id="r2-store"><label><input type="checkbox"><span><span class="tag t-me">개발</span><b>앱 아이콘 · AAB 빌드 · 스토어 등록</b> — 이름이 정해져서 진행 가능. 심심할 때 하는 게임·서바이벌 때와 같은 순서로 안내해 드림</span></label></li>
-  <li data-id="r2-enname"><label><input type="checkbox"><span><span class="tag t-me">개발</span><b>영어 앱 이름</b> — 폰 언어가 영어일 때 아이콘 아래 이름 (예: "Capybara vs Zombies"). 스토어 영어 등록과 같이</span></label></li>
+  <li data-id="r2-testbtn"><label><input type="checkbox"><span><span class="tag t-me">개발</span>설정 창의 <b>[테스트용] 재화 버튼 지우기</b> <span class="f">(치트 창은 에디터 전용이라 빌드엔 안 들어감)</span></span></label></li>
+  <li data-id="r2-temp"><label><input type="checkbox"><span><span class="tag t-me">개발</span><b>[임시] 표시된 것 바꾸기</b> — 광고·결제(⑤) · 보급품 아이콘(③)</span></label></li>
 </ul>
-<p class="note">표로 직접 고치시는 것: 좀비 이동 속도 = <code>Zombie.xlsx</code> 의 Speed · Actual_Speed_Min/Max · 스킨 이름·가격·효과 = <code>Skin.xlsx</code>. 저장 후 Unity 에서 재생하면 자동으로 바뀝니다.</p>
+<p class="note">표로 직접 고치시는 것 (저장 후 Unity 에서 재생하면 자동 반영): 좀비 이동 속도 = <code>Zombie.xlsx</code> 의 Speed · Actual_Speed_Min/Max · 스킨 이름·가격·효과 = <code>Skin.xlsx</code> · 영어 번역 = <code>String.xlsx</code> EN 칸. <b>밸런스 표(강화·보상 숫자)는 제 도구가 다시 쓰므로</b> 직접 고치셨으면 꼭 말씀해 주세요.</p>
+
+<details style="margin-top:30px">
+<summary><b>끝난 결정 (10-20)</b> — 펼치기</summary>
+<ul>
+  <li>광고 안 보는 무과금 538일 = <b>그대로</b> (광고를 봐야 진행되는 구조)</li>
+  <li>"무료 3 : 결제 7" = 다이아로 살 수 있는 것 전부(약 214만) 중 무료 31% — <b>맞음</b></li>
+  <li>광산 = 보스 던전 1회 보상의 <b>절반</b> (반영, 무료 다이아 중 광산 54% · 보스 던전 40%)</li>
+  <li>슬롯 강화 골드 = 그 챕터 수입 10분 · 미션 골드 환산(다이아 1 = 좀비 6마리) — <b>그대로</b></li>
+  <li>사냥 — <b>만들지 않음</b> (환생 폐기 → 스테이지를 늘리는 방향, 750 넘어도 자동 계산으로 계속)</li>
+  <li>앱 이름 <b>카피바라vs좀비</b> · 펫·탈것·패스 폐기 · 스킨 17개 · 슬롯 강화는 칸마다 · 좀비 속도는 표로 직접</li>
+  <li>GitHub 올리기 — 끝 (<code>JeongJoongHee/KachiGun</code>)</li>
+</ul>
+</details>
 
 <div class="bar"><span id="stat"></span><button type="button" id="copyNotes">의견 모아 복사</button></div>
 
 <footer>
-  체크·의견은 이 브라우저(localStorage, 키 <code>kachigun-todo-1020</code>)에 저장됩니다. 제가 읽을 때는 <code>python tools/todo_checks.py</code>.
+  체크·의견은 이 브라우저(localStorage, 키 <code>kachigun-todo-1021</code>)에 저장됩니다. 제가 읽을 때는 <code>python tools/todo_checks.py</code>.
 </footer>
 </main>
 
 <script>
 (function(){
   // 저장 형식: {"c":{항목id:true}, "n":{항목id:"의견"}} — 항목id 는 li 의 data-id
-  var KEY='kachigun-todo-1020', st={c:{},n:{}};
+  var KEY='kachigun-todo-1021', st={c:{},n:{}};
   try{ var v=JSON.parse(localStorage.getItem(KEY)||'{}'); st.c=v.c||{}; st.n=v.n||{}; }catch(e){}
   function save(){ try{ localStorage.setItem(KEY,JSON.stringify(st)); }catch(e){} stat(); }
   var items=document.querySelectorAll('ul.todo li[data-id]');
