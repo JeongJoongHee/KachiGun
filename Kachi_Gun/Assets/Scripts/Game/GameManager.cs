@@ -290,8 +290,7 @@ namespace KachiGun
             int empty = S.inv.IndexOf(-1);
             if (empty < 0) return L.T("인벤토리가 가득 찼습니다");
             S.gems -= cost;
-            var types = Tables.TypesOfGrade(0);
-            S.inv[empty] = Tables.Code(0, types[Random.Range(0, types.Count)]);
+            S.inv[empty] = Tables.Code(0, Tables.RandomType(0));   // Merge_Weight 비중
             S.weaponUnlocked = true;
             Notify();
             return null;
@@ -307,9 +306,8 @@ namespace KachiGun
             int g = Tables.GradeOf(ca);
             if (g != Tables.GradeOf(cb)) { S.inv[a] = cb; S.inv[b] = ca; Notify(); return null; }  // 등급 다르면 자리 바꾸기
             if (g >= Tables.MaxGrade) return L.T("최고 등급입니다");
-            var types = Tables.TypesOfGrade(g + 1);
             S.inv[a] = -1;
-            S.inv[b] = Tables.Code(g + 1, types[Random.Range(0, types.Count)]);
+            S.inv[b] = Tables.Code(g + 1, Tables.RandomType(g + 1));   // 한 단계 위 등급, Merge_Weight 비중 (10-24: 일반탄 각 18% · 레이저/미사일 각 14%)
             S.statMerges++;
             Notify();
             return null;

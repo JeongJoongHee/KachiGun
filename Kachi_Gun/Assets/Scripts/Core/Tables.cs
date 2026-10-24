@@ -11,6 +11,7 @@ namespace KachiGun
     {
         public int code, grade; public string type, name;
         public double atk; public float interval, spread, splash, range; public int count, pierce;
+        public double mergeWeight = 1;   // 뽑기·합성 때 그 등급 안에서 이 종류가 나올 비중 (Merge_Weight, 10-24: 일반탄 18 · 레이저/미사일 14)
     }
     public class GradeRow { public int idx; public string name; public Color color; public int maxEnchant; public double enchantMul = 1, salvage; }
     public class BulletRow { public string type, kind, sprite, icon; public float speed, maxSpeed, accel, turn, hitBonus, rangeBonus, jitter; }
@@ -99,7 +100,8 @@ namespace KachiGun
                 var w = new WeaponRow
                 {
                     code = r.I("Code"), grade = r.I("Grade_Idx"), type = r.S("Type"), name = r.S("Name"), atk = r.D("Atk"), interval = r.F("Interval"),
-                    count = Math.Max(1, r.I("Count")), spread = r.F("Spread"), pierce = Math.Max(1, r.I("Pierce")), splash = r.F("Splash"), range = r.F("Range")
+                    count = Math.Max(1, r.I("Count")), spread = r.F("Spread"), pierce = Math.Max(1, r.I("Pierce")), splash = r.F("Splash"), range = r.F("Range"),
+                    mergeWeight = Math.Max(0, r.D("Merge_Weight", 1))
                 };
                 Weapons.Add(w);
                 weapons[Code(w.grade, w.type)] = w;
@@ -440,6 +442,23 @@ namespace KachiGun
             foreach (var w in Weapons) if (w.grade == g && !l.Contains(w.type)) l.Add(w.type);
             if (l.Count == 0) l.Add("single");
             return l;
+        }
+
+        /// <summary>그 등급에서 나올 종류 하나 (Weapon_Master 의 Merge_Weight 비중대로, 뽑기·합성)</summary>
+        public static string RandomType(int grade)
+        {
+            var types = TypesOfGrade(grade);
+            int g = Math.Min(grade, MaxGrade);
+            double sum = 0;
+            foreach (var t in types) sum += weapons.TryGetValue(Code(g, t), out var w) ? w.mergeWeight : 1;
+            if (sum <= 0) return types[UnityEngine.Random.Range(0, types.Count)];
+            double x = UnityEngine.Random.value * sum;
+            foreach (var t in types)
+            {
+                x -= weapons.TryGetValue(Code(g, t), out var w) ? w.mergeWeight : 1;
+                if (x < 0) return t;
+            }
+            return types[types.Count - 1];
         }
 
         public static string WeaponName(int code)

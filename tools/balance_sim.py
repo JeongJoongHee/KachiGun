@@ -125,7 +125,8 @@ class P:
         am = s.atkmul() * (1 + a / 100) * ((1 + (s.sup_sum('Boss_Dmg_Bonus') + b) / 100) if boss else 1)
         ws = TYPES[min(g, MAXG)]
         iv = (lambda w: w['Interval'] / spd) if s.overflow else (lambda w: max(MIN_IV, w['Interval'] / spd))
-        return sum(w['Atk'] * w['Count'] / iv(w) for w in ws) / len(ws) * am
+        wt = lambda w: w['Merge_Weight'] if isinstance(w.get('Merge_Weight'), float) else 1.0   # 10-24 합성 비중 (일반탄 18 · 레이저/미사일 14)
+        return sum(w['Atk'] * w['Count'] / iv(w) * wt(w) for w in ws) / sum(wt(w) for w in ws) * am
 
     def dps(s, boss=False): return sum(s.slot_dps(i, boss) for i in range(3))
 

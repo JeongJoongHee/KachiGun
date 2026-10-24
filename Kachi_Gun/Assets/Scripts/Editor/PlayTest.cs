@@ -267,6 +267,10 @@ namespace KachiGun.EditorTools
                     }
                 }
                 Check(all && weaker && Tables.WeaponName(Tables.Code(12, "single")) == L.T("기본탄_SSU"), "S~SSU 6종 · 기본 4종이 더 약함 · 이름 종류_등급");
+                int nLaser = 0, nSingle = 0, N = 20000;
+                for (int k = 0; k < N; k++) { string t = Tables.RandomType(5); if (t == "laser") nLaser++; else if (t == "single") nSingle++; }
+                Log($"합성 확률(SS): 레이저 {nLaser * 100f / N:0.0}% · 기본탄 {nSingle * 100f / N:0.0}%");
+                Check(System.Math.Abs(nLaser * 100.0 / N - 14) < 1.2 && System.Math.Abs(nSingle * 100.0 / N - 18) < 1.2, "합성 확률 = 표 Merge_Weight (일반탄 18% · 레어탄 14%)");
                 bool icons = true;
                 foreach (var t in Tables.Types) icons &= Resources.Load<Texture2D>("Art/" + Tables.Bullet(t).icon) != null && Resources.Load<Texture2D>("Art/" + Tables.Bullet(t).sprite) != null;
                 foreach (var r in Tables.Supplies) icons &= SupplyPopup.Icon(r) != null;
