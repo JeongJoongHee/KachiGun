@@ -42,6 +42,14 @@ namespace KachiGun.EditorTools
         }
         public static bool RigOnly => SessionState.GetBool(Key + ".rig", false);
 
+        /// <summary>영어 화면 확인용: 언어를 English 로 바꿔 메인·창들을 촬영 → Logs/PlayTest/en/*.png (10-24)</summary>
+        public static void RunEn()
+        {
+            SessionState.SetBool(Key + ".en", true);
+            Run();
+        }
+        public static bool EnOnly => SessionState.GetBool(Key + ".en", false);
+
         public static void Run()
         {
             SaveData.ResetAll();
@@ -56,6 +64,7 @@ namespace KachiGun.EditorTools
             SessionState.SetBool(Key, false);
             SessionState.SetBool(Key + ".anim", false);
             SessionState.SetBool(Key + ".rig", false);
+            SessionState.SetBool(Key + ".en", false);
             EditorApplication.Exit(errors == 0 ? 0 : 3);
         }
     }
@@ -83,6 +92,7 @@ namespace KachiGun.EditorTools
             yield return Wait(0.5f);
             if (PlayTest.AnimOnly) { yield return Anim(); yield break; }
             if (PlayTest.RigOnly) { yield return RigShow(); yield break; }
+            if (PlayTest.EnOnly) { yield return EnTour(); yield break; }
 
             // 1) 시작 전투
             Log($"시작: Stage {SaveData.StageName(S.stage)}, 고양이 {Squad.I.cats.Count}, 총 {Tables.WeaponName(S.slots[0])}");
@@ -390,6 +400,31 @@ namespace KachiGun.EditorTools
             Check(Num.F(1850) == "1.85k" && Num.F(14100000) == "14.1m" && Num.F(396) == "396" && Num.F(1600) == "1.6k" && Num.F(2.5e9) == "2.5b" && Num.F(1e12) == "1t" && Num.F(1e15) == "1aa" && Num.F(999999) == "999k" && Num.F(1e6) == "1m",
                 "숫자 표기 " + Num.F(1850) + " " + Num.F(14100000) + " " + Num.F(2.5e9) + " " + Num.F(1e15));
 
+            Log($"DONE errors={errors}");
+            PlayTest.Finish(errors);
+        }
+
+        /// <summary>영어 화면: 진행을 조금 해 둔 세이브 + English → 씬 다시 불러 메인·창 촬영</summary>
+        IEnumerator EnTour()
+        {
+            DontDestroyOnLoad(gameObject);
+            S.lang = L.En;
+            S.stage = 22; S.bestEver = 22; S.gems = 5000; S.gold = 2.5e6;
+            S.slots[0] = Tables.Code(4, "laser"); S.slots[1] = Tables.Code(3, "shotgun"); S.slots[2] = Tables.Code(5, "single");
+            S.inv[0] = Tables.Code(2, "pierce"); S.inv[1] = Tables.Code(6, "missile");
+            S.Save();
+            UnityEngine.SceneManagement.SceneManager.LoadScene(0);
+            yield return Wait(1.0f);
+            SetupCapture();
+            yield return Wait(2.5f);
+            Check(L.IsEn && L.T("상점") == "Shop", "영어로 다시 불러옴");
+            Capture("en/01_main");
+            HUD.I.Open<WeaponPopup>(); yield return Wait(0.3f); Capture("en/02_weapon"); CloseAll();
+            HUD.I.Open<SkinPopup>(); yield return Wait(0.3f); Capture("en/03_skin"); CloseAll();
+            HUD.I.Open<SupplyPopup>(); yield return Wait(0.3f); Capture("en/04_supply"); CloseAll();
+            HUD.I.Open<MissionPopup>(); yield return Wait(0.3f); Capture("en/05_mission"); CloseAll();
+            HUD.I.Open<ShopPopup>(); yield return Wait(0.3f); Capture("en/06_shop"); CloseAll();
+            HUD.I.Open<SettingsPopup>(); yield return Wait(0.3f); Capture("en/07_settings"); CloseAll();
             Log($"DONE errors={errors}");
             PlayTest.Finish(errors);
         }

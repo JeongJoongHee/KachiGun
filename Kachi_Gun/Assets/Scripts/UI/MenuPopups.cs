@@ -294,7 +294,12 @@ namespace KachiGun
     /// <summary>설정 (기획서 2.2): 배경음·효과음·진동 · 저장/불러오기 · 언어(한국어/English) · [테스트] 재화</summary>
     public class SettingsPopup : Popup
     {
+        // 출시 빌드에는 [테스트용] 버튼이 없어 창이 짧음 (10-24 출시용 정리 — 테스트 버튼은 에디터에서만)
+#if UNITY_EDITOR
         protected override Vector2 Size => new(1000, 1500);
+#else
+        protected override Vector2 Size => new(1000, 1070);
+#endif
         protected override string Title => "설정";
         Button bgm, sfx, vibe, lang;
         readonly Image[] icons = new Image[4];   // 배경음·효과음·진동·언어 (10-24: 3칸이라 언어 줄에서 넘쳐 설정 창이 깨졌음)
@@ -314,7 +319,8 @@ namespace KachiGun
             Row(L.T("저장"), 4, new Color(0.45f, 0.7f, 0.3f), () => { S.Save(); H.Toast(L.T("저장했습니다 (기기 안)")); });
             Row(L.T("불러오기 · 구매 복원 · 문의"), 5, new Color(0.42f, 0.4f, 0.38f), () => H.Toast(L.T("클라우드 저장·결제 복원·문의는 준비 중입니다")));
 
-            var t = UIKit.Label(content, "[테스트용 — 출시 전에 지울 것]", 30, UIKit.Red, TextAnchor.MiddleCenter, 2);
+#if UNITY_EDITOR
+            var t = UIKit.Label(content, "[테스트용 — 에디터에서만 보임]", 30, UIKit.Red, TextAnchor.MiddleCenter, 2);
             t.rectTransform.Place(0.5f, 1, new Vector2(0, -940), new Vector2(880, 40), new Vector2(0.5f, 0.5f));
             Small("다이아 +1000", 0, () => { S.gems += 1000; GM.Notify(); });
             Small("골드 x100", 1, () => { S.gold = System.Math.Max(S.gold, 100) * 100; GM.Notify(); });
@@ -324,6 +330,7 @@ namespace KachiGun
                 SaveData.ResetAll();
                 UnityEngine.SceneManagement.SceneManager.LoadScene(0);
             }));
+#endif
         }
 
         Button Toggle(string name, int i, System.Action a)

@@ -8,6 +8,7 @@ DOTNET="$U/NetCoreRuntime/dotnet.exe"; CSC="$U/DotNetSdkRoslyn/csc.dll"
 REFS=()
 for f in "$U"/Managed/UnityEngine/*.dll; do REFS+=("-r:$f"); done
 REFS+=("-r:$U/NetStandard/ref/2.1.0/netstandard.dll")
+REFS+=("-r:$U/PlaybackEngines/AndroidPlayer/UnityEditor.Android.Extensions.dll")   # 10-24 앱 아이콘(AndroidPlatformIconKind)
 for f in UnityEngine.UI Unity.2D.Animation.Runtime Unity.2D.Common.Runtime Unity.Collections Unity.Mathematics; do REFS+=("-r:$P/Library/ScriptAssemblies/$f.dll"); done
 mapfile -t RT < <(find "$P/Assets/Scripts" -name "*.cs" -not -path "*/Editor/*")
 mapfile -t ED < <(find "$P/Assets/Scripts" -path "*/Editor/*" -name "*.cs")
