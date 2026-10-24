@@ -1,0 +1,172 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>카피바라vs좀비 게임설정 답안</title>
+<style>
+  :root { --bg:#faf7f2; --card:#fff; --ink:#2b2118; --soft:#6b5c4e; --line:#e6ddd2; --accent:#c9822b; --ok:#2f8a4a; --warn:#b5462b; }
+  * { box-sizing:border-box; }
+  body { margin:0; background:var(--bg); color:var(--ink); font:16px/1.65 "Malgun Gothic","Apple SD Gothic Neo",sans-serif; }
+  main { max-width:980px; margin:0 auto; padding:28px 16px 80px; }
+  h1 { font-size:26px; margin:0 0 6px; }
+  h2 { font-size:20px; margin:36px 0 10px; padding-bottom:6px; border-bottom:2px solid var(--accent); }
+  h3 { font-size:17px; margin:18px 0 6px; }
+  .lead { color:var(--soft); margin:0 0 18px; }
+  .path { background:#fff3e8; border:1px solid #f3cfb2; border-radius:10px; padding:12px 14px; margin:10px 0; }
+  .card { background:var(--card); border:1px solid var(--line); border-radius:12px; padding:16px; margin:12px 0; }
+  .toc { columns:2; column-gap:28px; }
+  .toc li { break-inside:avoid; }
+  table { border-collapse:collapse; width:100%; font-size:15px; margin:8px 0; }
+  th, td { border:1px solid var(--line); padding:8px 10px; text-align:left; vertical-align:top; }
+  th { background:#f3ece3; }
+  td.ans { font-weight:bold; color:var(--ok); white-space:nowrap; }
+  ol li, ul li { margin:4px 0; }
+  code { background:#f1e9df; padding:1px 5px; border-radius:4px; font-size:14px; }
+  .warn { color:var(--warn); font-weight:bold; }
+  .hint { font-size:14px; color:var(--soft); margin:6px 0 10px; }
+  .later { background:#eef4ff; border:1px solid #c9d8f5; border-radius:10px; padding:10px 14px; margin:10px 0; font-size:15px; }
+  .row { display:flex; align-items:center; gap:10px; flex-wrap:wrap; margin-bottom:6px; }
+  button { margin-left:auto; border:0; background:var(--accent); color:#fff; border-radius:8px; padding:6px 13px; font:inherit; font-size:14px; cursor:pointer; }
+  button.done { background:var(--ok); }
+  textarea { width:100%; border:1px solid var(--line); border-radius:8px; padding:10px; font:inherit; font-size:15px; background:#fffdfa; resize:vertical; }
+  @media (max-width:640px) { .toc { columns:1; } td.ans { white-space:normal; } }
+</style>
+</head>
+<body>
+<main>
+<h1>카피바라vs좀비 — Play Console 게임 설정 답안</h1>
+<p class="lead">2026-10-24 작성 · 대시보드 "앱 설정" 목록과 <b>정책 및 프로그램 › 앱 콘텐츠</b>의 칸마다 무엇을 고르면 되는지 정리했습니다. 답은 <b>지금 빌드(AAB 1.0 (1)) 기준</b>입니다. 확인한 것: 로그인 없음 · 서버 통신 없음(네트워크 코드 없음) · 광고 SDK 없음 · 실제 결제 없음 · Unity 분석 꺼짐 · 세이브는 기기 안(PlayerPrefs)에만.</p>
+
+<div class="path"><b>들어가는 곳</b> : Play Console → 카피바라vs좀비 → <b>대시보드</b>의 "앱 설정" 목록에서 항목을 누르면 됩니다. 왼쪽 메뉴로는 <b>정책 및 프로그램 › 앱 콘텐츠</b>에 1~9번이 모여 있습니다. 항목마다 마지막에 <b>저장</b>.</div>
+
+<div class="card">
+<b>권하는 순서</b> (서바이벌 때보다 짧음 — 모으는 정보가 없어서)
+<ol class="toc">
+  <li><a href="#s3">광고 · 광고 ID</a> (2분)</li>
+  <li><a href="#s7">정부 앱</a> (1분)</li>
+  <li><a href="#s8">금융 기능</a> (1분)</li>
+  <li><a href="#s9">건강</a> (1분)</li>
+  <li><a href="#s2">앱 액세스</a> (1분)</li>
+  <li><a href="#s5">타겟층</a> (3분)</li>
+  <li><a href="#s4">콘텐츠 등급</a> (5분 · 설문)</li>
+  <li><a href="#s10">카테고리·연락처</a> (3분)</li>
+  <li><a href="#s1">개인정보처리방침</a> (1분)</li>
+  <li><a href="#s6">데이터 보안</a> (3분)</li>
+</ol>
+</div>
+
+<h2 id="s1">1. 개인정보처리방침</h2>
+<p>모으는 정보가 없어도 게임은 <b>주소가 필수</b>입니다.</p>
+<div class="card">
+  <div class="row"><b>개인정보처리방침 URL</b> (개발자 FIBE · jjhfibe@gmail.com)<button data-copy="pp">복사</button></div>
+  <textarea id="pp" rows="1">https://survival-ranking.jeongsan-license.workers.dev/kachigun-privacy</textarea>
+  <p class="hint">원본 = 이 폴더의 <code>개인정보처리방침.html</code> (한국어 + 영어). 서바이벌 랭킹 서버에 <code>/kachigun-privacy</code> 로 올립니다 — <span class="warn">배포 전이면 주소가 안 열립니다</span>. 고치면 <code>D:\00 Survival\server\src\kachigun-privacy.html</code> 로 복사해 다시 배포.</p>
+</div>
+
+<h2 id="s2">2. 앱 액세스 (로그인 세부정보)</h2>
+<table>
+  <tr><th>질문</th><th>답</th></tr>
+  <tr><td>앱의 기능을 쓰려면 로그인 등 특별한 액세스가 필요한가요?</td><td class="ans">아니요 — 모든 기능을 제한 없이 사용 가능</td></tr>
+</table>
+<p class="hint">로그인 화면이 아예 없고, 켜면 바로 게임이 시작됩니다.</p>
+
+<h2 id="s3">3. 광고</h2>
+<table>
+  <tr><th>질문</th><th>답</th><th>이유</th></tr>
+  <tr><td>앱에 광고가 포함되어 있나요?</td><td class="ans">아니요</td><td>광고 SDK(AdMob 등)가 없음. 게임 안 "광고" 버튼은 테스트 기간 동안 <b>광고 없이 바로 보상</b>을 줌 (실제 광고 화면이 안 나옴)</td></tr>
+  <tr><td>앱에서 광고 ID 를 사용하나요? (광고 ID 선언)</td><td class="ans">아니요</td><td>AAB 매니페스트에 <code>com.google.android.gms.permission.AD_ID</code> 권한이 없음 (빌드 뒤 확인 — 서바이벌 때 이 칸 때문에 한 번 막혔음)</td></tr>
+</table>
+<div class="later"><b>나중에 꼭 바꿀 것</b> — 14일 동안 AdMob 을 붙이면 ① 광고 = 예 ② 광고 ID = 예 (용도: 광고) ③ 데이터 보안에 "기기 또는 기타 ID" 추가 ④ 개인정보처리방침에 광고 ID 내용 추가 → 다시 배포.</div>
+
+<h2 id="s4">4. 콘텐츠 등급 (설문)</h2>
+<ol>
+  <li>[설문 시작] → 이메일 = <b>jjhfibe@gmail.com</b> · 카테고리 = <b>게임</b></li>
+  <li>아래처럼 답하고 [저장] → [다음] → 결과 확인 후 [제출]</li>
+</ol>
+<table>
+  <tr><th>주제</th><th>답</th><th>이유</th></tr>
+  <tr><td>폭력</td><td class="ans">예</td><td>총으로 좀비를 쏘아 쓰러뜨림 → 세부 질문은 바로 아래 표</td></tr>
+  <tr><td>공포·무서운 콘텐츠</td><td class="ans">아니요</td><td>좀비가 귀여운 도트 그림, 갑자기 놀래키는 연출 없음 (보스 위협 요소는 폭력 세부 질문에서 "예")</td></tr>
+  <tr><td>성적 콘텐츠 · 노출</td><td class="ans">아니요</td><td>스킨은 잠옷·모자 등 의상</td></tr>
+  <tr><td>욕설·저속한 언어</td><td class="ans">아니요</td><td>사용자가 글을 쓰는 곳 없음</td></tr>
+  <tr><td>규제 약물 (술·담배·마약)</td><td class="ans">아니요</td><td>보급품 "아드레날린 주사 · 고농축 스팀팩 · 나노 수복 혈청"은 공상과학 아이템 그림 — 약물 사용 장면 없음. 걱정되면 "예(약물 언급)"로 해도 등급 차이는 작음</td></tr>
+  <tr><td>도박·시뮬레이션 도박</td><td class="ans">아니요</td><td>카지노·베팅 없음</td></tr>
+  <tr><td>사용자 간 소통·콘텐츠 공유</td><td class="ans">아니요</td><td>채팅·랭킹·공유 없음 (서버 통신 자체가 없음)</td></tr>
+  <tr><td>사용자 위치 공유</td><td class="ans">아니요</td><td></td></tr>
+  <tr><td>디지털 상품 구매 (실제 돈)</td><td class="ans">아니요</td><td>지금 빌드는 결제 버튼이 "준비 중"</td></tr>
+  <tr><td>무작위 아이템 구매 (뽑기)</td><td class="ans">아니요</td><td>총알 뽑기는 게임 안 다이아로만 — 실제 돈으로 사는 뽑기 없음</td></tr>
+  <tr><td>제한 없는 인터넷 접속</td><td class="ans">아니요</td><td></td></tr>
+</table>
+<h3>폭력 세부 질문</h3>
+<table>
+  <tr><th>화면의 질문</th><th>답</th><th>이유</th></tr>
+  <tr><td>폭력에 대한 반응</td><td class="ans">비현실적</td><td>도트 그림 · 맞으면 번쩍이고 쓰러짐</td></tr>
+  <tr><td>폭력 행위가 어떻게 표현됩니까?</td><td class="ans">멀리서 묘사되는 경우가 잦음 (하나만)</td><td>위에서 보는 작은 화면 · 계속 싸움 · 확대 장면 없음</td></tr>
+  <tr><td>선혈 묘사</td><td class="ans">없음</td><td>좀비는 맞으면 하얗게 번쩍이고 쓰러진 그림으로 바뀜 — 피·잘림 없음</td></tr>
+  <tr><td>사람처럼 행동하는 생명체</td><td class="ans">예</td><td>좀비는 두 발로 걷는 사람 모양</td></tr>
+  <tr><td>실제 동물 대상 폭력</td><td class="ans">예 (권함)</td><td>주인공이 실제 동물인 <b>카피바라</b>이고 좀비에게 맞아 쓰러지는 그림이 있음 · 박쥐 좀비(z_bat)도 있음 → 보수적으로 "예"</td></tr>
+  <tr><td>사나운 소리·위협적인 인물·어두운 음조</td><td class="ans">예 (권함)</td><td>지금은 소리가 없지만 챕터마다 보스 좀비가 나오고 경고 연출이 있음 — 서바이벌과 같은 기준</td></tr>
+  <tr><td>(나오면) 총기 등 무기 사용</td><td class="ans">예</td><td>카피바라가 총을 쏨 (만화풍)</td></tr>
+</table>
+<p class="hint">애매한 칸은 높은 쪽으로 골랐습니다 — 낮게 답했다가 나중에 다르게 판정되면 등급 변경·게시 중단이 될 수 있어서. 예상 결과: 한국 <b>12세 이용가</b> 전후 · PEGI 7~12. 질문이 이 표와 다르면 캡처를 대화창에 붙여 주세요.</p>
+<div class="later"><b>나중에 꼭 다시 할 것</b> — 결제를 붙이면 "디지털 상품 구매 = 예" 로 설문 다시 제출 (상점에 다이아로 사는 총알 뽑기가 있으므로 결제 뒤엔 "무작위 아이템 = 예" 도 검토).</div>
+
+<h2 id="s5">5. 타겟층 (대상 연령)</h2>
+<table>
+  <tr><th>질문</th><th>답</th><th>이유</th></tr>
+  <tr><td>대상 연령층</td><td class="ans">13~15세 · 16~17세 · 18세 이상</td><td><span class="warn">13세 미만은 고르지 마세요</span> — 고르면 "가족 정책" 심사가 붙고, 나중에 넣을 광고·결제에 제한이 생김</td></tr>
+  <tr><td>앱이 의도치 않게 어린이의 관심을 끌 수 있나요?</td><td class="ans">아니요</td><td>좀비를 총으로 쏘는 슈팅 게임 · 교육용 아님. (카피바라가 귀엽지만 무기·좀비 전투가 중심)</td></tr>
+</table>
+
+<h2 id="s6">6. 데이터 보안</h2>
+<p>밖으로 나가는 데이터가 <b>없습니다</b> — 세이브·설정은 기기 안에만 있고, 게임에 인터넷으로 보내는 코드가 없습니다.</p>
+<table>
+  <tr><th>질문</th><th>답</th></tr>
+  <tr><td>앱이 필수 사용자 데이터 유형을 수집하거나 공유하나요?</td><td class="ans">아니요</td></tr>
+</table>
+<p class="hint">"아니요"를 고르면 나머지 질문(암호화·계정·삭제 요청)이 생략되고 바로 [다음] → 미리보기 → [저장]. 스토어에 "데이터 수집 안 함 · 공유 안 함"으로 보입니다.</p>
+<div class="later"><b>나중에</b> — 광고(AdMob)를 넣으면 "예" 로 바꾸고: 기기 또는 기타 ID(광고) · 앱 활동 › 앱 상호작용 · 앱 정보 및 성능(비정상 종료·진단) — 수집 + <b>공유</b>(광고 회사로 감) · 목적 = 광고·분석. 결제를 넣으면 "금융 정보 › 구매 기록" 추가.</div>
+
+<h2 id="s7">7. 정부 앱</h2>
+<table><tr><th>질문</th><th>답</th></tr><tr><td>정부 기관이 개발했거나 대신 게시하는 앱인가요?</td><td class="ans">아니요</td></tr></table>
+
+<h2 id="s8">8. 금융 기능</h2>
+<table><tr><th>질문</th><th>답</th></tr><tr><td>앱이 제공하는 금융 기능</td><td class="ans">"앱이 금융 기능을 제공하지 않음"</td></tr></table>
+
+<h2 id="s9">9. 건강</h2>
+<table><tr><th>질문</th><th>답</th></tr><tr><td>앱의 건강 관련 기능</td><td class="ans">"앱에 건강 기능이 없음"</td></tr></table>
+
+<h2 id="s10">10. 카테고리 · 연락처 (스토어 설정)</h2>
+<div class="path">들어가는 곳: <b>사용자 늘리기 › 스토어 등재 › 스토어 설정</b></div>
+<table>
+  <tr><th>칸</th><th>답</th><th>메모</th></tr>
+  <tr><td>앱 또는 게임</td><td class="ans">게임</td><td></td></tr>
+  <tr><td>카테고리</td><td class="ans">캐주얼</td><td>다른 안: 액션. 방치형 슈팅은 보통 캐주얼·전략·액션 중 하나</td></tr>
+  <tr><td>태그 (최대 5개)</td><td>캐주얼 · 방치형 · 슈팅 · 싱글 플레이어 · 픽셀 그래픽 계열</td><td>목록에 있는 것만</td></tr>
+  <tr><td>이메일 주소</td><td class="ans">jjhfibe@gmail.com</td><td><span class="warn">스토어에 공개</span>됩니다</td></tr>
+  <tr><td>전화번호 · 웹사이트</td><td>비워 둠</td><td>선택 칸</td></tr>
+</table>
+
+<h2>11. 비공개 테스트 트랙 (참고)</h2>
+<table>
+  <tr><th>칸</th><th>답</th></tr>
+  <tr><td>국가/지역</td><td class="ans">대한민국만 (결정 p-country)</td></tr>
+  <tr><td>테스터</td><td class="ans">"규랩스 테스터 목록" (결정 p-testers — 서바이벌 때 만든 목록 그대로)</td></tr>
+  <tr><td>앱 서명</td><td class="ans">Google Play 앱 서명 사용 (권장)</td></tr>
+  <tr><td>AAB</td><td><code>Kachi_Gun\Builds\kachizombie-1.0-1.aab</code></td></tr>
+  <tr><td>출시 이름 · 출시 노트</td><td>"1.0 (1)" · 노트는 <code>스토어_등록정보.html</code> 3번 칸 복사</td></tr>
+</table>
+</main>
+<script>
+document.querySelectorAll('button[data-copy]').forEach(function (b) {
+  b.addEventListener('click', function () {
+    var ta = document.getElementById(b.dataset.copy);
+    var done = function () { b.textContent = '복사됨'; b.classList.add('done'); setTimeout(function () { b.textContent = '복사'; b.classList.remove('done'); }, 1500); };
+    if (navigator.clipboard) navigator.clipboard.writeText(ta.value).then(done, function () { ta.select(); document.execCommand('copy'); done(); });
+    else { ta.select(); document.execCommand('copy'); done(); }
+  });
+});
+</script>
+</body>
+</html>

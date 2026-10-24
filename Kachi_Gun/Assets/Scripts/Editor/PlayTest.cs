@@ -50,6 +50,14 @@ namespace KachiGun.EditorTools
         }
         public static bool EnOnly => SessionState.GetBool(Key + ".en", false);
 
+        /// <summary>스토어 스크린샷용: 진행한 세이브로 전투·보스·총알·상위 총알·보급품·스킨·광산·도전 촬영 → Logs/PlayTest/store/*.png (10-24)</summary>
+        public static void RunStore()
+        {
+            SessionState.SetBool(Key + ".store", true);
+            Run();
+        }
+        public static bool StoreOnly => SessionState.GetBool(Key + ".store", false);
+
         public static void Run()
         {
             SaveData.ResetAll();
@@ -65,6 +73,7 @@ namespace KachiGun.EditorTools
             SessionState.SetBool(Key + ".anim", false);
             SessionState.SetBool(Key + ".rig", false);
             SessionState.SetBool(Key + ".en", false);
+            SessionState.SetBool(Key + ".store", false);
             EditorApplication.Exit(errors == 0 ? 0 : 3);
         }
     }
@@ -93,6 +102,7 @@ namespace KachiGun.EditorTools
             if (PlayTest.AnimOnly) { yield return Anim(); yield break; }
             if (PlayTest.RigOnly) { yield return RigShow(); yield break; }
             if (PlayTest.EnOnly) { yield return EnTour(); yield break; }
+            if (PlayTest.StoreOnly) { yield return StoreTour(); yield break; }
 
             // 1) 시작 전투
             Log($"시작: Stage {SaveData.StageName(S.stage)}, 고양이 {Squad.I.cats.Count}, 총 {Tables.WeaponName(S.slots[0])}");
@@ -425,6 +435,62 @@ namespace KachiGun.EditorTools
             HUD.I.Open<MissionPopup>(); yield return Wait(0.3f); Capture("en/05_mission"); CloseAll();
             HUD.I.Open<ShopPopup>(); yield return Wait(0.3f); Capture("en/06_shop"); CloseAll();
             HUD.I.Open<SettingsPopup>(); yield return Wait(0.3f); Capture("en/07_settings"); CloseAll();
+            Log($"DONE errors={errors}");
+            PlayTest.Finish(errors);
+        }
+
+        /// <summary>스토어 스크린샷: 11챕터쯤 진행한 세이브 (분대 3 · 레이저/미사일 · 해적 선장 스킨) → 장면 8개</summary>
+        IEnumerator StoreTour()
+        {
+            DontDestroyOnLoad(gameObject);
+            S.stage = 51; S.bestEver = 51; S.gems = 12500; S.gold = 3.2e7;
+            S.lvAtk = 40; S.lvSpd = 60; S.lvGold = 150;   // 공격력은 낮게 — 좀비가 화면에 쌓여 보이게
+            S.weaponUnlocked = true; S.tutorialDone = true;
+            S.slots[0] = Tables.Code(5, "laser"); S.slots[1] = Tables.Code(4, "missile"); S.slots[2] = Tables.Code(3, "shotgun");
+            int[] inv = { Tables.Code(3, "single"), Tables.Code(3, "single"), Tables.Code(2, "pierce"), Tables.Code(4, "fast"), Tables.Code(2, "shotgun"), Tables.Code(1, "single"), Tables.Code(5, "missile") };
+            for (int i = 0; i < inv.Length && i < S.inv.Count; i++) S.inv[i] = inv[i];
+            foreach (int k in new[] { 1, 2, 3, 6, 17 }) if (!S.skins.Contains(k)) S.skins.Add(k);
+            S.skin = 17;
+            for (int k = 1; k <= 7; k++) if (!S.supplies.Contains(k)) S.supplies.Add(k);
+            S.Save();
+            UnityEngine.SceneManagement.SceneManager.LoadScene(0);
+            yield return Wait(1.0f);
+            SetupCapture();
+            yield return WaitUntil(() => Target.All.Count >= 14, 20f);
+            yield return Wait(0.5f);
+            Capture("store/01_battle");
+
+            // 보스 (챕터 마지막 스테이지 11-5 = 54)
+            S.stage = 54; S.kills = GM.Quota; GM.Notify();
+            yield return WaitUntil(() => GM.boss != null && GM.boss.transform.position.y < Field.I.PlayTop - 4.5f, 45f);
+            yield return Wait(1.5f);
+            Log($"보스: {(GM.boss != null ? "있음 y=" + GM.boss.transform.position.y.ToString("0.0") : "없음")}");
+            Capture("store/02_boss");
+            if (GM.boss != null) GM.boss.Hit(GM.boss.hp + 1, GM.boss.Pos);
+            yield return Wait(1.0f);
+
+            // 총알 창 (합성)
+            HUD.I.Open<WeaponPopup>(); yield return Wait(0.4f); Capture("store/03_weapon"); CloseAll();
+
+            // 상위 총알 전투
+            S.slots[0] = Tables.Code(9, "laser"); S.slots[1] = Tables.Code(9, "missile"); S.slots[2] = Tables.Code(8, "laser");
+            S.lvAtk = 0; S.lvSpd = 0;   // 상위 총알이라 강화를 빼야 좀비가 화면에 남아 보임
+            Squad.I.Rebuild(); GM.Notify();
+            yield return WaitUntil(() => Target.All.Count >= 16, 20f);
+            yield return Wait(0.3f);
+            Capture("store/04_high");
+
+            HUD.I.Open<SupplyPopup>(); yield return Wait(0.4f); Capture("store/05_supply"); CloseAll();
+            HUD.I.Open<SkinPopup>(); yield return Wait(0.4f); Capture("store/06_skin"); CloseAll();
+
+            // 광산
+            S.RefreshDaily();
+            if (GM.StartMine() == null) { yield return Wait(0.9f); Capture("store/07_mine"); GM.dungeonTime = 0.05f; yield return Wait(0.5f); HUD.I.Get<ResultPopup>()?.Close(); yield return Wait(0.4f); }
+            else Log("광산 못 들어감");
+
+            // 도전
+            if (GM.StartChallenge() == null) { yield return Wait(3f); Capture("store/08_challenge"); GM.ExitDungeon(); }
+            else Log("도전 못 들어감");
             Log($"DONE errors={errors}");
             PlayTest.Finish(errors);
         }

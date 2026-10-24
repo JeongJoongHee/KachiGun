@@ -1,0 +1,213 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>카피바라vs좀비 스토어 등록정보</title>
+<style>
+  :root { --bg:#faf7f2; --card:#fff; --ink:#2b2118; --soft:#6b5c4e; --line:#e6ddd2; --accent:#c9822b; --ok:#2f8a4a; --warn:#b5462b; }
+  * { box-sizing:border-box; }
+  body { margin:0; background:var(--bg); color:var(--ink); font:16px/1.65 "Malgun Gothic","Apple SD Gothic Neo",sans-serif; }
+  main { max-width:980px; margin:0 auto; padding:28px 16px 80px; }
+  h1 { font-size:26px; margin:0 0 6px; }
+  h2 { font-size:20px; margin:36px 0 10px; padding-bottom:6px; border-bottom:2px solid var(--accent); }
+  .lead { color:var(--soft); margin:0 0 18px; }
+  .path { background:#fff3e8; border:1px solid #f3cfb2; border-radius:10px; padding:12px 14px; }
+  .card { background:var(--card); border:1px solid var(--line); border-radius:12px; padding:16px; margin:12px 0; }
+  .row { display:flex; align-items:center; gap:10px; flex-wrap:wrap; margin-bottom:8px; }
+  .row b { font-size:17px; }
+  .count { font-size:13px; color:var(--soft); }
+  .count.over { color:var(--warn); font-weight:bold; }
+  button { margin-left:auto; border:0; background:var(--accent); color:#fff; border-radius:8px; padding:7px 14px; font:inherit; font-size:14px; cursor:pointer; }
+  button.done { background:var(--ok); }
+  textarea { width:100%; border:1px solid var(--line); border-radius:8px; padding:10px; font:inherit; font-size:15px; background:#fffdfa; resize:vertical; }
+  .hint { font-size:14px; color:var(--soft); margin:6px 0 0; }
+  .shots { display:grid; grid-template-columns:repeat(auto-fill,minmax(150px,1fr)); gap:12px; }
+  .shots figure { margin:0; text-align:center; font-size:13px; color:var(--soft); }
+  .shots img { width:100%; border-radius:8px; border:1px solid var(--line); display:block; }
+  .wide img { width:100%; max-width:640px; border-radius:8px; border:1px solid var(--line); }
+  .icon img { width:128px; border-radius:24px; border:1px solid var(--line); }
+  table { border-collapse:collapse; width:100%; font-size:15px; }
+  th, td { border:1px solid var(--line); padding:8px 10px; text-align:left; vertical-align:top; }
+  th { background:#f3ece3; width:30%; }
+  ol li, ul li { margin:4px 0; }
+  code { background:#f1e9df; padding:1px 5px; border-radius:4px; font-size:14px; }
+  .warn { color:var(--warn); font-weight:bold; }
+</style>
+</head>
+<body>
+<main>
+<h1>카피바라vs좀비 — 기본 스토어 등록정보</h1>
+<p class="lead">2026-10-24 작성 · 칸마다 [복사]를 눌러 Play Console 에 붙여 넣으세요. 그림은 이 폴더(<code>D:\00 Final_Game\스토어 등록\</code>)에 있습니다.</p>
+
+<div class="path"><b>들어가는 곳</b> : Play Console → 카피바라vs좀비 → 왼쪽 메뉴 <b>사용자 늘리기 › 스토어 등재 › 기본 스토어 등록정보</b> → 다 채우고 맨 아래 <b>저장</b>.<br>
+영어판은 같은 화면 위쪽 <b>[번역 관리] › 직접 번역 추가 › 영어(미국) en-US</b> 를 고른 뒤 아래 "영어" 칸을 붙여 넣으세요.</div>
+
+<h2>1. 앱 세부정보 — 한국어 (기본 언어 ko-KR)</h2>
+<div class="card">
+  <div class="row"><b>앱 이름</b><span class="count" data-for="name" data-max="30"></span><button data-copy="name">복사</button></div>
+  <textarea id="name" rows="1">카피바라vs좀비: 방치형 슈팅</textarea>
+  <p class="hint">스토어 제목 (30자까지). 폰 아이콘 아래 이름은 "카피바라vs좀비" 그대로입니다 (결정 p-enname).</p>
+</div>
+<div class="card">
+  <div class="row"><b>간단한 설명</b><span class="count" data-for="short" data-max="80"></span><button data-copy="short">복사</button></div>
+  <textarea id="short" rows="2">총 든 카피바라 분대로 좀비 떼를 막아라! 자동 사격 · 총알 합성 · 150챕터 방치형 슈팅</textarea>
+  <p class="hint">이름 아래 보이는 한 줄 (80자까지). 다른 안: <i>켜 두면 알아서 싸우는 카피바라 분대! 총알을 합성해 SSU 등급까지 키우는 방치형 슈팅</i></p>
+</div>
+<div class="card">
+  <div class="row"><b>자세한 설명</b><span class="count" data-for="full" data-max="4000"></span><button data-copy="full">복사</button></div>
+  <textarea id="full" rows="24">총을 든 카피바라 분대가 좀비 떼에 맞섭니다!
+화면을 켜 두기만 하면 카피바라들이 알아서 총을 쏘고, 나는 강화와 총알 합성으로 분대를 키우면 됩니다.
+
+■ 손이 편한 방치형 슈팅
+- 공격은 자동! 몰려오는 좀비를 카피바라 분대가 쉬지 않고 쓸어버립니다.
+- 골드로 공격력·공격 속도·골드 획득량을 강화하고, 자동 강화 버튼으로 더 편하게.
+- 배터리를 아끼는 절전 모드 지원
+
+■ 총알 뽑기와 합성
+- 기본탄·산탄·속사탄·관통탄·레이저탄·미사일탄, 6종의 총알
+- D부터 SSU까지 13개 등급 — 같은 등급 두 개를 겹치면 한 단계 위 등급으로 합성!
+- 높은 등급에서만 나오는 레이저탄과 미사일탄의 화끈한 화력
+- 장착 칸 강화로 총알을 더 강하게
+
+■ 150개 챕터, 750개 스테이지
+- 12종의 좀비와 챕터마다 기다리는 보스
+- 보스를 못 이기면 반복 사냥으로 골드를 모아 다시 도전
+
+■ 던전과 광산
+- 도전 던전: 제한 시간 안에 좀비를 쓰러뜨리고 다이아 획득
+- 보스 던전: 강력한 보스를 상대로 보상 획득
+- 다이아 광산: 광석을 부숴 다이아를 캐세요
+
+■ 모으고 꾸미는 재미
+- 해적 선장·공룡 잠옷·상어 잠옷 등 18가지 카피바라 스킨 — 입지 않아도 보유 효과
+- 비상 건빵부터 카피바라의 성배까지 25가지 보급품 수집
+- 좀비 처치·스테이지·광산·보스·합성, 5가지 반복 미션
+
+■ 한국어 · English 지원
+
+지금 카피바라 분대를 이끌고 좀비 떼를 막아 보세요!</textarea>
+  <p class="hint">4000자까지. 지금 빌드에 실제로 있는 것만 적었습니다 (챕터 150 · 스테이지 750 · 좀비 12종 · 총알 6종 13등급 · 스킨 18 · 보급품 25 · 미션 5). 광고·결제는 아직 실제로 붙지 않아 뺐습니다. "방치형" 이지만 꺼 두는 동안 쌓이는 보상(오프라인 보상)은 없으니 그 말은 넣지 않았습니다.</p>
+</div>
+
+<h2>2. 앱 세부정보 — 영어 (en-US)</h2>
+<div class="card">
+  <div class="row"><b>App name</b><span class="count" data-for="name_en" data-max="30"></span><button data-copy="name_en">복사</button></div>
+  <textarea id="name_en" rows="1">Capybara vs Zombies</textarea>
+  <p class="hint">영어 폰 아이콘 이름과 같음.</p>
+</div>
+<div class="card">
+  <div class="row"><b>Short description</b><span class="count" data-for="short_en" data-max="80"></span><button data-copy="short_en">복사</button></div>
+  <textarea id="short_en" rows="2">Lead a capybara gun squad against zombie hordes! Auto-shooting idle game.</textarea>
+  <p class="hint">80자까지.</p>
+</div>
+<div class="card">
+  <div class="row"><b>Full description</b><span class="count" data-for="full_en" data-max="4000"></span><button data-copy="full_en">복사</button></div>
+  <textarea id="full_en" rows="24">A squad of gun-toting capybaras vs. endless zombie hordes!
+Just leave the game on — your capybaras shoot automatically while you upgrade and merge ammo to grow your squad.
+
+■ Easy idle shooting
+- Auto attack! Your capybara squad mows down incoming zombies nonstop.
+- Upgrade Attack, Attack Speed and Gold Gain with gold — or let Auto Upgrade do it.
+- Battery-saving Eco mode
+
+■ Draw and merge ammo
+- 6 ammo types: Basic, Buckshot, Rapid, Piercing, Laser and Missile
+- 13 grades from D to SSU — merge two of the same grade to get a higher grade!
+- Powerful Laser and Missile rounds at high grades
+- Enhance your equip slots for even more power
+
+■ 150 chapters, 750 stages
+- 12 zombie types and a boss at the end of every chapter
+- Lost to a boss? Farm gold and try again
+
+■ Dungeons and the mine
+- Challenge Dungeon: defeat zombies against the clock for gems
+- Boss Dungeon: take on mighty bosses for rewards
+- Gem Mine: smash ores and dig up gems
+
+■ Collect and customize
+- 18 capybara skins — Pirate Captain, Dino Pajamas, Shark Pajamas and more, each with an owned bonus
+- Collect 25 supplies, from Emergency Crackers to the Capybara Grail
+- 5 repeatable missions
+
+■ Korean and English supported
+
+Lead your capybara squad and hold back the zombie horde!</textarea>
+  <p class="hint">4000자까지. 한국어판과 같은 내용.</p>
+</div>
+
+<h2>3. 출시 노트 (버전 1.0 · 비공개 테스트)</h2>
+<div class="card">
+  <div class="row"><b>출시 노트 (한국어/영어)</b><span class="count" data-for="notes" data-max="500"></span><button data-copy="notes">복사</button></div>
+  <textarea id="notes" rows="12"><ko-KR>
+카피바라vs좀비 첫 테스트 버전입니다. 플레이하며 불편한 점이나 버그를 jjhfibe@gmail.com 으로 알려 주세요!
+- 광고 버튼은 테스트 기간 동안 광고 없이 바로 보상을 줍니다.
+- 결제 상품은 준비 중입니다.
+</ko-KR>
+<en-US>
+First test build of Capybara vs Zombies. Please send feedback or bugs to jjhfibe@gmail.com!
+- Ad buttons give rewards instantly (no ads) during testing.
+- In-app purchases are coming soon.
+</en-US></textarea>
+  <p class="hint">Play Console 의 [새 버전 만들기] 화면 "출시 노트" 칸에 그대로 붙여 넣으면 언어별로 나뉩니다 (500자까지).</p>
+</div>
+
+<h2>4. 그래픽 (그림)</h2>
+
+<div class="card icon">
+  <div class="row"><b>앱 아이콘</b> <span class="count">512 × 512 PNG</span></div>
+  <img src="앱아이콘_512.png" alt="앱 아이콘">
+  <p class="hint">파일 <code>앱아이콘_512.png</code> — 폰에 깔리는 아이콘과 같은 그림 (<code>tools/app_icon_gen.py</code>).</p>
+</div>
+
+<div class="card wide">
+  <div class="row"><b>그래픽 이미지</b> <span class="count">1024 × 500 PNG</span></div>
+  <img src="그래픽이미지_1024x500.png" alt="그래픽 이미지">
+  <p class="hint">파일 <code>그래픽이미지_1024x500.png</code></p>
+</div>
+
+<div class="card">
+  <div class="row"><b>휴대전화 스크린샷</b> <span class="count">1080 × 1920 (세로 9:16)</span></div>
+  <div class="shots" id="shots"></div>
+  <p class="hint">01 부터 순서대로 올리면 스토어에도 이 순서로 보입니다. 실제 게임을 Unity 에서 돌려 찍은 화면에 짧은 문구를 얹었습니다 (<code>tools/store_graphics.py</code>).</p>
+</div>
+
+<div class="card">
+  <div class="row"><b>나머지 그림 칸</b></div>
+  <ul>
+    <li><b>동영상 (YouTube 주소)</b> — 선택. 비워 두어도 됩니다.</li>
+    <li><b>태블릿 스크린샷</b> — 선택. 비워 두어도 등록됩니다.</li>
+  </ul>
+</div>
+
+<h2>5. 같이 채우는 칸</h2>
+<table>
+  <tr><th>스토어 설정<br><span class="count">사용자 늘리기 › 스토어 등재 › 스토어 설정</span></th>
+      <td>앱 또는 게임 = <b>게임</b> · 카테고리 = <b>캐주얼</b> (권함 — 방치형 슈팅은 보통 캐주얼, 액션도 가능) · 태그는 목록에서 최대 5개 (예: 캐주얼 · 방치형 · 슈팅 · 싱글 플레이어 · 도트 그래픽 중 있는 것) · 이메일 = <b>jjhfibe@gmail.com</b></td></tr>
+  <tr><th>개인정보처리방침 URL</th>
+      <td><b>https://survival-ranking.jeongsan-license.workers.dev/kachigun-privacy</b> (배포 뒤 열림 — <code>게임설정_답안.html</code> 참고)</td></tr>
+</table>
+</main>
+<script>
+// 스크린샷 목록 (store_graphics.py 가 만든 파일 이름과 같게)
+var SHOTS = [['01','전투'],['02','보스'],['03','총알 합성'],['04','레이저·미사일'],['05','보급품'],['06','스킨'],['07','광산'],['08','도전 던전']];
+document.getElementById('shots').innerHTML = SHOTS.map(function (s) { return '<figure><img src="스크린샷_' + s[0] + '.png" alt=""><figcaption>' + s[0] + ' ' + s[1] + '</figcaption></figure>'; }).join('');
+</script>
+<script>
+document.querySelectorAll('.count[data-for]').forEach(function (el) {
+  var ta = document.getElementById(el.dataset.for), max = +el.dataset.max;
+  function upd() { var n = ta.value.length; el.textContent = n + ' / ' + max + '자'; el.classList.toggle('over', n > max); }
+  ta.addEventListener('input', upd); upd();
+});
+document.querySelectorAll('button[data-copy]').forEach(function (b) {
+  b.addEventListener('click', function () {
+    var ta = document.getElementById(b.dataset.copy);
+    var done = function () { b.textContent = '복사됨'; b.classList.add('done'); setTimeout(function () { b.textContent = '복사'; b.classList.remove('done'); }, 1500); };
+    if (navigator.clipboard) navigator.clipboard.writeText(ta.value).then(done, function () { ta.select(); document.execCommand('copy'); done(); });
+    else { ta.select(); document.execCommand('copy'); done(); }
+  });
+});
+</script>
+</body>
+</html>
