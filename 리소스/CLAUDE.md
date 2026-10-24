@@ -1,5 +1,10 @@
 # 카치건 (좀비 키우기) — 세로 방치형 분대 슈팅, Unity 6000.0.84f1 · 2D URP
 
+## ▶ 재개 메모 (2026-10-24 오후 — `추가 요청/요청_01.docx` 반영, 중간에 터미널 꺼져 이어서 끝냄)
+- 반영: ① 미션 보상 = 단계마다 골드 → 다이아 → 골드 번갈아 **한 종류만**(두 단계 합은 예전 30:70 과 같음, 시뮬 영향 +1일) ② 총알 이름 `종류_등급`(기본탄_D·산탄_D·속사탄_D·관통탄_C·레이저탄_S·미사일탄_S …, 영어 `Basic Round_D` 등) ③ 총알 아이콘 = 그림 전체(`Art/Bullet/icon_<type>`, Bullet_Spec Icon_Path) · 기본탄 발사체 = **Bullet_06**(`bullet_plain`, 문서엔 Bullet_09 라고 돼 있으나 그 파일 없음 → 사용자 확인 대기) · 속사탄 = Bullet_01 ④ **기본 4종 S~SSU 36줄** (공격력 = A 줄 × 등급 성장 누적 × 0.5, 나머지 사양 A 와 같음, Impl_Note 에 "10-24") · Weapon_Grade_Growth Available_Types 6종 ⑤ 영어 전환 안 되던 것 = 설정 창 icons 배열 3칸 → 4칸(언어 줄에서 오류) ⑥ **보급품 그림 25장** `tools/supply_icons.py`(리소스/Supply.png 5x5 → `Art/Supply/supply_01~25.png`, 배경·글자·워터마크 제거) + Supply.xlsx **Icon 칸**(그림 이름, 비우면 상자 아이콘) ⑦ Shop 핫딜 설명 "레이저탄_S 즉시 지급"
+- **결정 대기 `p-merge`** (남은_작업_정리.html ①): S 이상 합성이 6종 균등이라 150챕터 광고 최대 150→198일 · 안 봄 539→673일. 추천 = Weapon_Master 에 Merge_Weight 칸
+- Unity 열려 있어 **자동 시험 못 함**(컴파일 검사만 OK). PlayTest 에 10-24 검사 2개 추가(S~SSU 6종·약함·이름 / 총알·보급품 그림) → Unity 닫고 `bash tools/unity_batch.sh KachiGun.EditorTools.PlayTest.Run --play`
+
 ## ▶ 재개 메모 (2026-10-24 — 사용자 "오늘 비공개 테스트 요청하려고 해, 남은 작업 상세히")
 - `남은_작업_정리.html` 을 **비공개 테스트 제출 기준으로 다시 짬** (키 **`kachigun-todo-1024`**, 47항목, 이전 페이지 백업 = 스크래치 todo_backup_1021.html — 1021 키 체크·의견은 0개였음)
   - ① 결정 6: `p-pkg`(추천 com.zkfpf.capybaravszombie) · `p-enname`(Capybara vs Zombies · 스토어 제목 "카피바라vs좀비: 방치형 슈팅") · `p-scope`(추천 = 지금 게임 그대로 오늘 제출, 광고·결제·소리는 14일 동안 업데이트) · `p-privacy`(추천 서바이벌 랭킹 서버 `/kachigun-privacy`, 고르면 배포 허락) · `p-testers`(규랩스) · `p-country`(대한민국)

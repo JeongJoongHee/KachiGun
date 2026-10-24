@@ -277,7 +277,10 @@ namespace KachiGun
                     v.frame.color = gc;
                     v.bg.color = Color.Lerp(Color.white, gc, 0.25f);
                     int lv = Stats.SlotLvEff(i);
-                    v.name.text = $"<color=#{ColorUtility.ToHtmlStringRGB(gc)}>{Tables.GradeName(Tables.GradeOf(code))}</color> {L.T(Tables.Weapon(code).name)}" + (lv > 0 ? $" <color=#FFD966>+{lv}</color>" : "");
+                    string wn = Tables.Weapon(code).name, gn = Tables.GradeName(Tables.GradeOf(code));
+                    v.name.text = (Tables.NameHasGrade(wn, gn)
+                        ? $"<color=#{ColorUtility.ToHtmlStringRGB(gc)}>{L.T(wn)}</color>"
+                        : $"<color=#{ColorUtility.ToHtmlStringRGB(gc)}>{gn}</color> {L.T(wn)}") + (lv > 0 ? $" <color=#FFD966>+{lv}</color>" : "");
                     v.name.rectTransform.offsetMin = new Vector2(108, 4);
                     v.name.alignment = TextAnchor.MiddleLeft;
                 }

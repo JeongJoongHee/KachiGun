@@ -130,6 +130,12 @@ EN = {
     '큰 푸른 보석': 'Big Blue Gem', '작은 푸른 보석': 'Small Blue Gem', '회색 바위': 'Gray Rock', '거대 황금 크리스탈': 'Huge Gold Crystal',
 }
 
+# 10-24 총알 이름 규칙 "종류_등급" (Weapon_Master Name) → 영어 "Type_Grade"
+for _ko, _en in (('기본탄', 'Basic Round'), ('산탄', 'Buckshot'), ('속사탄', 'Rapid Round'), ('관통탄', 'Piercing Round'), ('레이저탄', 'Laser Round'), ('미사일탄', 'Missile')):
+    for _g in ('D', 'C', 'B', 'A', 'S', 'SS', 'SSS', 'R', 'SR', 'SSR', 'U', 'SU', 'SSU'):
+        EN[f'{_ko}_{_g}'] = f'{_en}_{_g}'
+EN['레이저탄_S 즉시 지급'] = 'Get a Laser Round_S now'
+
 
 def code_strings():
     """(글자, 파일) — 주석·Debug 줄 제외, $"" 안 한글은 경고"""

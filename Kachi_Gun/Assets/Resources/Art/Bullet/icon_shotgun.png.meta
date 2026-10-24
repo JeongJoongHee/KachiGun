@@ -1,37 +1,28 @@
 fileFormatVersion: 2
-guid: e938a32ea53be0241bc4a1ca353dbffd
+guid: 8c4a44c55e2be0b49bfa01245cd46267
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: -915834995833281203
-    second: laser_icon_0
+      213: 3989697889263997642
+    second: icon_shotgun_0
   - first:
-      213: 6599352217550947910
-    second: laser_icon_1
+      213: -6007677336085484140
+    second: icon_shotgun_1
   - first:
-      213: 403605510683362461
-    second: laser_icon_2
+      213: -2750493111048101987
+    second: icon_shotgun_2
   - first:
-      213: -2950852412761836841
-    second: laser_icon_3
+      213: 7078947202405289027
+    second: icon_shotgun_3
   - first:
-      213: -3016314111970364899
-    second: laser_icon_4
+      213: 6603789991732021725
+    second: icon_shotgun_4
   - first:
-      213: -8284927906505515455
-    second: laser_icon_5
+      213: -2767212899681992092
+    second: icon_shotgun_5
   - first:
-      213: 9190043092664830247
-    second: laser_icon_6
-  - first:
-      213: 6130463324900576723
-    second: laser_icon_7
-  - first:
-      213: 1478770824027628480
-    second: laser_icon_8
-  - first:
-      213: 3399877816564943758
-    second: laser_icon_9
+      213: -2623445700388754986
+    second: icon_shotgun_6
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -140,13 +131,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: laser_icon_0
+      name: icon_shotgun_0
       rect:
         serializedVersion: 2
-        x: 60
-        y: 174
-        width: 11
-        height: 11
+        x: 117
+        y: 93
+        width: 46
+        height: 38
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -155,20 +146,20 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: d456c707cec4a43f0800000000000000
-      internalID: -915834995833281203
+      spriteID: ac2d4ba87114e5730800000000000000
+      internalID: 3989697889263997642
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: laser_icon_1
+      name: icon_shotgun_1
       rect:
         serializedVersion: 2
-        x: 74
-        y: 171
-        width: 15
-        height: 10
+        x: 136
+        y: 81
+        width: 71
+        height: 48
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -177,20 +168,20 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 6468fc280eb959b50800000000000000
-      internalID: 6599352217550947910
+      spriteID: 49da579fa4170aca0800000000000000
+      internalID: -6007677336085484140
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: laser_icon_2
+      name: icon_shotgun_2
       rect:
         serializedVersion: 2
-        x: 81
-        y: 179
-        width: 10
-        height: 6
+        x: 164
+        y: 119
+        width: 43
+        height: 42
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -199,20 +190,20 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: d940ca5d215e99500800000000000000
-      internalID: 403605510683362461
+      spriteID: d9f91d6961944d9d0800000000000000
+      internalID: -2750493111048101987
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: laser_icon_3
+      name: icon_shotgun_3
       rect:
         serializedVersion: 2
-        x: 4
-        y: 0
-        width: 196
-        height: 175
+        x: 209
+        y: 100
+        width: 47
+        height: 36
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -221,63 +212,41 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 7d2f9b86d577c07d0800000000000000
-      internalID: -2950852412761836841
+      spriteID: 34ccc1789f87d3260800000000000000
+      internalID: 7078947202405289027
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: laser_icon_4
-      rect:
-        serializedVersion: 2
-        x: 93
-        y: 169
-        width: 7
-        height: 9
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: d123209db46e326d0800000000000000
-      internalID: -3016314111970364899
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: laser_icon_5
-      rect:
-        serializedVersion: 2
-        x: 100
-        y: 169
-        width: 7
-        height: 9
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: 14e9407e6f5060d80800000000000000
-      internalID: -8284927906505515455
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: laser_icon_6
+      name: icon_shotgun_4
       rect:
         serializedVersion: 2
         x: 0
-        y: 100
-        width: 10
+        y: 0
+        width: 132
+        height: 108
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: dd98774520065ab50800000000000000
+      internalID: 6603789991732021725
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: icon_shotgun_5
+      rect:
+        serializedVersion: 2
+        x: 131
+        y: 49
+        width: 53
         height: 33
       alignment: 0
       pivot: {x: 0, y: 0}
@@ -287,20 +256,20 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 729c1d87087998f70800000000000000
-      internalID: 9190043092664830247
+      spriteID: 46283907782e899d0800000000000000
+      internalID: -2767212899681992092
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: laser_icon_7
+      name: icon_shotgun_6
       rect:
         serializedVersion: 2
-        x: 6
-        y: 79
-        width: 24
-        height: 13
+        x: 186
+        y: 35
+        width: 49
+        height: 35
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -309,52 +278,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 3dd4245d9e7c31550800000000000000
-      internalID: 6130463324900576723
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: laser_icon_8
-      rect:
-        serializedVersion: 2
-        x: 191
-        y: 37
-        width: 9
-        height: 10
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: 0c3e066ca36a58410800000000000000
-      internalID: 1478770824027628480
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: laser_icon_9
-      rect:
-        serializedVersion: 2
-        x: 166
-        y: 0
-        width: 7
-        height: 9
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: e8b85106cdace2f20800000000000000
-      internalID: 3399877816564943758
+      spriteID: 6d96dccf806a79bd0800000000000000
+      internalID: -2623445700388754986
       vertices: []
       indices: 
       edges: []

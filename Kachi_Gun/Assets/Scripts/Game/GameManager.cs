@@ -496,11 +496,16 @@ namespace KachiGun
         public long MissionTarget(int i) => Tables.MissionTarget(i, S.missionTier[i]);
         public bool MissionDone(int i) => Tables.MissionDone(i, S.missionTier[i]);
 
-        // 보상 = 다이아로 친 값(Mission_Master)을 다이아 Mission_Gem_Ratio(30%) + 골드(나머지 70%)로 나눔.
+        // 보상 = 다이아로 친 값(Mission_Master). 10-24 사용자 요청: 한 번에 한 종류만 — 단계마다 골드 → 다이아 → 골드 … 번갈아.
+        // 두 단계를 합친 양은 예전(다이아 Mission_Gem_Ratio 30% + 골드 70%)과 같게: 다이아 차례 = 값 x 0.3 x 2, 골드 차례 = 값 x 0.7 x 2.
         // 골드 1다이아어치 = 지금 스테이지 좀비 Gem_Gold_Kills(6)마리 골드 x 돈 배율 (상점 골드 상자 100다이아 = 600마리와 같은 비율)
         static double GemRatio => Tables.C("Mission_Gem_Ratio", 0.3);
-        public double MissionGems(int i) => Math.Round(Tables.MissionReward(i, S.missionTier[i]) * GemRatio);
-        public double MissionGold(int i) => Tables.MissionReward(i, S.missionTier[i]) * (1 - GemRatio) * Tables.C("Gem_Gold_Kills", 6) * Stats.ZombieGold(S.stage) * Stats.GoldMul;
+        /// <summary>이번 단계 보상이 다이아인지 (짝수 단계 0·2·4… = 골드, 홀수 = 다이아)</summary>
+        public bool MissionIsGem(int i) => S.missionTier[i] % 2 == 1;
+        public double MissionGems(int i) => MissionIsGem(i) ? Math.Max(1, Math.Round(Tables.MissionReward(i, S.missionTier[i]) * GemRatio * 2)) : 0;
+        public double MissionGold(int i) => MissionIsGem(i) ? 0 : Tables.MissionReward(i, S.missionTier[i]) * (1 - GemRatio) * 2 * Tables.C("Gem_Gold_Kills", 6) * Stats.ZombieGold(S.stage) * Stats.GoldMul;
+        /// <summary>[받기] 버튼·토스트 글자: "다이아 N" 또는 "골드 M"</summary>
+        public string MissionRewardText(int i) => MissionIsGem(i) ? $"{L.T("다이아")} {Num.Gem(MissionGems(i))}" : $"{L.T("골드")} {Num.F(MissionGold(i))}";
 
         public bool MissionReady(int i) => !MissionDone(i) && MissionValue(i) >= MissionTarget(i);
 
@@ -508,12 +513,13 @@ namespace KachiGun
         {
             if (MissionDone(i)) return L.T("모든 단계를 끝냈습니다");
             if (!MissionReady(i)) return L.T("아직 달성하지 못했습니다");
+            bool gem = MissionIsGem(i);
             double gems = MissionGems(i), gold = MissionGold(i);
             S.gems += gems;
             S.gold += gold;
             S.missionTier[i]++;
-            HUD.I?.Bump(true); HUD.I?.Bump(false);
-            HUD.I?.Toast(L.T("다이아") + " +" + Num.Gem(gems) + " · " + L.T("골드") + " +" + Num.F(gold));
+            HUD.I?.Bump(gem);
+            HUD.I?.Toast(gem ? L.T("다이아") + " +" + Num.Gem(gems) : L.T("골드") + " +" + Num.F(gold));
             Notify();
             return null;
         }

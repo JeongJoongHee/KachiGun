@@ -42,7 +42,7 @@ namespace KachiGun
     public class BuffRow { public string id, name; public double mul, duration, maxStack, cooldown; }
     public class ShopRow { public int index; public string id, category, name, desc, priceType, priceValue, reward; public double bonusGems; }
     public class UnlockRow { public string id, name, type, lockMsg, bannerMsg; public int stageIdx; public double value; }
-    public class SupplyRow { public int id, unlockChapter; public string grade, name; public double cost, atk, spd, gold, boss; }
+    public class SupplyRow { public int id, unlockChapter; public string grade, name, icon; public double cost, atk, spd, gold, boss; }   // icon = Supply 표 Icon 칸 (Art/Supply/ 의 그림 이름, 10-24)
     public class EnchantRow { public int lv; public double gems, gold, atk, spd, boss, rate; }
 
     /// <summary>
@@ -225,7 +225,7 @@ namespace KachiGun
                 Supplies.Add(new SupplyRow
                 {
                     id = r.I("Supply_Id"), grade = r.S("Grade"), name = r.S("Name"), unlockChapter = r.I("Unlock_Chapter"), cost = r.D("Cost_Gems"),
-                    atk = r.D("Atk_Bonus"), spd = r.D("Spd_Bonus"), gold = r.D("Gold_Bonus"), boss = r.D("Boss_Dmg_Bonus")
+                    atk = r.D("Atk_Bonus"), spd = r.D("Spd_Bonus"), gold = r.D("Gold_Bonus"), boss = r.D("Boss_Dmg_Bonus"), icon = r.S("Icon")
                 });
             foreach (var r in Read("Weapon_Enchant"))
                 enchants.Add(new EnchantRow
@@ -445,8 +445,14 @@ namespace KachiGun
         public static string WeaponName(int code)
         {
             var w = Weapon(code);
-            return w == null ? "?" : $"{GradeName(GradeOf(code))} {L.T(w.name)}";
+            if (w == null) return "?";
+            string g = GradeName(GradeOf(code));
+            // 10-24: 표 이름에 등급이 이미 붙어 있으면(기본탄_D) 표 이름 그대로, 아니면 "등급 이름"
+            return NameHasGrade(w.name, g) ? L.T(w.name) : $"{g} {L.T(w.name)}";
         }
+
+        /// <summary>총알 이름이 "…_등급" 으로 끝나는지 (Weapon_Master 의 Name 칸, 10-24 사용자 이름 규칙)</summary>
+        public static bool NameHasGrade(string name, string grade) => !string.IsNullOrEmpty(name) && name.EndsWith("_" + grade);
 
         public static string TypeLabel(string t) => L.T(t switch
         {

@@ -25,9 +25,9 @@
 최소 1개의 총알을 장착해야 합니다,You must equip at least 1 ammo,Game/GameManager.cs
 빈 칸에만 놓을 수 있습니다,Can only be placed in an empty slot,Game/GameManager.cs
 {0}초 뒤에 다시 볼 수 있습니다,Available again in {0}s,Game/GameManager.cs
+다이아,Gems,Game/GameManager.cs
 모든 단계를 끝냈습니다,All tiers completed,Game/GameManager.cs
 아직 달성하지 못했습니다,Not achieved yet,Game/GameManager.cs
-다이아,Gems,Game/GameManager.cs
 오늘은 다 받았습니다 (내일 다시),All claimed today (come back tomorrow),Game/GameManager.cs
 다음 챕터에서 새 도전이 열립니다,A new challenge opens next chapter,Game/GameManager.cs
 도전 {0} — 모두 처치!,Challenge {0} — defeat them all!,Game/GameManager.cs
@@ -164,38 +164,74 @@ D 등급 총알 획득!,Got D grade ammo!,UI/WeaponPopup.cs
 상어 잠옷,Shark Pajamas,Skin_Table.Name
 줄무늬 고양이,Tabby Cat,Skin_Table.Name
 해적 선장,Pirate Captain,Skin_Table.Name
-리볼버,Revolver,Weapon_Master.Name
-소드오프 샷건,Sawed-off Shotgun,Weapon_Master.Name
-우지,Uzi,Weapon_Master.Name
-상위 리볼버,Elite Revolver,Weapon_Master.Name
-펌프액션 샷건,Pump Shotgun,Weapon_Master.Name
-돌격소총,Assault Rifle,Weapon_Master.Name
-매그넘,Magnum,Weapon_Master.Name
-전투 샷건,Combat Shotgun,Weapon_Master.Name
-중기관총,Heavy MG,Weapon_Master.Name
-관통 라이플,Piercing Rifle,Weapon_Master.Name
-황금 매그넘,Golden Magnum,Weapon_Master.Name
-드래곤 샷건,Dragon Shotgun,Weapon_Master.Name
-미니건,Minigun,Weapon_Master.Name
-레일 라이플,Rail Rifle,Weapon_Master.Name
-레이저 건,Laser Gun,Weapon_Master.Name
-미사일 런처,Missile Launcher,Weapon_Master.Name
-플라즈마 레이저,Plasma Laser,Weapon_Master.Name
-다연장 미사일,Multi Missile,Weapon_Master.Name
-오메가 레이저,Omega Laser,Weapon_Master.Name
-핵 미사일,Nuke Missile,Weapon_Master.Name
-하이퍼 레이저,Hyper Laser,Weapon_Master.Name
-전술 핵 미사일,Tactical Nuke,Weapon_Master.Name
-퀘이사 레이저,Quasar Laser,Weapon_Master.Name
-반물질 미사일,Antimatter Missile,Weapon_Master.Name
-네뷸라 레이저,Nebula Laser,Weapon_Master.Name
-중력자 미사일,Graviton Missile,Weapon_Master.Name
-노바 레이저,Nova Laser,Weapon_Master.Name
-초신성 미사일,Supernova Missile,Weapon_Master.Name
-보이드 레이저,Void Laser,Weapon_Master.Name
-차원파괴 미사일,Rift Missile,Weapon_Master.Name
-제네시스 레이저,Genesis Laser,Weapon_Master.Name
-아포칼립스 미사일,Apocalypse Missile,Weapon_Master.Name
+기본탄_D,Basic Round_D,Weapon_Master.Name
+산탄_D,Buckshot_D,Weapon_Master.Name
+속사탄_D,Rapid Round_D,Weapon_Master.Name
+기본탄_C,Basic Round_C,Weapon_Master.Name
+산탄_C,Buckshot_C,Weapon_Master.Name
+관통탄_C,Piercing Round_C,Weapon_Master.Name
+기본탄_B,Basic Round_B,Weapon_Master.Name
+산탄_B,Buckshot_B,Weapon_Master.Name
+속사탄_B,Rapid Round_B,Weapon_Master.Name
+관통탄_B,Piercing Round_B,Weapon_Master.Name
+기본탄_A,Basic Round_A,Weapon_Master.Name
+산탄_A,Buckshot_A,Weapon_Master.Name
+속사탄_A,Rapid Round_A,Weapon_Master.Name
+관통탄_A,Piercing Round_A,Weapon_Master.Name
+기본탄_S,Basic Round_S,Weapon_Master.Name
+산탄_S,Buckshot_S,Weapon_Master.Name
+속사탄_S,Rapid Round_S,Weapon_Master.Name
+관통탄_S,Piercing Round_S,Weapon_Master.Name
+레이저탄_S,Laser Round_S,Weapon_Master.Name
+미사일탄_S,Missile_S,Weapon_Master.Name
+기본탄_SS,Basic Round_SS,Weapon_Master.Name
+산탄_SS,Buckshot_SS,Weapon_Master.Name
+속사탄_SS,Rapid Round_SS,Weapon_Master.Name
+관통탄_SS,Piercing Round_SS,Weapon_Master.Name
+레이저탄_SS,Laser Round_SS,Weapon_Master.Name
+미사일탄_SS,Missile_SS,Weapon_Master.Name
+기본탄_SSS,Basic Round_SSS,Weapon_Master.Name
+산탄_SSS,Buckshot_SSS,Weapon_Master.Name
+속사탄_SSS,Rapid Round_SSS,Weapon_Master.Name
+관통탄_SSS,Piercing Round_SSS,Weapon_Master.Name
+레이저탄_SSS,Laser Round_SSS,Weapon_Master.Name
+미사일탄_SSS,Missile_SSS,Weapon_Master.Name
+기본탄_R,Basic Round_R,Weapon_Master.Name
+산탄_R,Buckshot_R,Weapon_Master.Name
+속사탄_R,Rapid Round_R,Weapon_Master.Name
+관통탄_R,Piercing Round_R,Weapon_Master.Name
+레이저탄_R,Laser Round_R,Weapon_Master.Name
+미사일탄_R,Missile_R,Weapon_Master.Name
+기본탄_SR,Basic Round_SR,Weapon_Master.Name
+산탄_SR,Buckshot_SR,Weapon_Master.Name
+속사탄_SR,Rapid Round_SR,Weapon_Master.Name
+관통탄_SR,Piercing Round_SR,Weapon_Master.Name
+레이저탄_SR,Laser Round_SR,Weapon_Master.Name
+미사일탄_SR,Missile_SR,Weapon_Master.Name
+기본탄_SSR,Basic Round_SSR,Weapon_Master.Name
+산탄_SSR,Buckshot_SSR,Weapon_Master.Name
+속사탄_SSR,Rapid Round_SSR,Weapon_Master.Name
+관통탄_SSR,Piercing Round_SSR,Weapon_Master.Name
+레이저탄_SSR,Laser Round_SSR,Weapon_Master.Name
+미사일탄_SSR,Missile_SSR,Weapon_Master.Name
+기본탄_U,Basic Round_U,Weapon_Master.Name
+산탄_U,Buckshot_U,Weapon_Master.Name
+속사탄_U,Rapid Round_U,Weapon_Master.Name
+관통탄_U,Piercing Round_U,Weapon_Master.Name
+레이저탄_U,Laser Round_U,Weapon_Master.Name
+미사일탄_U,Missile_U,Weapon_Master.Name
+기본탄_SU,Basic Round_SU,Weapon_Master.Name
+산탄_SU,Buckshot_SU,Weapon_Master.Name
+속사탄_SU,Rapid Round_SU,Weapon_Master.Name
+관통탄_SU,Piercing Round_SU,Weapon_Master.Name
+레이저탄_SU,Laser Round_SU,Weapon_Master.Name
+미사일탄_SU,Missile_SU,Weapon_Master.Name
+기본탄_SSU,Basic Round_SSU,Weapon_Master.Name
+산탄_SSU,Buckshot_SSU,Weapon_Master.Name
+속사탄_SSU,Rapid Round_SSU,Weapon_Master.Name
+관통탄_SSU,Piercing Round_SSU,Weapon_Master.Name
+레이저탄_SSU,Laser Round_SSU,Weapon_Master.Name
+미사일탄_SSU,Missile_SSU,Weapon_Master.Name
 기어오는 좀비,Crawler,Zombie_Master.Name
 칼 좀비,Knife Zombie,Zombie_Master.Name
 좀비,Zombie,Zombie_Master.Name
@@ -253,7 +289,7 @@ D 등급 총알 획득!,Got D grade ammo!,UI/WeaponPopup.cs
 광산 티켓 확장,Mine Ticket Pack,Shop_Products.Name
 하루 광산 티켓 2 → 6 + 다이아 500,Daily mine tickets 2 → 6 + 500 gems,Shop_Products.Description
 핫딜 레이저 총알,Hot Deal: Laser Ammo,Shop_Products.Name
-S 등급 레이저 건 즉시 지급,Get an S grade Laser Gun now,Shop_Products.Description
+레이저탄_S 즉시 지급,Get a Laser Round_S now,Shop_Products.Description
 다이아 한 줌 (500),Handful of Gems (500),Shop_Products.Name
 다이아 500개 즉시 획득,Get 500 gems now,Shop_Products.Description
 "다이아 주머니 (1,800)","Pouch of Gems (1,800)",Shop_Products.Name
@@ -284,3 +320,36 @@ Stage 10-1 에서 열립니다,Unlocks at Stage 10-1,Unlock_Roadmap.Lock_Toast_M
 작은 푸른 보석,Small Blue Gem,Mine_Ore_Spec.Name_KR
 회색 바위,Gray Rock,Mine_Ore_Spec.Name_KR
 거대 황금 크리스탈,Huge Gold Crystal,Mine_Ore_Spec.Name_KR
+S 등급 레이저 건 즉시 지급,Get an S grade Laser Gun now,(지금은 안 씀) Shop_Products.Description
+리볼버,Revolver,(지금은 안 씀) Weapon_Master.Name
+소드오프 샷건,Sawed-off Shotgun,(지금은 안 씀) Weapon_Master.Name
+우지,Uzi,(지금은 안 씀) Weapon_Master.Name
+상위 리볼버,Elite Revolver,(지금은 안 씀) Weapon_Master.Name
+펌프액션 샷건,Pump Shotgun,(지금은 안 씀) Weapon_Master.Name
+돌격소총,Assault Rifle,(지금은 안 씀) Weapon_Master.Name
+매그넘,Magnum,(지금은 안 씀) Weapon_Master.Name
+전투 샷건,Combat Shotgun,(지금은 안 씀) Weapon_Master.Name
+중기관총,Heavy MG,(지금은 안 씀) Weapon_Master.Name
+관통 라이플,Piercing Rifle,(지금은 안 씀) Weapon_Master.Name
+황금 매그넘,Golden Magnum,(지금은 안 씀) Weapon_Master.Name
+드래곤 샷건,Dragon Shotgun,(지금은 안 씀) Weapon_Master.Name
+미니건,Minigun,(지금은 안 씀) Weapon_Master.Name
+레일 라이플,Rail Rifle,(지금은 안 씀) Weapon_Master.Name
+레이저 건,Laser Gun,(지금은 안 씀) Weapon_Master.Name
+미사일 런처,Missile Launcher,(지금은 안 씀) Weapon_Master.Name
+플라즈마 레이저,Plasma Laser,(지금은 안 씀) Weapon_Master.Name
+다연장 미사일,Multi Missile,(지금은 안 씀) Weapon_Master.Name
+오메가 레이저,Omega Laser,(지금은 안 씀) Weapon_Master.Name
+핵 미사일,Nuke Missile,(지금은 안 씀) Weapon_Master.Name
+하이퍼 레이저,Hyper Laser,(지금은 안 씀) Weapon_Master.Name
+전술 핵 미사일,Tactical Nuke,(지금은 안 씀) Weapon_Master.Name
+퀘이사 레이저,Quasar Laser,(지금은 안 씀) Weapon_Master.Name
+반물질 미사일,Antimatter Missile,(지금은 안 씀) Weapon_Master.Name
+네뷸라 레이저,Nebula Laser,(지금은 안 씀) Weapon_Master.Name
+중력자 미사일,Graviton Missile,(지금은 안 씀) Weapon_Master.Name
+노바 레이저,Nova Laser,(지금은 안 씀) Weapon_Master.Name
+초신성 미사일,Supernova Missile,(지금은 안 씀) Weapon_Master.Name
+보이드 레이저,Void Laser,(지금은 안 씀) Weapon_Master.Name
+차원파괴 미사일,Rift Missile,(지금은 안 씀) Weapon_Master.Name
+제네시스 레이저,Genesis Laser,(지금은 안 씀) Weapon_Master.Name
+아포칼립스 미사일,Apocalypse Missile,(지금은 안 씀) Weapon_Master.Name

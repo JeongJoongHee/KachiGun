@@ -191,9 +191,12 @@ class P:
                 if mx and tr >= mx: break
                 if s.stat[k] < s.mission_target(i, tr): break
                 v = mission_value(m) + m['Reward_Add_Per_10Tier'] * (tr // 10)
-                s.gems += v * ratio; s.gem_src['mission'] += v * ratio
-                g = v * (1 - ratio) * kills * s.stage_row(s.stage)['Base_Zombie_Gold'] * s.goldmul()
-                s.gold += g; s.gold_src['mission'] += g
+                # 10-24: 단계마다 골드(짝수) → 다이아(홀수) 번갈아 한 종류, 두 단계 합 = 다이아 ratio + 골드 (1-ratio)
+                if tr % 2 == 1:
+                    s.gems += v * ratio * 2; s.gem_src['mission'] += v * ratio * 2
+                else:
+                    g = v * (1 - ratio) * 2 * kills * s.stage_row(s.stage)['Base_Zombie_Gold'] * s.goldmul()
+                    s.gold += g; s.gold_src['mission'] += g
                 s.mtier[i] += 1
 
     def gem_options(s):

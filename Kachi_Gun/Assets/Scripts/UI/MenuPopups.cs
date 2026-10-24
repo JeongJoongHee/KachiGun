@@ -176,8 +176,10 @@ namespace KachiGun
                 var r = Tables.Supplies[i];
                 var bg = UIKit.Row(inner, "Supply" + r.id);
                 bg.rectTransform.Place(0.5f, 1, new Vector2(0, -10 - i * (rh + 10)), new Vector2(880, rh), new Vector2(0.5f, 1));
-                var ic = UIKit.KitImg(bg.transform, "i_chest_w", new Vector2(96, 86), "Icon");
-                ic.rectTransform.Place(0, 0.5f, new Vector2(30, 0), new Vector2(96, 86), new Vector2(0, 0.5f));
+                var art = Icon(r);
+                var ic = art ? UIKit.Img(bg.transform, art, new Vector2(110, 110), "Icon") : UIKit.KitImg(bg.transform, "i_chest_w", new Vector2(96, 86), "Icon");
+                if (art) ic.preserveAspect = true;
+                ic.rectTransform.Place(0, 0.5f, new Vector2(art ? 22 : 30, 0), art ? new Vector2(110, 110) : new Vector2(96, 86), new Vector2(0, 0.5f));
                 ic.raycastTarget = false;
                 var nm = UIKit.Label(bg.transform, "", 34, Color.white, TextAnchor.MiddleLeft, 3);
                 nm.rectTransform.Place(0, 0.5f, new Vector2(146, 28), new Vector2(470, 46), new Vector2(0, 0.5f));
@@ -191,6 +193,10 @@ namespace KachiGun
                 rows.Add((r, bg, ic, nm, inf, b));
             }
         }
+
+        /// <summary>보급품 그림 = Supply 표 Icon 칸 → Art/Supply/그 이름 (tools/supply_icons.py 가 만듦). 비었거나 없으면 null(상자 아이콘)</summary>
+        public static Sprite Icon(SupplyRow r) =>
+            string.IsNullOrEmpty(r.icon) || Resources.Load<Texture2D>("Art/Supply/" + r.icon) == null ? null : Art.Get("Supply/" + r.icon);
 
         void MakeList(out RectTransform inner) => SkinPopup.MakeScroll(content, new Vector2(0, -135), new Vector2(900, 1300), out inner);
 
@@ -216,7 +222,8 @@ namespace KachiGun
                 var gc = GradeColor(c.row.grade);
                 c.name.text = $"{L.T(c.row.name)}  <size=26><color=#{ColorUtility.ToHtmlStringRGB(gc)}>{L.T(c.row.grade)}</color></size>";
                 c.info.text = Effect(c.row);
-                c.icon.color = open ? gc : new Color(0.45f, 0.42f, 0.4f);
+                bool art = c.icon.sprite && c.icon.sprite.name.StartsWith("Supply/");
+                c.icon.color = art ? (open ? Color.white : new Color(0.3f, 0.3f, 0.3f, 0.85f)) : open ? gc : new Color(0.45f, 0.42f, 0.4f);   // 그림이면 잠김만 어둡게
                 c.name.color = open ? Color.white : new Color(0.85f, 0.82f, 0.78f);
                 c.bg.color = own ? new Color(1f, 0.92f, 0.6f) : open ? Color.white : new Color(0.72f, 0.68f, 0.64f);
                 UIKit.LabelOf(c.buy).text = own ? L.T("보유") : open ? L.T("다이아") + " " + c.row.cost.ToString("0") : L.F("챕터 {0}", c.row.unlockChapter);
@@ -225,7 +232,7 @@ namespace KachiGun
         }
     }
 
-    /// <summary>미션 (기획서 10.1): 단계별 반복 미션 → 다이아 30% + 골드 70% (Mission_Gem_Ratio). 패스 상품은 넣지 않음(10-20 결정)</summary>
+    /// <summary>미션 (기획서 10.1): 단계별 반복 미션 → 단계마다 골드·다이아 번갈아 한 종류 (10-24, 합은 다이아 30% + 골드 70%). 패스 상품은 넣지 않음(10-20 결정)</summary>
     public class MissionPopup : Popup
     {
         protected override Vector2 Size => new(1000, 1320);
@@ -276,7 +283,7 @@ namespace KachiGun
                 rows[i].fill.rectTransform.anchorMax = new Vector2(Mathf.Max(r01, 0.04f), 1);
                 rows[i].fill.enabled = r01 > 0;
                 bool ready = v >= t;
-                UIKit.LabelOf(rows[i].claim).text = $"{L.T("받기")}\n<size=22>{L.T("다이아")} {Num.Gem(GM.MissionGems(i))} · {L.T("골드")} {Num.F(GM.MissionGold(i))}</size>";
+                UIKit.LabelOf(rows[i].claim).text = $"{L.T("받기")}\n<size=24>{GM.MissionRewardText(i)}</size>";
                 UIKit.SetOn(rows[i].claim, ready);
             }
         }
@@ -290,7 +297,7 @@ namespace KachiGun
         protected override Vector2 Size => new(1000, 1500);
         protected override string Title => "설정";
         Button bgm, sfx, vibe, lang;
-        readonly Image[] icons = new Image[3];
+        readonly Image[] icons = new Image[4];   // 배경음·효과음·진동·언어 (10-24: 3칸이라 언어 줄에서 넘쳐 설정 창이 깨졌음)
 
         protected override void Build()
         {

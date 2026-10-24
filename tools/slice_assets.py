@@ -596,7 +596,7 @@ def do_bullets():
     save(shrink(trim(b1, 2), 256), 'Bullet/bullet_basic.png')                         # 오른쪽(+x) 방향
     b2 = loadb('Bullet_02.png')
     save(shrink(trim(keep_largest(crop(b2, (1176, 663, 188, 189)), 0, 0.5), 1), 64), 'Bullet/pellet.png')
-    save(shrink(trim(crop(b2, (440, 560, 600, 830)), 1), 200), 'Bullet/shotgun_icon.png')
+    # (10-24) 예전 산탄 아이콘 조각 shotgun_icon 은 안 씀 → icon_shotgun
     # 드릴: 과녁과 겹쳐 있어 다각형으로 드릴만 남기고, 끝이 +x 를 향하게 돌림
     b3 = loadb('Bullet_03.png')
     s = 2048 / 800.0
@@ -621,16 +621,19 @@ def do_bullets():
     cm = (cr[..., 0] > 150) & (cr[..., 1] < 140) & (cr[..., 2] < 140)
     cr[~cm] = 0
     save(shrink(trim(cr, 1), 160), 'Bullet/crosshair.png')
-    blue = (b4[..., 2] > 150) & (b4[..., 0] < 150) & a4
-    lz = b4.copy(); lz[~blue & ~((b4[..., :3].min(-1) > 200) & a4)] = 0
-    lz[red] = 0
-    save(shrink(trim(lz, 2), 200), 'Bullet/laser_icon.png')
+    # (10-24) 예전 레이저 아이콘 조각 laser_icon 은 안 씀 → icon_laser
     save(make_beam(), 'Bullet/laser_beam.png')
     # 미사일: 로켓 + 뒤 폭발 불꽃 전체. 코 방향(오른쪽 위 약 50도)을 +x 로
     b5 = loadb('Bullet_05.png')
     m5 = trim(b5, 2)
     m5 = rotate_keep(m5, -48)
     save(shrink(trim(m5, 2), 320), 'Bullet/missile.png')
+    # 10-24 사용자 요청: 기본탄 = Bullet_06(불꽃 없는 총알, 아래 작은 불티는 버림) · 속사탄 = Bullet_01(bullet_basic 그대로)
+    b6 = loadb('Bullet_06.png')
+    save(shrink(trim(keep_largest(b6, 3, 0.5), 2), 200), 'Bullet/bullet_plain.png')    # 오른쪽(+x) 방향
+    # 10-24: 총알 아이콘 = 그림 전체 (Bullet_Spec 의 Icon_Path). 번호 = 종류
+    for typ, n in (('single', 6), ('shotgun', 2), ('fast', 1), ('pierce', 3), ('laser', 4), ('missile', 5)):
+        save(shrink(trim(loadb('Bullet_%02d.png' % n), 2), 256), 'Bullet/icon_%s.png' % typ)
 
 def make_beam():
     """레이저 줄(가로로 늘려 쓰는 32x24 픽셀): 가운데 흰색 → 하늘색 → 파랑 → 투명 (Bullet_04 색)"""

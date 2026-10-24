@@ -253,6 +253,26 @@ namespace KachiGun.EditorTools
             Check(System.Math.Abs(Tables.Stage(4).bossHp - 6039.8) < 1 && Stats.Cost(1) == System.Math.Round(Tables.Upgrade(1).cost) && Tables.GradeName(12) == "SSU", "표: 스테이지·강화·등급");
             Check(Tables.Upgrade(1600).spd > Tables.Upgrade(1500).spd * 1.5 && Tables.Buff("buff_atk").mul == 2, "공속 곱 성장 · 광고 x2");
             {
+                // 10-24) 기본 4종도 SSU 까지, 같은 등급 레이저·미사일보다 약함 · 이름 "종류_등급" · 총알 아이콘·보급품 그림이 표대로 있음
+                bool all = true, weaker = true;
+                for (int g = 4; g <= Tables.MaxGrade; g++)
+                {
+                    var types = Tables.TypesOfGrade(g);
+                    all &= types.Count == 6;
+                    var la = Tables.Weapon(Tables.Code(g, "laser")); var mi = Tables.Weapon(Tables.Code(g, "missile"));
+                    foreach (var t in new[] { "single", "shotgun", "fast", "pierce" })
+                    {
+                        var w = Tables.Weapon(Tables.Code(g, t));
+                        weaker &= w != null && w.atk * w.count / w.interval < System.Math.Max(la.atk * la.count / la.interval, mi.atk * mi.count / mi.interval);
+                    }
+                }
+                Check(all && weaker && Tables.WeaponName(Tables.Code(12, "single")) == L.T("기본탄_SSU"), "S~SSU 6종 · 기본 4종이 더 약함 · 이름 종류_등급");
+                bool icons = true;
+                foreach (var t in Tables.Types) icons &= Resources.Load<Texture2D>("Art/" + Tables.Bullet(t).icon) != null && Resources.Load<Texture2D>("Art/" + Tables.Bullet(t).sprite) != null;
+                foreach (var r in Tables.Supplies) icons &= SupplyPopup.Icon(r) != null;
+                Check(icons, "총알 아이콘·발사체 그림 · 보급품 그림 25장 (표 Icon 칸)");
+            }
+            {
                 // 공속 상한을 넘으면 넘친 만큼 공격력 (초당 피해가 공속에 비례)
                 var w0 = Tables.Weapon(Tables.Code(0, "single"));
                 int sv = S.lvSpd;
@@ -315,13 +335,21 @@ namespace KachiGun.EditorTools
                 for (int i = 0; i < n; i++) GM.AdGems();
                 Check(System.Math.Abs(S.gems - g0a - n * Tables.C("AdGems_Amount", 40)) < 0.01 && GM.AdGemsLeft == 0 && GM.AdGems() != null, $"광고 다이아 {n}번 x {Tables.C("AdGems_Amount", 40)}");
             }
-            // 10-6) 미션 보상 = 다이아 30% + 골드 70%, 스테이지 미션은 Max_Tier 에서 끝
+            // 10-6) 미션 보상 = 단계마다 골드 → 다이아 번갈아 한 종류 (10-24), 스테이지 미션은 Max_Tier 에서 끝
             {
                 int mi = Tables.Missions.FindIndex(m => m.id == "kill");
                 long keep = S.statKills;
-                S.statKills = GM.MissionTarget(mi);
-                double gg = S.gems, go = S.gold, eg = GM.MissionGems(mi), eo = GM.MissionGold(mi);
-                Check(GM.ClaimMission(mi) == null && System.Math.Abs(S.gems - gg - eg) < 0.01 && S.gold - go > eo * 0.99 && eo > 0, $"미션 보상 다이아 {eg} + 골드 {Num.F(eo)}");
+                int keepTier = S.missionTier[mi];
+                for (int k = 0; k < 2; k++)
+                {
+                    S.missionTier[mi] = k;   // 0 = 골드 차례 · 1 = 다이아 차례
+                    S.statKills = GM.MissionTarget(mi);
+                    double gg = S.gems, go = S.gold, eg = GM.MissionGems(mi), eo = GM.MissionGold(mi);
+                    bool one = k == 0 ? (eg == 0 && eo > 0) : (eg > 0 && eo == 0);
+                    Check(one && GM.ClaimMission(mi) == null && System.Math.Abs(S.gems - gg - eg) < 0.01 && S.gold - go >= eo * 0.99,
+                        $"미션 보상 {k + 1}단계 = {(k == 0 ? "골드 " + Num.F(eo) : "다이아 " + eg)} 한 종류만");
+                }
+                S.missionTier[mi] = keepTier;
                 S.statKills = keep;
                 int si = Tables.Missions.FindIndex(m => m.id == "stage");
                 int tier = S.missionTier[si];
