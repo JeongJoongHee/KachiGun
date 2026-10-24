@@ -1,5 +1,13 @@
 # 카치건 (좀비 키우기) — 세로 방치형 분대 슈팅, Unity 6000.0.84f1 · 2D URP
 
+## ▶ 재개 메모 (2026-10-24 — 사용자 "오늘 비공개 테스트 요청하려고 해, 남은 작업 상세히")
+- `남은_작업_정리.html` 을 **비공개 테스트 제출 기준으로 다시 짬** (키 **`kachigun-todo-1024`**, 47항목, 이전 페이지 백업 = 스크래치 todo_backup_1021.html — 1021 키 체크·의견은 0개였음)
+  - ① 결정 6: `p-pkg`(추천 com.zkfpf.capybaravszombie) · `p-enname`(Capybara vs Zombies · 스토어 제목 "카피바라vs좀비: 방치형 슈팅") · `p-scope`(추천 = 지금 게임 그대로 오늘 제출, 광고·결제·소리는 14일 동안 업데이트) · `p-privacy`(추천 서바이벌 랭킹 서버 `/kachigun-privacy`, 고르면 배포 허락) · `p-testers`(규랩스) · `p-country`(대한민국)
+  - ② 내 몫 순서: `m-test` 자동 시험 → `m-clean` [테스트용] 버튼 삭제 → `m-settings` 패키지·1.0(1)·min 24·target 36·IL2CPP ARM64·앱 이름 한/영 → `m-icon` → `m-key`(키 보관\, 비번 출력 금지) → `m-aab`(서바이벌 BuildAab.cs 가져와 배치 빌드 → Builds/capybaravszombie-1.0-1.aab, AD_ID 없음 점검) → `m-shots`·`m-text`(→ `스토어 등록\`, 서바이벌 store_graphics.py·스토어_등록정보.html 방식) → `m-privacy` → `m-answers`(`스토어 등록\게임설정_답안.html`, 서바이벌 게임설정_10항목.html 고쳐 씀 — 광고 없음·광고 ID 아니요·로그인 없음·데이터 수집 없음·13세 이상)
+  - ③ 사용자 Play Console 7단계(`y-app`~`y-keybak`) · ④ 검토 뒤 14일(`w-*`, 규랩스 요청 글은 내가) · ⑤ 14일 동안 업데이트(`u-ads`·`u-iap` 결정, AdMob·결제 프로필·소리·보급품, 내 몫 광고·결제·소리·클라우드(선택)) · ⑥ 프로덕션 · ⑦ 재생 확인
+- 10-24 확인한 상태: 10-20 이후 바뀐 파일 없음 · Unity 닫혀 있음 · 네트워크 코드 없음 · Unity 서비스(분석) 꺼짐 · `키 보관/`·`*.keystore` 는 .gitignore 에 있음 · Unity 6000.0.84f1 에 AndroidPlayer 설치돼 있음
+- **재개하면**: `PYTHONUTF8=1 python tools/todo_checks.py` → ① 결정 읽고 ② 순서대로. 사용자가 "추천대로 진행해 줘" 하면 ① 전부 추천안
+
 ## ▶ 재개 메모 (2026-10-20 밤 마무리 — 사용자 "다음에 작업할 수 있게")
 
 **재개하면 이 순서로**

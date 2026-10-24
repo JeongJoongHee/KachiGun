@@ -24,12 +24,22 @@
   h2 small{font-size:14px;font-weight:normal;color:var(--soft);margin-left:8px}
   h3{font-size:16px;margin:20px 0 6px;color:var(--orange)}
   p.note{color:var(--soft);margin:4px 0 10px;font-size:15px}
-  .sum{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:10px;margin:16px 0}
+  .sum{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin:16px 0}
   .sum a{display:block;background:var(--card);border:1px solid var(--line);border-radius:10px;padding:12px 14px;text-decoration:none;color:var(--ink)}
   .sum b{display:block;font-size:26px;line-height:1.2}
   .sum span{color:var(--soft);font-size:14px}
   .tip{background:var(--orange-bg);border-left:5px solid var(--orange);border-radius:8px;padding:12px 16px;margin:14px 0}
-  .tip ol{margin:6px 0 0;padding-left:22px}
+  .tip ol,.tip ul{margin:6px 0 0;padding-left:22px}
+  .tip.green{background:var(--green-bg);border-color:var(--green)}
+  .tip.red{background:var(--red-bg);border-color:var(--red)}
+  .tip.blue{background:var(--blue-bg);border-color:var(--blue)}
+  /* 일정 띠 */
+  .flow{display:grid;grid-template-columns:repeat(auto-fit,minmax(128px,1fr));gap:8px;margin:14px 0 6px;counter-reset:st}
+  .flow div{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:10px 12px;font-size:14px;position:relative}
+  .flow div b{display:block;font-size:15px}
+  .flow div i{font-style:normal;color:var(--soft);font-size:13px;display:block}
+  .flow div.today{border:2px solid var(--orange)}
+  .flow div::before{counter-increment:st;content:counter(st);position:absolute;top:8px;right:10px;color:var(--soft);font-weight:bold}
   ul.todo{list-style:none;margin:0;padding:0;background:var(--card);border:1px solid var(--line);border-radius:10px}
   ul.todo li{border-top:1px solid var(--line)}
   ul.todo li:first-child{border-top:0}
@@ -48,15 +58,21 @@
   .notebox .hint{color:var(--soft);font-size:13px;margin:4px 0 0}
   .f{color:var(--soft);font-size:14px}
   .rec{color:var(--green);font-weight:bold}
+  .warn{color:var(--red);font-weight:bold}
   .tag{display:inline-block;font-size:12px;border-radius:5px;padding:0 7px;margin-right:6px;font-weight:bold;white-space:nowrap}
   .t-see{background:var(--blue-bg);color:var(--blue)}
   .t-pick{background:var(--orange-bg);color:var(--orange)}
   .t-me{background:var(--green-bg);color:var(--green)}
   .t-wait{background:var(--gray-bg);color:var(--soft)}
   .t-you{background:var(--orange);color:#fff}
+  .time{display:inline-block;font-size:12px;color:var(--soft);border:1px solid var(--line);border-radius:5px;padding:0 6px;margin-left:4px;white-space:nowrap}
   ol.opts{margin:4px 0 0;padding-left:22px}
   ol.opts li{margin:2px 0;border:0}
-  code{background:var(--gray-bg);border-radius:4px;padding:0 5px;font-size:14px}
+  ol.opts ul{margin:2px 0;padding-left:18px}
+  code{background:var(--gray-bg);border-radius:4px;padding:0 5px;font-size:14px;word-break:break-all}
+  table.mini{border-collapse:collapse;width:100%;font-size:14px;margin:6px 0}
+  table.mini th,table.mini td{border:1px solid var(--line);padding:5px 8px;text-align:left;vertical-align:top}
+  table.mini th{background:var(--gray-bg)}
   .bar{position:sticky;bottom:0;display:flex;gap:10px;align-items:center;justify-content:flex-end;margin-top:24px;padding:18px 0 12px;background:linear-gradient(transparent,var(--bg) 45%)}
   .bar button{border:0;border-radius:8px;padding:9px 16px;background:var(--orange);color:#fff;font:bold 15px/1.4 inherit;cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,.18)}
   .bar span{color:var(--soft);font-size:14px;background:var(--card);border-radius:6px;padding:2px 8px}
@@ -67,182 +83,265 @@
 </head>
 <body>
 <main>
-<h1>남은 작업 정리</h1>
-<p class="sub">카치건 (카피바라vs좀비) · <b>2026-10-20 밤 기준 — 남은 일만</b> (끝난 일 기록은 <code>리소스/CLAUDE.md</code>, 전체 정리는 <code>구현_정리.html</code>, 밸런스 숫자는 <code>밸런스_점검.html</code> 맨 위) · 체크와 의견은 이 브라우저에 저장되고, 다음 작업 때 제가 읽어서 반영합니다</p>
+<h1>남은 작업 정리 — 비공개 테스트 제출</h1>
+<p class="sub">카치건 (카피바라vs좀비) · <b>2026-10-24 기준</b> · 목표: <b>오늘 Play Console 에서 비공개 테스트 검토 제출까지</b> · 체크와 의견은 이 브라우저에 저장되고, 제가 읽어서 이어 갑니다 (이전 목록은 이 문서로 합쳐 다시 짰습니다)</p>
 
-<div class="tip" style="background:var(--green-bg);border-color:var(--green)">
-  <b>10-20 한 것 (체크·의견 30개 반영 · GitHub 올림 끝)</b>
-  <ol>
-    <li><b>밸런스</b> — 광고 최대·무과금·하루 4시간 = 50챕터 20일 · 100챕터 62일 · 150챕터 <b>149일</b> · 광고 안 봄 538일(그대로 — 광고를 봐야 진행되는 구조)</li>
-    <li><b>무료 다이아 = 살 수 있는 것 전부의 31%</b> (무료 3 : 결제 7) · 상점 광고 다이아 40 x 하루 3번 · 미션 보상 다이아 30% + 골드 70%</li>
-    <li><b>광산 = 보스 던전 1회 보상의 절반</b> · 슬롯 강화 골드 = 그 챕터 수입 10분 · 골드 1/2</li>
-    <li><b>스킨 17개</b>(해적 선장) · 펫·탈것·패스·<b>사냥</b> 폐기 · 앱 이름 <b>카피바라vs좀비</b> · <b>영어</b>(설정 → 언어)</li>
-    <li><b>GitHub</b> <code>JeongJoongHee/KachiGun</code> — 앞으로 커밋·올리기는 제가 함</li>
-  </ol>
+<div class="tip red">
+  <b>지금 상태 (10-24 확인)</b>
+  <ul>
+    <li><b>게임</b>: 10-20 마지막 작업 그대로 (그 뒤로 바뀐 파일 없음). 10-20 에 넣은 광고 다이아·미션 보상·영어는 <b>자동 시험을 아직 한 번도 안 돌렸음</b></li>
+    <li><b>출시 준비는 아직 0</b>: 앱 ID(패키지 이름)가 Unity 기본값 · 서명 키 없음 · 앱 아이콘 없음 · AAB 빌드 도구 없음 · 스토어 그림·글 없음 · 개인정보처리방침 없음 · Play Console 에 앱 없음</li>
+    <li>광고 = [임시](누르면 바로 보상) · 결제 = "준비 중" · 소리 없음 · 설정 창에 [테스트용] 재화 버튼 남아 있음</li>
+    <li>Unity 는 지금 <b>닫혀 있음</b> — 제가 자동 시험·빌드를 바로 돌릴 수 있는 상태</li>
+  </ul>
 </div>
 
 <div class="tip">
-  <b>다음에 시작할 때 (이 순서로)</b>
+  <b>오늘 하루 흐름 (추천)</b>
   <ol>
-    <li>가능하면 <b>Unity 를 닫아 둔 채</b> 시작 — 닫혀 있어야 제가 자동 시험을 돌릴 수 있습니다 (열려 있어도 다른 작업은 됨)</li>
-    <li>이 페이지에서 한 것은 <b>체크</b>, 정할 것·고칠 것은 <b>✎ 의견</b> (결정 항목은 글자를 누르면 의견 칸이 열림 — 번호나 "추천대로"만 적어도 됨)</li>
-    <li>Claude Code 대화창에 <b>"카치건 남은 작업 반영해 줘"</b> — 제가 체크·의견을 읽고 이어서 합니다. 못 읽을 때는 맨 아래 <b>[의견 모아 복사]</b> → 대화창에 붙여 넣기</li>
+    <li><b>① 정할 것 6개</b>를 이 페이지에서 정하기 (10분) — 번호나 "추천대로"만 적어도 됨. 전부 추천대로면 대화창에 <b>"추천대로 진행해 줘"</b> 한마디로 끝</li>
+    <li>그동안 <b>③-1 Play Console 앱 만들기</b>는 바로 하셔도 됩니다 (제 작업과 상관없음)</li>
+    <li>제가 <b>② 준비</b>를 순서대로 진행 (3~4시간) — <span class="warn">이 동안 Unity 를 열지 말아 주세요</span> (열면 자동 시험·빌드가 멈춤)</li>
+    <li>제가 "AAB·스토어 자료 끝" 하면 <b>③ Play Console 입력</b> (1~1.5시간, 답안을 보고 그대로 고르기·붙여 넣기)</li>
+    <li>마지막에 <b>[검토를 위해 변경사항 전송]</b> → 오늘 할 일 끝. 구글 검토는 보통 하루쯤 (서바이벌 때 10-16 밤 제출 → 다음 날 통과)</li>
   </ol>
 </div>
+
+<div class="flow">
+  <div class="today"><b>정하기</b>① 6개<i>지금 · 10분</i></div>
+  <div class="today"><b>제가 준비</b>② 시험·빌드·자료<i>오늘 · 3~4시간</i></div>
+  <div class="today"><b>Play Console</b>③ 입력·제출<i>오늘 · 1~1.5시간</i></div>
+  <div><b>구글 검토</b>④ 기다리기<i>하루쯤</i></div>
+  <div><b>테스터 14일</b>④ 12명 이상<i>~11월 9일쯤</i></div>
+  <div><b>정식 출시</b>⑥ 프로덕션 신청<i>11월 중순</i></div>
+</div>
+<p class="note">14일 동안에도 새 버전을 계속 올릴 수 있고 14일은 끊기지 않습니다. 그래서 <b>실제 광고·결제·소리는 14일 동안 업데이트로 넣는 것</b>을 추천합니다 (⑤). 오늘 다 넣으려 하면 제출이 며칠 밀립니다.</p>
+
 <p class="note">
-  <span class="tag t-pick">결정</span>어떻게 할지 정해 주셔야 함
-  <span class="tag t-see">보기</span>재생해 보고 괜찮은지만
-  <span class="tag t-you">직접</span>직접 하셔야 함
-  <span class="tag t-me">개발</span>말씀하시면 제가 만듦
+  <span class="tag t-pick">결정</span>정해 주셔야 함 (글자를 누르면 의견 칸)
+  <span class="tag t-you">직접</span>구글 계정으로 직접 하셔야 함
+  <span class="tag t-me">개발</span>제가 함
+  <span class="tag t-see">보기</span>보고 괜찮은지만
+  <span class="tag t-wait">대기</span>기다리기
 </p>
 
-<div class="sum"><a href="#now"><b>2</b><span>① 지금 바로</span></a><a href="#see"><b>6</b><span>② Unity 재생 확인</span></a><a href="#art"><b>2</b><span>③ 그림·소리 준비</span></a><a href="#store"><b>11</b><span>④ 스토어 출시 준비</span></a><a href="#dev"><b>5</b><span>⑤ 제가 만들 것</span></a><a href="#rel"><b>2</b><span>⑥ 출시 전 정리</span></a></div>
+<div class="sum"><a href="#pick"><b>6</b><span>① 지금 정할 것</span></a><a href="#me"><b>10</b><span>② 제가 오늘 준비</span></a><a href="#console"><b>7</b><span>③ Play Console (오늘)</span></a><a href="#wait"><b>4</b><span>④ 검토 뒤 14일</span></a><a href="#update"><b>11</b><span>⑤ 14일 동안 업데이트</span></a><a href="#prod"><b>3</b><span>⑥ 정식 출시</span></a><a href="#see"><b>6</b><span>⑦ 재생 확인</span></a></div>
 
-<h2 id="now">① 지금 바로 <small>10분 — 다음 작업 방향이 여기서 정해짐</small></h2>
+<!-- ───────────────────────── ① ───────────────────────── -->
+<h2 id="pick">① 지금 정할 것 <small>10분 — 이게 정해져야 ② 를 시작할 수 있음</small></h2>
 <ul class="todo">
-  <li data-id="u-priority"><label><input type="checkbox"><span><span class="tag t-pick">결정</span><span class="txt"><b>다음에 만들 것 순서</b> — 남은 큰 일은 광고·결제 연결 · 소리 · 클라우드 저장 · 스토어 등록입니다. 무엇부터 할까요?
+  <li data-id="p-pkg"><label><input type="checkbox"><span><span class="tag t-pick">결정</span><span class="txt"><b>패키지 이름 (앱 ID)</b> — 첫 AAB 를 올리는 순간 <b>영원히 못 바꿉니다</b>. 지금은 Unity 기본값(<code>com.DefaultCompany.2D-URP</code>)이라 반드시 정해야 함
     <ol class="opts">
-      <li><b>광고·결제 연결 + 스토어 준비</b>(⑤) → 소리 → 클라우드 저장 <span class="rec">추천 — 비공개 테스트 14일을 빨리 시작할수록 출시가 당겨짐 (서바이벌 때와 같은 흐름)</span></li>
-      <li>소리 먼저 (④ 리소스를 먼저 구하셔야 함) → 광고·결제 → 스토어</li>
-      <li>게임 내용 더 다듬기 먼저 (③ 재생 확인 의견 위주) → 그다음 스토어</li>
+      <li><code>com.zkfpf.capybaravszombie</code> <span class="rec">추천 — 불도깨비(<code>com.zkfpf.buldokkaebi</code>)와 같은 형식</span></li>
+      <li>다른 이름 — 영어 소문자·숫자·점만, 의견에 적어 주세요</li>
     </ol></span></span></label></li>
-  <li data-id="u-close"><label><input type="checkbox"><span><span class="tag t-you">직접</span><b>Unity 닫기 → "시험 돌려 줘"</b> — 10-20 에 새로 넣은 것(광고 다이아 · 미션 다이아+골드 · 영어 글자) 자동 시험이 아직 안 돌았습니다. Unity 가 열려 있으면 시험을 못 돌려서 지금까지는 코드 검사만 했습니다.
+  <li data-id="p-enname"><label><input type="checkbox"><span><span class="tag t-pick">결정</span><span class="txt"><b>이름 (한국어·영어)</b> — 한국어 폰 아이콘 아래 = <b>카피바라vs좀비</b>(10-20 확정)
     <ol class="opts">
-      <li>Unity 에서 저장(Ctrl+S) 후 창 닫기</li>
-      <li>대화창에 "시험 돌려 줘" → 제가 자동 시험 + 영어 화면 캡처 + Unity 가 만드는 <code>.meta</code> 파일까지 커밋 (5~10분)</li>
-      <li>제가 "끝났다"고 하면 Unity 다시 열기</li>
-    </ol></span></label></li>
+      <li>영어 폰 아이콘 이름·영어 스토어 제목 = <b>Capybara vs Zombies</b> <span class="rec">추천</span></li>
+      <li>스토어 제목(30자까지, 아이콘 이름과 달라도 됨) = <b>카피바라vs좀비: 방치형 슈팅</b> <span class="rec">추천 — 검색에 걸리게</span> · 그냥 "카피바라vs좀비"만 원하시면 의견에</li>
+    </ol></span></span></label></li>
+  <li data-id="p-scope"><label><input type="checkbox"><span><span class="tag t-pick">결정</span><span class="txt"><b>첫 빌드에 무엇까지</b>
+    <ol class="opts">
+      <li><b>지금 게임 그대로</b> (광고 버튼 = 바로 보상 · 결제 = "준비 중" · 소리 없음) + [테스트용] 버튼만 지움 → <b>오늘 제출</b>. 광고·결제·소리는 14일 동안 업데이트로 <span class="rec">추천 — 14일이 오늘~내일 바로 시작됨</span></li>
+      <li>실제 광고(AdMob)까지 붙인 뒤 제출 — AdMob 계정 작업(⑤ 의 AdMob 칸) + 제 작업 2~3시간 더 → 오늘 제출은 어려울 수 있음</li>
+    </ol>
+    <span class="f">1번이면 Play Console 의 광고 질문은 "광고 없음"으로 답하고, 광고를 넣은 업데이트를 올릴 때 "있음"으로 바꿉니다 (서바이벌 때와 같음).</span></span></span></label></li>
+  <li data-id="p-privacy"><label><input type="checkbox"><span><span class="tag t-pick">결정</span><span class="txt"><b>개인정보처리방침 올릴 곳</b> — Play Console 에 웹 주소가 꼭 필요. 내용은 서바이벌 것(개발자 FIBE · jjhfibe@gmail.com)을 이 게임에 맞게 고침 (지금 빌드는 모으는 정보 없음 → 나중에 광고 넣을 때 광고 ID 내용 추가)
+    <ol class="opts">
+      <li>이미 있는 서바이벌 랭킹 서버(Cloudflare)에 <code>/kachigun-privacy</code> 주소를 하나 더 → 제가 배포 <span class="rec">추천 — 돈·관리 추가 없음. 이걸 고르시면 배포 허락으로 봄</span></li>
+      <li>다른 곳 (GitHub Pages 등) — 의견에</li>
+    </ol></span></span></label></li>
+  <li data-id="p-testers"><label><input type="checkbox"><span><span class="tag t-pick">결정</span><span class="txt"><b>테스터 12명 구하기</b> — 개인 개발자 계정이라 <b>12명 이상이 14일 동안 참여</b>해야 정식 출시 신청이 됩니다
+    <ol class="opts">
+      <li><b>규랩스 대행사</b> 그대로 (계정에 이미 "규랩스 테스터 목록" 44명) — 검토 통과 후 새 참여 링크로 다시 요청, 요청 글은 제가 씀 <span class="rec">추천 — 서바이벌·심심할 때 하는 게임과 같은 방법</span></li>
+      <li>지인 12명 이상 — Gmail 주소를 모아서 목록으로</li>
+      <li>둘 다 (대행사 + 지인 몇 명 — 실제 의견을 받기 좋음)</li>
+    </ol></span></span></label></li>
+  <li data-id="p-country"><label><input type="checkbox"><span><span class="tag t-pick">결정</span><span class="txt"><b>테스트 국가</b>
+    <ol class="opts">
+      <li><b>대한민국만</b> <span class="rec">추천 — 서바이벌과 같음 · 테스터가 모두 한국</span></li>
+      <li>여러 나라 — 의견에</li>
+    </ol>
+    <span class="f">정식 출시 국가는 나중에 따로 정합니다 (영어가 있으니 그때 넓힐 수 있음).</span></span></span></label></li>
 </ul>
 
-<h2 id="see">② Unity 재생 확인 <small>30분쯤 — 이상하면 ✎ 의견에 "어디서 · 무엇이"</small></h2>
+<!-- ───────────────────────── ② ───────────────────────── -->
+<h2 id="me">② 제가 오늘 준비할 것 <small>순서대로 3~4시간 · Unity 는 닫아 두기</small></h2>
+<p class="note">끝날 때마다 제가 대화창에 알려 드립니다. 이 칸은 보고만 계셔도 되고, 다 끝나면 체크해 두셔도 됩니다.</p>
 <ul class="todo">
-  <li data-id="s2-lang"><label><input type="checkbox"><span><span class="tag t-see">보기</span><b>영어 화면</b>
+  <li data-id="m-test"><label><input type="checkbox"><span><span class="tag t-me">개발</span><b>1. 자동 시험</b> <span class="time">20분</span> — 10-20 에 넣은 것(광고 다이아 · 미션 다이아+골드 · 영어 글자)을 포함해 전체 자동 플레이 시험 → 오류가 있으면 고침 → 영어 화면 캡처 → Unity 가 만든 <code>.meta</code> 파일 커밋</span></label></li>
+  <li data-id="m-clean"><label><input type="checkbox"><span><span class="tag t-me">개발</span><b>2. 출시용 정리</b> <span class="time">20분</span>
     <ol class="opts">
-      <li>재생 → 설정 창 → <b>언어 · Language</b> → English (화면이 다시 만들어짐 · 던전 중엔 안 바뀜)</li>
-      <li>메인 화면 · 아래 메뉴 5개 · 상점 · 미션 · 스킨 · 보급품 · 총알 창 · 보스 던전/광산 결과 창을 차례로 열어 보기</li>
-      <li>볼 것: <b>글자가 칸을 넘치거나 잘림</b> · 한국어가 그대로 남은 곳 · 어색한 번역</li>
-      <li>번역은 <code>Kachi_Gun/Table/String.xlsx</code> 의 <b>EN 칸</b>을 직접 고쳐도 됩니다 (Key 칸 = 한국어 원문, 고치지 말 것) → 저장 → 재생하면 바로 반영</li>
-      <li>끝나면 설정에서 <b>한국어</b>로 되돌리기</li>
+      <li>설정 창의 <b>[테스트용 — 출시 전에 지울 것]</b> 재화 버튼 지우기 (치트 창은 에디터 전용이라 원래 빌드에 안 들어감)</li>
+      <li>"결제는 준비 중입니다" · "클라우드 저장·결제 복원·문의는 준비 중입니다" 글자는 테스트 기간이라 그대로 (테스터가 눌러도 문제 없음)</li>
+      <li>앱을 내렸다 올렸을 때 · 처음 켤 때 세이브가 잘 남는지 한 번 더 확인</li>
     </ol></span></label></li>
-  <li data-id="s2-shop"><label><input type="checkbox"><span><span class="tag t-see">보기</span><b>상점 [무료 다이아]</b> — 상점 버튼에 <b>빨간 점</b> → 상점 열기 → [무료 다이아] 3번 누르기 (지금은 광고 없이 바로 지급). 볼 것: 누를 때마다 다이아 +40 · 버튼 글자 "광고 1/3 → 3/3" · 3번 뒤 빨간 점 사라짐 <span class="f">(날짜가 바뀌면 다시 3번)</span></span></label></li>
-  <li data-id="s2-mission"><label><input type="checkbox"><span><span class="tag t-see">보기</span><b>미션 보상</b> — 미션 창 [받기] 버튼에 <b>다이아 N · 골드 M</b> 둘 다 보이는지 · 받으면 둘 다 들어오는지 (골드가 너무 많거나 적어 보이면 의견에)</span></label></li>
-  <li data-id="s2-mine"><label><input type="checkbox"><span><span class="tag t-see">보기</span><b>광산 보상</b> (10-20 2차) — 광산 한 판 끝난 다이아가 <b>같은 챕터 보스 던전 1번 보상의 절반쯤</b>인지 (광산은 4-1 부터 · 하루 2장)</span></label></li>
-  <li data-id="s2-skin"><label><input type="checkbox"><span><span class="tag t-see">보기</span><b>스킨 17 해적 선장</b> — 스킨 창 맨 끝. 그림·움직임이 다른 스킨과 어울리는지. 이름·가격·효과는 <code>Skin.xlsx</code> 에서 직접 고쳐도 됨</span></label></li>
-  <li data-id="s2-feel"><label><input type="checkbox"><span><span class="tag t-see">보기</span><b>새 밸런스 손맛 (1~10챕터)</b> — 목표는 하루 4시간 기준 <b>10챕터 = 3일째</b>. 처음부터 해 보시려면 대화창에 "세이브 지워 줘" (지금 세이브를 백업한 뒤 지워 드림). 볼 것: 강화 버튼을 누를 골드가 너무 안 모이거나 · 보스가 너무 쉽거나 어려운 곳 → 의견에 "몇 챕터에서 · 무엇이"</span></label></li>
+  <li data-id="m-settings"><label><input type="checkbox"><span><span class="tag t-me">개발</span><b>3. 안드로이드 빌드 설정</b> <span class="time">20분</span> — ① 의 패키지 이름 · 버전 <b>1.0 (코드 1)</b> · 최소 안드로이드 7.0(API 24) · 대상 API 36 (구글 요구 · 서바이벌과 같음) · IL2CPP + ARM64 (구글 64비트 필수) · 세로 고정 · 앱 이름 한국어/영어 (서바이벌의 앱 이름 도구 가져옴)</span></label></li>
+  <li data-id="m-icon"><label><input type="checkbox"><span><span class="tag t-me">개발</span><b>4. 앱 아이콘</b> <span class="time">30분</span> — 게임 속 카피바라 얼굴 그림으로 512x512 + 안드로이드 둥근/적응형 아이콘 → 미리보기 그림을 보여 드림 (⑦ 아래 "보기" 칸). 직접 그린 아이콘이 있으면 의견에</span></label></li>
+  <li data-id="m-key"><label><input type="checkbox"><span><span class="tag t-me">개발</span><b>5. 업로드 서명 키 만들기</b> <span class="time">5분</span> — <code>D:\00 Final_Game\키 보관\</code> 에 키 파일 + 비밀번호 파일 (GitHub 에 안 올라가게 이미 막혀 있음 · <b>비밀번호는 화면에 안 띄움</b>). 백업은 ③-7</span></label></li>
+  <li data-id="m-aab"><label><input type="checkbox"><span><span class="tag t-me">개발</span><b>6. AAB 빌드</b> <span class="time">30~40분</span> — 서바이벌의 빌드 도구(<code>BuildAab.cs</code>, [버전 코드 +1] 버튼 있는 창)를 가져와 제가 배치로 빌드 → 파일 <code>Kachi_Gun\Builds\capybaravszombie-1.0-1.aab</code>. 만든 뒤 점검: 패키지 이름 · 버전 코드 · 서명 · 앱 이름 · <b>광고 ID 권한 없음</b>(서바이벌 때 이걸로 한 번 막힘) · 용량</span></label></li>
+  <li data-id="m-shots"><label><input type="checkbox"><span><span class="tag t-me">개발</span><b>7. 스토어 그림</b> <span class="time">40분</span> — 아이콘 512x512 · 그래픽 이미지 1024x500 · 휴대전화 스크린샷 6~8장(1080x1920, 자동 플레이로 전투·보스·강화·총알 합성·상점·광산 장면 캡처 + 위에 짧은 문구) → <code>D:\00 Final_Game\스토어 등록\</code> (새 폴더, 서바이벌 <code>store_graphics.py</code> 방식)</span></label></li>
+  <li data-id="m-text"><label><input type="checkbox"><span><span class="tag t-me">개발</span><b>8. 스토어 글</b> <span class="time">20분</span> — 앱 이름 · 짧은 설명(80자) · 자세한 설명(4000자 안) · 영어판 · 출시 노트 → <code>스토어 등록\스토어_등록정보.html</code> (칸마다 [복사] 버튼)</span></label></li>
+  <li data-id="m-privacy"><label><input type="checkbox"><span><span class="tag t-me">개발</span><b>9. 개인정보처리방침 페이지 + 배포</b> <span class="time">20분</span> — ① 에서 고른 곳에 올리고, 주소가 열리는지 확인 → 주소를 ③ 답안에 넣음</span></label></li>
+  <li data-id="m-answers"><label><input type="checkbox"><span><span class="tag t-me">개발</span><b>10. Play Console 답안</b> <span class="time">30분</span> — <code>스토어 등록\게임설정_답안.html</code>: 앱 콘텐츠 10칸(개인정보처리방침 · 앱 액세스 · 광고 · 광고 ID · 콘텐츠 등급 설문 · 타겟층 · 데이터 보안 · 정부 앱 · 금융 · 건강) + 카테고리·연락처를 <b>이 빌드 기준</b>으로 "무엇을 누를지" 표로. 서바이벌 답안(<code>D:\00 Survival\스토어 등록\게임설정_10항목.html</code>)을 고쳐 씀 — 카치건은 로그인·서버 통신이 없어 더 간단함</span></label></li>
 </ul>
 
-<h2 id="art">③ 그림·소리 준비 <small><code>D:\00 Final_Game\리소스\</code> 에 넣고 말씀해 주시면 제가 붙임</small></h2>
+<!-- ───────────────────────── ③ ───────────────────────── -->
+<h2 id="console">③ 직접 하실 것 — Play Console <small>오늘 · 순서대로 1~1.5시간</small></h2>
+<p class="note">구글 계정으로 로그인해야 해서 제가 대신 못 하는 부분입니다. 메뉴 이름·위치는 구글이 자주 바꿉니다 — <b>화면이 다르거나 막히면 캡처를 <code>D:\00 Final_Game\게시 과정\</code>(새 폴더)에 넣고 "막혔어"</b> 하시면 보고 알려 드립니다.</p>
 <ul class="todo">
-  <li data-id="a2-supply"><label><input type="checkbox"><span><span class="tag t-you">직접</span><b>보급품 아이콘 25개</b> — 지금은 상자 + 등급 색 임시
+  <li data-id="y-app"><label><input type="checkbox"><span><span class="tag t-you">직접</span><b>3-1. 새 앱 만들기</b> <span class="time">5분 · 지금 바로 가능</span>
     <ol class="opts">
-      <li>형식: <b>PNG · 투명 배경 · 정사각형 256x256 이상</b> (테두리·등급 색은 게임이 입힘 — 물건만)</li>
-      <li>이름: <code>supply_01.png</code> ~ <code>supply_25.png</code> (아래 번호대로) · 넣을 곳: <code>리소스\보급품\</code> (새 폴더)</li>
-      <li>목록: 01 비상 건빵 · 02 통조림 캔 · 03 정수 필터 (일반) / 04 야전 반합 · 05 에너지 바 · 06 구급 상자 (고급) / 07 아드레날린 주사 · 08 군용 무전기 · 09 야간 투시경 (희귀) / 10 방탄 조끼 · 11 전술 탄띠 · 12 고농축 스팀팩 (영웅) / 13 열화우라늄 탄심 · 14 냉각 모듈 · 15 플라즈마 배터리 (전설) / 16 양자 증폭기 · 17 중력 제어 코어 · 18 나노 수복 혈청 (신화) / 19 바이오 리액터 · 20 초전도 코일 · 21 암흑물질 셀 (초월) / 22 차원 도약 엔진 · 23 항성 에너지 핵 · 24 영구기관 모듈 (불멸) / 25 카피바라의 성배 (태초)</li>
-      <li>구하기 어려우시면: ✎ 의견에 <b>"그려 줘"</b>(제가 게임 화풍에 맞춰 간단히 그림) 또는 <b>"AI 프롬프트 줘"</b>(이미지 AI 에 넣을 문장 25개를 HTML 로)</li>
+      <li><code>play.google.com/console</code> (불도깨비와 같은 개발자 계정 FIBE) → <b>모든 앱</b> → <b>[앱 만들기]</b></li>
+      <li>앱 이름 <b>카피바라vs좀비</b> · 기본 언어 <b>한국어 – ko-KR</b> · 앱 또는 게임 = <b>게임</b> · 무료 또는 유료 = <b>무료</b> <span class="f">(무료로 만들면 나중에 유료로 못 바꿈 — 무료가 맞음)</span></li>
+      <li>선언 2개(개발자 프로그램 정책 · 미국 수출법) 체크 → <b>[앱 만들기]</b></li>
+      <li>대시보드가 나오면 캡처해서 <code>게시 과정\</code> 에 넣어 주세요 (메뉴 확인용)</li>
     </ol></span></label></li>
-  <li data-id="a2-sound"><label><input type="checkbox"><span><span class="tag t-you">직접</span><b>소리</b> — 지금 게임에 소리가 하나도 없습니다
+  <li data-id="y-listing"><label><input type="checkbox"><span><span class="tag t-you">직접</span><b>3-2. 스토어 등록정보</b> <span class="time">15분 · ②-7·8 이 끝난 뒤</span>
     <ol class="opts">
-      <li>효과음(1초 안팎): 총 발사(가벼운 것 1~3종) · 좀비 맞음 · 좀비 죽음 · 보스 등장 경고 · 보스 죽음 · 버튼 누름 · 강화 성공 · 강화 실패 · 총알 합성 · 보상·코인 받기 · 승리 · 패배</li>
-      <li>배경음(1~3분, 끊김 없이 반복): 메인 전투 · 보스전 · 던전(보스 던전·광산·도전)</li>
-      <li>형식: <b>wav 또는 ogg</b> · 파일 이름은 무엇인지 알 수 있게(예: <code>총_발사_01.wav</code>) · 넣을 곳: <code>리소스\소리\</code> (새 폴더)</li>
-      <li><b>상업 이용 가능한 라이선스</b>인지 꼭 확인 (출처·라이선스를 <code>리소스\소리\출처.txt</code> 에 적어 두시면 스토어 등록 때 씀)</li>
-      <li>후보가 많으면: ✎ 의견에 "미리듣기 만들어 줘" — 서바이벌 때처럼 들어 보고 고르는 페이지를 만들어 드림</li>
+      <li>왼쪽 <b>스토어 등록정보 › 기본 스토어 등록정보</b> (또는 대시보드 "스토어 등록정보 설정")</li>
+      <li>앱 이름 · 짧은 설명 · 자세한 설명 = <code>스토어_등록정보.html</code> 의 [복사] 버튼으로 붙여 넣기</li>
+      <li>앱 아이콘(512) · 그래픽 이미지(1024x500) · 휴대전화 스크린샷 = <code>스토어 등록\</code> 폴더의 그림 끌어다 놓기 <span class="f">(태블릿 스크린샷은 비워도 됨)</span></li>
+      <li>영어 페이지(선택): [번역 관리] → 영어 추가 → 영어판 붙여 넣기 — 오늘 생략하고 나중에 해도 됨</li>
+      <li><b>[저장]</b></li>
     </ol></span></label></li>
+  <li data-id="y-content"><label><input type="checkbox"><span><span class="tag t-you">직접</span><b>3-3. 앱 콘텐츠 + 카테고리·연락처</b> <span class="time">30분 · ②-10 답안 보고</span>
+    <ol class="opts">
+      <li>대시보드 "앱 설정" 목록 또는 <b>정책 및 프로그램 › 앱 콘텐츠</b> 에서 칸마다 답안대로 고르고 [저장]</li>
+      <li>미리 알아 두실 것 (지금 빌드 기준 예상 — 정확한 답은 답안 파일):
+        <ul>
+          <li>광고 = <b>없음</b> · 광고 ID 사용 = <b>아니요</b> (광고를 넣는 업데이트 때 둘 다 "예"로 바꿈)</li>
+          <li>앱 액세스 = <b>로그인 없이 모든 기능 사용 가능</b></li>
+          <li>타겟층 = <b>13세 이상</b>만 고르기 (13세 미만을 고르면 가족 정책 심사가 붙어 복잡해짐)</li>
+          <li>데이터 보안 = <b>모으거나 공유하는 정보 없음</b> (서버·로그인·광고 없음 · Unity 분석 꺼짐 확인함)</li>
+          <li>콘텐츠 등급 = 설문 (좀비를 총으로 쏘는 만화풍 폭력 → 세부 질문 표를 답안에)</li>
+          <li>정부 앱·금융·건강 = 해당 없음 · 카테고리 = 게임 › 캐주얼(답안에서 확정) · 연락처 이메일 jjhfibe@gmail.com</li>
+        </ul></li>
+    </ol></span></label></li>
+  <li data-id="y-track"><label><input type="checkbox"><span><span class="tag t-you">직접</span><b>3-4. 비공개 테스트 트랙 준비</b> <span class="time">10분</span>
+    <ol class="opts">
+      <li><b>테스트 및 출시 › 테스트 › 비공개 테스트</b> → 기본 트랙(Alpha) <b>[트랙 관리]</b></li>
+      <li><b>국가/지역</b> 탭 → ① 에서 고른 대로 (추천 대한민국)</li>
+      <li><b>테스터</b> 탭 → 이메일 목록에서 <b>"규랩스 테스터 목록"</b> 체크 (+ 본인 확인용 목록이 있으면 같이) → <b>의견 보낼 곳</b> = jjhfibe@gmail.com → [변경사항 저장]</li>
+    </ol></span></label></li>
+  <li data-id="y-upload"><label><input type="checkbox"><span><span class="tag t-you">직접</span><b>3-5. AAB 올리고 검토 보내기</b> <span class="time">10분 · ②-6 이 끝난 뒤</span>
+    <ol class="opts">
+      <li>같은 트랙에서 <b>[새 버전 만들기]</b> → 앱 서명을 묻는 창이 나오면 <b>Google Play 앱 서명 사용(권장)</b> 그대로 [계속]</li>
+      <li>App Bundle 칸에 <code>Kachi_Gun\Builds\capybaravszombie-1.0-1.aab</code> 끌어다 놓기 → 올라가면 버전 이름 "1 (1.0)" 자동</li>
+      <li>출시 노트 = <code>스토어_등록정보.html</code> 의 출시 노트 [복사] → [다음] → 경고(노란색)는 무시해도 됨 · <b>오류(빨간색)</b>가 나오면 캡처</li>
+      <li><b>[저장]</b> → 왼쪽 <b>게시 개요</b> → <b>[검토를 위해 변경사항 전송]</b> <span class="f">(관리형 게시가 꺼져 있으면 통과하자마자 자동 게시)</span></li>
+      <li>"불완전한 광고 ID 선언" 같은 문제가 뜨면 → 답안의 광고 ID 칸대로 고친 뒤 다시 전송 (서바이벌 10-16 때 막혔던 곳)</li>
+    </ol></span></label></li>
+  <li data-id="y-internal"><label><input type="checkbox"><span><span class="tag t-you">직접</span><b>3-6. (선택) 내 폰에 먼저 설치 — 내부 테스트</b> <span class="time">5분</span> — 비공개 테스트는 검토를 기다려야 하지만 내부 테스트는 거의 바로 설치됩니다
+    <ol class="opts">
+      <li><b>테스트 › 내부 테스트</b> → 테스터 탭에 본인 Gmail 목록 → [새 버전 만들기] → <b>라이브러리에서 추가</b>로 같은 AAB 선택 → 출시 시작</li>
+      <li>테스터 탭의 <b>링크 복사</b> → 폰에서 열어 [테스터 되기] → Play 스토어에서 설치</li>
+      <li>켜 보고 이상한 곳은 대화창에 (특히 화면 비율·글자 크기·세이브)</li>
+    </ol></span></label></li>
+  <li data-id="y-keybak"><label><input type="checkbox"><span><span class="tag t-you">직접</span><b>3-7. 서명 키 백업</b> <span class="time">2분</span> — <code>D:\00 Final_Game\키 보관\</code> 폴더를 <b>USB·클라우드에 한 부 더 복사</b>. 잃어버리면 구글에 키 재설정을 요청해야 해서 업데이트가 며칠 막힙니다</span></label></li>
 </ul>
 
-<h2 id="store">④ 스토어 출시 준비 <small>① 에서 순서를 정하신 뒤 — 서바이벌(불도깨비)과 같은 흐름</small></h2>
-<p class="note">개인 개발자 계정이라 <b>비공개 테스트 12명 이상 · 14일</b>을 거쳐야 프로덕션(정식 출시) 신청이 됩니다. 아래 "직접" 항목은 구글 계정으로 로그인해야 해서 제가 대신 못 하는 것들이고, 화면이 막히면 캡처를 <code>D:\00 Final_Game\게시 과정\</code>(새 폴더)에 넣고 말씀해 주세요.</p>
+<!-- ───────────────────────── ④ ───────────────────────── -->
+<h2 id="wait">④ 검토 통과 뒤 — 테스터 14일 <small>내일쯤부터</small></h2>
+<ul class="todo">
+  <li data-id="w-review"><label><input type="checkbox"><span><span class="tag t-wait">대기</span><b>구글 검토</b> — 보통 하루쯤 (길면 며칠). 대시보드 상태가 "검토 중" → 게시되면 끝. <b>거절 메일</b>이 오면 내용을 그대로 대화창에 붙여 주세요</span></label></li>
+  <li data-id="w-link"><label><input type="checkbox"><span><span class="tag t-you">직접</span><b>참여 링크 전달</b> — 통과하면 <b>비공개 테스트 › 테스터</b> 탭 맨 아래 "테스터 참여 방법"의 <b>링크 복사</b> → 대화창에 붙이기 → 제가 <b>규랩스 요청 글</b>(게임 소개·링크·설치 방법·14일 유지 부탁)을 써 드림 → 대행사에 전달</span></label></li>
+  <li data-id="w-count"><label><input type="checkbox"><span><span class="tag t-you">직접</span><b>테스터 수 확인</b> — 이틀쯤 뒤 Play Console 대시보드 "비공개 테스트 — 참여 테스터 수"가 <b>12명 이상</b>인지. 12명을 채운 날부터 14일 (예: 10-26 에 채우면 <b>11-09</b>). 중간에 12명 아래로 떨어지면 늦어지니 가끔 확인</span></label></li>
+  <li data-id="w-feedback"><label><input type="checkbox"><span><span class="tag t-me">개발</span><b>테스터 의견 모으기</b> — 메일(jjhfibe@gmail.com)·대행사 보고서로 온 의견을 대화창에 붙여 주시면 → "의견 → 고친 것 → 버전" 표로 정리 (정식 출시 신청 때 그대로 씀)</span></label></li>
+</ul>
+
+<!-- ───────────────────────── ⑤ ───────────────────────── -->
+<h2 id="update">⑤ 14일 동안 넣을 것 — 업데이트 <small>올릴 때마다 버전 코드 +1, 같은 비공개 트랙에</small></h2>
+<p class="note">추천 순서: 광고 → 결제 → 소리 → 나머지. 업데이트는 검토가 다시 붙지만 14일 날짜는 그대로 이어집니다.</p>
 <h3>먼저 정할 것</h3>
 <ul class="todo">
-  <li data-id="st-pkg"><label><input type="checkbox"><span><span class="tag t-pick">결정</span><span class="txt"><b>패키지 이름 (앱 ID)</b> — 스토어에 한 번 올리면 <b>영원히 못 바꿉니다</b>. 지금은 Unity 기본값(<code>com.DefaultCompany.2D-URP</code>)이라 꼭 정해야 함. <span class="rec">추천: <code>com.zkfpf.capybaravszombie</code></span> <span class="f">(불도깨비 = com.zkfpf.buldokkaebi 와 같은 형식 · 영어 소문자·숫자·점만)</span></span></span></label></li>
-  <li data-id="st-enname"><label><input type="checkbox"><span><span class="tag t-pick">결정</span><span class="txt"><b>영어 앱 이름</b> — 폰 언어가 영어일 때 아이콘 아래 이름 · 스토어 영어 페이지 제목. <span class="rec">추천: Capybara vs Zombies</span> <span class="f">(30자 이내 · 한국어 폰에선 "카피바라vs좀비")</span></span></span></label></li>
-  <li data-id="st-iap"><label><input type="checkbox"><span><span class="tag t-pick">결정</span><span class="txt"><b>결제 상품 9개 · 가격</b> — 기획 표(<code>Shop.xlsx</code>) 그대로면 "그대로", 바꾸실 것은 의견에. 구글은 달러로 정하면 원화를 자동으로 붙이고, 원화를 직접 정할 수도 있음
+  <li data-id="u-ads"><label><input type="checkbox"><span><span class="tag t-pick">결정</span><span class="txt"><b>광고 종류</b> — 지금 게임 속 광고는 전부 <b>보상형</b>(공격 x2 · 골드 x2 · 던전 x2 · 무료 다이아). 기획의 "강제 광고 제거" 상품은 <b>전면 광고</b>(몇 판마다 저절로 뜨는 광고)가 있어야 의미가 있음
     <ol class="opts">
-      <li>강제 광고 제거 $1.99 · 모든 광고 제거 $9.99</li>
-      <li>자동강화 패키지 $3.99 · 영구 3배 버프 $7.99 · 광산 티켓 확장 $3.99 · 핫딜 레이저 총알 $0.99</li>
-      <li>다이아 500 $1.99 · 1,800 $4.99 · 4,200 $9.99</li>
-    </ol></span></span></label></li>
-  <li data-id="st-ads"><label><input type="checkbox"><span><span class="tag t-pick">결정</span><span class="txt"><b>광고 종류</b> — 지금 게임에 있는 광고는 전부 <b>보상형</b>(버프 2개 · 던전 x2 · 무료 다이아). 기획의 "강제 광고 제거" 상품은 <b>전면 광고</b>(몇 판마다 자동으로 뜨는 광고)가 있어야 의미가 있습니다.
-    <ol class="opts">
-      <li>보상형 + 전면 광고(예: 스테이지 5개 깰 때마다 1번, 처음 10챕터는 안 뜸) <span class="rec">추천 — 기획 상품 그대로 살림</span></li>
+      <li>보상형 + 전면 광고 (예: 스테이지 5개 깰 때마다 1번 · 처음 10챕터는 안 뜸) <span class="rec">추천 — 기획 상품 그대로 살림</span></li>
       <li>보상형만 — "강제 광고 제거" 상품은 뺌</li>
     </ol></span></span></label></li>
+  <li data-id="u-iap"><label><input type="checkbox"><span><span class="tag t-pick">결정</span><span class="txt"><b>결제 상품 9개 · 가격</b> — 기획 표(<code>Shop.xlsx</code>) 그대로면 "그대로". 구글은 달러로 정하면 원화를 자동으로 붙임 (원화를 직접 정해도 됨)
+    <table class="mini">
+      <tr><th>광고</th><td>강제 광고 제거 $1.99 · 모든 광고 제거 $9.99</td></tr>
+      <tr><th>패키지</th><td>자동강화 패키지 $3.99 · 영구 3배 버프 $7.99 · 광산 티켓 확장 $3.99 · 핫딜 레이저 총알 $0.99</td></tr>
+      <tr><th>다이아</th><td>500 $1.99 · 1,800 $4.99 · 4,200 $9.99</td></tr>
+    </table></span></span></label></li>
 </ul>
-<h3>직접 하실 것 (순서대로)</h3>
+<h3>직접 하실 것</h3>
 <ul class="todo">
-  <li data-id="st-console"><label><input type="checkbox"><span><span class="tag t-you">직접</span><b>Play Console 에 새 앱 만들기</b> (5분)
+  <li data-id="u-admob"><label><input type="checkbox"><span><span class="tag t-you">직접</span><b>AdMob 에 앱·광고 단위 만들기</b> <span class="time">10분 · 광고 붙이기 전에</span>
     <ol class="opts">
-      <li><code>play.google.com/console</code> → 모든 앱 → <b>[앱 만들기]</b></li>
-      <li>앱 이름 <b>카피바라vs좀비</b> · 기본 언어 <b>한국어</b> · 앱 또는 게임 = <b>게임</b> · 유료/무료 = <b>무료</b> · 선언 2개 체크 → [앱 만들기]</li>
-      <li>만들어진 대시보드 화면을 캡처해서 <code>게시 과정\</code> 에 넣고 "앱 만들었어" — 다음 칸들(게임 설정·스토어 등록정보)은 제가 표로 답을 만들어 드림</li>
+      <li><code>admob.google.com</code> (심심할 때 하는 게임과 같은 계정) → 앱 → <b>[앱 추가]</b> → Android · "지원되는 스토어에 등록되었나요?" = <b>아니요</b> → 이름 카피바라vs좀비</li>
+      <li>그 앱 → 광고 단위 → <b>보상형</b> 1개 (이름 예: reward_all) · 위에서 전면 광고를 고르셨으면 <b>전면</b> 1개 더</li>
+      <li>앱 ID(<code>ca-app-pub-…~…</code>)와 광고 단위 ID(<code>ca-app-pub-…/…</code>)를 메모장에 붙여 <code>D:\00 Final_Game\키 보관\admob.txt</code> 로 저장 → "애드몹 만들었어"</li>
     </ol></span></label></li>
-  <li data-id="st-admob"><label><input type="checkbox"><span><span class="tag t-you">직접</span><b>AdMob 에 앱·광고 단위 만들기</b> (10분 — 광고 SDK 연결 전에 필요)
+  <li data-id="u-pay"><label><input type="checkbox"><span><span class="tag t-you">직접</span><b>결제 상품 등록</b> <span class="time">20분 · 결제가 들어간 AAB 를 올린 뒤에만 가능</span>
     <ol class="opts">
-      <li><code>admob.google.com</code> → 앱 → <b>[앱 추가]</b> → Android · "지원되는 앱 스토어에 등록되었나요?" = <b>아니요</b> → 앱 이름 카피바라vs좀비 → 추가</li>
-      <li>그 앱 → 광고 단위 → <b>보상형</b> 1개 (이름 예: reward_all) · ① 에서 전면 광고를 고르셨으면 <b>전면</b> 1개 더 (interstitial)</li>
-      <li><b>앱 ID</b>(<code>ca-app-pub-…~…</code>)와 <b>광고 단위 ID</b>(<code>ca-app-pub-…/…</code>)를 메모장에 붙여 <code>D:\00 Final_Game\키 보관\admob.txt</code> 로 저장 → "애드몹 만들었어" <span class="f">(키 보관 폴더는 GitHub 에 안 올라감)</span></li>
-      <li>스토어에 출시된 뒤에 "앱 스토어 연결"을 한 번 더 함 (심심할 때 하는 게임 때처럼 — 그때 안내)</li>
+      <li>결제 프로필(판매자 계정)이 있는지 확인 — Play Console → 설정 → 결제 프로필 (없으면 만들어야 상품 등록 가능)</li>
+      <li>앱 → 수익 창출 › 제품 › <b>인앱 상품</b> → 제가 드리는 표(상품 ID·이름·가격 9줄)대로 만들고 활성화</li>
+      <li>설정 › <b>라이선스 테스트</b>에 본인 Gmail → 결제 시험 때 실제 돈이 안 나감</li>
     </ol></span></label></li>
-  <li data-id="st-pay"><label><input type="checkbox"><span><span class="tag t-you">직접</span><b>결제 상품 등록</b> (첫 AAB 를 올린 뒤에만 가능 — 그때 제가 상품 ID·이름·가격 표를 드림)
+  <li data-id="u-sound"><label><input type="checkbox"><span><span class="tag t-you">직접</span><b>소리 구하기</b> — 지금 게임에 소리가 하나도 없음
     <ol class="opts">
-      <li>Play Console → 앱 → 수익 창출 → 제품 → <b>인앱 상품</b> → [상품 만들기] — 표의 9줄을 그대로 입력 · 활성화</li>
-      <li>판매자 계정(결제 프로필)이 이미 있는지 확인 — 없으면 Play Console → 설정 → 결제 프로필에서 만들어야 상품 등록 가능</li>
+      <li>효과음(1초 안팎): 총 발사(1~3종) · 좀비 맞음 · 좀비 죽음 · 보스 등장 경고 · 보스 죽음 · 버튼 · 강화 성공 · 강화 실패 · 총알 합성 · 보상·코인 · 승리 · 패배</li>
+      <li>배경음(1~3분, 끊김 없이 반복): 메인 전투 · 보스전 · 던전</li>
+      <li>wav 또는 ogg · <code>리소스\소리\</code> 에 · <b>상업 이용 가능</b> 라이선스 확인 (<code>리소스\소리\출처.txt</code> 에 출처 적기)</li>
+      <li>후보가 많으면 "미리듣기 만들어 줘" — 서바이벌 때처럼 들어 보고 고르는 페이지</li>
     </ol></span></label></li>
-  <li data-id="st-keybak"><label><input type="checkbox"><span><span class="tag t-you">직접</span><b>서명 키 백업</b> — 첫 AAB 때 제가 업로드 키를 만들어 <code>키 보관\</code> 에 넣습니다(비밀번호는 화면에 안 띄움). 그 폴더를 <b>USB·클라우드에 한 부 더 복사</b>해 두세요 — 잃어버리면 업데이트를 올리기 번거로워집니다</span></label></li>
-  <li data-id="st-check-assets"><label><input type="checkbox"><span><span class="tag t-see">보기</span><b>스토어 그림·글 확인</b> — 제가 만들어 드리는 것을 보고 의견만: 앱 아이콘 512x512 · 그래픽 이미지 1024x500 · 스크린샷 6~8장(게임 캡처) · 짧은 설명(80자) · 자세한 설명(4000자) · 영어판. 아이콘을 직접 그리실 거면 의견에</span></label></li>
-  <li data-id="st-privacy"><label><input type="checkbox"><span><span class="tag t-pick">결정</span><span class="txt"><b>개인정보처리방침 올릴 곳</b> — 광고 SDK 가 기기 광고 ID 를 쓰므로 필수. 내용은 서바이벌 것(개발자 FIBE · jjhfibe@gmail.com)을 이 게임에 맞게 고침
-    <ol class="opts">
-      <li>서바이벌 랭킹 서버에 <code>/kachigun-privacy</code> 주소 하나 더 <span class="rec">추천 — 이미 있는 서버라 돈·관리 추가 없음</span></li>
-      <li>GitHub Pages 등 다른 곳</li>
-    </ol></span></span></label></li>
-  <li data-id="st-closed"><label><input type="checkbox"><span><span class="tag t-you">직접</span><b>테스트 → 출시</b> (AAB 가 나온 뒤)
-    <ol class="opts">
-      <li><b>내부 테스트</b>: 본인 폰에 설치해 광고·결제·저장 확인 (결제는 테스트 계정 = Play Console → 설정 → 라이선스 테스트에 본인 Gmail)</li>
-      <li><b>비공개 테스트</b>: 규랩스 테스터 목록 체크 · 대행사에 새 참여 링크로 요청 (요청 글은 제가 써 드림) · <b>14일</b> 동안 12명 이상 유지</li>
-      <li><b>프로덕션 신청</b>: 질문 답안은 제가 받은 의견 기준으로 써 드림 → 승인되면 출시</li>
-    </ol></span></label></li>
+  <li data-id="u-supply"><label><input type="checkbox"><span><span class="tag t-you">직접</span><b>보급품 아이콘 25개</b> (지금은 상자 + 등급 색 임시) — PNG · 투명 배경 · 정사각형 256 이상 · <code>리소스\보급품\supply_01.png</code> ~ <code>supply_25.png</code>. 구하기 어려우면 의견에 "그려 줘" 또는 "AI 프롬프트 줘"
+    <span class="f">목록: 01 비상 건빵 · 02 통조림 캔 · 03 정수 필터 / 04 야전 반합 · 05 에너지 바 · 06 구급 상자 / 07 아드레날린 주사 · 08 군용 무전기 · 09 야간 투시경 / 10 방탄 조끼 · 11 전술 탄띠 · 12 고농축 스팀팩 / 13 열화우라늄 탄심 · 14 냉각 모듈 · 15 플라즈마 배터리 / 16 양자 증폭기 · 17 중력 제어 코어 · 18 나노 수복 혈청 / 19 바이오 리액터 · 20 초전도 코일 · 21 암흑물질 셀 / 22 차원 도약 엔진 · 23 항성 에너지 핵 · 24 영구기관 모듈 / 25 카피바라의 성배</span></span></label></li>
+</ul>
+<h3>제가 만들 것</h3>
+<ul class="todo">
+  <li data-id="d-ad"><label><input type="checkbox"><span><span class="tag t-me">개발</span><b>실제 광고 (Google Mobile Ads)</b> — AdMob ID 를 받으면. 보상형 + (고르시면) 전면 · "모든 광고 제거"를 산 사람은 보상형도 바로 보상 · 개인정보처리방침에 광고 ID 내용 추가 · <b>Play Console 광고·광고 ID·데이터 보안 답안 새로</b> (그 업데이트 올릴 때 같이 고치셔야 함)</span></label></li>
+  <li data-id="d-iap"><label><input type="checkbox"><span><span class="tag t-me">개발</span><b>실제 결제 (Unity IAP)</b> — 9상품 · 산 것 복원 · 앱 안 영수증 확인 · 상품 등록 표 드림</span></label></li>
+  <li data-id="d-sound"><label><input type="checkbox"><span><span class="tag t-me">개발</span><b>소리 연결</b> — 소리가 오면 효과음·배경음 + 설정 창 소리 크기 (지금 소리 켜고 끄기는 값만 있음)</span></label></li>
+  <li data-id="d-cloud"><label><input type="checkbox"><span><span class="tag t-me">개발</span><b>(선택) 클라우드 저장</b> — 지금 세이브는 폰 안에만 (폰 바꾸면 사라짐). 서바이벌처럼 구글 계정 연동 저장 — 넣으면 Play 게임즈 설정이 추가로 필요해서 <b>정식 출시 뒤로 미뤄도 됨</b>. 설정 창 "불러오기·구매 복원·문의" 버튼도 이때</span></label></li>
+  <li data-id="d-fix"><label><input type="checkbox"><span><span class="tag t-me">개발</span><b>테스터 의견 고치기</b> → AAB [버전 코드 +1] → 같은 비공개 트랙에 올리기 안내</span></label></li>
 </ul>
 
-<h2 id="dev">⑤ 제가 만들 것 <small>① 순서대로 — 말씀하시면 시작</small></h2>
+<!-- ───────────────────────── ⑥ ───────────────────────── -->
+<h2 id="prod">⑥ 14일 뒤 — 정식 출시 <small>11월 9일쯤부터</small></h2>
 <ul class="todo">
-  <li data-id="d2-ad"><label><input type="checkbox"><span><span class="tag t-me">개발</span><b>실제 광고</b> (Google Mobile Ads) — ④ AdMob ID 를 받으면. 지금 광고는 [임시]로 누르면 바로 보상 · 전면 광고는 ④ 결정대로 · "모든 광고 제거" 산 사람은 보상형도 바로 보상</span></label></li>
-  <li data-id="d2-iap"><label><input type="checkbox"><span><span class="tag t-me">개발</span><b>실제 결제</b> (Unity IAP) — 지금 원 상품은 "준비 중". 산 것 복원 · 앱 안 확인</span></label></li>
-  <li data-id="d2-store"><label><input type="checkbox"><span><span class="tag t-me">개발</span><b>AAB 빌드 준비</b> — 패키지 이름 · 버전 · 업로드 키 · 앱 아이콘 · 대상 API · 빌드 도구(서바이벌 것 가져옴) → 빌드는 Unity 에서 직접 누르시게 안내</span></label></li>
-  <li data-id="d2-sound"><label><input type="checkbox"><span><span class="tag t-me">개발</span><b>소리 연결</b> — ③ 소리가 오면 효과음·배경음 + 설정 창 소리 크기 (지금 설정의 소리 켜고 끄기는 값만 있음)</span></label></li>
-  <li data-id="d2-cloud"><label><input type="checkbox"><span><span class="tag t-me">개발</span><b>클라우드 저장 · 문의</b> — 지금 세이브는 기기 안에만 (폰 바꾸면 사라짐). 서바이벌처럼 구글 계정 연동 저장</span></label></li>
+  <li data-id="r-apply"><label><input type="checkbox"><span><span class="tag t-me">개발</span><b>프로덕션 신청 답안</b> — 대시보드에 [프로덕션 액세스 신청]이 열리면 말씀해 주세요. 테스트 방법 · 받은 의견 · 고친 것 · 출시 준비 질문 답을 <b>받은 의견만 사실대로</b> HTML 로 써 드림 (심심할 때 하는 게임 <code>프로덕션_신청_답안.html</code> 참고)</span></label></li>
+  <li data-id="r-release"><label><input type="checkbox"><span><span class="tag t-you">직접</span><b>신청 → 승인(보통 7일 안) → 프로덕션 출시</b> — 승인 메일 뒤 프로덕션 트랙에 마지막 버전 올리기 · 출시 국가 정하기</span></label></li>
+  <li data-id="r-admob"><label><input type="checkbox"><span><span class="tag t-you">직접</span><b>출시 뒤 AdMob 스토어 연결</b> — AdMob 앱 설정에서 Play 스토어 앱 연결 · <code>app-ads.txt</code>(심심할 때 하는 게임 때 올린 것과 같은 계정이면 그대로 됨 — 그때 확인해 드림)</span></label></li>
 </ul>
 
-<h2 id="rel">⑥ 출시 전 정리 <small>잊지 않게 — 마지막에 제가 함</small></h2>
+<!-- ───────────────────────── ⑦ ───────────────────────── -->
+<h2 id="see">⑦ 재생 확인 <small>시간 날 때 — 폰 테스트 버전으로 해도 됨 · 이상하면 ✎ 의견에 "어디서 · 무엇이"</small></h2>
 <ul class="todo">
-  <li data-id="r2-testbtn"><label><input type="checkbox"><span><span class="tag t-me">개발</span>설정 창의 <b>[테스트용] 재화 버튼 지우기</b> <span class="f">(치트 창은 에디터 전용이라 빌드엔 안 들어감)</span></span></label></li>
-  <li data-id="r2-temp"><label><input type="checkbox"><span><span class="tag t-me">개발</span><b>[임시] 표시된 것 바꾸기</b> — 광고·결제(⑤) · 보급품 아이콘(③)</span></label></li>
+  <li data-id="s-icon"><label><input type="checkbox"><span><span class="tag t-see">보기</span><b>앱 아이콘·스토어 그림·글</b> (②-4·7·8 끝나면) — 아이콘이 작게 봐도 알아보이는지 · 스크린샷 문구 · 설명 글 말투</span></label></li>
+  <li data-id="s-lang"><label><input type="checkbox"><span><span class="tag t-see">보기</span><b>영어 화면</b> — 설정 → 언어 · Language → English → 메인 · 아래 메뉴 5개 · 상점 · 미션 · 스킨 · 보급품 · 총알 창 · 던전 결과 창. 볼 것: 글자가 칸을 넘치거나 잘림 · 한국어가 남은 곳 · 어색한 번역 (번역은 <code>Table\String.xlsx</code> EN 칸을 직접 고쳐도 됨)</span></label></li>
+  <li data-id="s-shop"><label><input type="checkbox"><span><span class="tag t-see">보기</span><b>상점 [무료 다이아]</b> — 빨간 점 → 3번 누르기 → 누를 때마다 +40 · "광고 1/3 → 3/3" · 3번 뒤 빨간 점 사라짐</span></label></li>
+  <li data-id="s-mission"><label><input type="checkbox"><span><span class="tag t-see">보기</span><b>미션 보상</b> — [받기]에 다이아 N · 골드 M 둘 다 보이고 둘 다 들어오는지</span></label></li>
+  <li data-id="s-mine"><label><input type="checkbox"><span><span class="tag t-see">보기</span><b>광산 보상</b> — 광산 한 판 다이아가 같은 챕터 보스 던전 1번의 절반쯤인지 (4-1 부터 · 하루 2장)</span></label></li>
+  <li data-id="s-feel"><label><input type="checkbox"><span><span class="tag t-see">보기</span><b>1~10챕터 손맛 · 스킨 17 해적 선장</b> — 목표는 하루 4시간 기준 10챕터 = 3일째. 골드가 너무 안 모이거나 보스가 너무 쉽거나 어려운 곳 → "몇 챕터에서 · 무엇이"</span></label></li>
 </ul>
-<p class="note">표로 직접 고치시는 것 (저장 후 Unity 에서 재생하면 자동 반영): 좀비 이동 속도 = <code>Zombie.xlsx</code> 의 Speed · Actual_Speed_Min/Max · 스킨 이름·가격·효과 = <code>Skin.xlsx</code> · 영어 번역 = <code>String.xlsx</code> EN 칸. <b>밸런스 표(강화·보상 숫자)는 제 도구가 다시 쓰므로</b> 직접 고치셨으면 꼭 말씀해 주세요.</p>
+<p class="note">표로 직접 고치시는 것 (저장 후 재생하면 자동 반영): 좀비 속도 = <code>Zombie.xlsx</code> · 스킨 이름·가격·효과 = <code>Skin.xlsx</code> · 영어 번역 = <code>String.xlsx</code> EN 칸. <b>밸런스 표(강화·보상 숫자)는 제 도구가 다시 쓰므로</b> 직접 고치셨으면 꼭 말씀해 주세요.</p>
 
 <details style="margin-top:30px">
-<summary><b>끝난 결정 (10-20)</b> — 펼치기</summary>
+<summary><b>끝난 결정 (10-20까지)</b> — 펼치기</summary>
 <ul>
-  <li>광고 안 보는 무과금 538일 = <b>그대로</b> (광고를 봐야 진행되는 구조)</li>
-  <li>"무료 3 : 결제 7" = 다이아로 살 수 있는 것 전부(약 214만) 중 무료 31% — <b>맞음</b></li>
-  <li>광산 = 보스 던전 1회 보상의 <b>절반</b> (반영, 무료 다이아 중 광산 54% · 보스 던전 40%)</li>
-  <li>슬롯 강화 골드 = 그 챕터 수입 10분 · 미션 골드 환산(다이아 1 = 좀비 6마리) — <b>그대로</b></li>
-  <li>사냥 — <b>만들지 않음</b> (환생 폐기 → 스테이지를 늘리는 방향, 750 넘어도 자동 계산으로 계속)</li>
-  <li>앱 이름 <b>카피바라vs좀비</b> · 펫·탈것·패스 폐기 · 스킨 17개 · 슬롯 강화는 칸마다 · 좀비 속도는 표로 직접</li>
-  <li>GitHub 올리기 — 끝 (<code>JeongJoongHee/KachiGun</code>)</li>
+  <li>밸런스: 광고 최대·무과금·하루 4시간 = 150챕터 149일 · 광고 안 봄 538일 <b>그대로</b> (광고를 봐야 진행되는 구조)</li>
+  <li>무료 다이아 = 살 수 있는 것 전부의 31% (무료 3 : 결제 7) · 광산 = 보스 던전 1회 절반 · 슬롯 강화 골드 = 그 챕터 수입 10분 · 미션 골드 환산 그대로</li>
+  <li>사냥·펫·탈것·패스 — <b>만들지 않음</b> · 스킨 17개 · 슬롯 강화는 칸마다</li>
+  <li>앱 이름 <b>카피바라vs좀비</b> · 영어 지원 · GitHub <code>JeongJoongHee/KachiGun</code> (커밋·올리기는 제가 함)</li>
+  <li>10-21 목록의 "다음에 만들 것 순서" → 이번에 <b>스토어 먼저</b>로 정리 (사용자 10-24 "오늘 비공개 테스트 요청")</li>
 </ul>
 </details>
 
 <div class="bar"><span id="stat"></span><button type="button" id="copyNotes">의견 모아 복사</button></div>
 
 <footer>
-  체크·의견은 이 브라우저(localStorage, 키 <code>kachigun-todo-1021</code>)에 저장됩니다. 제가 읽을 때는 <code>python tools/todo_checks.py</code>.
+  체크·의견은 이 브라우저(localStorage, 키 <code>kachigun-todo-1024</code>)에 저장됩니다. 제가 읽을 때는 <code>python tools/todo_checks.py</code>. 못 읽을 때는 [의견 모아 복사] → 대화창에 붙여 넣기.
 </footer>
 </main>
 
 <script>
 (function(){
   // 저장 형식: {"c":{항목id:true}, "n":{항목id:"의견"}} — 항목id 는 li 의 data-id
-  var KEY='kachigun-todo-1021', st={c:{},n:{}};
+  var KEY='kachigun-todo-1024', st={c:{},n:{}};
   try{ var v=JSON.parse(localStorage.getItem(KEY)||'{}'); st.c=v.c||{}; st.n=v.n||{}; }catch(e){}
   function save(){ try{ localStorage.setItem(KEY,JSON.stringify(st)); }catch(e){} stat(); }
   var items=document.querySelectorAll('ul.todo li[data-id]');
@@ -261,7 +360,7 @@
     row.appendChild(pen);
     var box=document.createElement('div'); box.className='notebox';
     var ta=document.createElement('textarea');
-    ta.placeholder=pick?'어떻게 할지 적어 주세요 (예: 3번 / 추천대로 / 그대로 둬)':'의견이 있으면 적어 주세요';
+    ta.placeholder=pick?'어떻게 할지 적어 주세요 (예: 1번 / 추천대로 / 그대로 둬)':'의견이 있으면 적어 주세요';
     var hint=document.createElement('div'); hint.className='hint'; hint.textContent='적는 대로 이 브라우저에 저장됩니다.';
     box.appendChild(ta); box.appendChild(hint); li.appendChild(box);
     cb.checked=!!st.c[id];
