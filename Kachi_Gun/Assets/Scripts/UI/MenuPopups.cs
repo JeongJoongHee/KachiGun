@@ -310,8 +310,8 @@ namespace KachiGun
 
         protected override void Build()
         {
-            bgm = Toggle(L.T("배경음"), 0, () => { S.bgm = !S.bgm; Refresh(); });
-            sfx = Toggle(L.T("효과음"), 1, () => { S.sfx = !S.sfx; Refresh(); });
+            bgm = Toggle(L.T("배경음"), 0, () => { S.bgm = !S.bgm; S.Save(); AudioManager.Apply(); Refresh(); });
+            sfx = Toggle(L.T("효과음"), 1, () => { S.sfx = !S.sfx; S.Save(); AudioManager.Apply(); Refresh(); });
             vibe = Toggle(L.T("진동"), 2, () => { S.vibe = !S.vibe; Refresh(); });
             // 언어: 누르면 바로 바뀌고 화면을 다시 만듦 (던전 중에는 막음)
             lang = Toggle("언어 · Language", 3, () =>

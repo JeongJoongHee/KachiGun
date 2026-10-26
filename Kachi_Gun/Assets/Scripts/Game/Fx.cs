@@ -43,6 +43,7 @@ namespace KachiGun
         {
             boom ??= new[] { Art.Get("Gen/boom_0", 100), Art.Get("Gen/boom_1", 100), Art.Get("Gen/boom_2", 100) };
             Spawn(boom, p, 0.45f, Mathf.Max(0.6f, radius * 0.85f), 21000).fade = true;
+            AudioManager.Play(AudioManager.Sfx.Boom);
             CamShake(0.12f);
         }
 
@@ -198,6 +199,7 @@ namespace KachiGun
                 if (b.t >= b.dur)
                 {
                     if (b.gem) SaveData.Cur.gems += b.gold; else SaveData.Cur.gold += b.gold;
+                    AudioManager.Play(AudioManager.Sfx.Coin);
                     HUD.I?.Bump(b.gem);
                     b.rt.gameObject.SetActive(false);
                     billPool.Push(b.rt);

@@ -412,6 +412,7 @@ namespace KachiGun
         void ToggleEco()
         {
             GM.eco = !GM.eco;
+            AudioManager.Muffle(GM.eco);
             eco.SetActive(GM.eco);
             Application.targetFrameRate = GM.eco ? 15 : 60;
         }

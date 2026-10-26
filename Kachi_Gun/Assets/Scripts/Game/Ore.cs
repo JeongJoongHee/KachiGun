@@ -60,9 +60,10 @@ namespace KachiGun
                 dead = true;
                 HideBar();
                 GameManager.I?.OnTargetDead(this);
+                AudioManager.Play(reward > 0 ? AudioManager.Sfx.Coin : AudioManager.Sfx.MineHit);
                 if (reward > 0) Fx.I?.Sparkle(Center);
             }
-            else ShowBar(false);
+            else { AudioManager.Play(AudioManager.Sfx.MineHit); ShowBar(false); }
         }
     }
 }

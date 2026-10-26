@@ -253,7 +253,7 @@ namespace KachiGun
             if (!isBoss) knock = (Pos - from).normalized * 1.1f;
             Fx.I?.Damage(Center + Random.insideUnitCircle * 0.25f, dmg, isBoss);
             if (hp <= 0) Die(from);
-            else ShowBar(isBoss);
+            else { AudioManager.Play(AudioManager.Sfx.Hit); ShowBar(isBoss); }
         }
 
         void Die(Vector2 from)
@@ -268,6 +268,7 @@ namespace KachiGun
             knock = (Pos - from).normalized * (isBoss ? 0.5f : 1.8f);
             dir = (Pos - from).x > 0 ? 1 : -1;      // 맞은 쪽 반대로 쓰러짐 (죽기 그림은 머리가 오른쪽)
             sr.flipX = flash.flipX = dir < 0;
+            AudioManager.Play(isBoss ? AudioManager.Sfx.BossDead : AudioManager.Sfx.Dead);
             GameManager.I?.OnTargetDead(this);
         }
     }

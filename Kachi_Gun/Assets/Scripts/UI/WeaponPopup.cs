@@ -264,7 +264,7 @@ namespace KachiGun
             else rt.localScale = Vector3.one;
         }
 
-        public void OnPointerClick(PointerEventData e) { if (!e.dragging) pop.Select(this); }
+        public void OnPointerClick(PointerEventData e) { if (!e.dragging) { AudioManager.Play(AudioManager.Sfx.UiClick); pop.Select(this); } }
 
         public void OnBeginDrag(PointerEventData e)
         {

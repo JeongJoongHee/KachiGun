@@ -44,6 +44,7 @@ namespace KachiGun
             ApplyTint();
             Squad.I.Rebuild();
             Squad.I.ResetPosition();
+            StageChanged += AudioManager.RefreshBgm;
             StageChanged?.Invoke();
         }
 
@@ -128,6 +129,7 @@ namespace KachiGun
             S.bossFarm = true;
             upgradeHint = true;
             S.Save();
+            AudioManager.Play(AudioManager.Sfx.Fail);
             HUD.I?.Banner(L.T("보스 실패! 강화 후 다시 도전하세요"), new Color(1f, 0.55f, 0.45f));
             StageChanged?.Invoke();
             Notify();
@@ -153,6 +155,7 @@ namespace KachiGun
             double hp = st.bossHp > 0 ? st.bossHp : st.hp * Tables.C("BossHpMul");
             double gold = st.bossGold > 0 ? st.bossGold : st.gold * Tables.C("BossGoldMul");
             boss = Zombie.Spawn(r, p, hp, gold, st.bossScale > 0 ? st.bossScale : Tables.Cf("BossScale"), true);
+            AudioManager.Play(AudioManager.Sfx.BossAppear);
             HUD.I?.Banner(L.T("보스 등장!"), new Color(1f, 0.4f, 0.3f));
             StageChanged?.Invoke();
         }
@@ -255,6 +258,7 @@ namespace KachiGun
             if (which == 0) S.lvAtk++; else if (which == 1) S.lvSpd++; else S.lvGold++;
             if (!S.tutorialDone) S.tutorialDone = true;
             upgradeHint = false;
+            AudioManager.Play(AudioManager.Sfx.Upgrade);
             Notify();
             return true;
         }
@@ -292,6 +296,7 @@ namespace KachiGun
             S.gems -= cost;
             S.inv[empty] = Tables.Code(0, Tables.RandomType(0));   // Merge_Weight 비중
             S.weaponUnlocked = true;
+            AudioManager.Play(AudioManager.Sfx.Merge);
             Notify();
             return null;
         }
@@ -309,6 +314,7 @@ namespace KachiGun
             S.inv[a] = -1;
             S.inv[b] = Tables.Code(g + 1, Tables.RandomType(g + 1));   // 한 단계 위 등급, Merge_Weight 비중 (10-24: 일반탄 각 18% · 레이저/미사일 각 14%)
             S.statMerges++;
+            AudioManager.Play(AudioManager.Sfx.Merge);
             Notify();
             return null;
         }
@@ -321,6 +327,7 @@ namespace KachiGun
             double g = Tables.Grade(Tables.GradeOf(c)).salvage;
             S.inv[invIdx] = -1;
             S.gems += g;
+            AudioManager.Play(AudioManager.Sfx.Coin);
             HUD.I?.Bump(true);
             Notify();
             return null;
@@ -345,6 +352,7 @@ namespace KachiGun
             S.gold -= e.gold;
             ok = Random.value * 100 < e.rate;
             if (ok) S.slotLv[slot] = lv + 1;
+            AudioManager.Play(ok ? AudioManager.Sfx.Upgrade : AudioManager.Sfx.Fail);
             Notify();
             return null;
         }
@@ -362,6 +370,7 @@ namespace KachiGun
             if (S.gems < r.cost) return L.T("다이아가 부족합니다");
             S.gems -= r.cost;
             S.supplies.Add(id);
+            AudioManager.Play(AudioManager.Sfx.Upgrade);
             Notify();
             return null;
         }
@@ -378,6 +387,7 @@ namespace KachiGun
             double g = Stats.ZombieGold(S.stage) * n * Stats.GoldMul;
             S.gems -= price;
             S.gold += g;
+            AudioManager.Play(AudioManager.Sfx.Coin);
             HUD.I?.Bump(false);
             HUD.I?.Toast(L.T("골드") + " +" + Num.F(g));
             Notify();
@@ -456,6 +466,7 @@ namespace KachiGun
             S.skins.Add(id);
             S.skin = id;
             Squad.I.SetSkin(id);
+            AudioManager.Play(AudioManager.Sfx.Upgrade);
             Notify();
             return null;
         }
@@ -516,6 +527,7 @@ namespace KachiGun
             S.gems += gems;
             S.gold += gold;
             S.missionTier[i]++;
+            AudioManager.Play(AudioManager.Sfx.Coin);
             HUD.I?.Bump(gem);
             HUD.I?.Toast(gem ? L.T("다이아") + " +" + Num.Gem(gems) : L.T("골드") + " +" + Num.F(gold));
             Notify();
@@ -535,6 +547,7 @@ namespace KachiGun
                 double g = Tables.C("AdGems_Amount", 40);
                 S.adGemUsed++;
                 S.gems += g;
+                AudioManager.Play(AudioManager.Sfx.Coin);
                 HUD.I?.Bump(true);
                 HUD.I?.Toast(L.T("다이아") + " +" + Num.Gem(g));
                 S.Save();
@@ -610,6 +623,7 @@ namespace KachiGun
             var z = Zombie.Spawn(r, Field.I.RandomRoad(0.5f, 0.62f, 1.4f), row.hp, 0, row.scale, true);
             z.standStill = true;
             dungeonTotal = 1;
+            AudioManager.Play(AudioManager.Sfx.BossAppear);
             HUD.I?.Banner(L.F("보스 던전 Lv.{0}", S.bossLv + 1), new Color(1f, 0.4f, 0.3f));
             return null;
         }
@@ -649,6 +663,7 @@ namespace KachiGun
             if (mode == Mode.Challenge) { title = win ? L.F("도전 {0} 성공!", dungeonChapter) : L.T("시간 초과"); if (win) reward = Tables.Challenge(dungeonChapter).reward; }
             else if (mode == Mode.Mine) { title = L.T("채굴 끝!"); reward = Math.Round(dungeonGems, 1); }
             else { title = win ? L.T("보스 처치!") : L.T("시간 초과"); if (win) reward = Tables.BossRaid(S.bossLv).reward; }
+            AudioManager.Play(win ? AudioManager.Sfx.Victory : AudioManager.Sfx.Fail);
             HUD.I?.ShowResult(title, win, reward);
         }
 

@@ -15,6 +15,7 @@ namespace KachiGun
             Application.targetFrameRate = 60;
             Screen.sleepTimeout = SleepTimeout.NeverSleep;
             Tables.Load();
+            AudioManager.Ensure();
             var cam = Camera.main;
             cam.orthographic = true;
             cam.backgroundColor = new Color(0.16f, 0.12f, 0.09f);

@@ -405,6 +405,7 @@ namespace KachiGun.EditorTools
             HUD.I.Open<MissionPopup>(); yield return Wait(0.3f); Capture("16_mission"); CloseAll();
             HUD.I.Open<ShopPopup>(); yield return Wait(0.3f); Capture("17_shop"); CloseAll();
             HUD.I.Open<SettingsPopup>(); yield return Wait(0.3f); Capture("18_settings"); CloseAll();
+            Check(AudioManager.I != null, "사운드 매니저 생성");
             var buff = GM.Buff(true);
             Check(buff == null && Stats.BuffAtk, "버프");
 

@@ -229,6 +229,7 @@ namespace KachiGun
 
         void Fire()
         {
+            AudioManager.PlayShoot(weapon.type);
             Vector2 m = MuzzlePos;
             Vector2 aim = target.Center - m;
             // 대상이 총구보다 뒤(총 회전 중심과 총구 사이)에 있으면 총 방향으로 쏨
