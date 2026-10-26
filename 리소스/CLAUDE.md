@@ -1,5 +1,12 @@
 # 카치건 (좀비 키우기) — 세로 방치형 분대 슈팅, Unity 6000.0.84f1 · 2D URP
 
+## ▶ 재개 메모 (2026-10-26 오후 — 소리 검토)
+- 사용자가 소리를 넣음 (생성형 = **코드 합성** `Kachi_Gun/Assets/Scripts/Core/AudioManager.cs`, 효과음 16·배경음 2, 호출 10개 파일) → 자동 시험 errors=0, 커밋함
+- 검토: `tools/sound_review.py`(AudioManager 식을 파이썬으로 따라 만들어 wav·측정, 결과 `사운드_검토_wav/`(.gitignore)·`tools/_sound_metrics.json`) → **`사운드_검토.html`** (키 `kachigun-sound-1026`, 읽기 `python tools/todo_checks.py 사운드_검토.html`)
+  - 결정 7: `f-bgm` 배경음 8초 반복(추천 코드로 40초쯤 4~6구간) · `f-dead` 좀비 죽음 폰 스피커 3%·보스 경고 27%(추천 한 옥타브 위) · `f-coin` 돈 소리 총보다 9dB 크고 높낮이 1.55배 고정(추천 절반·0.1초·맨 위면 처음으로) · `f-late` 후반 16채널 꽉 참(추천 전투 10칸·종류당 초당 8번) · `f-mine` · `f-switch` 보스 배경음 겹쳐 바꾸기 · `f-alike` 합성/보스 처치/승리 비슷
+  - 찢어짐 없음(후반 최대 -4.2dB) · 크기 순서 맞음
+- 남은_작업_정리: u-sound 지움, d-sound → `d-sound2`(소리 다듬기)
+
 ## ▶ 재개 메모 (2026-10-26 — 비공개 테스트 진행 중, 남은 작업 문서 다시 짬)
 - 사용자: "10월 24일에 비공개 테스트 넣었어". 1024 목록 체크 = ①결정 6·②10개·③3-1~3-6·검토·참여 링크·테스터 12명 확인 · **서명 키 백업(y-keybak)만 안 함**. 게임 파일은 10-24 제출 뒤 안 바뀜(git 깨끗)
 - `남은_작업_정리.html` 새 키 **`kachigun-todo-1026`** (32항목, 이전 백업 = 스크래치 todo_backup_1024.html): ① `y-keybak`·`k-date`(12명 채운 날 → 14일 끝 11-08~09 맞추기)·`k-bullet`(기본탄 Bullet_06 그대로? 추천 그대로) ② `u-scope2`(추천 광고+결제 같이 2번 빌드, 11-02 전)·`u-ads`(추천 보상형+전면)·`u-iap`(9상품) ③ `u-admob`→`키 보관/admob.txt` · `u-payprofile`(FIBE 계정 결제 프로필, 불도깨비에서 만들었으면 그대로) · `u-upload2`(앱 콘텐츠 광고·광고 ID·데이터 보안·콘텐츠 등급 먼저 바꾸기) · `u-pay` · `u-license`(→ `키 보관/google_play_license_key.txt`) · `u-sound` ④ `d-ad`·`d-iap`(서바이벌 Unity IAP 5.4.4 코드 가져옴, Shop Product_Id)·`d-test2`·`d-aab2`(1.0 코드 2)·`d-answers2`(개인정보처리방침 재배포는 허락 받고) ⑤ 프로덕션 ⑥ 재생 확인 9

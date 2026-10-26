@@ -2,6 +2,7 @@
 # Chrome 의 Local Storage(leveldb) 를 직접 풀어 (.ldb = 스내피 압축 표, .log = 쓰기 기록) 키 값을 찾고 항목 이름과 맞춰 보여 줌.
 # 10-05 부터 의견(결정 항목 글자를 누르면 열리는 칸)도 같이 저장·출력. 한글 출력이라 PYTHONUTF8=1 로 실행
 # 사용: python tools/todo_checks.py [키]   (기본 키 = 문서 안 script 의 KEY)
+#       python tools/todo_checks.py 사운드_검토.html   (다른 문서 — 키는 그 문서의 KEY)
 import glob, html, json, os, re, struct, sys
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -80,6 +81,8 @@ def latest(keyname):
     return val[1:].decode("latin-1") if val[:1] == b"\x01" else val[1:].decode("utf-16-le")
 
 
+if len(sys.argv) > 1 and sys.argv[1].endswith(".html"):
+    DOC = os.path.join(ROOT, sys.argv.pop(1))
 doc = open(DOC, encoding="utf-8").read()
 keyname = sys.argv[1] if len(sys.argv) > 1 else re.search(r"KEY='([^']+)'", doc).group(1)
 raw = latest(keyname)

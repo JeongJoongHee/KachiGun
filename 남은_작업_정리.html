@@ -125,7 +125,7 @@
   <span class="tag t-wait">대기</span>기다리기
 </p>
 
-<div class="sum"><a href="#check"><b>3</b><span>① 지금 확인</span></a><a href="#pick"><b>3</b><span>② 정할 것</span></a><a href="#you"><b>6</b><span>③ 직접 하실 것</span></a><a href="#me"><b>8</b><span>④ 제가 할 것</span></a><a href="#prod"><b>3</b><span>⑤ 정식 출시</span></a><a href="#see"><b>9</b><span>⑥ 재생 확인</span></a></div>
+<div class="sum"><a href="#check"><b>3</b><span>① 지금 확인</span></a><a href="#pick"><b>3</b><span>② 정할 것</span></a><a href="#you"><b>5</b><span>③ 직접 하실 것</span></a><a href="#me"><b>8</b><span>④ 제가 할 것</span></a><a href="#prod"><b>3</b><span>⑤ 정식 출시</span></a><a href="#see"><b>9</b><span>⑥ 재생 확인</span></a></div>
 
 <!-- ───────────────────────── ① ───────────────────────── -->
 <h2 id="check">① 지금 확인할 것 <small>5분</small></h2>
@@ -191,13 +191,6 @@
       <li>앱 → 수익 창출 설정 → <b>라이선스 키</b>(긴 글자) 복사 → <code>키 보관\google_play_license_key.txt</code> 로 저장 (앱 안에서 결제가 진짜인지 확인하는 데 씀, 불도깨비와 같은 방식)</li>
       <li>폰에서 상품 하나씩 시험 결제 → 다이아·패키지가 들어오는지 대화창에</li>
     </ol></span></label></li>
-  <li data-id="u-sound"><label><input type="checkbox"><span><span class="tag t-you">직접</span><b>소리 구하기</b> — 지금 게임에 소리가 하나도 없음 (급하지 않음 — 3번 빌드나 출시 뒤도 됨)
-    <ol class="opts">
-      <li>효과음(1초 안팎): 총 발사(1~3종) · 좀비 맞음 · 좀비 죽음 · 보스 등장 경고 · 보스 죽음 · 버튼 · 강화 성공 · 강화 실패 · 총알 합성 · 보상·코인 · 승리 · 패배</li>
-      <li>배경음(1~3분, 끊김 없이 반복): 메인 전투 · 보스전 · 던전</li>
-      <li>wav 또는 ogg · <code>리소스\소리\</code> 에 · <b>상업 이용 가능</b> 라이선스 확인 (<code>리소스\소리\출처.txt</code> 에 출처 적기)</li>
-      <li>후보가 많으면 "미리듣기 만들어 줘" — 들어 보고 고르는 페이지</li>
-    </ol></span></label></li>
 </ul>
 
 <!-- ───────────────────────── ④ ───────────────────────── -->
@@ -209,7 +202,7 @@
   <li data-id="d-aab2"><label><input type="checkbox"><span><span class="tag t-me">개발</span><b>4. 2번 AAB</b> — 버전 1.0 · <b>코드 2</b> (<code>kachizombie-1.0-2.aab</code>, 같은 서명 키) · 점검: 패키지 · 서명 · 64비트 · <b>광고 ID 권한·결제 권한 들어갔는지</b> · 시험용 데이터가 안 들어갔는지 · 출시 노트</span></label></li>
   <li data-id="d-answers2"><label><input type="checkbox"><span><span class="tag t-me">개발</span><b>5. 바뀐 답안 + 개인정보처리방침</b> — <code>스토어 등록\게임설정_답안.html</code> 에 "2번 빌드부터" 칸 (광고 · 광고 ID · 데이터 보안: 기기 ID·광고 목적 · 콘텐츠 등급: 인앱 구매) · 개인정보처리방침에 광고 ID·결제 내용 추가 → <b>다시 배포할 때 "배포해도 돼" 받고</b> 올림</span></label></li>
   <li data-id="w-feedback"><label><input type="checkbox"><span><span class="tag t-me">개발</span><b>테스터 의견 모으기</b> — 메일(jjhfibe@gmail.com)·대행사 보고서로 온 의견을 대화창에 붙여 주시면 → "의견 → 고친 것 → 버전" 표로 정리 (프로덕션 신청 때 그대로 씀)</span></label></li>
-  <li data-id="d-sound"><label><input type="checkbox"><span><span class="tag t-me">개발</span><b>소리 연결</b> — 소리가 오면 효과음·배경음 + 설정 창 소리 크기 (지금 소리 켜고 끄기는 값만 있음)</span></label></li>
+  <li data-id="d-sound2"><label><input type="checkbox"><span><span class="tag t-me">개발</span><b>소리 다듬기</b> — 10-26 넣으신 코드 합성 소리(<code>AudioManager.cs</code>) 검토 = <code>사운드_검토.html</code> (들어 보기 · 고칠 것 7개 결정). 정해 주시면 고쳐서 2번 빌드에 같이</span></label></li>
   <li data-id="d-cloud"><label><input type="checkbox"><span><span class="tag t-me">개발</span><b>(선택·출시 뒤) 클라우드 저장</b> — 지금 세이브는 폰 안에만 (폰 바꾸면 사라짐). 서바이벌처럼 구글 계정 연동 저장 — Play 게임즈 설정이 추가로 필요해서 <b>정식 출시 뒤로</b>. 설정 창 "불러오기·구매 복원·문의" 버튼도 이때</span></label></li>
 </ul>
 
@@ -240,6 +233,7 @@
 <summary><b>끝난 것 (10-24 비공개 테스트 제출까지)</b> — 펼치기</summary>
 <ul>
   <li><b>결정</b>: 패키지 <code>com.zkfpf.kachizombie</code> (이제 못 바꿈) · 이름 카피바라vs좀비 / Capybara vs Zombies · 스토어 제목 "카피바라vs좀비: 방치형 슈팅" · 첫 빌드는 지금 게임 그대로 · 테스터 = 규랩스 · 대한민국만</li>
+  <li><b>소리 (10-26, 직접 넣으심)</b>: 코드로 만드는 효과음 16 · 배경음 2 (<code>Core/AudioManager.cs</code>, 설정 창 켜고 끄기 연결) · 자동 시험 오류 0 · 검토 = <code>사운드_검토.html</code></li>
   <li><b>결제 상품 (10-26)</b>: 모든 광고 제거 9,900원 · 자동강화 패키지 5,900원 · 다이아 한 줌(500) 2,900원 · 다이아 주머니(1,800) 5,900원 · 다이아 상자(4,200) 11,900원 — 강제 광고 제거 · 영구 3배 버프 · 광산 티켓 확장 · 핫딜 레이저 · 30분 방치 골드 상자는 뺌 (<code>Shop.xlsx</code>, 가격 칸 = 원화)</li>
   <li><b>합성 확률</b>: Weapon_Master <code>Merge_Weight (%)</code> 칸 = 일반탄 각 18% · 레어탄 각 14% (시뮬 150챕터 광고 최대 205일 · 안 봄 684일 — 밸런스는 마지막에)</li>
   <li><b>10-24 추가 요청</b>: 미션 보상 번갈아 · 총알 이름·아이콘 · 기본 4종 S~SSU · 보급품 그림 25장(<code>tools/supply_icons.py</code>) · 영어 전환 버그</li>

@@ -27,3 +27,6 @@ Thumbs.db
 키 보관/
 *.keystore
 *.jks
+
+# 소리 검토 wav (tools/sound_review.py 로 다시 만듦)
+사운드_검토_wav/
