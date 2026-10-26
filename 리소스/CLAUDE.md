@@ -1,5 +1,10 @@
 # 카치건 (좀비 키우기) — 세로 방치형 분대 슈팅, Unity 6000.0.84f1 · 2D URP
 
+## ▶ 재개 메모 (2026-10-26 — 비공개 테스트 진행 중, 남은 작업 문서 다시 짬)
+- 사용자: "10월 24일에 비공개 테스트 넣었어". 1024 목록 체크 = ①결정 6·②10개·③3-1~3-6·검토·참여 링크·테스터 12명 확인 · **서명 키 백업(y-keybak)만 안 함**. 게임 파일은 10-24 제출 뒤 안 바뀜(git 깨끗)
+- `남은_작업_정리.html` 새 키 **`kachigun-todo-1026`** (32항목, 이전 백업 = 스크래치 todo_backup_1024.html): ① `y-keybak`·`k-date`(12명 채운 날 → 14일 끝 11-08~09 맞추기)·`k-bullet`(기본탄 Bullet_06 그대로? 추천 그대로) ② `u-scope2`(추천 광고+결제 같이 2번 빌드, 11-02 전)·`u-ads`(추천 보상형+전면)·`u-iap`(9상품) ③ `u-admob`→`키 보관/admob.txt` · `u-payprofile`(FIBE 계정 결제 프로필, 불도깨비에서 만들었으면 그대로) · `u-upload2`(앱 콘텐츠 광고·광고 ID·데이터 보안·콘텐츠 등급 먼저 바꾸기) · `u-pay` · `u-license`(→ `키 보관/google_play_license_key.txt`) · `u-sound` ④ `d-ad`·`d-iap`(서바이벌 Unity IAP 5.4.4 코드 가져옴, Shop Product_Id)·`d-test2`·`d-aab2`(1.0 코드 2)·`d-answers2`(개인정보처리방침 재배포는 허락 받고) ⑤ 프로덕션 ⑥ 재생 확인 9
+- **재개하면**: `PYTHONUTF8=1 python tools/todo_checks.py` → ①② 답 읽고 ④ 순서대로
+
 ## ▶ 재개 메모 (2026-10-24 저녁 — 비공개 테스트 제출 준비 ② 진행)
 - 사용자 결정: 합성 확률 = **일반탄 각 18% · 레어탄(레이저·미사일) 각 14%** (Weapon_Master `Merge_Weight (%)` 칸, `Tables.RandomType`) → 시뮬 150챕터 광고 최대 205일 · 안 봄 684일 (밸런스는 마지막에)
 - ① 결정 6개 끝: 패키지 **com.zkfpf.kachizombie** · 이름 카피바라vs좀비 / Capybara vs Zombies (스토어 제목 "카피바라vs좀비: 방치형 슈팅") · 지금 게임 그대로 · 개인정보 = 서바이벌 랭킹 서버 `/kachigun-privacy` · 규랩스 · 대한민국
