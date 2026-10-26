@@ -4,6 +4,8 @@
 - 사용자: "10월 24일에 비공개 테스트 넣었어". 1024 목록 체크 = ①결정 6·②10개·③3-1~3-6·검토·참여 링크·테스터 12명 확인 · **서명 키 백업(y-keybak)만 안 함**. 게임 파일은 10-24 제출 뒤 안 바뀜(git 깨끗)
 - `남은_작업_정리.html` 새 키 **`kachigun-todo-1026`** (32항목, 이전 백업 = 스크래치 todo_backup_1024.html): ① `y-keybak`·`k-date`(12명 채운 날 → 14일 끝 11-08~09 맞추기)·`k-bullet`(기본탄 Bullet_06 그대로? 추천 그대로) ② `u-scope2`(추천 광고+결제 같이 2번 빌드, 11-02 전)·`u-ads`(추천 보상형+전면)·`u-iap`(9상품) ③ `u-admob`→`키 보관/admob.txt` · `u-payprofile`(FIBE 계정 결제 프로필, 불도깨비에서 만들었으면 그대로) · `u-upload2`(앱 콘텐츠 광고·광고 ID·데이터 보안·콘텐츠 등급 먼저 바꾸기) · `u-pay` · `u-license`(→ `키 보관/google_play_license_key.txt`) · `u-sound` ④ `d-ad`·`d-iap`(서바이벌 Unity IAP 5.4.4 코드 가져옴, Shop Product_Id)·`d-test2`·`d-aab2`(1.0 코드 2)·`d-answers2`(개인정보처리방침 재배포는 허락 받고) ⑤ 프로덕션 ⑥ 재생 확인 9
 - 10-26 추가: 사용자 "사업자 등록 아직" → ② `u-biz` 추가 (개인 계정이 인앱 결제로 수익 내면 결제 프로필 전체 주소 스토어 공개 · 유형 못 바꿈 → 추천 = 2번 빌드는 실제 광고 + 결제 [초안] 꺼 둠, 사업자·주소 정한 뒤 결제 켬)
+- 10-26 상품 정리 (사용자 지시): Shop.xlsx 결제 상품 5개만 — 모든 광고 제거 9,900원 · 자동강화 5,900 · 다이아 한 줌 2,900 · 주머니 5,900 · 상자 11,900 (Price_Type **KRW**, Price_Value 숫자, 화면 `ShopPopup.KrwText` → "9,900원"/"KRW 9,900"). 뺀 것: remove_forced_ads · perma_buff · mine_ticket · hotdeal_laser · gold_instant_30m(다이아 골드 상자 — PlayTest 골드 상자 검사는 줄이 없으면 건너뜀). 자동 시험 errors=0 (17_shop.png). u-iap 끝 → u-ads 추천을 "보상형만"으로 바꿈
+- ⚠ `balance_apply_1020.py --apply/--retune` 은 `_backup_1020` 에서 표를 다시 만들어서 **10-24(미션 번갈아·Merge_Weight 등)·10-26(상품) 변경을 되돌림** — 다시 돌릴 일이 생기면 먼저 도구에 그 변경을 옮길 것
 - **재개하면**: `PYTHONUTF8=1 python tools/todo_checks.py` → ①② 답 읽고 ④ 순서대로
 
 ## ▶ 재개 메모 (2026-10-24 저녁 — 비공개 테스트 제출 준비 ② 진행)

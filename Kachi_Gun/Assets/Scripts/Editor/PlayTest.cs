@@ -351,6 +351,14 @@ namespace KachiGun.EditorTools
                 double gb = S.gold, db = S.gems;
                 Check(GM.BuyShop(box) == null && S.gold > gb && S.gems == db - 100, "상점 골드 상자");
             }
+            // 10-4b) 10-26: 결제 상품 5개(원화) · 뺀 상품 없음 · 가격 글자
+            {
+                var cash = Tables.Shop.FindAll(x => x.priceType == "KRW");
+                string[] gone = { "remove_forced_ads", "perma_buff", "mine_ticket", "hotdeal_laser", "gold_instant_30m" };
+                var ads = Tables.Shop.Find(x => x.id == "remove_all_ads");
+                Check(cash.Count == 5 && !Tables.Shop.Exists(x => System.Array.IndexOf(gone, x.id) >= 0)
+                      && ads != null && ShopPopup.KrwText(ads.priceValue) == L.F("{0}원", "9,900"), $"상점 결제 상품 5개 원화 ({cash.Count}개)");
+            }
             // 10-5) 10-20: 광고 무료 다이아 (하루 AdGems_Daily 번)
             {
                 S.adGemUsed = 0;

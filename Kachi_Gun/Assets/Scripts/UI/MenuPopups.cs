@@ -111,6 +111,7 @@ namespace KachiGun
                     kind = 1;
                     act = () => ConfirmPopup.Ask($"<size=46>{L.T(row.name)}</size>\n\n{L.T(row.desc)}\n\n" + L.F("{0} 으로 살까요?", price), () => Msg(GM.BuyShop(row)), "구매");
                 }
+                else if (r.priceType == "KRW") { price = KrwText(r.priceValue); kind = 2; act = () => Iap.Buy(row.id); }   // 10-26 원화 (실제 결제를 붙이면 스토어 가격으로 바꿈)
                 else { price = r.priceType == "Ad" ? L.T("광고") : r.priceValue; kind = r.priceType == "Ad" ? 0 : 2; act = () => Iap.Buy(row.id); }
                 items.Add((r.id, L.T(r.name), L.T(r.desc), price, kind, act));
             }
@@ -140,6 +141,9 @@ namespace KachiGun
             UIKit.LabelOf(adGemBtn).text = $"{L.T("광고")} {left}/{(int)Tables.C("AdGems_Daily", 3)}";
             UIKit.SetOn(adGemBtn, left > 0);
         }
+
+        /// <summary>표의 원화 가격 9900 → "9,900원" (영어 "KRW 9,900")</summary>
+        public static string KrwText(string v) => L.F("{0}원", GameManager.Digits(v).ToString("N0", System.Globalization.CultureInfo.InvariantCulture));
     }
 
     /// <summary>

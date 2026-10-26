@@ -58,7 +58,7 @@ EN = {
     '오늘 티켓': "Today's tickets", '{0}초 안에 {1}를 처치!': 'Defeat {1} within {0}s!', '체력': 'HP', '보상: 다이아 {0}': 'Reward: {0} gems',
     '받기': 'Claim', '광고 보고': 'Watch ad', '돌아가기': 'Back',
     # ---------- 스킨 · 상점 · 보급품 · 미션 · 설정 ----------
-    '그림 준비 중': 'Art coming soon', '다이아 {0} 으로 살까요?': 'Buy for {0} gems?', '보유 효과': 'Owned bonus',
+    '그림 준비 중': 'Art coming soon', '다이아 {0} 으로 살까요?': 'Buy for {0} gems?', '{0}원': 'KRW {0}', '보유 효과': 'Owned bonus',
     '공격력 +{0}% · 공격속도 +{1}% · 돈 +{2}%': 'ATK +{0}% · SPD +{1}% · Gold +{2}%', '보유 효과 합계': 'Total owned bonus',
     '공격력 +{0}% · 공격속도 +{1}% · 돈 획득량 +{2}%': 'ATK +{0}% · SPD +{1}% · Gold +{2}%', '입는 중': 'Wearing', '보유': 'Owned',
     '스킨 구매': 'Buy Skin', '광고': 'Ad', '{0} 으로 살까요?': 'Buy for {0}?', '구매': 'Buy',

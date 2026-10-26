@@ -75,6 +75,7 @@
 광고,Ad,UI/MenuPopups.cs
 {0} 으로 살까요?,Buy for {0}?,UI/MenuPopups.cs
 구매,Buy,UI/MenuPopups.cs
+{0}원,KRW {0},UI/MenuPopups.cs
 일반,Common,UI/MenuPopups.cs
 고급,Uncommon,UI/MenuPopups.cs
 희귀,Rare,UI/MenuPopups.cs
@@ -278,26 +279,16 @@ D 등급 총알 획득!,Got D grade ammo!,UI/WeaponPopup.cs
 공격력 x2 (5분),Attack x2 (5 min),Shop_Products.Name
 광고 1편 · 연속 시청 시 시간 누적,1 ad · time stacks when watched again,Shop_Products.Description
 돈 획득량 x2 (5분),Gold x2 (5 min),Shop_Products.Name
-강제 광고 제거,Remove Forced Ads,Shop_Products.Name
-자동 전면 광고 제거 + 돼지저금통,No more forced ads + piggy bank,Shop_Products.Description
 모든 광고 제거,Remove All Ads,Shop_Products.Name
 보상형 광고도 바로 보상,Rewards without watching ads,Shop_Products.Description
 자동강화 패키지,Auto Upgrade Pack,Shop_Products.Name
 하단 강화 자동 + 다이아 500,Upgrades buy themselves + 500 gems,Shop_Products.Description
-영구 3배 버프,Permanent x3 Buff,Shop_Products.Name
-"공격력·돈 x3 영구 + 다이아 1,000","Permanent x3 attack & gold + 1,000 gems",Shop_Products.Description
-광산 티켓 확장,Mine Ticket Pack,Shop_Products.Name
-하루 광산 티켓 2 → 6 + 다이아 500,Daily mine tickets 2 → 6 + 500 gems,Shop_Products.Description
-핫딜 레이저 총알,Hot Deal: Laser Ammo,Shop_Products.Name
-레이저탄_S 즉시 지급,Get a Laser Round_S now,Shop_Products.Description
 다이아 한 줌 (500),Handful of Gems (500),Shop_Products.Name
 다이아 500개 즉시 획득,Get 500 gems now,Shop_Products.Description
 "다이아 주머니 (1,800)","Pouch of Gems (1,800)",Shop_Products.Name
 "다이아 1,800개 즉시 획득","Get 1,800 gems now",Shop_Products.Description
 "다이아 상자 (4,200)","Chest of Gems (4,200)",Shop_Products.Name
 "다이아 4,200개 즉시 획득","Get 4,200 gems now",Shop_Products.Description
-30분 방치 골드 상자,30-min Gold Chest,Shop_Products.Name
-현재 스테이지 기준 600마리 처치 골드,Gold of 600 zombies at your current stage,Shop_Products.Description
 무료 다이아,Free Gems,Shop_Products.Name
 광고 1편 · 다이아 40 · 하루 3번,1 ad · 40 gems · 3 times a day,Shop_Products.Description
 폐허 숲길,Ruined Forest Trail,Chapter_Summary.Biome_Name
@@ -320,6 +311,16 @@ Stage 10-1 에서 열립니다,Unlocks at Stage 10-1,Unlock_Roadmap.Lock_Toast_M
 작은 푸른 보석,Small Blue Gem,Mine_Ore_Spec.Name_KR
 회색 바위,Gray Rock,Mine_Ore_Spec.Name_KR
 거대 황금 크리스탈,Huge Gold Crystal,Mine_Ore_Spec.Name_KR
+강제 광고 제거,Remove Forced Ads,(지금은 안 씀) Shop_Products.Name
+자동 전면 광고 제거 + 돼지저금통,No more forced ads + piggy bank,(지금은 안 씀) Shop_Products.Description
+영구 3배 버프,Permanent x3 Buff,(지금은 안 씀) Shop_Products.Name
+"공격력·돈 x3 영구 + 다이아 1,000","Permanent x3 attack & gold + 1,000 gems",(지금은 안 씀) Shop_Products.Description
+광산 티켓 확장,Mine Ticket Pack,(지금은 안 씀) Shop_Products.Name
+하루 광산 티켓 2 → 6 + 다이아 500,Daily mine tickets 2 → 6 + 500 gems,(지금은 안 씀) Shop_Products.Description
+핫딜 레이저 총알,Hot Deal: Laser Ammo,(지금은 안 씀) Shop_Products.Name
+레이저탄_S 즉시 지급,Get a Laser Round_S now,(지금은 안 씀) Shop_Products.Description
+30분 방치 골드 상자,30-min Gold Chest,(지금은 안 씀) Shop_Products.Name
+현재 스테이지 기준 600마리 처치 골드,Gold of 600 zombies at your current stage,(지금은 안 씀) Shop_Products.Description
 S 등급 레이저 건 즉시 지급,Get an S grade Laser Gun now,(지금은 안 씀) Shop_Products.Description
 리볼버,Revolver,(지금은 안 씀) Weapon_Master.Name
 소드오프 샷건,Sawed-off Shotgun,(지금은 안 씀) Weapon_Master.Name
