@@ -406,6 +406,9 @@ namespace KachiGun.EditorTools
             HUD.I.Open<ShopPopup>(); yield return Wait(0.3f); Capture("17_shop"); CloseAll();
             HUD.I.Open<SettingsPopup>(); yield return Wait(0.3f); Capture("18_settings"); CloseAll();
             Check(AudioManager.I != null, "사운드 매니저 생성");
+            // 10-26 소리 다듬기: 배경음 40초 (8초 반복 아님) · 효과음 16개 다 재생돼도 오류 없음
+            Check(AudioManager.StageBgmSeconds >= 30f, $"배경음 길이 {AudioManager.StageBgmSeconds:F1}초");
+            foreach (AudioManager.Sfx sx in System.Enum.GetValues(typeof(AudioManager.Sfx))) AudioManager.Play(sx);
             var buff = GM.Buff(true);
             Check(buff == null && Stats.BuffAtk, "버프");
 
