@@ -10,6 +10,8 @@ for f in "$U"/Managed/UnityEngine/*.dll; do REFS+=("-r:$f"); done
 REFS+=("-r:$U/NetStandard/ref/2.1.0/netstandard.dll")
 REFS+=("-r:$U/PlaybackEngines/AndroidPlayer/UnityEditor.Android.Extensions.dll")   # 10-24 앱 아이콘(AndroidPlatformIconKind)
 for f in UnityEngine.UI Unity.2D.Animation.Runtime Unity.2D.Common.Runtime Unity.Collections Unity.Mathematics; do REFS+=("-r:$P/Library/ScriptAssemblies/$f.dll"); done
+# 10-30 결제(Unity IAP 5.4.4): GooglePlayTangle 의 Obfuscator · IapTools (폰 전용 광고·결제 코드는 #if 라 여기선 안 봄 → 배치 IapTools.CompileAndroidBatch)
+for f in "$P"/Library/ScriptAssemblies/Unity.Purchasing.SecurityStub.dll "$P"/Library/ScriptAssemblies/Unity.Purchasing.SecurityCore.dll; do [ -f "$f" ] && REFS+=("-r:$f"); done
 mapfile -t RT < <(find "$P/Assets/Scripts" -name "*.cs" -not -path "*/Editor/*")
 mapfile -t ED < <(find "$P/Assets/Scripts" -path "*/Editor/*" -name "*.cs")
 FAIL=0

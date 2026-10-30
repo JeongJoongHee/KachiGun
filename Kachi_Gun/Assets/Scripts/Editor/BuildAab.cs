@@ -159,6 +159,10 @@ namespace KachiGun.EditorTools
 
         static bool BuildPlayer(bool apk, string suffix)
         {
+            // 10-30 광고: 개발용 키 APK(-debug) = 구글 테스트 광고(KACHI_TEST_ADS) · AAB·업로드 키 APK = 실제 광고
+            bool testAds = suffix == "-debug";
+            Debug.Log("[BuildAab] 광고 = " + (testAds ? "구글 테스트 광고 (눌러도 됨)" : "실제 광고 — 내 광고는 누르지 말 것"));
+            IapTools.Check();
             string kind = apk ? "APK" : "AAB";
             if (EditorUserBuildSettings.activeBuildTarget != BuildTarget.Android)
             {
@@ -190,6 +194,7 @@ namespace KachiGun.EditorTools
                     target = BuildTarget.Android,
                     targetGroup = BuildTargetGroup.Android,
                     options = BuildOptions.None,
+                    extraScriptingDefines = testAds ? new[] { "KACHI_TEST_ADS" } : null,
                 });
             }
             finally { EditorUserBuildSettings.buildAppBundle = true; }   // 평소(스토어용)는 AAB 그대로

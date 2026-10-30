@@ -1,6 +1,19 @@
 ﻿Key,EN,Where
 [테스트] 광고 대신 바로 지급,[Test] Reward given without an ad,Core/AdService.cs
-결제는 준비 중입니다,Purchases are coming soon,Core/AdService.cs
+광고를 불러오는 중입니다. 잠시 뒤 다시 눌러 주세요,Loading the ad. Please tap again in a moment.,Core/AdService.cs
+광고를 띄우지 못했습니다. 잠시 뒤 다시 해 주세요,Couldn't show the ad. Please try again later.,Core/AdService.cs
+{0} 구매 완료!,{0} purchased!,Core/Iap.cs
+결제는 준비 중입니다,Purchases are coming soon,Core/Iap.cs
+이미 가지고 있습니다,Already owned,Core/Iap.cs
+스토어에 연결하는 중입니다. 잠시 뒤 다시 눌러 주세요,Connecting to the store. Please tap again in a moment.,Core/Iap.cs
+[테스트] 가짜 결제 {0} — 살까요?,[Test] Fake purchase {0} — buy?,Core/Iap.cs
+구매,Buy,Core/Iap.cs
+결제 승인을 기다리는 중입니다,Waiting for payment approval,Core/Iap.cs
+결제를 확인하지 못했습니다,Couldn't verify the purchase,Core/Iap.cs
+{0} 구매 기록을 되살렸습니다,Restored your purchase: {0},Core/Iap.cs
+결제를 취소했습니다,Purchase canceled,Core/Iap.cs
+앞의 결제를 처리하는 중입니다,A previous purchase is still processing,Core/Iap.cs
+결제하지 못했습니다,Purchase failed,Core/Iap.cs
 {0}초,{0}s,Core/Num.cs
 단발,Single,Core/Tables.cs
 산탄,Shotgun,Core/Tables.cs
@@ -11,6 +24,8 @@
 보스 실패! 강화 후 다시 도전하세요,Boss failed! Upgrade and try again,Game/GameManager.cs
 아직 보스를 만날 때가 아닙니다,It's not time to face the boss yet,Game/GameManager.cs
 보스 등장!,Boss incoming!,Game/GameManager.cs
+자동강화 켬,Auto upgrade ON,Game/GameManager.cs
+자동강화 끔,Auto upgrade OFF,Game/GameManager.cs
 아직 열리지 않았습니다,Not unlocked yet,Game/GameManager.cs
 다이아가 부족합니다,Not enough gems,Game/GameManager.cs
 인벤토리가 가득 찼습니다,Inventory is full,Game/GameManager.cs
@@ -74,7 +89,7 @@
 보유,Owned,UI/MenuPopups.cs
 광고,Ad,UI/MenuPopups.cs
 {0} 으로 살까요?,Buy for {0}?,UI/MenuPopups.cs
-구매,Buy,UI/MenuPopups.cs
+보유 중,Owned,UI/MenuPopups.cs
 {0}원,KRW {0},UI/MenuPopups.cs
 일반,Common,UI/MenuPopups.cs
 고급,Uncommon,UI/MenuPopups.cs

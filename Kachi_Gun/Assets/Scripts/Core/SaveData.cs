@@ -41,6 +41,11 @@ namespace KachiGun
         public bool tutorialDone;
         public long firstPlay;
 
+        // 결제 (10-30) — 영구 상품은 다시 설치해도 구글에서 되살림 (Iap.Restore)
+        public bool noAds;                       // 모든 광고 제거 (remove_all_ads): 광고 버튼 = 광고 없이 바로 보상
+        public bool autoUpgrade, autoOn = true;  // 자동강화 패키지 (auto_upgrade) 가짐 · 켜 둠
+        public List<string> iapOrders = new();   // 이미 지급한 주문 번호 (같은 결제를 두 번 주지 않게)
+
         // ---------- 불러오기·저장 ----------
         static SaveData cur;
         public static SaveData Cur => cur ??= LoadOrNew();

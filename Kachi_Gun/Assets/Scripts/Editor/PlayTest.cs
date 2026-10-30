@@ -405,6 +405,46 @@ namespace KachiGun.EditorTools
             HUD.I.Open<MissionPopup>(); yield return Wait(0.3f); Capture("16_mission"); CloseAll();
             HUD.I.Open<ShopPopup>(); yield return Wait(0.3f); Capture("17_shop"); CloseAll();
             HUD.I.Open<SettingsPopup>(); yield return Wait(0.3f); Capture("18_settings"); CloseAll();
+
+            // 11b) 10-30 결제·광고: 가짜 결제(배치는 바로 지급) · 영구 상품 두 번 안 줌 · 광고 제거 = 광고 없이 바로 보상 · 자동강화 켬/끔 · 결제 꺼진 폰 = 원화 줄 숨김
+            {
+                double iapG0 = S.gems;
+                Iap.Buy("gem_pack_small");
+                Check(System.Math.Abs(S.gems - iapG0 - 500) < 0.01, $"결제 다이아 한 줌 +{S.gems - iapG0}");
+                Iap.Buy("remove_all_ads");
+                bool got = false;
+                AdService.Show("test", () => got = true);
+                Check(S.noAds && got, "모든 광고 제거 → 광고 버튼 바로 보상");
+                double iapG1 = S.gems;
+                Iap.Buy("auto_upgrade");
+                Iap.Buy("auto_upgrade");   // 두 번째는 "이미 가지고 있습니다"
+                Check(S.autoUpgrade && S.autoOn && System.Math.Abs(S.gems - iapG1 - 500) < 0.01, $"자동강화 패키지 (다이아 +{S.gems - iapG1}, 한 번만)");
+                HUD.I.Open<ShopPopup>(); yield return Wait(0.3f); Capture("17b_shop_owned"); CloseAll();
+                int autoLv0 = S.lvAtk + S.lvSpd + S.lvGold;
+                double iapGold0 = S.gold;
+                S.gold += Stats.Cost(S.lvAtk) * 20;
+                yield return Wait(1.6f);
+                int autoLv1 = S.lvAtk + S.lvSpd + S.lvGold;
+                Check(autoLv1 >= autoLv0 + 2, $"자동강화 켜짐 → 강화 {autoLv1 - autoLv0}번");
+                GM.AutoUpgradeButton();   // 끔
+                S.gold += Stats.Cost(S.lvAtk) * 20;
+                yield return Wait(1.1f);
+                Check(!S.autoOn && S.lvAtk + S.lvSpd + S.lvGold == autoLv1, "자동강화 끄면 멈춤");
+                Capture("17c_auto_off");
+                Iap.SimulateNoStore = true;
+                S.noAds = false; S.autoUpgrade = false; S.autoOn = true;
+                Iap.Buy("gem_pack_small");   // 이벤트로 창 다시 그림 (지급은 됨 — 다음 줄에서 되돌림)
+                S.gems = iapG0; S.gold = iapGold0;
+                var shop = HUD.I.Open<ShopPopup>(); yield return Wait(0.3f);
+                int krwRows = 0;
+                foreach (var t in shop.GetComponentsInChildren<Text>(true)) if (t.text.EndsWith("원") && t.text.Length > 1 && char.IsDigit(t.text[0])) krwRows++;
+                Capture("17d_shop_nostore");
+                CloseAll();
+                bool autoHidden = !GameObject.Find("AutoUpgrade");
+                Iap.SimulateNoStore = false;
+                Iap.Buy("gem_pack_small"); S.gems = iapG0;   // 창·버튼 원래대로
+                Check(krwRows == 0 && autoHidden, $"결제 꺼진 폰: 원화 줄 {krwRows}개 · 자동강화 버튼 숨김 {autoHidden}");
+            }
             Check(AudioManager.I != null, "사운드 매니저 생성");
             // 10-26 소리 다듬기: 배경음 40초 (8초 반복 아님) · 효과음 16개 다 재생돼도 오류 없음
             Check(AudioManager.StageBgmSeconds >= 30f, $"배경음 길이 {AudioManager.StageBgmSeconds:F1}초");

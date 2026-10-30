@@ -51,6 +51,16 @@ EN = {
     '오늘 티켓을 다 썼습니다': 'No tickets left today', '다이아 광산': 'Gem Mine', '보스 던전 Lv.{0}': 'Boss Dungeon Lv.{0}',
     '도전 {0} 성공!': 'Challenge {0} cleared!', '시간 초과': "Time's up", '채굴 끝!': 'Mining done!', '보스 처치!': 'Boss defeated!',
     '[테스트] 광고 대신 바로 지급': '[Test] Reward given without an ad', '결제는 준비 중입니다': 'Purchases are coming soon',
+    # ---------- 10-30 실제 광고·결제 ----------
+    '광고를 불러오는 중입니다. 잠시 뒤 다시 눌러 주세요': 'Loading the ad. Please tap again in a moment.',
+    '광고를 띄우지 못했습니다. 잠시 뒤 다시 해 주세요': "Couldn't show the ad. Please try again later.",
+    '{0} 구매 완료!': '{0} purchased!', '이미 가지고 있습니다': 'Already owned', '보유 중': 'Owned',
+    '스토어에 연결하는 중입니다. 잠시 뒤 다시 눌러 주세요': 'Connecting to the store. Please tap again in a moment.',
+    '[테스트] 가짜 결제 {0} — 살까요?': '[Test] Fake purchase {0} — buy?',
+    '결제 승인을 기다리는 중입니다': 'Waiting for payment approval', '결제를 확인하지 못했습니다': "Couldn't verify the purchase",
+    '{0} 구매 기록을 되살렸습니다': 'Restored your purchase: {0}', '결제를 취소했습니다': 'Purchase canceled',
+    '앞의 결제를 처리하는 중입니다': 'A previous purchase is still processing', '결제하지 못했습니다': 'Purchase failed',
+    '자동강화 켬': 'Auto upgrade ON', '자동강화 끔': 'Auto upgrade OFF',
     # ---------- 창 공통 · 던전 ----------
     '확인': 'OK', '시작': 'Start', '{0}초 안에 좀비 {1}마리를 모두 처치!': 'Defeat all {1} zombies within {0}s!',
     '화면을 눌러 분대를 직접 움직이면 빨라요': 'Tap the screen to move your squad — it\'s faster', '보상: 다이아 {0} (챕터당 1번)': 'Reward: {0} gems (once per chapter)',

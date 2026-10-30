@@ -1,5 +1,13 @@
 # 카치건 (좀비 키우기) — 세로 방치형 분대 슈팅, Unity 6000.0.84f1 · 2D URP
 
+## ▶ 재개 메모 (2026-10-30 — `지금 상태.txt`: 새 계정으로 이전 계획 + 선행 작업)
+- **사용자 상태(10-30)**: 앱은 **zkfpf1@gmail.com** 개발자 계정(FIBE·개인, 사업자 등록 불가)에 있음 · 새 개발자 계정 **kachigoogoo@gmail.com** = 개인사업자 등록 + 결제 프로필 작성 끝 · 비공개 테스트 중(10-24 제출·12명) → 끝나면 kachigoogoo 로 앱 이전
+- **정한 순서** (`남은_작업_정리.html` 새 키 **`kachigun-todo-1030`**, 42항목, 이전 판 백업 = 스크래치 todo_backup_1026.html — 1026 체크·의견 0개): ① 2번 빌드(실제 광고 + 결제 코드 꺼 둠) 11-02 전 → ② 14일 끝(~11-08) 프로덕션 신청·출시(옛 계정, 결제 없음) → ③ 앱 이전(mv-account 계정 유형 확인 · mv-admob 광고 수익 받을 곳 결정 · 거래 ID · 신청/승인 · 라이선스 키 → `키 보관/google_play_license_key.txt`) → ④ 새 계정에서 설문 → 3번 빌드(키) → 내부 테스트 → 라이선스 테스터 → 상품 5개 → 시험 결제 → 프로덕션. 이유: kachigoogoo 가 개인 계정이면 옮긴 앱에 12명·14일을 다시 요구할 수 있음(구글 안내에 없음 — 확인 못 함), 옛 계정엔 결제 프로필 만들지 말 것
+- **10-30 한 것**: 패키지 `com.google.ads.mobile` 11.5.0(OpenUPM, JumpJump 와 같음) + `com.unity.purchasing` 5.4.4 · `Assets/Plugins/Android` gradle 템플릿(JumpJump 것) · `Assets/GoogleMobileAds/Resources/GoogleMobileAdsSettings.asset`(앱 ID ~5156919833) · `Core/AdService.cs`(AdIds·실제 보상형·UMP·MainThread, noAds 면 바로 보상, 에디터는 바로 보상) · `Core/Iap.cs`(불도깨비 Iap 를 가져옴: KRW 줄 = 상품, NoAllAds·AutoUpgrade = 영구(OnPurchasesFetched 로 되살림), 다이아 3 = 소모, 키 없으면 폰에서 원화 줄·자동강화 버튼 숨김, 에디터 가짜 결제) · `UnityPurchasing/generated/GooglePlayTangle.cs` 빈 키 · `Editor/IapTools.cs`(키 넣기·결제·광고 점검·`CompileAndroidBatch`) · 자동강화 기능(GM.AutoUpgradeTick 0.5초 가장 싼 강화, HUD 버튼 ON/OFF) · SaveData noAds/autoUpgrade/autoOn/iapOrders · BuildAab: `-debug` APK = `KACHI_TEST_ADS`(구글 테스트 광고) · PlayTest 11b 7줄 → **errors=0** · String 15줄 · `aab_check.py` 2번 기준(AD_ID·BILLING·AdMob ID 있어야 통과, APK 도) · `compile_check.sh` 결제 dll 참조
+- 문서: `스토어 등록/게임설정_답안.html` 맨 위 ★(2번 빌드용 광고·광고 ID·데이터 보안 답, 웹사이트 = https://jeongjoonghee.github.io — app-ads.txt 같은 pub ID 이미 있음) · `개인정보처리방침.html` 새 판(광고·결제) — **배포 허락 대기**(n-privacy, 배포 = `D:\00 Survival\server\src\kachigun-privacy.html` 로 복사 → wrangler deploy)
+- **빌드 끝(10-30)**: 개발용 `Builds/kachizombie-1.0-1-debug.apk`(테스트 광고) · **`Builds/kachizombie-1.0-2.aab`**(versionCode 2, 실제 광고) — aab_check 전부 통과. 사용자 몫 = n-console(앱 콘텐츠 답) → n-website → n-upload2 · push 는 자동 승인에서 막힘 → 사용자가 `! git -C "D:/00 Final_Game" push`
+- **재개하면**: `PYTHONUTF8=1 python tools/todo_checks.py` → n-scope · k-bullet · k-date · n-privacy 답 → 다르면 고쳐서 AAB 다시
+
 ## ▶ 재개 메모 (2026-10-26 오후 — 소리 검토)
 - 사용자가 소리를 넣음 (생성형 = **코드 합성** `Kachi_Gun/Assets/Scripts/Core/AudioManager.cs`, 효과음 16·배경음 2, 호출 10개 파일) → 자동 시험 errors=0, 커밋함
 - 검토: `tools/sound_review.py`(AudioManager 식을 파이썬으로 따라 만들어 wav·측정, 결과 `사운드_검토_wav/`(.gitignore)·`tools/_sound_metrics.json`) → **`사운드_검토.html`** (키 `kachigun-sound-1026`, 읽기 `python tools/todo_checks.py 사운드_검토.html`)

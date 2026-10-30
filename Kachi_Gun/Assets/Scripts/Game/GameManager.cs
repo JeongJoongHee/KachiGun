@@ -60,7 +60,7 @@ namespace KachiGun
 
             switch (mode)
             {
-                case Mode.Stage: StageTick(dt); break;
+                case Mode.Stage: StageTick(dt); AutoUpgradeTick(); break;
                 default: DungeonTick(dt); break;
             }
         }
@@ -249,7 +249,7 @@ namespace KachiGun
         // =====================================================================
         // 강화
         // =====================================================================
-        public bool TryUpgrade(int which)
+        public bool TryUpgrade(int which, bool auto = false)
         {
             int lv = which == 0 ? S.lvAtk : which == 1 ? S.lvSpd : S.lvGold;
             double cost = Stats.Cost(lv);
@@ -258,9 +258,35 @@ namespace KachiGun
             if (which == 0) S.lvAtk++; else if (which == 1) S.lvSpd++; else S.lvGold++;
             if (!S.tutorialDone) S.tutorialDone = true;
             upgradeHint = false;
-            AudioManager.Play(AudioManager.Sfx.Upgrade);
+            if (!auto) AudioManager.Play(AudioManager.Sfx.Upgrade);   // 자동강화는 조용히 (0.5초마다 울리면 시끄러움)
             Notify();
             return true;
+        }
+
+        // 자동강화 패키지 (10-30, 상품 auto_upgrade): 켜 두면 0.5초마다 공격·속도·돈 중 가장 싼 강화를 골드가 되는 만큼 하나씩
+        float autoT;
+        public bool AutoUpgradeOn => S.autoUpgrade && S.autoOn;
+
+        void AutoUpgradeTick()
+        {
+            if (!AutoUpgradeOn) return;
+            autoT += Time.unscaledDeltaTime;
+            if (autoT < 0.5f) return;
+            autoT = 0;
+            int best = 0;
+            double bestCost = double.MaxValue;
+            int[] lv = { S.lvAtk, S.lvSpd, S.lvGold };
+            for (int i = 0; i < 3; i++) { double c = Stats.Cost(lv[i]); if (c < bestCost) { bestCost = c; best = i; } }
+            TryUpgrade(best, true);
+        }
+
+        /// <summary>HUD [자동강화]: 가졌으면 켜기/끄기, 아니면 구매</summary>
+        public void AutoUpgradeButton()
+        {
+            if (!S.autoUpgrade) { Iap.Buy("auto_upgrade"); return; }
+            S.autoOn = !S.autoOn;
+            HUD.I?.Toast(S.autoOn ? L.T("자동강화 켬") : L.T("자동강화 끔"));
+            Notify();
         }
 
         // =====================================================================

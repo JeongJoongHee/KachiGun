@@ -95,7 +95,8 @@ namespace KachiGun
 
         protected override void Build()
         {
-            var items = new List<(string id, string name, string desc, string price, int kind, System.Action act)>();   // kind 0 = 광고 · 1 = 다이아 · 2 = 결제
+            Iap.Changed -= Rebuild; Iap.Changed += Rebuild;
+            var items = new List<(string id, string name, string desc, string price, int kind, System.Action act)>();   // kind 0 = 광고 · 1 = 다이아 · 2 = 결제 · 3 = 결제(보유 중)
             foreach (var r in Tables.Shop)
             {
                 var row = r;
@@ -111,7 +112,15 @@ namespace KachiGun
                     kind = 1;
                     act = () => ConfirmPopup.Ask($"<size=46>{L.T(row.name)}</size>\n\n{L.T(row.desc)}\n\n" + L.F("{0} 으로 살까요?", price), () => Msg(GM.BuyShop(row)), "구매");
                 }
-                else if (r.priceType == "KRW") { price = KrwText(r.priceValue); kind = 2; act = () => Iap.Buy(row.id); }   // 10-26 원화 (실제 결제를 붙이면 스토어 가격으로 바꿈)
+                else if (r.priceType == "KRW")
+                {
+                    // 10-30 실제 결제: 스토어 가격(받았으면) · 폰에서 결제가 꺼져 있으면 숨김 · 영구 상품을 가졌으면 "보유 중"
+                    if (!Iap.CanSell(r) && !Iap.Owned(r)) continue;
+                    bool owned = Iap.Permanent(r) && Iap.Owned(r);
+                    price = owned ? L.T("보유 중") : Iap.PriceText(r);
+                    kind = owned ? 3 : 2;
+                    act = () => { Iap.Buy(row.id); };
+                }
                 else { price = r.priceType == "Ad" ? L.T("광고") : r.priceValue; kind = r.priceType == "Ad" ? 0 : 2; act = () => Iap.Buy(row.id); }
                 items.Add((r.id, L.T(r.name), L.T(r.desc), price, kind, act));
             }
@@ -130,8 +139,21 @@ namespace KachiGun
                 var b = UIKit.ColorBtn(rb.transform, ad ? new Color(0.95f, 0.6f, 0.15f) : gem ? new Color(0.3f, 0.55f, 0.95f) : new Color(0.45f, 0.7f, 0.3f), new Vector2(220, 100), it.price, gem ? 32 : 38, it.act);
                 ((RectTransform)b.transform).Place(1, 0.5f, new Vector2(-24, 0), new Vector2(220, 100), new Vector2(1, 0.5f));
                 if (it.id == "free_gems_ad") adGemBtn = b;
+                if (it.kind == 3) UIKit.SetOn(b, false);
             }
         }
+
+        /// <summary>스토어 상품 정보를 받았거나 결제로 받았을 때 줄을 다시 만듦 (10-30)</summary>
+        void Rebuild()
+        {
+            if (this == null) { Iap.Changed -= Rebuild; return; }
+            for (int i = content.childCount - 1; i >= 0; i--) Destroy(content.GetChild(i).gameObject);
+            adGemBtn = null;
+            Build();
+            Refresh();
+        }
+
+        void OnDestroy() => Iap.Changed -= Rebuild;
 
         /// <summary>광고 무료 다이아: 남은 횟수 "광고 2/3"</summary>
         public override void Refresh()

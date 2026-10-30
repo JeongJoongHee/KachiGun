@@ -22,6 +22,7 @@ namespace KachiGun
         readonly Image[] nodes = new Image[5];
         RectTransform nodeMarker, stageGroup, dungeonGroup;
         Button ecoBtn, missionBtn, quitBtn, autoBtn, bossBtn;
+        Text autoState;
         GameObject missionDot;
         readonly Card[] cards = new Card[3];
         readonly Dictionary<string, SideBtn> side = new();
@@ -124,11 +125,15 @@ namespace KachiGun
             dot.rectTransform.Place(1, 1, new Vector2(8, 8), new Vector2(34, 34), new Vector2(1, 1));
             missionDot = dot.gameObject;
 
-            // 자동강화 (오른쪽 맨 아래 = 절전모드 밑, [임시] 결제 전이라 상점 결제 안내)
-            autoBtn = UIKit.Btn(root, Art.Kit("btn_play"), new Vector2(84, 84), null, 0, () => Iap.Buy("auto_upgrade"), "AutoUpgrade");
+            // 자동강화 (오른쪽 맨 아래 = 절전모드 밑). 10-30: 안 가졌으면 구매(auto_upgrade), 가졌으면 켜기/끄기.
+            // 폰에서 결제가 꺼져 있고(라이선스 키 없음·상품 없음) 안 가졌으면 숨김
+            autoBtn = UIKit.Btn(root, Art.Kit("btn_play"), new Vector2(84, 84), null, 0, () => GM.AutoUpgradeButton(), "AutoUpgrade");
             ((RectTransform)autoBtn.transform).Place(1, 1, new Vector2(-40, -694), new Vector2(84, 84), new Vector2(1, 1));
             var al = UIKit.Label(autoBtn.transform, L.T("자동강화"), 28, Color.white, TextAnchor.MiddleCenter, 2);
             al.rectTransform.Place(0.5f, 0, new Vector2(0, -16), new Vector2(160, 34), new Vector2(0.5f, 0.5f));
+            autoState = UIKit.Label(autoBtn.transform, "", 24, Color.white, TextAnchor.MiddleCenter, 2);
+            autoState.rectTransform.Place(0.5f, 0, new Vector2(0, -46), new Vector2(120, 30), new Vector2(0.5f, 0.5f));
+            Iap.Changed += RefreshAuto;
 
             // 광고 버프 (오른쪽, 다이아 아래) — 배율 = Buff_Table
             buffAtk = BuffBtn(new Vector2(-38, -282), "UI/stat_atk", L.T("공격") + " " + BuffX(true), true, out buffAtkT);
@@ -505,6 +510,12 @@ namespace KachiGun
             side["mine"].dot.SetActive(GM.MineOpen && S.mineTickets > 0);
             side["boss"].dot.SetActive(GM.BossRaidOpen && S.bossTickets > 0);
             side["shop"].dot.SetActive(GM.Unlocked("shop") && GM.AdGemsLeft > 0);
+            if (autoState)
+            {
+                autoState.text = S.autoUpgrade ? (S.autoOn ? "ON" : "OFF") : "";
+                autoState.color = S.autoOn ? new Color(0.6f, 1f, 0.5f) : new Color(0.8f, 0.8f, 0.8f);
+                autoBtn.image.color = S.autoUpgrade && !S.autoOn ? new Color(0.6f, 0.6f, 0.6f) : Color.white;
+            }
             RefreshSlots();
 
             pctFill.rectTransform.anchorMax = new Vector2(Mathf.Max(0.03f, GM.StageProgress), 1);
@@ -517,13 +528,24 @@ namespace KachiGun
             foreach (var p in openPopups) p.Tick();
         }
 
+        void OnDestroy() => Iap.Changed -= RefreshAuto;
+
+        /// <summary>자동강화 버튼: 스테이지 화면 + (가졌거나 살 수 있을 때)</summary>
+        void RefreshAuto()
+        {
+            if (!autoBtn) return;
+            var row = Tables.Shop.Find(x => x.id == "auto_upgrade");
+            bool show = GM.mode == GameManager.Mode.Stage && (S.autoUpgrade || Iap.CanSell(row));
+            if (autoBtn.gameObject.activeSelf != show) autoBtn.gameObject.SetActive(show);
+        }
+
         void RefreshStage()
         {
             bool stage = GM.mode == GameManager.Mode.Stage;
             stageGroup.gameObject.SetActive(stage);
             dungeonGroup.gameObject.SetActive(!stage);
             navBar.gameObject.SetActive(stage);
-            autoBtn.gameObject.SetActive(stage);
+            RefreshAuto();
             ecoBtn.gameObject.SetActive(stage && GM.Unlocked("eco"));
             side["shop"].b.gameObject.SetActive(stage);
             side["challenge"].b.gameObject.SetActive(stage);
