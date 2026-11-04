@@ -157,12 +157,72 @@ namespace KachiGun.EditorTools
             }
         }
 
+        /// <summary>
+        /// 11-04 Unity 창에서 빌드하면 "Building Player · Begin" 에서 멈추던 것 고침.
+        /// 원인 = 광고 플러그인 빌드 전처리(AndroidBuildPreProcessor)가 빌드 도중 PlayServicesResolver.ResolveSync(true)(구글 라이브러리 강제 정리)를 부름
+        ///   → 열린 에디터에서는 이 정리가 끝나지 않아 빌드가 영원히 기다림 (배치 모드에선 됨 — 그래서 배치 빌드는 늘 성공했음).
+        /// 고침 = 빌드 중 정리는 끔(광고 플러그인 enableGradleBuildPreProcessor · EDM AutoResolveOnBuild) — 그 전처리가 하던 나머지
+        ///   (최소 API 24 · gradle 템플릿 · Jetifier)는 이미 되어 있음. 배치 빌드는 빌드 전에 정리를 한 번 직접 돌리고,
+        ///   창 빌드는 mainTemplate.gradle 에 광고 라이브러리 줄이 있는지만 확인 (없으면 Force Resolve 안내).
+        /// </summary>
+        static bool PrepareAndroidDependencies()
+        {
+            // 1) 광고 플러그인 설정: 빌드 전처리 끔 (설정 클래스가 internal 이라 칸 이름으로)
+            var guid = AssetDatabase.FindAssets("GoogleMobileAdsSettings t:ScriptableObject").FirstOrDefault();
+            var asset = guid == null ? null : AssetDatabase.LoadAssetAtPath<ScriptableObject>(AssetDatabase.GUIDToAssetPath(guid));
+            if (asset != null)
+            {
+                var so = new SerializedObject(asset);
+                var p = so.FindProperty("enableGradleBuildPreProcessor");
+                if (p != null && p.boolValue)
+                {
+                    p.boolValue = false;
+                    so.ApplyModifiedPropertiesWithoutUndo();
+                    AssetDatabase.SaveAssets();
+                    Debug.Log("[BuildAab] 광고 플러그인 빌드 전처리 끔 (빌드 중 라이브러리 강제 정리 → 에디터 멈춤 원인)");
+                }
+            }
+
+            // 2) EDM: 빌드 때 자동 정리 끔 (SettingsDialog.AutoResolveOnBuild — internal)
+            var edm = AppDomain.CurrentDomain.GetAssemblies().FirstOrDefault(a => a.GetName().Name == "Google.JarResolver");
+            if (edm != null)
+            {
+                const System.Reflection.BindingFlags F = System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.NonPublic;
+                Type[] types;
+                try { types = edm.GetTypes(); } catch (System.Reflection.ReflectionTypeLoadException e) { types = e.Types.Where(t => t != null).ToArray(); }
+                foreach (var t in types)
+                {
+                    var prop = t.GetProperty("AutoResolveOnBuild", F);
+                    if (prop == null || !prop.CanWrite || prop.PropertyType != typeof(bool)) continue;
+                    if ((bool)prop.GetValue(null)) { prop.SetValue(null, false); Debug.Log("[BuildAab] EDM 빌드 때 자동 정리 끔"); }
+                }
+
+                // 3) 배치 모드: 빌드 전에 직접 정리 (여기서는 끝까지 돎) — 패키지 버전이 바뀌어도 gradle 줄이 따라감
+                if (Application.isBatchMode)
+                {
+                    var resolver = edm.GetType("GooglePlayServices.PlayServicesResolver");
+                    var m = resolver?.GetMethod("ResolveSync", F, null, new[] { typeof(bool) }, null);
+                    if (m != null) { Debug.Log("[BuildAab] 안드로이드 라이브러리 정리 (배치)"); m.Invoke(null, new object[] { true }); }
+                }
+            }
+
+            // 4) 광고 라이브러리 줄 확인
+            string gradle = Path.Combine(Application.dataPath, "Plugins", "Android", "mainTemplate.gradle");
+            if (!File.Exists(gradle) || !File.ReadAllText(gradle).Contains("com.google.android.gms:play-services-ads"))
+            {
+                Debug.LogError("[BuildAab] mainTemplate.gradle 에 광고 라이브러리 줄이 없음 — 메뉴 Assets > External Dependency Manager > Android Resolver > Force Resolve 를 누른 뒤 다시 빌드하세요");
+                return false;
+            }
+            return true;
+        }
+
         static bool BuildPlayer(bool apk, string suffix)
         {
             // 10-30 광고: 개발용 키 APK(-debug) = 구글 테스트 광고(KACHI_TEST_ADS) · AAB·업로드 키 APK = 실제 광고
             bool testAds = suffix == "-debug";
             Debug.Log("[BuildAab] 광고 = " + (testAds ? "구글 테스트 광고 (눌러도 됨)" : "실제 광고 — 내 광고는 누르지 말 것"));
             IapTools.Check();
+            if (!PrepareAndroidDependencies()) return false;
             string kind = apk ? "APK" : "AAB";
             if (EditorUserBuildSettings.activeBuildTarget != BuildTarget.Android)
             {
@@ -351,11 +411,18 @@ namespace KachiGun.EditorTools
                 }
                 if (GUILayout.Button($"{kind} 빌드 (10~20분)", GUILayout.Height(30f)))
                 {
-                    bool ok = needPass ? BuildAab.BuildWith(storePass, kp, apk, false) : BuildAab.BuildWith(null, null, true, true);
+                    // 11-04: 창 그리기(OnGUI) 안에서 바로 빌드하지 않고, 그리기가 끝난 다음 차례에 빌드 (Unity 권장)
+                    string sp = storePass; bool np = needPass, a = apk;
                     storePass = keyPass = "";
-                    message = ok ? "빌드 끝 — " + Path.GetFileName(BuildAab.LastOutput) + " (Kachi_Gun/Builds 폴더)"
-                                 : "빌드하지 못했습니다 — Console 의 [BuildAab] 빨간 줄을 보세요";
-                    messageType = ok ? MessageType.Info : MessageType.Error;
+                    message = "빌드 중…"; messageType = MessageType.Info;
+                    EditorApplication.delayCall += () =>
+                    {
+                        bool ok = np ? BuildAab.BuildWith(sp, kp, a, false) : BuildAab.BuildWith(null, null, true, true);
+                        message = ok ? "빌드 끝 — " + Path.GetFileName(BuildAab.LastOutput) + " (Kachi_Gun/Builds 폴더)"
+                                     : "빌드하지 못했습니다 — Console 의 [BuildAab] 빨간 줄을 보세요";
+                        messageType = ok ? MessageType.Info : MessageType.Error;
+                        Repaint();
+                    };
                     GUIUtility.ExitGUI();
                 }
             }
