@@ -136,10 +136,14 @@
 종료,Quit,UI/Popup.cs
 방치 보상,Offline Reward,UI/Popup.cs
 오프라인 시간,Time away,UI/Popup.cs
-스테이지,,UI/Popup.cs
+스테이지,Stage,UI/Popup.cs
 보상,Reward,UI/Popup.cs
 최대 {0}시간까지 쌓입니다,Stacks up to {0} hours,UI/Popup.cs
 광고 보고,Watch ad,UI/Popup.cs
+출석 보상,Daily Reward,UI/Popup.cs
+{0}일차,Day {0},UI/Popup.cs
+내일 또 받을 수 있어요!,Come back tomorrow for more!,UI/Popup.cs
+{0}일을 다 받으면 1일차부터 다시 시작합니다,"After Day {0}, it starts again from Day 1",UI/Popup.cs
 돌아가기,Back,UI/Popup.cs
 총알,Ammo,UI/WeaponPopup.cs
 리더,Leader,UI/WeaponPopup.cs
@@ -148,7 +152,7 @@
 장착,Equip,UI/WeaponPopup.cs
 강화,Enhance,UI/WeaponPopup.cs
 D 등급 총알 획득!,Got D grade ammo!,UI/WeaponPopup.cs
-같은 탄알 두 개를 끌어다 겹치면 합성!\n장착 칸을 누르면 슬롯 강화 · 남는 총알은 분해 → 다이아,,UI/WeaponPopup.cs
+같은 탄알 두 개를 끌어다 겹치면 합성!\n장착 칸을 누르면 슬롯 강화 · 남는 총알은 분해 → 다이아,Drag two identical ammo together to merge!\nTap an equipped slot to enhance · Salvage spares → gems,UI/WeaponPopup.cs
 뽑기,Draw,UI/WeaponPopup.cs
 총알을 누르면 정보가 나옵니다.\n장착 칸으로 끌어다 놓으면 장착!,Tap ammo to see its info.\nDrag it onto an equip slot to equip!,UI/WeaponPopup.cs
 {0}발,{0} pellets,UI/WeaponPopup.cs
@@ -297,12 +301,12 @@ D 등급 총알 획득!,Got D grade ammo!,UI/WeaponPopup.cs
 태초,Primordial,Supply_Collection.Grade
 좀비 처치하기,Defeat zombies,Mission_Master.Mission_Name
 스테이지 클리어하기,Clear stages,Mission_Master.Mission_Name
-광산 플레이하기,Play the mine,Mission_Master.Mission_Name
+비밀던전 플레이하기,Play the Secret Dungeon,Mission_Master.Mission_Name
 보스 처치하기,Defeat bosses,Mission_Master.Mission_Name
 총알 합성하기,Merge ammo,Mission_Master.Mission_Name
 공격력 x2 (5분),Attack x2 (5 min),Shop_Products.Name
 광고 1편 · 연속 시청 시 시간 누적,1 ad · time stacks when watched again,Shop_Products.Description
-돈 획득량 x2 (5분),Gold x2 (5 min),Shop_Products.Name
+금전 획득량 x2 (5분),Gold x2 (5 min),Shop_Products.Name
 모든 광고 제거,Remove All Ads,Shop_Products.Name
 보상형 광고도 바로 보상,Rewards without watching ads,Shop_Products.Description
 자동강화 패키지,Auto Upgrade Pack,Shop_Products.Name
@@ -326,7 +330,7 @@ D 등급 총알 획득!,Got D grade ammo!,UI/WeaponPopup.cs
 Stage 1-2 에서 열립니다,Unlocks at Stage 1-2,Unlock_Roadmap.Lock_Toast_Message
 스킨이 열렸습니다!,Skins unlocked!,Unlock_Roadmap.Unlock_Banner_Message
 Stage 4-1 에서 열립니다,Unlocks at Stage 4-1,Unlock_Roadmap.Lock_Toast_Message
-다이아 광산이 열렸습니다!,Gem Mine unlocked!,Unlock_Roadmap.Unlock_Banner_Message
+비밀던전이 열렸습니다!,Secret Dungeon unlocked!,Unlock_Roadmap.Unlock_Banner_Message
 Stage 6-1 에서 열립니다,Unlocks at Stage 6-1,Unlock_Roadmap.Lock_Toast_Message
 보급품이 열렸습니다!,Supplies unlocked!,Unlock_Roadmap.Unlock_Banner_Message
 Stage 10-1 에서 열립니다,Unlocks at Stage 10-1,Unlock_Roadmap.Lock_Toast_Message
@@ -335,6 +339,9 @@ Stage 10-1 에서 열립니다,Unlocks at Stage 10-1,Unlock_Roadmap.Lock_Toast_M
 작은 푸른 보석,Small Blue Gem,Mine_Ore_Spec.Name_KR
 회색 바위,Gray Rock,Mine_Ore_Spec.Name_KR
 거대 황금 크리스탈,Huge Gold Crystal,Mine_Ore_Spec.Name_KR
+광산 플레이하기,Play the mine,(지금은 안 씀) Mission_Master.Mission_Name
+돈 획득량 x2 (5분),Gold x2 (5 min),(지금은 안 씀) Shop_Products.Name
+다이아 광산이 열렸습니다!,Gem Mine unlocked!,(지금은 안 씀) Unlock_Roadmap.Unlock_Banner_Message
 다이아 광산,Gem Mine,(지금은 안 씀) Game/GameManager.cs
 돈 획득량,Gold Gain,(지금은 안 씀) UI/HUD.cs
 광산,Mine,(지금은 안 씀) UI/HUD.cs

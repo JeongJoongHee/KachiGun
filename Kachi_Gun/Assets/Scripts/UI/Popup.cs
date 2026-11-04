@@ -270,6 +270,119 @@ namespace KachiGun
         }
     }
 
+    /// <summary>출석 보상 (11-04): 하루 한 번 접속 창 — 1·2·3일차 칸(받은 칸 = 체크, 오늘 칸 = 금색 테두리) + [받기].
+    /// 칸 수·다이아는 Global_Config Attend_Days · Attend_Gems_N. X·뒤로 가기로 닫아도 오늘 보상은 받음.</summary>
+    public class AttendPopup : Popup
+    {
+        protected override Vector2 Size => new(900, 730);
+        protected override string Title => "출석 보상";
+        protected override bool CloseOnDim => false;
+
+        class Cell { public RectTransform rt; public Image board, glow, check, gem; public Text day, amount; }
+        Cell[] cells = new Cell[0];
+        Text note;
+        Button take;
+        public int index;        // 오늘 받을(받은) 칸
+        public bool claimed;
+        float pulse;
+
+        protected override void Build()
+        {
+            note = UIKit.Label(content, "", 30, UIKit.Ink, TextAnchor.MiddleCenter, 0);
+            note.rectTransform.Place(0.5f, 1, new Vector2(0, -398), new Vector2(800, 60), new Vector2(0.5f, 0.5f));
+            take = UIKit.ColorBtn(content, new Color(0.45f, 0.7f, 0.3f), new Vector2(380, 110), L.T("받기"), 42, OnButton);
+            ((RectTransform)take.transform).Place(0.5f, 0, new Vector2(0, 10), new Vector2(380, 110), new Vector2(0.5f, 0));
+        }
+
+        void MakeCells(int n)
+        {
+            foreach (var c in cells) if (c != null) Destroy(c.rt.gameObject);
+            cells = new Cell[n];
+            float step = Mathf.Min(260, 800f / n), w = step - 20;
+            for (int i = 0; i < n; i++)
+            {
+                var c = new Cell();
+                c.rt = UIKit.Rect(content, "Day" + (i + 1)).Place(0.5f, 1, new Vector2((i - (n - 1) / 2f) * step, -200), new Vector2(w, 320), new Vector2(0.5f, 0.5f));
+                c.glow = UIKit.KitImg(c.rt, "outline", new Vector2(w + 24, 344), "Glow");
+                c.glow.rectTransform.Fill(-12, -12, -12, -12);
+                c.glow.color = UIKit.Gold;
+                c.board = UIKit.Row(c.rt, "Board");
+                c.board.rectTransform.Fill();
+                c.day = UIKit.Label(c.rt, "", 36, Color.white, TextAnchor.MiddleCenter, 3);
+                c.day.rectTransform.Place(0.5f, 1, new Vector2(0, -42), new Vector2(w - 10, 50), new Vector2(0.5f, 0.5f));
+                c.gem = UIKit.Img(c.rt, Art.Get("UI/icon_gem"), new Vector2(110, 110), "Gem");
+                c.gem.rectTransform.Place(0.5f, 0.5f, new Vector2(0, 4), new Vector2(110, 110), new Vector2(0.5f, 0.5f));
+                c.amount = UIKit.Label(c.rt, "", 46, Color.white, TextAnchor.MiddleCenter, 3);
+                c.amount.rectTransform.Place(0.5f, 0, new Vector2(0, 54), new Vector2(w - 10, 60), new Vector2(0.5f, 0.5f));
+                c.check = UIKit.KitImg(c.rt, "i_check_w", new Vector2(150, 150), "Check");   // 흰색판(tools/kit_white.py)에 녹색
+                c.check.color = new Color(0.5f, 0.88f, 0.38f);
+                c.check.rectTransform.Place(0.5f, 0.5f, new Vector2(0, 4), new Vector2(150, 150), new Vector2(0.5f, 0.5f));
+                foreach (var g in c.rt.GetComponentsInChildren<Graphic>()) g.raycastTarget = false;
+                cells[i] = c;
+            }
+        }
+
+        public static AttendPopup Show()
+        {
+            var p = HUD.I.Open<AttendPopup>();
+            p.claimed = false;
+            p.index = S.attendCount % GameManager.AttendDays;
+            p.Refresh();
+            return p;
+        }
+
+        public override void Refresh()
+        {
+            int n = GameManager.AttendDays;
+            if (cells.Length != n) MakeCells(n);
+            for (int i = 0; i < n; i++)
+            {
+                var c = cells[i];
+                bool got = i < index || (i == index && claimed), today = i == index && !claimed;
+                c.day.text = L.F("{0}일차", i + 1);
+                c.amount.text = Num.F(GameManager.AttendGems(i));
+                c.check.enabled = got;
+                c.glow.enabled = today;
+                var dim = got ? new Color(0.55f, 0.55f, 0.55f) : Color.white;
+                c.board.color = dim; c.gem.color = dim;
+                c.day.color = today ? UIKit.Gold : Color.white;
+                c.rt.localScale = Vector3.one;
+            }
+            note.text = claimed ? L.T("내일 또 받을 수 있어요!") : L.F("{0}일을 다 받으면 1일차부터 다시 시작합니다", n);
+            UIKit.LabelOf(take).text = claimed ? L.T("확인") : L.T("받기");
+        }
+
+        void Update()
+        {
+            if (claimed || index >= cells.Length) return;
+            pulse += Time.unscaledDeltaTime;
+            cells[index].rt.localScale = Vector3.one * (1f + 0.04f * Mathf.Sin(pulse * 5f));
+        }
+
+        void OnButton()
+        {
+            if (claimed) { base.Close(); return; }
+            Claim();
+        }
+
+        void Claim()
+        {
+            if (claimed) return;
+            int i = GM.ClaimAttend();
+            claimed = true;
+            if (i >= 0)
+            {
+                index = i;
+                AudioManager.Play(AudioManager.Sfx.Coin);
+                H.Bump(true);   // 알림 글자는 칸을 가려서 안 띄움 (체크 + 위 다이아 숫자로 보임)
+            }
+            Refresh();
+        }
+
+        /// <summary>X · 뒤로 가기: 안 받았으면 받고 닫음</summary>
+        public override void Close() { Claim(); base.Close(); }
+    }
+
     /// <summary>던전 결과: 받기 · 광고 보고 x3</summary>
     public class ResultPopup : Popup
     {

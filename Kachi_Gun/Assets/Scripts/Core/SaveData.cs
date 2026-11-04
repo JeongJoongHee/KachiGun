@@ -50,6 +50,11 @@ namespace KachiGun
         public long lastSeen;                    // 마지막 저장 시각 (유닉스 초, 0 = 아직 없음)
         [NonSerialized] public long loadedLastSeen;   // 켤 때 읽은 값 (켜자마자 저장해도 안 사라지게)
 
+        // 출석 (11-04): 하루 한 번 접속 창 → 1·2·3일차 다이아를 차례로, 다 받으면 1일차부터 다시 (빠진 날이 있어도 이어서)
+        public string attendDay = "";            // 마지막으로 받은 날 (yyyyMMdd, 기기 시간)
+        public int attendCount;                  // 지금까지 받은 횟수 (다음 칸 = attendCount % Attend_Days)
+        public bool AttendToday => attendDay == DateTime.Now.ToString("yyyyMMdd");
+
         // ---------- 불러오기·저장 ----------
         static SaveData cur;
         public static SaveData Cur => cur ??= LoadOrNew();

@@ -104,6 +104,10 @@ namespace KachiGun.EditorTools
             if (PlayTest.EnOnly) { yield return EnTour(); yield break; }
             if (PlayTest.StoreOnly) { yield return StoreTour(); yield break; }
 
+            // 출석 창이 시험 중간(10초마다 날짜 확인)에 끼어들지 않게 — 출석은 11f 에서 따로
+            Check(!GM.CheckAttend(true) && !S.AttendToday, "처음(첫 강화·메뉴 열리기 전) → 출석 창 없음");
+            S.attendDay = System.DateTime.Now.ToString("yyyyMMdd");
+
             // 1) 시작 전투
             Log($"시작: Stage {SaveData.StageName(S.stage)}, 고양이 {Squad.I.cats.Count}, 총 {Tables.WeaponName(S.slots[0])}");
             Check(Squad.I.cats.Count == 1, "처음 분대 1마리");
@@ -399,6 +403,7 @@ namespace KachiGun.EditorTools
             {
                 string keepLang = S.lang;
                 S.lang = L.En;
+            S.attendDay = System.DateTime.Now.ToString("yyyyMMdd");   // 촬영에 출석 창이 안 끼게
                 string shop = L.T("상점"), f = L.F("챕터 {0} 에서 열립니다", 3), skin = L.T(Tables.Skins[17].name);
                 S.lang = L.Ko;
                 Check(shop == "Shop" && f == "Unlocks at chapter 3" && skin == "Pirate Captain" && L.T("상점") == "상점", $"영어 글자 {shop} · {f} · {skin}");
@@ -479,6 +484,54 @@ namespace KachiGun.EditorTools
                 HUD.I.Back();
                 Check(!op.gameObject.activeSelf && System.Math.Abs(S.gold - og2 - want2) < want2 * 0.001 + 1, "뒤로 가기 → 방치 창 닫히고 기본 보상");
                 S.gold = og0;   // 뒤 시험에 영향 없게
+                CloseAll();
+            }
+
+            // 11f) 11-04 출석: 1·2·3일차 다이아 → 다 받으면 1일차부터 · 하루 한 번 · 뒤로 가기도 받음 · 던전 중엔 안 뜸
+            {
+                CloseAll();
+                int n = GameManager.AttendDays;
+                Check(n == 3 && GameManager.AttendGems(0) == 100 && GameManager.AttendGems(1) == 200 && GameManager.AttendGems(2) == 300, $"출석 {n}일 · {GameManager.AttendGems(0)}/{GameManager.AttendGems(1)}/{GameManager.AttendGems(2)} 다이아");
+                Check(!GM.CheckAttend(true), "오늘 이미 받음 → 창 없음");
+                S.attendDay = "20000101"; S.attendCount = 0;
+                double ag0 = S.gems;
+                bool ashown = GM.CheckAttend(true); yield return Wait(0.3f);
+                var ap = HUD.I.Get<AttendPopup>();
+                Check(ashown && ap != null && ap.gameObject.activeSelf && ap.index == 0, "새 날 → 출석 창 (1일차)");
+                Capture("18f_attend");
+                Button tb = null;
+                foreach (var b in ap.GetComponentsInChildren<Button>(true)) { var lt = UIKit.LabelOf(b); if (lt != null && lt.text == L.T("받기")) tb = b; }
+                tb?.onClick.Invoke(); yield return Wait(0.2f);
+                Check(S.gems - ag0 == 100 && S.AttendToday && S.attendCount == 1 && ap.gameObject.activeSelf, $"[받기] → 다이아 +{S.gems - ag0} (체크 표시, 창은 그대로)");
+                Capture("18g_attend_claimed");
+                tb?.onClick.Invoke();
+                Check(!ap.gameObject.activeSelf && S.gems - ag0 == 100, "[확인] → 닫힘 (두 번 안 줌)");
+                Check(!GM.CheckAttend(true) && GM.ClaimAttend() < 0, "같은 날 다시 → 없음");
+                // 2일차: 뒤로 가기로 닫아도 받음
+                S.attendDay = "20000102"; ag0 = S.gems;
+                GM.CheckAttend(true); yield return Wait(0.2f);
+                Check(ap.index == 1, "다음 날 → 2일차");
+                HUD.I.Back();
+                Check(!ap.gameObject.activeSelf && S.gems - ag0 == 200, $"뒤로 가기 → 2일차 다이아 +{S.gems - ag0}");
+                // 3일차 → 다음은 다시 1일차
+                S.attendDay = "20000103"; ag0 = S.gems;
+                GM.CheckAttend(true); yield return Wait(0.2f);
+                Check(ap.index == 2, "3일차");
+                ap.Close();
+                Check(S.gems - ag0 == 300, $"3일차 다이아 +{S.gems - ag0}");
+                S.attendDay = "20000104";
+                GM.CheckAttend(true); yield return Wait(0.2f);
+                Check(ap.index == 0, "3일 다 받음 → 다시 1일차");
+                ap.Close();
+                // 다른 창이 떠 있으면 (켜 둔 채 날이 바뀜) 안 끼어듦
+                S.attendDay = "20000105";
+                HUD.I.Open<SettingsPopup>(); yield return Wait(0.1f);
+                Check(!GM.CheckAttend(false), "다른 창이 떠 있음 → 출석 창 기다림");
+                CloseAll();
+                Check(GM.CheckAttend(false), "창이 닫힘 → 출석 창");
+                ap.Close();
+                S.gems -= 100 + 200 + 300 + 100 + 200;   // 뒤 시험에 영향 없게
+                GM.Notify();
                 CloseAll();
             }
 
@@ -617,6 +670,7 @@ namespace KachiGun.EditorTools
             S.stage = 51; S.bestEver = 51; S.gems = 12500; S.gold = 3.2e7;
             S.lvAtk = 40; S.lvSpd = 60; S.lvGold = 150;   // 공격력은 낮게 — 좀비가 화면에 쌓여 보이게
             S.weaponUnlocked = true; S.tutorialDone = true;
+            S.attendDay = System.DateTime.Now.ToString("yyyyMMdd");   // 촬영에 출석 창이 안 끼게
             S.slots[0] = Tables.Code(5, "laser"); S.slots[1] = Tables.Code(4, "missile"); S.slots[2] = Tables.Code(3, "shotgun");
             int[] inv = { Tables.Code(3, "single"), Tables.Code(3, "single"), Tables.Code(2, "pierce"), Tables.Code(4, "fast"), Tables.Code(2, "shotgun"), Tables.Code(1, "single"), Tables.Code(5, "missile") };
             for (int i = 0; i < inv.Length && i < S.inv.Count; i++) S.inv[i] = inv[i];

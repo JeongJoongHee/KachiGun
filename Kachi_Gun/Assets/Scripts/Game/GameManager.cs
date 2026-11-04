@@ -57,7 +57,7 @@ namespace KachiGun
             saveT += Time.unscaledDeltaTime;
             if (saveT > 5f) { saveT = 0; S.Save(); }
             dailyT += Time.unscaledDeltaTime;
-            if (dailyT > 10f) { dailyT = 0; S.RefreshDaily(); }
+            if (dailyT > 10f) { dailyT = 0; S.RefreshDaily(); CheckAttend(false); }   // 켜 둔 채 날이 바뀜 → 창이 없을 때 출석 창
 
             switch (mode)
             {
@@ -770,12 +770,45 @@ namespace KachiGun
             yield return null;   // HUD 가 다 만들어진 뒤
             offlineReady = true;
             CheckOffline();
+            CheckAttend(true);   // 방치 보상 창 위에 출석 창 (출석부터 받고 → 방치 보상)
+        }
+
+        // =====================================================================
+        // 출석 (11-04): 하루 한 번(기기 날짜) 접속 창 — Attend_Gems_1·2·3 다이아를 차례로, 다 받으면 1일차부터 다시
+        //   빠진 날이 있어도 끊기지 않고 다음 칸 · 메뉴가 열린 뒤(1-2)·첫 강화(튜토리얼) 뒤부터 · 스테이지 화면에서만
+        // =====================================================================
+        public static int AttendDays => Math.Max(1, Tables.Ci("Attend_Days"));
+        public static double AttendGems(int i) => Tables.C("Attend_Gems_" + (i + 1), 100 * (i + 1));
+
+        /// <summary>오늘 출석을 아직 안 받았으면 출석 창 (true = 띄움). overPopups = 다른 창이 떠 있어도 (켤 때·돌아올 때)</summary>
+        public bool CheckAttend(bool overPopups)
+        {
+            if (!offlineReady || HUD.I == null || S.AttendToday) return false;
+            if (mode != Mode.Stage || !MenuOpen || !S.tutorialDone) return false;
+            var cur = HUD.I.Get<AttendPopup>();
+            if (cur != null && cur.gameObject.activeSelf) return false;
+            if (!overPopups && HUD.I.PopupOpen) return false;
+            AttendPopup.Show();
+            return true;
+        }
+
+        /// <summary>오늘 출석 받기: 다이아 지급 · 받은 칸 번호(0부터) 돌려줌, 이미 받았으면 -1</summary>
+        public int ClaimAttend()
+        {
+            if (S.AttendToday) return -1;
+            int i = S.attendCount % AttendDays;
+            S.gems += AttendGems(i);
+            S.attendCount++;
+            S.attendDay = DateTime.Now.ToString("yyyyMMdd");
+            S.Save();
+            Notify();
+            return i;
         }
 
         void OnApplicationPause(bool p)
         {
             if (p) { Fx.I?.FlushMoney(); S.Save(); }
-            else CheckOffline();   // 백그라운드에서 돌아옴 — 나갈 때 저장한 시각부터 (켤 때 불리는 것은 offlineReady 전이라 무시)
+            else { CheckOffline(); CheckAttend(true); }   // 백그라운드에서 돌아옴 — 나갈 때 저장한 시각부터 (켤 때 불리는 것은 offlineReady 전이라 무시)
         }
         void OnApplicationQuit() { Fx.I?.FlushMoney(); S.Save(); }
     }
