@@ -6,14 +6,15 @@ using UnityEngine;
 namespace KachiGun.EditorTools
 {
     /// <summary>
-    /// 휴대폰 홈 화면의 앱 이름 (10-24 결정 p-enname): 한국어 폰 = "카피바라vs좀비" · 그 밖의 언어 = "Capybara vs Zombies".
+    /// 휴대폰 홈 화면의 앱 이름: 한국어 폰 = "카피바라 vs 좀비" · 그 밖의 언어 = "Capy vs Zombies".
+    /// 11-04: 삼성 런처는 띄어쓰기에서만 두 줄로 나눠서 "카피바라vs좀비"(띄어쓰기 없음)는 뒤가 잘렸음 → 띄어 씀 (스토어 제목은 Play Console 에서 따로).
     /// 안드로이드 빌드 때 만들어지는 Gradle 프로젝트에서 values/strings.xml 의 app_name 을 영어로,
     /// values-ko/strings.xml 을 새로 만들어 한국어로 넣음 (서바이벌 AndroidAppName 방식 + 언어별).
     /// </summary>
     public class AndroidAppName : IPostGenerateGradleAndroidProject
     {
-        public const string NameKo = ProjectInfo.Name;          // 카피바라vs좀비
-        public const string NameEn = "Capybara vs Zombies";
+        public const string NameKo = "카피바라 vs 좀비";
+        public const string NameEn = "Capy vs Zombies";
 
         public int callbackOrder => 100;
 

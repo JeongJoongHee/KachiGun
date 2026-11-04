@@ -28,8 +28,8 @@ def main():
     text = man.decode(enc, errors='ignore') if apk else man.decode('latin-1')
     perms = sorted(set(re.findall(r'[a-z.]+\.permission\.[A-Z_]+', text)))
     print('권한 목록                     :', ', '.join(perms) or '없음')
-    print('앱 이름 영어 Capybara vs Zombies :', ok(has('Capybara vs Zombies', res)))
-    print('앱 이름 한국어 카피바라vs좀비   :', ok(has('카피바라vs좀비', res)))
+    print('앱 이름 영어 Capy vs Zombies    :', ok(has('Capy vs Zombies', res)))
+    print('앱 이름 한국어 카피바라 vs 좀비 :', ok(has('카피바라 vs 좀비', res)))
     pre = 'lib/' if apk else 'base/lib/'
     libs = sorted({n[len(pre):].split('/')[0] for n in names if n.startswith(pre)})
     print('네이티브 라이브러리 (64비트 arm64-v8a) :', ', '.join(libs), '→', ok(libs == ['arm64-v8a']))
