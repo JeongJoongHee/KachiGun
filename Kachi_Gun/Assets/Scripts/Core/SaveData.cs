@@ -46,6 +46,10 @@ namespace KachiGun
         public bool autoUpgrade, autoOn = true;  // 자동강화 패키지 (auto_upgrade) 가짐 · 켜 둠
         public List<string> iapOrders = new();   // 이미 지급한 주문 번호 (같은 결제를 두 번 주지 않게)
 
+        // 방치 보상 (11-04): 저장할 때마다 시각을 남김 → 다시 켜거나 백그라운드에서 돌아오면 비운 시간만큼 골드
+        public long lastSeen;                    // 마지막 저장 시각 (유닉스 초, 0 = 아직 없음)
+        [NonSerialized] public long loadedLastSeen;   // 켤 때 읽은 값 (켜자마자 저장해도 안 사라지게)
+
         // ---------- 불러오기·저장 ----------
         static SaveData cur;
         public static SaveData Cur => cur ??= LoadOrNew();
@@ -61,6 +65,7 @@ namespace KachiGun
             }
             d ??= new SaveData();
             d.Fix();
+            d.loadedLastSeen = d.lastSeen;
             return d;
         }
 
@@ -80,6 +85,7 @@ namespace KachiGun
 
         public void Save()
         {
+            lastSeen = Now;
             PlayerPrefs.SetString(Key, JsonUtility.ToJson(this));
             PlayerPrefs.Save();
         }

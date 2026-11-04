@@ -172,6 +172,77 @@ namespace KachiGun
         }
     }
 
+    /// <summary>방치 보상 (11-04): 비운 시간 · 기준 스테이지 · 골드 → [받기] · [광고 보고 x2]. X·뒤로 가기도 기본 보상은 받음</summary>
+    public class OfflinePopup : Popup
+    {
+        protected override Vector2 Size => new(860, 820);
+        protected override string Title => "방치 보상";
+        protected override bool CloseOnDim => false;
+        Text info, amount;
+        Button take, ad;
+        public long awaySec;      // 실제로 비운 시간
+        public double sec, gold;  // 보상에 쓴 시간(최대까지) · 골드
+        bool claimed;
+
+        protected override void Build()
+        {
+            info = UIKit.Label(content, "", 36, UIKit.Ink, TextAnchor.MiddleCenter, 0);
+            info.rectTransform.Place(0.5f, 1, new Vector2(0, -10), new Vector2(760, 250), new Vector2(0.5f, 1));
+            info.horizontalOverflow = HorizontalWrapMode.Wrap;
+            var gi = UIKit.Img(content, Art.Get("UI/icon_money"), new Vector2(96, 99), "Gold");
+            gi.rectTransform.Place(0.5f, 0.5f, new Vector2(-200, -30), new Vector2(96, 99), new Vector2(0.5f, 0.5f));
+            amount = UIKit.Label(content, "", 56, UIKit.Ink, TextAnchor.MiddleLeft, 0);
+            amount.rectTransform.Place(0.5f, 0.5f, new Vector2(-130, -30), new Vector2(480, 90), new Vector2(0, 0.5f));
+            take = UIKit.ColorBtn(content, new Color(0.45f, 0.7f, 0.3f), new Vector2(330, 110), L.T("받기"), 42, () => Claim(1));
+            ((RectTransform)take.transform).Place(0.5f, 0, new Vector2(-180, 10), new Vector2(330, 110), new Vector2(0.5f, 0));
+            ad = UIKit.ColorBtn(content, new Color(0.95f, 0.6f, 0.15f), new Vector2(330, 110), "", 40, () =>
+                AdService.Show("offline", () => Claim(Tables.C("Offline_AdMul", 2))));
+            ((RectTransform)ad.transform).Place(0.5f, 0, new Vector2(180, 10), new Vector2(330, 110), new Vector2(0.5f, 0));
+        }
+
+        /// <summary>창이 이미 떠 있으면(백그라운드를 또 다녀옴) 시간을 더함</summary>
+        public static void Show(long away, double sec)
+        {
+            var old = HUD.I.Get<OfflinePopup>();
+            bool stack = old != null && old.gameObject.activeSelf && !old.claimed;
+            var p = HUD.I.Open<OfflinePopup>();
+            if (stack) { away += p.awaySec; sec += p.sec; }
+            p.claimed = false;
+            p.awaySec = away;
+            p.sec = System.Math.Min(sec, GameManager.OfflineMaxSec);
+            p.gold = GameManager.I.OfflineGoldPerSec * p.sec;
+            double maxH = Tables.C("Offline_MaxHours", 8);
+            p.info.text = L.F("자리를 비운 시간 {0}", Dur(away)) + "\n<size=30>" + L.F("최대 {0}시간까지 쌓입니다", maxH.ToString("0.#")) + "</size>\n\n"
+                + L.F("스테이지 {0} 에서 계속 사냥했어요", SaveData.StageName(SaveData.Cur.stage));
+            p.amount.text = "+" + Num.F(p.gold);
+            UIKit.LabelOf(p.ad).text = L.T("광고 보고") + " x" + Tables.C("Offline_AdMul", 2).ToString("0.#");
+        }
+
+        static string Dur(long s)
+        {
+            long h = s / 3600, m = s % 3600 / 60;
+            if (h >= 24) return L.F("{0}일 {1}시간", h / 24, h % 24);
+            return h > 0 ? L.F("{0}시간 {1}분", h, m) : L.F("{0}분", m);
+        }
+
+        void Claim(double mul)
+        {
+            if (claimed) return;
+            claimed = true;
+            base.Close();
+            double g = gold * mul;
+            S.gold += g;
+            AudioManager.Play(AudioManager.Sfx.Coin);
+            H.Bump(false);
+            H.Toast(L.T("골드") + " +" + Num.F(g));
+            GM.Notify();
+            S.Save();
+        }
+
+        /// <summary>X · 뒤로 가기로 닫아도 기본 보상은 받음</summary>
+        public override void Close() => Claim(1);
+    }
+
     /// <summary>던전 결과: 받기 · 광고 보고 x3</summary>
     public class ResultPopup : Popup
     {

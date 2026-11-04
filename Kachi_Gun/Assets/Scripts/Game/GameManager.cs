@@ -46,6 +46,7 @@ namespace KachiGun
             Squad.I.ResetPosition();
             StageChanged += AudioManager.RefreshBgm;
             StageChanged?.Invoke();
+            StartCoroutine(OfflineAtStart());
         }
 
         public void Notify() => Changed?.Invoke();
@@ -725,7 +726,55 @@ namespace KachiGun
         }
 
         // =====================================================================
-        void OnApplicationPause(bool p) { if (p) { Fx.I?.FlushMoney(); S.Save(); } }
+        // 방치 보상 (11-04): 게임을 끄거나 백그라운드에 두는 동안에도 마지막 스테이지에서 사냥한 셈 치고 골드를 줌
+        //   초당 골드 = 처치 속도 x 그 스테이지 좀비 골드 x 돈 배율(버프 뺌) x Offline_Rate
+        //   처치 속도 = min(분대 초당 피해 ÷ 좀비 체력, 1 ÷ 등장 간격) — balance_sim.py 반복 사냥과 같은 식
+        //   비운 시간은 Offline_MaxHours 까지 · Offline_MinMinutes 보다 짧으면 안 줌(광고·결제 창으로 잠깐 나간 것)
+        // =====================================================================
+        public double OfflineGoldPerSec
+        {
+            get
+            {
+                var st = Tables.Stage(S.stage);
+                double hp = Stats.ZombieHp(S.stage);
+                double byDps = hp > 0 ? Stats.SquadDps() / hp : 0;
+                double bySpawn = 1.0 / Math.Max(0.05, st.spawn);
+                return Math.Min(byDps, bySpawn) * Stats.ZombieGold(S.stage) * Stats.GoldMulBase * Tables.C("Offline_Rate", 0.5);
+            }
+        }
+
+        public static double OfflineMaxSec => Tables.C("Offline_MaxHours", 8) * 3600;
+
+        bool offlineReady;   // 첫 프레임 뒤(HUD 다 만든 뒤)부터
+
+        /// <summary>마지막 저장 시각부터 지금까지 오래 비웠으면 방치 보상 창 (true = 창 띄움). 한 번 계산하면 소진(두 번 안 줌)</summary>
+        public bool CheckOffline()
+        {
+            if (!offlineReady || HUD.I == null) return false;
+            long last = S.loadedLastSeen > 0 ? S.loadedLastSeen : S.lastSeen;
+            S.loadedLastSeen = 0;
+            S.lastSeen = SaveData.Now;
+            if (last <= 0) return false;
+            long away = SaveData.Now - last;
+            if (away < Tables.C("Offline_MinMinutes", 5) * 60) return false;   // 기기 시간을 뒤로 돌린 경우(음수)도 여기서 걸림
+            double sec = Math.Min(away, OfflineMaxSec);
+            if (OfflineGoldPerSec * sec <= 0) return false;
+            OfflinePopup.Show(away, sec);
+            return true;
+        }
+
+        System.Collections.IEnumerator OfflineAtStart()
+        {
+            yield return null;   // HUD 가 다 만들어진 뒤
+            offlineReady = true;
+            CheckOffline();
+        }
+
+        void OnApplicationPause(bool p)
+        {
+            if (p) { Fx.I?.FlushMoney(); S.Save(); }
+            else CheckOffline();   // 백그라운드에서 돌아옴 — 나갈 때 저장한 시각부터 (켤 때 불리는 것은 offlineReady 전이라 무시)
+        }
         void OnApplicationQuit() { Fx.I?.FlushMoney(); S.Save(); }
     }
 }

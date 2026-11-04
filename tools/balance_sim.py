@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """카치건 밸런스 시뮬레이터 — 사용: python tools/balance_sim.py [최대 날 수] [결과 json]
  — Resources/Tables/*.csv 를 게임 코드와 같은 식으로 계산 (10-19 처음, 10-20 규칙 추가).
-가정: 하루 H 시간 켜 둠(오프라인 보상 없음), 플레이어는 '가장 효율 좋은 것부터' 산다.
+가정: 하루 H 시간 켜 둠(offline=True 면 나머지 시간 방치 보상), 플레이어는 '가장 효율 좋은 것부터' 산다.
 ads=True = 광고를 최대로 봄: 공격·골드 버프 늘 켜짐 · 던전 결과 광고 x2 · 상점 광고 다이아 하루 AdGems_Daily 번.
 10-20: 미션 보상 = 다이아 Mission_Gem_Ratio + 골드(나머지, 1다이아 = 좀비 Gem_Gold_Kills 마리 골드) · Max_Tier 에서 끝
        광산 = Mine_Ore_Spec 보석 전부 x Mine_Scaling 배율 · 슬롯 강화 골드는 모아서 삼(30분 수입 이하일 때)
@@ -78,8 +78,9 @@ def mission_value(m):
 
 
 class P:
-    def __init__(s, ads=False, hours=4.0, spd_smart=True, overflow=True):
+    def __init__(s, ads=False, hours=4.0, spd_smart=True, overflow=True, offline=False):
         s.ads, s.hours, s.smart, s.overflow = ads, hours, spd_smart, overflow   # overflow = 상한 넘는 공속 → 공격력 1:1
+        s.offline = offline   # 11-04 방치 보상: 하루 한 번 끄고(24-H 시간) 다음 날 켤 때 받음
         s.t = 0.0; s.day = 0; s.stage = 0; s.gold = 0.0; s.gems = 0.0
         s.lv = [0, 0, 0]          # atk spd gold
         s.slot = [0, -1, -1]      # 등급 (-1 = 빈칸)
@@ -90,7 +91,7 @@ class P:
         s.gem_src = dict(mission=0, challenge=0, mine=0, raid=0, ad=0)
         s.gem_use = dict(weapon=0, skin=0, supply=0, enchant=0)
         s.gold_use = dict(atk=0, spd=0, gold=0, enchant=0)
-        s.gold_src = dict(stage=0, mission=0)
+        s.gold_src = dict(stage=0, mission=0, offline=0)
         s.farm = 0.0; s.log = []; s.spd_cap_t = None
         s.reserve = 0.0           # 슬롯 강화 골드를 모으는 중 (강화에 안 씀)
         s.grate = 1.0             # 최근 골드 수입 (초당)
@@ -143,6 +144,11 @@ class P:
 
     def daily(s):
         ch = s.stage // 5 + 1
+        # 11-04 방치 보상 = 반복 사냥 초당 골드(버프 뺌) x Offline_Rate x min(꺼 둔 시간, Offline_MaxHours) · 광고 보면 x Offline_AdMul
+        if s.offline:
+            away = min(24 - s.hours, cfg('Offline_MaxHours', 8)) * 3600
+            g = s.grate / (AD if s.ads else 1) * cfg('Offline_Rate', 0.5) * away * (cfg('Offline_AdMul', 2) if s.ads else 1)
+            s.gold += g; s.gold_src['offline'] += g
         # 광고 무료 다이아 (상점)
         if s.ads:
             g = cfg('AdGems_Daily', 0) * cfg('AdGems_Amount', 0)

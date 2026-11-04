@@ -435,6 +435,47 @@ namespace KachiGun.EditorTools
                 CloseAll();
             }
 
+            // 11d) 11-04 방치 보상: 1시간 비움 → 창·골드 · 10시간 = 최대 8시간 · 2분 = 없음 · 시계 뒤로 = 없음 · 광고 x2 · 뒤로 가기 = 기본 보상
+            {
+                CloseAll();
+                double gps = GM.OfflineGoldPerSec;
+                Log($"방치 초당 골드 {gps:0.##} (스테이지 {SaveData.StageName(S.stage)} · 분대 초당 피해 {Stats.SquadDps():0} · 좀비 체력 {Stats.ZombieHp(S.stage):0} · 좀비 골드 {Stats.ZombieGold(S.stage):0})");
+                Check(gps > 0, "방치 초당 골드 > 0");
+                S.loadedLastSeen = 0; S.lastSeen = SaveData.Now - 3600;
+                bool shown = GM.CheckOffline(); yield return Wait(0.3f);
+                var op = HUD.I.Get<OfflinePopup>();
+                Check(shown && op != null && op.gameObject.activeSelf && System.Math.Abs(op.sec - 3600) < 5, $"1시간 비움 → 방치 보상 창 ({op?.sec:0}초)");
+                Capture("18d_offline");
+                double og0 = S.gold, want = op != null ? op.gold : 0;
+                Check(want > 0 && System.Math.Abs(want - gps * op.sec) < want * 0.01 + 1, $"방치 골드 {Num.F(want)} = 초당 x 시간");
+                Button take = null, adb = null;
+                foreach (var b in op.GetComponentsInChildren<Button>(true)) { var lt = UIKit.LabelOf(b); if (lt == null) continue; if (lt.text == L.T("받기")) take = b; else if (lt.text.StartsWith(L.T("광고 보고"))) adb = b; }
+                if (take != null) take.onClick.Invoke();
+                Check(!op.gameObject.activeSelf && System.Math.Abs(S.gold - og0 - want) < want * 0.001 + 1, $"[받기] → 골드 +{Num.F(S.gold - og0)}");
+                Check(!GM.CheckOffline(), "받은 뒤 바로 다시 → 없음 (두 번 안 줌)");
+
+                S.lastSeen = SaveData.Now - 36000;
+                GM.CheckOffline(); yield return Wait(0.2f);
+                Check(System.Math.Abs(op.sec - GameManager.OfflineMaxSec) < 1, $"10시간 비움 → 최대 {GameManager.OfflineMaxSec / 3600:0.#}시간만");
+                Capture("18e_offline_max");
+                double og1 = S.gold, want1 = op.gold;
+                if (adb != null) adb.onClick.Invoke();   // 에디터 = 광고 없이 바로 보상
+                Check(System.Math.Abs(S.gold - og1 - want1 * Tables.C("Offline_AdMul", 2)) < want1 * 0.001 + 1, "[광고 보고] → x2");
+
+                S.lastSeen = SaveData.Now - 120;
+                Check(!GM.CheckOffline(), "2분 비움 → 없음");
+                S.lastSeen = SaveData.Now + 7200;
+                Check(!GM.CheckOffline(), "기기 시계를 뒤로 돌림 → 없음");
+
+                S.lastSeen = SaveData.Now - 3600;
+                GM.CheckOffline(); yield return Wait(0.2f);
+                double og2 = S.gold, want2 = op.gold;
+                HUD.I.Back();
+                Check(!op.gameObject.activeSelf && System.Math.Abs(S.gold - og2 - want2) < want2 * 0.001 + 1, "뒤로 가기 → 방치 창 닫히고 기본 보상");
+                S.gold = og0;   // 뒤 시험에 영향 없게
+                CloseAll();
+            }
+
             // 11b) 10-30 결제·광고: 가짜 결제(배치는 바로 지급) · 영구 상품 두 번 안 줌 · 광고 제거 = 광고 없이 바로 보상 · 자동강화 켬/끔 · 결제 꺼진 폰 = 원화 줄 숨김
             {
                 double iapG0 = S.gems;

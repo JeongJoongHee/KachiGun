@@ -74,6 +74,23 @@ namespace KachiGun
         }
 
         // ---------- 스테이지 (Stage_Table) ----------
+        /// <summary>돈 배율에서 잠깐 켜는 골드 버프를 뺀 값 (방치 보상용)</summary>
+        public static double GoldMulBase => GoldMul / (BuffGold ? Tables.Buff("buff_gold").mul : 1);
+
+        /// <summary>분대 초당 피해 (장착 3칸 합, 버프 뺌) — 방치 보상의 처치 속도 계산용 (balance_sim.py 의 dps 와 같은 생각)</summary>
+        public static double SquadDps()
+        {
+            double d = 0;
+            for (int i = 0; i < S.slots.Count; i++)
+            {
+                var w = Tables.Weapon(S.slots[i]);
+                if (w == null) continue;
+                d += Damage(w, i) * Math.Max(1, w.count) / Math.Max(0.01f, Interval(w, i));
+            }
+            if (BuffAtk) d /= Tables.Buff("buff_atk").mul;
+            return d;
+        }
+
         public static double ZombieHp(int idx) => Tables.Stage(idx).hp;
         public static double ZombieGold(int idx) => Tables.Stage(idx).gold;
     }

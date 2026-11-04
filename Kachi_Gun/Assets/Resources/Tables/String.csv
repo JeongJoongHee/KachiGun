@@ -134,7 +134,14 @@
 게임을 종료할까요?,Quit the game?,UI/Popup.cs
 취소,Cancel,UI/Popup.cs
 종료,Quit,UI/Popup.cs
+방치 보상,Offline Reward,UI/Popup.cs
+자리를 비운 시간 {0},Time away: {0},UI/Popup.cs
+최대 {0}시간까지 쌓입니다,Stacks up to {0} hours,UI/Popup.cs
+스테이지 {0} 에서 계속 사냥했어요,Your squad kept hunting at Stage {0},UI/Popup.cs
 광고 보고,Watch ad,UI/Popup.cs
+{0}일 {1}시간,{0}d {1}h,UI/Popup.cs
+{0}시간 {1}분,{0}h {1}m,UI/Popup.cs
+{0}분,{0}m,UI/Popup.cs
 돌아가기,Back,UI/Popup.cs
 총알,Ammo,UI/WeaponPopup.cs
 리더,Leader,UI/WeaponPopup.cs

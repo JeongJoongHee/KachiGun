@@ -77,6 +77,8 @@ EN = {
     '챕터 {0}': 'Ch. {0}', '보급품 구매': 'Buy Supply', '모든 단계 완료': 'All tiers complete', '완료': 'Done',
     '배경음': 'Music', '효과음': 'Sound', '진동': 'Vibration', '던전에서는 바꿀 수 없습니다': "Can't change during a dungeon", '저장': 'Save',
     '게임 종료': 'Quit Game', '게임을 종료할까요?': 'Quit the game?', '취소': 'Cancel', '종료': 'Quit',
+    '방치 보상': 'Offline Reward', '자리를 비운 시간 {0}': 'Time away: {0}', '최대 {0}시간까지 쌓입니다': 'Stacks up to {0} hours',
+    '스테이지 {0} 에서 계속 사냥했어요': 'Your squad kept hunting at Stage {0}', '{0}일 {1}시간': '{0}d {1}h', '{0}시간 {1}분': '{0}h {1}m', '{0}분': '{0}m',
     '저장했습니다 (기기 안)': 'Saved (on this device)', '불러오기 · 구매 복원 · 문의': 'Load · Restore · Contact',
     '클라우드 저장·결제 복원·문의는 준비 중입니다': 'Cloud save, restore and contact are coming soon', '켜짐': 'On', '꺼짐': 'Off',
     '설정': 'Settings',
