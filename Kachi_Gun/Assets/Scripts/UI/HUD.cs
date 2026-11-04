@@ -426,6 +426,7 @@ namespace KachiGun
         void Update()
         {
             float dt = Time.unscaledDeltaTime;
+            if (Input.GetKeyDown(KeyCode.Escape)) Back();   // 안드로이드 뒤로 가기 = Escape
             refreshT -= dt;
             if (refreshT <= 0) { refreshT = 0.1f; Refresh(); }
 
@@ -453,6 +454,14 @@ namespace KachiGun
                 timerText.color = GM.dungeonTime < 10 ? UIKit.Red : Color.white;
                 leftText.text = GM.mode == GameManager.Mode.Mine ? L.T("다이아") + $" +{GM.dungeonGems:0.0}" : L.F("남은 좀비 {0}", GM.DungeonLeft);
             }
+        }
+
+        /// <summary>폰 뒤로 가기 (11-04): 절전 모드면 돌아오기 → 열린 창이 있으면 맨 위 창 닫기(X 와 같음) → 없으면 게임 종료 확인 창</summary>
+        public void Back()
+        {
+            if (GM != null && GM.eco) { ToggleEco(); return; }
+            if (openPopups.Count > 0) { openPopups[openPopups.Count - 1].Close(); return; }
+            Open<QuitPopup>();
         }
 
         public void Bump(bool gem) { if (gem) gemBump = 1; else goldBump = 1; }

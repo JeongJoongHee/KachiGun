@@ -27,7 +27,7 @@ TABLE_COLS = [
 ]
 # 코드에 있어도 번역하지 않는 것 (출시 전에 지울 테스트 버튼 등)
 SKIP = {'[테스트용 — 에디터에서만 보임]', '다이아 +1000', '골드 x100', '다음 스테이지', '처음부터', '세이브를 지우고 처음부터 시작할까요?',
-        '100 다이아', '언어 · Language', '한국어'}
+        '100 다이아', '언어 · Language', '한국어', '에디터에서는 종료되지 않습니다'}
 
 EN = {
     # ---------- 전투 화면 ----------
@@ -76,6 +76,7 @@ EN = {
     '보유 효과 합계 ({0}/{1})': 'Total owned bonus ({0}/{1})', '공격력 +{0}% · 공격속도 +{1}% · 돈 +{2}% · 보스 +{3}%': 'ATK +{0}% · SPD +{1}% · Gold +{2}% · Boss +{3}%',
     '챕터 {0}': 'Ch. {0}', '보급품 구매': 'Buy Supply', '모든 단계 완료': 'All tiers complete', '완료': 'Done',
     '배경음': 'Music', '효과음': 'Sound', '진동': 'Vibration', '던전에서는 바꿀 수 없습니다': "Can't change during a dungeon", '저장': 'Save',
+    '게임 종료': 'Quit Game', '게임을 종료할까요?': 'Quit the game?', '취소': 'Cancel', '종료': 'Quit',
     '저장했습니다 (기기 안)': 'Saved (on this device)', '불러오기 · 구매 복원 · 문의': 'Load · Restore · Contact',
     '클라우드 저장·결제 복원·문의는 준비 중입니다': 'Cloud save, restore and contact are coming soon', '켜짐': 'On', '꺼짐': 'Off',
     '설정': 'Settings',

@@ -56,7 +56,7 @@ namespace KachiGun
         {
             gameObject.SetActive(true);
             transform.SetAsLastSibling();
-            if (!H.openPopups.Contains(this)) H.openPopups.Add(this);
+            H.openPopups.Remove(this); H.openPopups.Add(this);   // 마지막 = 맨 위 창 (뒤로 가기가 이 창부터 닫음)
             panel.localScale = Vector3.one * 0.9f;
             Refresh();
         }
@@ -137,6 +137,38 @@ namespace KachiGun
             p.body.text = text;
             p.onOk = go;
             UIKit.LabelOf(p.ok).text = L.T("시작");
+        }
+    }
+
+    /// <summary>게임 종료 확인 (11-04): 설정 창 [게임 종료] · 폰 뒤로 가기(열린 창이 없을 때). [취소] · [종료]</summary>
+    public class QuitPopup : Popup
+    {
+        protected override Vector2 Size => new(860, 560);
+        protected override string Title => "게임 종료";
+        /// <summary>시험용: 에디터에서 [종료]를 누른 횟수 (에디터는 실제로 꺼지지 않음)</summary>
+        public static int editorQuitCount;
+
+        protected override void Build()
+        {
+            var body = UIKit.Label(content, L.T("게임을 종료할까요?"), 42, UIKit.Ink, TextAnchor.MiddleCenter, 0);
+            body.rectTransform.Fill(0, 140, 0, 20);
+            body.horizontalOverflow = HorizontalWrapMode.Wrap;
+            var no = UIKit.ColorBtn(content, new Color(0.42f, 0.4f, 0.38f), new Vector2(330, 110), L.T("취소"), 42, Close);
+            ((RectTransform)no.transform).Place(0.5f, 0, new Vector2(-180, 10), new Vector2(330, 110), new Vector2(0.5f, 0));
+            var yes = UIKit.ColorBtn(content, new Color(0.8f, 0.32f, 0.26f), new Vector2(330, 110), L.T("종료"), 42, Quit);
+            ((RectTransform)yes.transform).Place(0.5f, 0, new Vector2(180, 10), new Vector2(330, 110), new Vector2(0.5f, 0));
+        }
+
+        static void Quit()
+        {
+            Fx.I?.FlushMoney();
+            SaveData.Cur.Save();
+#if UNITY_EDITOR
+            editorQuitCount++;
+            HUD.I.Toast(L.T("에디터에서는 종료되지 않습니다"));
+#else
+            Application.Quit();
+#endif
         }
     }
 

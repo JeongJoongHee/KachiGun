@@ -406,6 +406,35 @@ namespace KachiGun.EditorTools
             HUD.I.Open<ShopPopup>(); yield return Wait(0.3f); Capture("17_shop"); CloseAll();
             HUD.I.Open<SettingsPopup>(); yield return Wait(0.3f); Capture("18_settings"); CloseAll();
 
+            // 11c) 11-04 게임 종료: 뒤로 가기(창 없음) → 종료 창 · 뒤로 가기는 맨 위 창부터 닫음 · 설정 [게임 종료] · [종료] = 저장 후 종료
+            {
+                HUD.I.Back(); yield return Wait(0.3f);
+                var q = HUD.I.Get<QuitPopup>();
+                Check(q != null && q.gameObject.activeSelf, "뒤로 가기(열린 창 없음) → 종료 확인 창");
+                Capture("18b_quit_back");
+                HUD.I.Back();
+                Check(q != null && !q.gameObject.activeSelf, "뒤로 가기 한 번 더 → 종료 창 닫힘(취소)");
+                var st = HUD.I.Open<SettingsPopup>(); yield return Wait(0.3f);
+                Button qb = null;
+                foreach (var b in st.GetComponentsInChildren<Button>(true)) { var lt = UIKit.LabelOf(b); if (lt != null && lt.text == L.T("게임 종료")) qb = b; }
+                Check(qb != null, "설정 창 [게임 종료] 버튼");
+                if (qb != null) qb.onClick.Invoke();
+                yield return Wait(0.3f);
+                Capture("18c_settings_quit");
+                Check(q.gameObject.activeSelf && HUD.I.openPopups[HUD.I.openPopups.Count - 1] == q, "설정 [게임 종료] → 종료 창이 맨 위");
+                HUD.I.Back();
+                Check(!q.gameObject.activeSelf && st.gameObject.activeSelf, "뒤로 가기 → 종료 창만 닫히고 설정 창은 남음");
+                HUD.I.Back();
+                Check(!st.gameObject.activeSelf && HUD.I.openPopups.Count == 0, "뒤로 가기 → 설정 창 닫힘");
+                HUD.I.Back();
+                Button yes = null;
+                foreach (var b in q.GetComponentsInChildren<Button>(true)) { var lt = UIKit.LabelOf(b); if (lt != null && lt.text == L.T("종료")) yes = b; }
+                int qc = QuitPopup.editorQuitCount;
+                if (yes != null) yes.onClick.Invoke();
+                Check(QuitPopup.editorQuitCount == qc + 1, "[종료] → 저장 후 종료 (에디터는 꺼지지 않음)");
+                CloseAll();
+            }
+
             // 11b) 10-30 결제·광고: 가짜 결제(배치는 바로 지급) · 영구 상품 두 번 안 줌 · 광고 제거 = 광고 없이 바로 보상 · 자동강화 켬/끔 · 결제 꺼진 폰 = 원화 줄 숨김
             {
                 double iapG0 = S.gems;
