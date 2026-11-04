@@ -204,12 +204,14 @@ namespace KachiGun
         {
             var row = UIKit.Row(content, "Info" + i);
             row.rectTransform.Place(0.5f, 1, new Vector2(0, -10 - i * 124), new Vector2(740, 108), new Vector2(0.5f, 1));
-            var t = UIKit.Label(row.transform, "", 46, Color.white, TextAnchor.MiddleCenter, 3);
-            t.rectTransform.Fill(20, 0, 20, 0);
+            // 11-04 밤: 글자·금화 0.8배(46 → 37) · 판 아래 턱만큼 위로 4 (앞면 가운데)
+            var t = UIKit.Label(row.transform, "", 37, Color.white, TextAnchor.MiddleCenter, 2.5f);
+            t.rectTransform.Fill(20, 8, 20, 0);
             if (icon != null)
             {
-                var ic = UIKit.Img(row.transform, Art.Get(icon), new Vector2(72, 67), "Icon");
-                ic.rectTransform.Place(0.5f, 0.5f, Vector2.zero, new Vector2(72, 67), new Vector2(0.5f, 0.5f));
+                var ic = UIKit.Img(row.transform, Art.Get(icon), new Vector2(50, 50), "Icon");
+                ic.preserveAspect = true;
+                ic.rectTransform.Place(0.5f, 0.5f, new Vector2(0, 4), new Vector2(50, 50), new Vector2(0.5f, 0.5f));
                 t.gameObject.AddComponent<IconFollow>().icon = ic.rectTransform;
             }
             return t;
@@ -265,8 +267,9 @@ namespace KachiGun
             if (!icon) return;
             t ??= GetComponent<Text>();
             float w = t.preferredWidth;
-            icon.anchoredPosition = new Vector2(-w / 2 - icon.sizeDelta.x / 2 - 8, 2);
-            ((RectTransform)transform).anchoredPosition = new Vector2(icon.sizeDelta.x / 2 + 4, 0);
+            var rt = (RectTransform)transform;
+            rt.anchoredPosition = new Vector2(icon.sizeDelta.x / 2 + 4, rt.anchoredPosition.y);   // 세로 자리는 그대로
+            icon.anchoredPosition = new Vector2(rt.anchoredPosition.x - w / 2 - icon.sizeDelta.x / 2 - 8, rt.anchoredPosition.y);
         }
     }
 
