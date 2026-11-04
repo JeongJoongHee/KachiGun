@@ -135,8 +135,9 @@ namespace KachiGun
                 nm.rectTransform.Place(0, 0.5f, new Vector2(30, 26), new Vector2(560, 50), new Vector2(0, 0.5f));
                 var ds = UIKit.Fit(UIKit.Label(rb.transform, it.desc, 28, UIKit.Cream, TextAnchor.MiddleLeft, 2), 18);
                 ds.rectTransform.Place(0, 0.5f, new Vector2(30, -30), new Vector2(560, 40), new Vector2(0, 0.5f));
-                bool ad = it.kind == 0, gem = it.kind == 1;
-                var b = UIKit.ColorBtn(rb.transform, ad ? new Color(0.95f, 0.6f, 0.15f) : gem ? new Color(0.3f, 0.55f, 0.95f) : new Color(0.45f, 0.7f, 0.3f), new Vector2(220, 100), it.price, gem ? 32 : 38, it.act);
+                bool gem = it.kind == 1;
+                // 11-04 밤: 광고 버튼도 다른 버튼과 같은 녹색 (전엔 주황 = 나무판 색이라 줄과 섞여 보였음)
+                var b = UIKit.ColorBtn(rb.transform, gem ? new Color(0.3f, 0.55f, 0.95f) : new Color(0.45f, 0.7f, 0.3f), new Vector2(220, 100), it.price, gem ? 32 : 38, it.act);
                 ((RectTransform)b.transform).Place(1, 0.5f, new Vector2(-24, 0), new Vector2(220, 100), new Vector2(1, 0.5f));
                 if (it.id == "free_gems_ad") adGemBtn = b;
                 if (it.kind == 3) UIKit.SetOn(b, false);

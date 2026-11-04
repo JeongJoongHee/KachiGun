@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
-"""11-04 요청_02 "달러 아이콘 → 금전": 초록 지폐 그림을 금화 더미로 바꾼다.
+"""11-04 요청_02 "달러 아이콘 → 금전": 초록 지폐 그림을 금화로 바꾼다 (11-04 밤: 더미 → 둥근 동전 한 닢).
+ ※ 다시 돌린 뒤엔 tools/_build/card_green_orig/ 를 지우고 python tools/card_green.py (카드 녹색 채도)
  - UI/icon_money.png      : 금화 더미 아이콘을 새로 그림 (작게 그려 3배, 1px 진한 외곽선 — icon_gen.py 와 같은 화풍)
  - UI/card_atk·spd·gold   : 아래 금액 칸의 지폐 · card_gold 왼쪽 위 칸의 지폐
  - UI/stat_gold.png       : 골드 버프 버튼의 지폐
@@ -71,6 +72,29 @@ def coin_pile():
     return im.resize((im.width * 3, im.height * 3), Image.NEAREST)
 
 
+def coin_round():
+    """11-04 밤 사용자 "금전 아이콘은 동전 형태로": 둥근 금화 한 닢 (살짝 기울여 아래쪽 두께가 보임) → 3배"""
+    n = 26
+    im = Image.new('RGBA', (n, n), (0, 0, 0, 0))
+    d = ImageDraw.Draw(im)
+    cx, cy, rx, ry = 12, 11, 11, 10
+    d.ellipse((cx - rx, cy - ry + 3, cx + rx, cy + ry + 3), fill=G_DARK)          # 두께(옆면)
+    d.ellipse((cx - rx, cy - ry + 1, cx + rx, cy + ry + 1), fill=G_MID)
+    d.ellipse((cx - rx, cy - ry, cx + rx, cy + ry), fill=G_MID)                   # 앞면 테
+    d.ellipse((cx - rx + 2, cy - ry + 2, cx + rx - 2, cy + ry - 2), fill=G_BASE)   # 앞면
+    d.ellipse((cx - rx + 4, cy - ry + 4, cx + rx - 4, cy + ry - 4), outline=G_DARK)   # 안쪽 고리 (새김)
+    d.ellipse((cx - rx + 5, cy - ry + 5, cx + rx - 5, cy + ry - 5), outline=G_LIGHT)
+    # 가운데 새김: 세로 막대 (도트 동전 흔한 모양)
+    d.rectangle((cx - 1, cy - 4, cx + 1, cy + 4), fill=G_DARK)
+    d.rectangle((cx - 1, cy - 4, cx, cy + 3), fill=G_LIGHT)
+    # 왼쪽 위 반짝임
+    d.line((cx - rx + 3, cy - 2, cx - 3, cy - ry + 3), fill=G_SHINE)
+    d.point([(cx - rx + 4, cy - 1), (cx - 2, cy - ry + 4)], fill=G_LIGHT)
+    im = outline(im)
+    im = im.crop(im.getbbox())
+    return im.resize((im.width * 3, im.height * 3), Image.NEAREST)
+
+
 def bill_mask(a, x, y, w, h):
     """bbox 안 초록 덩어리 + 둘레 3px 안의 어두운 외곽선 = 지울 곳"""
     r, g, b, al = (a[..., i].astype(int) for i in range(4))
@@ -110,7 +134,7 @@ def main():
     for f in FILES:
         if not os.path.exists(os.path.join(ORIG, f)):
             shutil.copy(os.path.join(UI, f), os.path.join(ORIG, f))
-    coin = coin_pile()
+    coin = coin_round()   # 11-04 밤: 더미(coin_pile) → 둥근 동전 한 닢
     # 아이콘: 원래 크기(79x74) 그대로 가운데에
     icon = Image.new('RGBA', (79, 74), (0, 0, 0, 0))
     icon.alpha_composite(coin, ((79 - coin.width) // 2, (74 - coin.height) // 2))

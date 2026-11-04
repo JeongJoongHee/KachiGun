@@ -4,7 +4,8 @@
 - **3일 출석** (`AttendPopup` · `GM.CheckAttend/ClaimAttend` · 세이브 attendDay/attendCount): 하루 한 번(기기 날짜) 접속 창 1·2·3일차 = 100·200·300 다이아 → 다 받으면 1일차부터 다시 · **빠진 날이 있어도 끊기지 않고 다음 칸**(내 해석) · 켤 때·백그라운드에서 돌아올 때(방치 보상 창 위) · 켜 둔 채 날이 바뀌면 창이 없을 때 · 첫 강화(튜토리얼)·메뉴 열림(1-2) 뒤 · 스테이지 화면에서만 · X/뒤로 가기도 받음. 값 = Config `Attend_Days`·`Attend_Gems_1~3`. 받은 칸 녹색 체크(`i_check_w`, tools/kit_white.py). PlayTest 11f 15줄 · 캡처 18f_attend·18g_attend_claimed · errors=0
 - **강화 카드 녹색 금액 칸 채도 낮춤**: `tools/card_green.py`(밝은 녹색 채도 x0.72·밝기 x0.78, 잎은 조금) — 원본 tools/_build/card_green_orig/, 미리보기 tools/_preview/card_green.png. **coin_icon.py 를 다시 돌리면 card_green_orig 를 지우고 card_green.py 도 다시**
 - strings_collect: 합성 안내문 영어 키 `\n` 고침 + 출석·"스테이지" 영어 → 영어 빈 칸 0
-- push: 11-04 20:21 GitHub 장애(500)로 실패 — 커밋 쌓여 있음, 사용자가 다시 push
+- push: 11-04 20:21 GitHub 장애(500)로 실패 → 장애 풀린 뒤 사용자가 push 끝
+- **상점 광고 버튼(공격력·금전 x2·무료 다이아) 녹색으로 통일** · **금화 아이콘 = 둥근 동전 한 닢**(`coin_icon.py` coin_round, 아이콘·카드 3·card_gold·stat_gold) → card_green 다시 적용. Unity 열려 있어 배치 시험 못 함(csc 컴파일만) — 다음 배치 때 17_shop 캡처 확인
 
 ## ▶ 재개 메모 (2026-11-04 밤 — `추가 요청/요청_02.docx` 반영)
 - **요청_02 9개 전부 반영 · 배치 시험 errors=0 (80줄) · 영어 화면 errors=0**:
