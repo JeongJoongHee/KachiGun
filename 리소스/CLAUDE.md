@@ -1,5 +1,11 @@
 # 카치건 (좀비 키우기) — 세로 방치형 분대 슈팅, Unity 6000.0.84f1 · 2D URP
 
+## ▶ 재개 메모 (2026-10-31 — kachigoogoo 사업자 전환 기준으로 남은 작업 다시 짬)
+- **구글 공식 문서 확인(10-31)**: 한국 개발자가 유료 앱·인앱 결제 → Play Console 에 사업자 등록 번호 · 통신판매업 신고 번호 · 신고 기관 필수(answer/6223646 · 3255733). 개인 → 조직 전환은 Play Console 안에서 가능: 내 정보 › 웹사이트 인증 → [계정 유형 변경] → 새 사업자 결제 프로필(D-U-N-S) → 연결 · 되돌릴 수 없음 · 전환 뒤 72시간(answer/16260648 · 13634888). 12명·14일 규정은 2023-11-13 이후 개인 계정 대상(14151465). 오늘 처음엔 "사업자 필요 없다"고 잘못 답했다가 정정함 — 정책 질문은 공식 문서부터
+- **사용자 상태**: 사업자 등록 끝 · kachigoogoo = 개인 계정 + 결제 프로필 "개인" · **10-31 구글 지원팀에 kachigoogoo 사업자 전환 문의** → 답 대기. 통신판매업 신고·D-U-N-S 는 아직(확인 안 됨)
+- **`남은_작업_정리.html` 새 키 `kachigun-todo-1031`** (42항목, 이전 판 백업 = 스크래치 kachigun_todo_before_1031.html · 1030b 체크 n-console·n-website 는 끝난 것으로): ① n-upload2(오늘) ② 프로덕션 ③ **사업자 전환 b-support·b-duns·b-tongsin·b-website·b-convert·b-korea·b-payout·b-check** + "안 될 때"(zkfpf1 전환 = 이전 불필요 / 새 조직 계정) ④ 이전(조건: 출시 + 전환 끝 + 72시간) ⑤ 결제 ⑥ 재생 확인 ⑦ 나중. 불도깨비 문서는 ② 한 줄(biz-follow)로 이 ③ 을 따라감
+- **재개하면**: 지원팀 답 메일 있으면 그 기준으로 두 문서 고침 → `PYTHONUTF8=1 python tools/todo_checks.py`
+
 ## ▶ 재개 메모 (2026-10-30 마무리 — 2번 AAB 다시 구움, 사용자가 올릴 차례)
 - **지금 상태**: 2번 AAB `Kachi_Gun/Builds/kachizombie-1.0-2.aab`(15:56 배치로 다시 구움 — 사용자 Unity 빌드가 "begin" 창에서 멈춤, 내용은 09:44 판과 같음 · 그 판 백업 = 스크래치 kachizombie-1.0-2_0944.aab) · aab_check 전부 통과 · git 의 csv 5개는 줄바꿈만 다름(내용 같음), PackageManagerSettings·GvhProjectSettings.xml 은 Unity 가 만든 기록
 - **사용자 차례** (`남은_작업_정리.html` 키 **kachigun-todo-1030b**): ① n-console 앱 콘텐츠 답(광고·광고 ID·데이터 보안) → n-website → **n-upload2 2번 AAB 10-31 까지** → n-adtest · 14일 끝 **11-06**, 프로덕션 신청 **11-07~** → "프로덕션 신청 답 만들어 줘"
