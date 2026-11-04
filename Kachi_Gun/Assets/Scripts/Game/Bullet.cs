@@ -14,6 +14,9 @@ namespace KachiGun
         public int pierceLeft;
         public float life, speed, splash, maxSpeed, accel, turn, hitBonus;
         public double bossMul = 1;          // 보스 피해 배율 (쏜 카피바라의 보급품·슬롯 강화)
+        public int grade;                   // 총알 등급 (오오라·폭발 색)
+        SpriteRenderer auraOut, auraIn;     // 11-04 요청_02: A 등급부터 일반탄 네온 오오라 (등급 색)
+        float auraT;
         public Target homing;
         Vector2 dir;
         SpriteRenderer sr;
@@ -25,7 +28,7 @@ namespace KachiGun
         };
 
         /// <summary>spec = Bullet_Spec 줄 (속도·가속·유도·판정 크기·그림). range = 날아가는 거리</summary>
-        public static Bullet Fire(BulletRow spec, Vector2 pos, Vector2 dir, double dmg, int pierce, float range, double bossMul = 1)
+        public static Bullet Fire(BulletRow spec, Vector2 pos, Vector2 dir, double dmg, int pierce, float range, double bossMul = 1, int grade = 0)
         {
             Bullet b = pool.Count > 0 ? pool.Pop() : null;
             if (b == null)
@@ -36,7 +39,7 @@ namespace KachiGun
             }
             b.gameObject.SetActive(true);
             var k = KindOf(spec.kind);
-            b.kind = k; b.dmg = dmg; b.pierceLeft = pierce; b.dir = dir.normalized; b.homing = null; b.splash = 0; b.bossMul = bossMul;
+            b.kind = k; b.grade = grade; b.dmg = dmg; b.pierceLeft = pierce; b.dir = dir.normalized; b.homing = null; b.splash = 0; b.bossMul = bossMul;
             b.speed = Mathf.Max(0.5f, spec.speed); b.maxSpeed = Mathf.Max(b.speed, spec.maxSpeed); b.accel = spec.accel; b.turn = spec.turn; b.hitBonus = spec.hitBonus;
             string path = string.IsNullOrEmpty(spec.sprite) ? "Bullet/bullet_basic" : spec.sprite;
             b.hitSet.Clear();
@@ -51,8 +54,44 @@ namespace KachiGun
             }
             b.life = range / b.speed;
             b.sr.sortingOrder = 20000;
+            b.transform.localScale = Vector3.one * (k == Kind.Drill ? 0.8f : 1f);   // 11-04 요청_02: 관통탄 크기 0.8배 (맞는 판정은 그대로)
+            b.SetAura(k != Kind.Missile && grade >= AuraGrade);
             b.Face();
             return b;
+        }
+
+        /// <summary>네온 오오라가 붙는 등급 (A = 3)</summary>
+        public const int AuraGrade = 3;
+
+        /// <summary>총알 그림 뒤에 등급 색 빛 두 겹 (바깥 넓게 흐리게 · 안쪽 진하게) — 총알 방향으로 길쭉하게</summary>
+        void SetAura(bool on)
+        {
+            if (!on) { if (auraOut) { auraOut.enabled = false; auraIn.enabled = false; } return; }
+            if (!auraOut)
+            {
+                auraOut = NewGlow("AuraOut", 19998);
+                auraIn = NewGlow("AuraIn", 19999);
+            }
+            var c = Tables.GradeColor(grade);
+            Vector2 size = sr.sprite ? (Vector2)sr.sprite.bounds.size : new Vector2(0.3f, 0.15f);
+            float big = 1f + Mathf.Clamp(grade - AuraGrade, 0, 6) * 0.08f;   // 등급이 높을수록 조금 더 크게
+            auraOut.transform.localScale = new Vector3(size.x * 2.2f + 0.25f, size.y * 3.2f + 0.25f, 1) * big;
+            auraIn.transform.localScale = new Vector3(size.x * 1.5f + 0.08f, size.y * 1.9f + 0.08f, 1) * big;
+            auraOut.transform.localPosition = auraIn.transform.localPosition = new Vector3(size.x * (0.5f - sr.sprite.pivot.x / sr.sprite.rect.width), 0, 0);
+            auraOut.color = new Color(c.r, c.g, c.b, 0.55f);
+            auraIn.color = Color.Lerp(c, Color.white, 0.35f) * new Color(1, 1, 1, 0.9f);
+            auraOut.enabled = auraIn.enabled = true;
+            auraT = Random.value * 6f;
+        }
+
+        SpriteRenderer NewGlow(string n, int order)
+        {
+            var go = new GameObject(n);
+            go.transform.SetParent(transform, false);
+            var g = go.AddComponent<SpriteRenderer>();
+            g.sprite = Art.Glow;
+            g.sortingOrder = order;
+            return g;
         }
 
         void Face() => transform.rotation = Quaternion.Euler(0, 0, Mathf.Atan2(dir.y, dir.x) * Mathf.Rad2Deg);
@@ -61,6 +100,7 @@ namespace KachiGun
         {
             float dt = Time.deltaTime;
             life -= dt;
+            if (auraOut && auraOut.enabled) { auraT += dt * 14f; var c = auraOut.color; c.a = 0.45f + 0.15f * Mathf.Sin(auraT); auraOut.color = c; }   // 네온 일렁임
             if (life <= 0) { if (kind == Kind.Missile) Explode(); Recycle(); return; }
 
             if (kind == Kind.Missile && homing != null && homing.Alive)
@@ -93,10 +133,10 @@ namespace KachiGun
         void Explode()
         {
             Vector2 c = transform.position;
-            Fx.I?.Boom(c, splash);
+            Fx.I?.Boom(c, splash, grade);
             foreach (var t in Target.All.ToArray())
                 if (t.Alive && (t.Center - c).magnitude <= splash + t.radius)
-                    GameManager.I.Damage(t, dmg, c, bossMul);
+                    GameManager.I.Damage(t, dmg, c, bossMul, false);   // 11-04 요청_02: 미사일은 넉백 없음
         }
 
         void Recycle()

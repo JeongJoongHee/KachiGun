@@ -79,6 +79,13 @@ EN = {
     '게임 종료': 'Quit Game', '게임을 종료할까요?': 'Quit the game?', '취소': 'Cancel', '종료': 'Quit',
     '방치 보상': 'Offline Reward', '자리를 비운 시간 {0}': 'Time away: {0}', '최대 {0}시간까지 쌓입니다': 'Stacks up to {0} hours',
     '스테이지 {0} 에서 계속 사냥했어요': 'Your squad kept hunting at Stage {0}', '{0}일 {1}시간': '{0}d {1}h', '{0}시간 {1}분': '{0}h {1}m', '{0}분': '{0}m',
+    # 11-04 요청_02
+    '오프라인 시간': 'Time away', '보상': 'Reward', '같은 탄알끼리만 합성할 수 있습니다': 'Only identical ammo can be merged',
+    '같은 탄알 두 개를 끌어다 겹치면 합성!\n장착 칸을 누르면 슬롯 강화 · 남는 총알은 분해 → 다이아': 'Drag two identical ammo together to merge!\nTap an equipped slot to enhance · Salvage spares → gems',
+    '비밀던전': 'Secret Dungeon', '비밀던전 {0}단계': 'Secret Dungeon Tier {0}', '비밀던전이 열렸습니다!': 'Secret Dungeon unlocked!', '비밀던전 플레이하기': 'Play the Secret Dungeon',
+    '금전 획득량': 'Gold Gain', '금전 획득량 x2 (5분)': 'Gold x2 (5 min)',
+    '공격력 +{0}% · 공격속도 +{1}% · 금전 +{2}%': 'ATK +{0}% · SPD +{1}% · Gold +{2}%', '공격력 +{0}% · 공격속도 +{1}% · 금전 획득량 +{2}%': 'ATK +{0}% · SPD +{1}% · Gold +{2}%',
+    '공격 +{0}% · 속도 +{1}% · 금전 +{2}% · 보스 +{3}%': 'ATK +{0}% · SPD +{1}% · Gold +{2}% · Boss +{3}%', '공격력 +{0}% · 공격속도 +{1}% · 금전 +{2}% · 보스 +{3}%': 'ATK +{0}% · SPD +{1}% · Gold +{2}% · Boss +{3}%',
     '저장했습니다 (기기 안)': 'Saved (on this device)', '불러오기 · 구매 복원 · 문의': 'Load · Restore · Contact',
     '클라우드 저장·결제 복원·문의는 준비 중입니다': 'Cloud save, restore and contact are coming soon', '켜짐': 'On', '꺼짐': 'Off',
     '설정': 'Settings',

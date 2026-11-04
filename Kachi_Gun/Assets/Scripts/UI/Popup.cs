@@ -122,7 +122,7 @@ namespace KachiGun
                     double mm = Tables.MineMul(s.Chapter);
                     var ores = new System.Text.StringBuilder();
                     foreach (var o in Tables.Ores) if (o.count > 0) ores.Append(o.reward > 0 ? $"{L.T(o.name)} = {L.T("다이아")} {o.reward * mm:0.##}\n" : $"{L.T(o.name)} = {L.T("보상 없음")}\n");
-                    text = $"<size=48>{L.F("다이아 광산 {0}단계", Tables.MineTier(s.Chapter))}</size>\n\n{L.T("모든 공격이 1 피해로 고정!")}\n{ores}\n{L.T("오늘 티켓")} {s.mineTickets}/{Tables.Ci("MineTickets")}";
+                    text = $"<size=48>{L.F("비밀던전 {0}단계", Tables.MineTier(s.Chapter))}</size>\n\n{L.T("모든 공격이 1 피해로 고정!")}\n{ores}\n{L.T("오늘 티켓")} {s.mineTickets}/{Tables.Ci("MineTickets")}";
                     go = () => HUD.I.Msg(gm.StartMine());
                     break;
                 default:
@@ -133,7 +133,7 @@ namespace KachiGun
                     break;
             }
             var p = HUD.I.Open<ConfirmPopup>();
-            p.title.text = L.T(k == Kind.Challenge ? "도전" : k == Kind.Mine ? "광산" : "보스");
+            p.title.text = L.T(k == Kind.Challenge ? "도전" : k == Kind.Mine ? "비밀던전" : "보스");
             p.body.text = text;
             p.onOk = go;
             UIKit.LabelOf(p.ok).text = L.T("시작");
@@ -175,29 +175,44 @@ namespace KachiGun
     /// <summary>방치 보상 (11-04): 비운 시간 · 기준 스테이지 · 골드 → [받기] · [광고 보고 x2]. X·뒤로 가기도 기본 보상은 받음</summary>
     public class OfflinePopup : Popup
     {
-        protected override Vector2 Size => new(860, 820);
+        protected override Vector2 Size => new(860, 770);
         protected override string Title => "방치 보상";
         protected override bool CloseOnDim => false;
-        Text info, amount;
+        Text timeT, stageT, rewardT, note;
         Button take, ad;
         public long awaySec;      // 실제로 비운 시간
         public double sec, gold;  // 보상에 쓴 시간(최대까지) · 골드
         bool claimed;
 
+        // 11-04 요청_02: 가운데 정렬 · 잘 보이는 글자(나무판 위 흰 글자 + 테두리) · "오프라인 시간 : hh:mm" / "스테이지 : n-n" / "보상 : n"
         protected override void Build()
         {
-            info = UIKit.Label(content, "", 36, UIKit.Ink, TextAnchor.MiddleCenter, 0);
-            info.rectTransform.Place(0.5f, 1, new Vector2(0, -10), new Vector2(760, 250), new Vector2(0.5f, 1));
-            info.horizontalOverflow = HorizontalWrapMode.Wrap;
-            var gi = UIKit.Img(content, Art.Get("UI/icon_money"), new Vector2(96, 99), "Gold");
-            gi.rectTransform.Place(0.5f, 0.5f, new Vector2(-200, -30), new Vector2(96, 99), new Vector2(0.5f, 0.5f));
-            amount = UIKit.Label(content, "", 56, UIKit.Ink, TextAnchor.MiddleLeft, 0);
-            amount.rectTransform.Place(0.5f, 0.5f, new Vector2(-130, -30), new Vector2(480, 90), new Vector2(0, 0.5f));
+            timeT = InfoRow(0, null);
+            stageT = InfoRow(1, null);
+            rewardT = InfoRow(2, "UI/icon_money");
+            note = UIKit.Label(content, "", 30, UIKit.Ink, TextAnchor.MiddleCenter, 0);
+            note.rectTransform.Place(0.5f, 1, new Vector2(0, -400), new Vector2(760, 50), new Vector2(0.5f, 0.5f));
             take = UIKit.ColorBtn(content, new Color(0.45f, 0.7f, 0.3f), new Vector2(330, 110), L.T("받기"), 42, () => Claim(1));
             ((RectTransform)take.transform).Place(0.5f, 0, new Vector2(-180, 10), new Vector2(330, 110), new Vector2(0.5f, 0));
             ad = UIKit.ColorBtn(content, new Color(0.95f, 0.6f, 0.15f), new Vector2(330, 110), "", 40, () =>
                 AdService.Show("offline", () => Claim(Tables.C("Offline_AdMul", 2))));
             ((RectTransform)ad.transform).Place(0.5f, 0, new Vector2(180, 10), new Vector2(330, 110), new Vector2(0.5f, 0));
+        }
+
+        /// <summary>나무판 한 줄 + 가운데 흰 글자 (icon 이 있으면 글자 왼쪽에 붙여 그림)</summary>
+        Text InfoRow(int i, string icon)
+        {
+            var row = UIKit.Row(content, "Info" + i);
+            row.rectTransform.Place(0.5f, 1, new Vector2(0, -10 - i * 124), new Vector2(740, 108), new Vector2(0.5f, 1));
+            var t = UIKit.Label(row.transform, "", 46, Color.white, TextAnchor.MiddleCenter, 3);
+            t.rectTransform.Fill(20, 0, 20, 0);
+            if (icon != null)
+            {
+                var ic = UIKit.Img(row.transform, Art.Get(icon), new Vector2(72, 67), "Icon");
+                ic.rectTransform.Place(0.5f, 0.5f, Vector2.zero, new Vector2(72, 67), new Vector2(0.5f, 0.5f));
+                t.gameObject.AddComponent<IconFollow>().icon = ic.rectTransform;
+            }
+            return t;
         }
 
         /// <summary>창이 이미 떠 있으면(백그라운드를 또 다녀옴) 시간을 더함</summary>
@@ -212,18 +227,15 @@ namespace KachiGun
             p.sec = System.Math.Min(sec, GameManager.OfflineMaxSec);
             p.gold = GameManager.I.OfflineGoldPerSec * p.sec;
             double maxH = Tables.C("Offline_MaxHours", 8);
-            p.info.text = L.F("자리를 비운 시간 {0}", Dur(away)) + "\n<size=30>" + L.F("최대 {0}시간까지 쌓입니다", maxH.ToString("0.#")) + "</size>\n\n"
-                + L.F("스테이지 {0} 에서 계속 사냥했어요", SaveData.StageName(SaveData.Cur.stage));
-            p.amount.text = "+" + Num.F(p.gold);
+            p.timeT.text = L.T("오프라인 시간") + " : " + HhMm(away);
+            p.stageT.text = L.T("스테이지") + " : " + SaveData.StageName(SaveData.Cur.stage);
+            p.rewardT.text = L.T("보상") + " : " + Num.F(p.gold);
+            p.note.text = L.F("최대 {0}시간까지 쌓입니다", maxH.ToString("0.#"));
             UIKit.LabelOf(p.ad).text = L.T("광고 보고") + " x" + Tables.C("Offline_AdMul", 2).ToString("0.#");
         }
 
-        static string Dur(long s)
-        {
-            long h = s / 3600, m = s % 3600 / 60;
-            if (h >= 24) return L.F("{0}일 {1}시간", h / 24, h % 24);
-            return h > 0 ? L.F("{0}시간 {1}분", h, m) : L.F("{0}분", m);
-        }
+        /// <summary>비운 시간 hh:mm (24시간이 넘어도 시간으로 셈: 30:05)</summary>
+        public static string HhMm(long s) => $"{s / 3600:00}:{s % 3600 / 60:00}";
 
         void Claim(double mul)
         {
@@ -241,6 +253,21 @@ namespace KachiGun
 
         /// <summary>X · 뒤로 가기로 닫아도 기본 보상은 받음</summary>
         public override void Close() => Claim(1);
+    }
+
+    /// <summary>가운데 정렬 글자의 왼쪽 끝 바로 앞에 아이콘을 붙여 둠 (글자 길이가 바뀌어도 따라감)</summary>
+    public class IconFollow : MonoBehaviour
+    {
+        public RectTransform icon;
+        Text t;
+        void LateUpdate()
+        {
+            if (!icon) return;
+            t ??= GetComponent<Text>();
+            float w = t.preferredWidth;
+            icon.anchoredPosition = new Vector2(-w / 2 - icon.sizeDelta.x / 2 - 8, 2);
+            ((RectTransform)transform).anchoredPosition = new Vector2(icon.sizeDelta.x / 2 + 4, 0);
+        }
     }
 
     /// <summary>던전 결과: 받기 · 광고 보고 x3</summary>

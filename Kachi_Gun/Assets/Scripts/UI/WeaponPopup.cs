@@ -6,7 +6,7 @@ namespace KachiGun
 {
     /// <summary>
     /// 총알 창 (기획서 6장): 장착 3칸(리더·동료1·동료2) + 5x3 인벤토리 + 뽑기(다이아 100, D 등급 100%).
-    /// 같은 등급 두 개를 끌어다 겹치면 한 단계 위 등급의 랜덤 종류로 합성. 장착 중인 총알은 해제한 뒤 합성.
+    /// 같은 탄알(종류·등급 같음) 두 개를 끌어다 겹치면 한 단계 위 등급의 랜덤 종류로 합성 (11-04: 종류가 다르면 안 됨). 장착 중인 총알은 해제한 뒤 합성.
     /// 장착 칸을 누르면 [슬롯 강화] (Weapon_Enchant), 인벤토리 총알을 누르면 [분해] → 다이아 (Grade_Enchant_Multiplier).
     /// </summary>
     public class WeaponPopup : Popup
@@ -70,7 +70,7 @@ namespace KachiGun
             gachaLabel = UIKit.LabelOf(g);
             var gi = UIKit.Img(g.transform, Art.Get("UI/icon_gem"), new Vector2(60, 60), "Gem");
             gi.rectTransform.Place(0, 0.5f, new Vector2(40, 0), new Vector2(60, 60), new Vector2(0, 0.5f));
-            var hint = UIKit.Label(content, L.T("같은 등급 두 개를 끌어다 겹치면 합성!\n장착 칸을 누르면 슬롯 강화 · 남는 총알은 분해 → 다이아"), 30, UIKit.Ink, TextAnchor.MiddleCenter, 0);
+            var hint = UIKit.Label(content, L.T("같은 탄알 두 개를 끌어다 겹치면 합성!\n장착 칸을 누르면 슬롯 강화 · 남는 총알은 분해 → 다이아"), 30, UIKit.Ink, TextAnchor.MiddleCenter, 0);
             hint.rectTransform.Place(0.5f, 0, new Vector2(0, 260), new Vector2(880, 80), new Vector2(0.5f, 0.5f));
 
             ghost = UIKit.Img(transform, null, new Vector2(150, 150), "Ghost").rectTransform;
@@ -179,10 +179,9 @@ namespace KachiGun
         {
             if (from == null || to == null || from == to || from.code < 0) return;
             string e = null;
-            int beforeGrade = to.code >= 0 ? Tables.GradeOf(to.code) : -1;
             if (!from.isSlot && !to.isSlot)
             {
-                bool merge = to.code >= 0 && Tables.GradeOf(to.code) == Tables.GradeOf(from.code);
+                bool merge = to.code >= 0 && to.code == from.code;
                 e = GM.Merge(from.index, to.index);
                 if (merge && string.IsNullOrEmpty(e)) { H.Toast(L.T("합성!") + " " + Tables.WeaponName(S.inv[to.index])); to.Pop(); }
             }
@@ -190,7 +189,7 @@ namespace KachiGun
             else if (from.isSlot && !to.isSlot)
             {
                 if (to.code < 0) e = GM.Unequip(from.index, to.index);
-                else if (beforeGrade == Tables.GradeOf(from.code)) e = L.T("장착 중인 총알은 해제한 뒤 합성할 수 있습니다");
+                else if (to.code == from.code) e = L.T("장착 중인 총알은 해제한 뒤 합성할 수 있습니다");
                 else e = GM.Equip(to.index, from.index);
             }
             else GM.SwapSlots(from.index, to.index);

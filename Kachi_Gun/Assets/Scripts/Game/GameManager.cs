@@ -208,11 +208,11 @@ namespace KachiGun
         // 피해·처치
         // =====================================================================
         /// <summary>bossMul = 쏜 카피바라의 보스 피해 배율 (보급품 + 슬롯 강화)</summary>
-        public void Damage(Target t, double dmg, Vector2 from, double bossMul = 1)
+        public void Damage(Target t, double dmg, Vector2 from, double bossMul = 1, bool knock = true)
         {
             if (mode == Mode.Mine) dmg = 1;      // 광산 = 고정 피해 1
             else if (t is Zombie z && z.isBoss) dmg *= bossMul;
-            t.Hit(dmg, from);
+            t.Hit(dmg, from, knock);
         }
 
         public void OnTargetDead(Target t)
@@ -328,7 +328,8 @@ namespace KachiGun
             return null;
         }
 
-        /// <summary>인벤토리 a 칸을 b 칸에 겹치기: 같은 등급이면 한 단계 위 등급의 랜덤 종류로 합성</summary>
+        /// <summary>인벤토리 a 칸을 b 칸에 겹치기: 같은 탄알(종류·등급 모두 같음)이면 한 단계 위 등급의 랜덤 종류로 합성.
+        /// 11-04 요청_02: 등급이 같아도 종류가 다르면 합성 안 됨 (알림만, 자리는 그대로)</summary>
         public string Merge(int a, int b)
         {
             if (a == b) return "";
@@ -337,6 +338,7 @@ namespace KachiGun
             if (cb < 0) { S.inv[b] = ca; S.inv[a] = -1; Notify(); return null; }   // 빈칸으로 옮기기
             int g = Tables.GradeOf(ca);
             if (g != Tables.GradeOf(cb)) { S.inv[a] = cb; S.inv[b] = ca; Notify(); return null; }  // 등급 다르면 자리 바꾸기
+            if (ca != cb) return L.T("같은 탄알끼리만 합성할 수 있습니다");
             if (g >= Tables.MaxGrade) return L.T("최고 등급입니다");
             S.inv[a] = -1;
             S.inv[b] = Tables.Code(g + 1, Tables.RandomType(g + 1));   // 한 단계 위 등급, Merge_Weight 비중 (10-24: 일반탄 각 18% · 레이저/미사일 각 14%)
@@ -634,7 +636,7 @@ namespace KachiGun
             double mul = Tables.MineMul(S.Chapter);
             foreach (var o in Tables.Ores)
                 for (int i = 0; i < o.count; i++) Ore.Spawn(o, Field.I.RandomRoad(o.near, o.far, o.scale >= 1 ? 0.7f : 0.6f), mul);
-            HUD.I?.Banner(L.T("다이아 광산"), new Color(0.5f, 0.85f, 1f));
+            HUD.I?.Banner(L.T("비밀던전"), new Color(0.5f, 0.85f, 1f));
             return null;
         }
 

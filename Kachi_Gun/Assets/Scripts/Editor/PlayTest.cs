@@ -172,11 +172,17 @@ namespace KachiGun.EditorTools
             S.gems += 1000; GM.Notify();
             for (int i = 0; i < 4; i++) { var e = GM.Gacha(); if (e != null) { Log("뽑기 실패 " + e); errors++; } }
             Log($"뽑은 뒤 인벤토리: {Inv()}  다이아 {S.gems}");
+            // 11-04 요청_02: 같은 탄알(종류·등급)끼리만 합성 — 시험은 칸을 정해 두고
+            S.inv[0] = Tables.Code(0, "single"); S.inv[1] = Tables.Code(0, "shotgun");
+            string me0 = GM.Merge(0, 1);
+            Check(me0 != null && Tables.TypeOf(S.inv[0]) == "single" && Tables.TypeOf(S.inv[1]) == "shotgun", $"D 단발 + D 산탄 → 합성 안 됨 ({me0})");
+            S.inv[1] = Tables.Code(0, "single"); S.inv[2] = Tables.Code(0, "fast"); S.inv[3] = Tables.Code(0, "fast");
             GM.Merge(0, 1); GM.Merge(2, 3);
             Log($"합성 뒤: {Inv()}");
-            Check(S.inv[1] >= 0 && Tables.GradeOf(S.inv[1]) == 1 && Tables.GradeOf(S.inv[3]) == 1, "D+D → C");
+            Check(S.inv[0] < 0 && S.inv[1] >= 0 && Tables.GradeOf(S.inv[1]) == 1 && Tables.GradeOf(S.inv[3]) == 1, "같은 D 두 개 → C");
+            S.inv[1] = S.inv[3];   // 같은 C 두 개로 맞춤 (합성 결과 종류는 무작위)
             GM.Merge(1, 3);
-            Check(Tables.GradeOf(S.inv[3]) == 2, "C+C → B");
+            Check(Tables.GradeOf(S.inv[3]) == 2, "같은 C 두 개 → B");
             Log($"B 합성: {Tables.WeaponName(S.inv[3])}");
             GM.Gacha(); GM.Gacha();
             int a = S.inv.FindIndex(x => x >= 0 && Tables.GradeOf(x) == 0);
@@ -196,12 +202,12 @@ namespace KachiGun.EditorTools
             CloseAll();
 
             // 5) 스킨
-            S.gems += 1000;
+            S.gems += Tables.Skins.Find(r => r.id == 3).price + Tables.Skins.Find(r => r.id == 2).price;   // 표 가격대로 (11-04 스킨 재밸런스)
             var se = GM.BuySkin(3);
             Log($"스킨 3 구매: {(se ?? "성공")}, 입은 스킨 {S.skin}, 공격 보너스 +{Stats.SkinAtk}%");
-            Check(se == null && S.skin == 3 && Stats.SkinAtk == 48, "스킨 구매·합산");
+            Check(se == null && S.skin == 3 && Stats.SkinAtk == Tables.Skins.Find(r => r.id == 3).atk, $"스킨 구매·합산 (+{Stats.SkinAtk}%)");
             GM.BuySkin(2);
-            Check(Stats.SkinAtk == 48 + 32, "스킨 합산(2개)");
+            Check(Stats.SkinAtk == Tables.Skins.Find(r => r.id == 3).atk + Tables.Skins.Find(r => r.id == 2).atk, $"스킨 합산(2개) +{Stats.SkinAtk}%");
             HUD.I.Open<SkinPopup>();
             yield return Wait(0.4f);
             Capture("05_skin");
@@ -474,6 +480,49 @@ namespace KachiGun.EditorTools
                 Check(!op.gameObject.activeSelf && System.Math.Abs(S.gold - og2 - want2) < want2 * 0.001 + 1, "뒤로 가기 → 방치 창 닫히고 기본 보상");
                 S.gold = og0;   // 뒤 시험에 영향 없게
                 CloseAll();
+            }
+
+            // 11e) 11-04 요청_02 총알: 관통탄 0.8배 · A 이상 일반탄 네온 오오라 · 미사일 넉백 없음 · 폭발 등급 색
+            {
+                var dspec = Tables.Bullet("pierce");
+                var db = Bullet.Fire(dspec, new Vector2(0, -20), Vector2.up, 1, 1, 0.5f, 1, 3);
+                Check(Mathf.Abs(db.transform.localScale.x - 0.8f) < 0.01f, $"관통탄 크기 x{db.transform.localScale.x:0.##}");
+                var aura = db.transform.Find("AuraOut");
+                Check(aura != null && aura.GetComponent<SpriteRenderer>().enabled, "A 관통탄 → 네온 오오라");
+                var nb = Bullet.Fire(Tables.Bullet("single"), new Vector2(0, -20), Vector2.up, 1, 1, 0.5f, 1, 2);
+                var na = nb.transform.Find("AuraOut");
+                Check(na == null || !na.GetComponent<SpriteRenderer>().enabled, "B 단발 → 오오라 없음");
+                Check(Mathf.Abs(nb.transform.localScale.x - 1f) < 0.01f, "단발 크기 그대로");
+                // 넉백: 좀비 하나를 세워 두고 일반 피해 / 미사일 피해(knock=false)
+                GM.ClearTargets();
+                var zr = GameManager.PickZombie(S.Chapter);
+                var z = Zombie.Spawn(zr, new Vector2(0, 2), 1e12, 0);
+                yield return Wait(0.1f);
+                // 맞은 바로 뒤 좀비의 밀림 값(knock, private)을 읽어 비교 — 움직인 거리는 걷기·프레임에 따라 흔들려서
+                var kf = typeof(Zombie).GetField("knock", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic);
+                kf.SetValue(z, Vector2.zero);
+                GM.Damage(z, 1, z.Pos + Vector2.down, 1, false);
+                float mv = ((Vector2)kf.GetValue(z)).magnitude;
+                GM.Damage(z, 1, z.Pos + Vector2.down);
+                float mv2 = ((Vector2)kf.GetValue(z)).magnitude;
+                Log($"밀림 값: 미사일 {mv:0.00} · 일반 {mv2:0.00}");
+                Check(mv < 0.001f && mv2 > 0.5f, "미사일 피해 = 넉백 없음 (일반 피해만 밀림)");
+                GM.ClearTargets();
+                // 미사일 장착 장면 캡처 (등급 색 폭발 · 네온 오오라)
+                var keep = new System.Collections.Generic.List<int>(S.slots);
+                S.slots[0] = Tables.Code(7, "missile"); S.slots[1] = Tables.Code(5, "single"); S.slots[2] = Tables.Code(3, "pierce");   // 청록 미사일 · 빨강 단발 · 보라 관통
+                Squad.I.Rebuild();
+                yield return Wait(2.5f);
+                Capture("19_bullet_fx");
+                yield return Wait(0.35f);
+                Capture("19b_bullet_fx");
+                // 폭발 색 비교: 원래(주황) · S(주황) · SS(빨강) · R(청록) · SR(분홍) · U(연두)
+                int[] gs = { -1, 4, 5, 7, 8, 10 };
+                for (int k = 0; k < gs.Length; k++) Fx.I.Boom(new Vector2(-1.6f + (k % 3) * 1.6f, 1.6f - (k / 3) * 2.2f), 0.9f, gs[k]);
+                yield return Wait(0.1f);
+                Capture("19c_boom_colors");
+                for (int k = 0; k < keep.Count; k++) S.slots[k] = keep[k];
+                Squad.I.Rebuild();
             }
 
             // 11b) 10-30 결제·광고: 가짜 결제(배치는 바로 지급) · 영구 상품 두 번 안 줌 · 광고 제거 = 광고 없이 바로 보상 · 자동강화 켬/끔 · 결제 꺼진 폰 = 원화 줄 숨김

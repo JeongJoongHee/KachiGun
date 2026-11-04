@@ -23,7 +23,8 @@ namespace KachiGun
         protected virtual void OnDisable() => All.Remove(this);
 
         /// <summary>맞음. fixedOne = 광산처럼 무조건 1 피해</summary>
-        public abstract void Hit(double dmg, Vector2 from);
+        /// <summary>knock = false 면 밀려나지 않음 (11-04 요청_02: 미사일 폭발)</summary>
+        public abstract void Hit(double dmg, Vector2 from, bool knock = true);
 
         protected void MakeBody(Sprite s, float scale)
         {

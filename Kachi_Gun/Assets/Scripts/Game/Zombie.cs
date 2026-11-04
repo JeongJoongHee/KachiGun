@@ -244,19 +244,19 @@ namespace KachiGun
             if (dieT > 1.15f) Destroy(gameObject);
         }
 
-        public override void Hit(double dmg, Vector2 from)
+        public override void Hit(double dmg, Vector2 from, bool knock = true)
         {
             if (dead) return;
             hp -= dmg;
             hitT = HitTime;
             flashT = FlashTime;
-            if (!isBoss) knock = (Pos - from).normalized * 1.1f;
+            if (!isBoss && knock) this.knock = (Pos - from).normalized * 1.1f;
             Fx.I?.Damage(Center + Random.insideUnitCircle * 0.25f, dmg, isBoss);
-            if (hp <= 0) Die(from);
+            if (hp <= 0) Die(from, knock);
             else { AudioManager.Play(AudioManager.Sfx.Hit); ShowBar(isBoss); }
         }
 
-        void Die(Vector2 from)
+        void Die(Vector2 from, bool push = true)
         {
             dead = true;
             hp = 0;
@@ -265,7 +265,7 @@ namespace KachiGun
             sr.color = Color.white;
             ShowRig(false);
             fallFrom = 0.35f * scale;
-            knock = (Pos - from).normalized * (isBoss ? 0.5f : 1.8f);
+            knock = push ? (Pos - from).normalized * (isBoss ? 0.5f : 1.8f) : Vector2.zero;   // 미사일로 죽으면 밀리지 않고 그 자리에 쓰러짐
             dir = (Pos - from).x > 0 ? 1 : -1;      // 맞은 쪽 반대로 쓰러짐 (죽기 그림은 머리가 오른쪽)
             sr.flipX = flash.flipX = dir < 0;
             AudioManager.Play(isBoss ? AudioManager.Sfx.BossDead : AudioManager.Sfx.Dead);

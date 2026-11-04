@@ -29,6 +29,7 @@
 아직 열리지 않았습니다,Not unlocked yet,Game/GameManager.cs
 다이아가 부족합니다,Not enough gems,Game/GameManager.cs
 인벤토리가 가득 찼습니다,Inventory is full,Game/GameManager.cs
+같은 탄알끼리만 합성할 수 있습니다,Only identical ammo can be merged,Game/GameManager.cs
 최고 등급입니다,Already the highest grade,Game/GameManager.cs
 총알을 장착한 칸만 강화할 수 있습니다,Only slots with ammo equipped can be enhanced,Game/GameManager.cs
 최고 강화입니다,Already max enhancement,Game/GameManager.cs
@@ -47,7 +48,7 @@
 다음 챕터에서 새 도전이 열립니다,A new challenge opens next chapter,Game/GameManager.cs
 도전 {0} — 모두 처치!,Challenge {0} — defeat them all!,Game/GameManager.cs
 오늘 티켓을 다 썼습니다,No tickets left today,Game/GameManager.cs
-다이아 광산,Gem Mine,Game/GameManager.cs
+비밀던전,Secret Dungeon,Game/GameManager.cs
 보스 던전 Lv.{0},Boss Dungeon Lv.{0},Game/GameManager.cs
 도전 {0} 성공!,Challenge {0} cleared!,Game/GameManager.cs
 시간 초과,Time's up,Game/GameManager.cs
@@ -62,14 +63,13 @@
 도전,Challenge,UI/HUD.cs
 공격력,Attack,UI/HUD.cs
 공격속도,Attack Speed,UI/HUD.cs
-돈 획득량,Gold Gain,UI/HUD.cs
+금전 획득량,Gold Gain,UI/HUD.cs
 총알 {0},Ammo {0},UI/HUD.cs
 비어 있음,Empty,UI/HUD.cs
 무기,Weapons,UI/HUD.cs
 스킨,Skins,UI/HUD.cs
 보급품,Supplies,UI/HUD.cs
 보스,Boss,UI/HUD.cs
-광산,Mine,UI/HUD.cs
 포기,Give Up,UI/HUD.cs
 던전을 포기할까요?\n(사용한 티켓은 돌아오지 않습니다),Give up the dungeon?\n(Used tickets are not refunded),UI/HUD.cs
 눌러서 강화!,Tap to upgrade!,UI/HUD.cs
@@ -81,10 +81,10 @@
 그림 준비 중,Art coming soon,UI/MenuPopups.cs
 다이아 {0} 으로 살까요?,Buy for {0} gems?,UI/MenuPopups.cs
 보유 효과,Owned bonus,UI/MenuPopups.cs
-공격력 +{0}% · 공격속도 +{1}% · 돈 +{2}%,ATK +{0}% · SPD +{1}% · Gold +{2}%,UI/MenuPopups.cs
+공격력 +{0}% · 공격속도 +{1}% · 금전 +{2}%,ATK +{0}% · SPD +{1}% · Gold +{2}%,UI/MenuPopups.cs
 스킨 구매,Buy Skin,UI/MenuPopups.cs
 보유 효과 합계,Total owned bonus,UI/MenuPopups.cs
-공격력 +{0}% · 공격속도 +{1}% · 돈 획득량 +{2}%,ATK +{0}% · SPD +{1}% · Gold +{2}%,UI/MenuPopups.cs
+공격력 +{0}% · 공격속도 +{1}% · 금전 획득량 +{2}%,ATK +{0}% · SPD +{1}% · Gold +{2}%,UI/MenuPopups.cs
 입는 중,Wearing,UI/MenuPopups.cs
 보유,Owned,UI/MenuPopups.cs
 광고,Ad,UI/MenuPopups.cs
@@ -100,9 +100,9 @@
 초월,Transcendent,UI/MenuPopups.cs
 불멸,Immortal,UI/MenuPopups.cs
 보급품 구매,Buy Supply,UI/MenuPopups.cs
-공격 +{0}% · 속도 +{1}% · 돈 +{2}% · 보스 +{3}%,ATK +{0}% · SPD +{1}% · Gold +{2}% · Boss +{3}%,UI/MenuPopups.cs
+공격 +{0}% · 속도 +{1}% · 금전 +{2}% · 보스 +{3}%,ATK +{0}% · SPD +{1}% · Gold +{2}% · Boss +{3}%,UI/MenuPopups.cs
 보유 효과 합계 ({0}/{1}),Total owned bonus ({0}/{1}),UI/MenuPopups.cs
-공격력 +{0}% · 공격속도 +{1}% · 돈 +{2}% · 보스 +{3}%,ATK +{0}% · SPD +{1}% · Gold +{2}% · Boss +{3}%,UI/MenuPopups.cs
+공격력 +{0}% · 공격속도 +{1}% · 금전 +{2}% · 보스 +{3}%,ATK +{0}% · SPD +{1}% · Gold +{2}% · Boss +{3}%,UI/MenuPopups.cs
 챕터 {0},Ch. {0},UI/MenuPopups.cs
 모든 단계 완료,All tiers complete,UI/MenuPopups.cs
 완료,Done,UI/MenuPopups.cs
@@ -125,7 +125,7 @@
 화면을 눌러 분대를 직접 움직이면 빨라요,Tap the screen to move your squad — it's faster,UI/Popup.cs
 보상: 다이아 {0} (챕터당 1번),Reward: {0} gems (once per chapter),UI/Popup.cs
 보상 없음,No reward,UI/Popup.cs
-다이아 광산 {0}단계,Gem Mine Tier {0},UI/Popup.cs
+비밀던전 {0}단계,Secret Dungeon Tier {0},UI/Popup.cs
 모든 공격이 1 피해로 고정!,Every hit deals exactly 1 damage!,UI/Popup.cs
 오늘 티켓,Today's tickets,UI/Popup.cs
 {0}초 안에 {1}를 처치!,Defeat {1} within {0}s!,UI/Popup.cs
@@ -135,13 +135,11 @@
 취소,Cancel,UI/Popup.cs
 종료,Quit,UI/Popup.cs
 방치 보상,Offline Reward,UI/Popup.cs
-자리를 비운 시간 {0},Time away: {0},UI/Popup.cs
+오프라인 시간,Time away,UI/Popup.cs
+스테이지,,UI/Popup.cs
+보상,Reward,UI/Popup.cs
 최대 {0}시간까지 쌓입니다,Stacks up to {0} hours,UI/Popup.cs
-스테이지 {0} 에서 계속 사냥했어요,Your squad kept hunting at Stage {0},UI/Popup.cs
 광고 보고,Watch ad,UI/Popup.cs
-{0}일 {1}시간,{0}d {1}h,UI/Popup.cs
-{0}시간 {1}분,{0}h {1}m,UI/Popup.cs
-{0}분,{0}m,UI/Popup.cs
 돌아가기,Back,UI/Popup.cs
 총알,Ammo,UI/WeaponPopup.cs
 리더,Leader,UI/WeaponPopup.cs
@@ -150,7 +148,7 @@
 장착,Equip,UI/WeaponPopup.cs
 강화,Enhance,UI/WeaponPopup.cs
 D 등급 총알 획득!,Got D grade ammo!,UI/WeaponPopup.cs
-같은 등급 두 개를 끌어다 겹치면 합성!\n장착 칸을 누르면 슬롯 강화 · 남는 총알은 분해 → 다이아,Drag two of the same grade together to merge!\nTap an equip slot to enhance · Salvage spares → gems,UI/WeaponPopup.cs
+같은 탄알 두 개를 끌어다 겹치면 합성!\n장착 칸을 누르면 슬롯 강화 · 남는 총알은 분해 → 다이아,,UI/WeaponPopup.cs
 뽑기,Draw,UI/WeaponPopup.cs
 총알을 누르면 정보가 나옵니다.\n장착 칸으로 끌어다 놓으면 장착!,Tap ammo to see its info.\nDrag it onto an equip slot to equip!,UI/WeaponPopup.cs
 {0}발,{0} pellets,UI/WeaponPopup.cs
@@ -337,6 +335,20 @@ Stage 10-1 에서 열립니다,Unlocks at Stage 10-1,Unlock_Roadmap.Lock_Toast_M
 작은 푸른 보석,Small Blue Gem,Mine_Ore_Spec.Name_KR
 회색 바위,Gray Rock,Mine_Ore_Spec.Name_KR
 거대 황금 크리스탈,Huge Gold Crystal,Mine_Ore_Spec.Name_KR
+다이아 광산,Gem Mine,(지금은 안 씀) Game/GameManager.cs
+돈 획득량,Gold Gain,(지금은 안 씀) UI/HUD.cs
+광산,Mine,(지금은 안 씀) UI/HUD.cs
+공격력 +{0}% · 공격속도 +{1}% · 돈 +{2}%,ATK +{0}% · SPD +{1}% · Gold +{2}%,(지금은 안 씀) UI/MenuPopups.cs
+공격력 +{0}% · 공격속도 +{1}% · 돈 획득량 +{2}%,ATK +{0}% · SPD +{1}% · Gold +{2}%,(지금은 안 씀) UI/MenuPopups.cs
+공격 +{0}% · 속도 +{1}% · 돈 +{2}% · 보스 +{3}%,ATK +{0}% · SPD +{1}% · Gold +{2}% · Boss +{3}%,(지금은 안 씀) UI/MenuPopups.cs
+공격력 +{0}% · 공격속도 +{1}% · 돈 +{2}% · 보스 +{3}%,ATK +{0}% · SPD +{1}% · Gold +{2}% · Boss +{3}%,(지금은 안 씀) UI/MenuPopups.cs
+다이아 광산 {0}단계,Gem Mine Tier {0},(지금은 안 씀) UI/Popup.cs
+자리를 비운 시간 {0},Time away: {0},(지금은 안 씀) UI/Popup.cs
+스테이지 {0} 에서 계속 사냥했어요,Your squad kept hunting at Stage {0},(지금은 안 씀) UI/Popup.cs
+{0}일 {1}시간,{0}d {1}h,(지금은 안 씀) UI/Popup.cs
+{0}시간 {1}분,{0}h {1}m,(지금은 안 씀) UI/Popup.cs
+{0}분,{0}m,(지금은 안 씀) UI/Popup.cs
+같은 등급 두 개를 끌어다 겹치면 합성!\n장착 칸을 누르면 슬롯 강화 · 남는 총알은 분해 → 다이아,Drag two of the same grade together to merge!\nTap an equip slot to enhance · Salvage spares → gems,(지금은 안 씀) UI/WeaponPopup.cs
 강제 광고 제거,Remove Forced Ads,(지금은 안 씀) Shop_Products.Name
 자동 전면 광고 제거 + 돼지저금통,No more forced ads + piggy bank,(지금은 안 씀) Shop_Products.Description
 영구 3배 버프,Permanent x3 Buff,(지금은 안 씀) Shop_Products.Name

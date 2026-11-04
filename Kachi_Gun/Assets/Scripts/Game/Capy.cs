@@ -249,7 +249,7 @@ namespace KachiGun
                     for (int i = 0; i < weapon.count; i++)
                     {
                         float a = weapon.count == 1 ? 0 : Mathf.Lerp(-weapon.spread / 2, weapon.spread / 2, i / (float)(weapon.count - 1));
-                        var b = Bullet.Fire(spec, m, Rot(dir, a + Random.Range(-jit, jit)), dmg, 1, range, bm);
+                        var b = Bullet.Fire(spec, m, Rot(dir, a + Random.Range(-jit, jit)), dmg, 1, range, bm, weapon.grade);
                         b.homing = target; b.splash = weapon.splash;
                     }
                     break;
@@ -257,7 +257,7 @@ namespace KachiGun
                     for (int i = 0; i < weapon.count; i++)
                     {
                         float a = weapon.count == 1 ? 0 : Mathf.Lerp(-weapon.spread / 2, weapon.spread / 2, i / (float)(weapon.count - 1));
-                        Bullet.Fire(spec, m, Rot(dir, a + Random.Range(-jit, jit)), dmg, weapon.pierce, range, bm);
+                        Bullet.Fire(spec, m, Rot(dir, a + Random.Range(-jit, jit)), dmg, weapon.pierce, range, bm, weapon.grade);
                     }
                     break;
             }

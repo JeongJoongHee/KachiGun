@@ -201,7 +201,7 @@ namespace KachiGun
 
         void BuildBottom()
         {
-            string[] names = { L.T("공격력"), L.T("공격속도"), L.T("돈 획득량") };
+            string[] names = { L.T("공격력"), L.T("공격속도"), L.T("금전 획득량") };
             string[] imgs = { "UI/card_atk", "UI/card_spd", "UI/card_gold" };
             // 세 카드를 묶는 판 (카드 아래 8 ~ 이름 위 8)
             upgradePanel = UIKit.KitImg(root, "panel_brown", new Vector2(CardStep * 3 + 24, 254 * CardScale + 66), "UpgradePanel");
@@ -314,7 +314,7 @@ namespace KachiGun
             NavBtn(1, "skin", "Gen/capy_head", L.T("스킨"), () => GM.SkinOpen, "skin", () => Open<SkinPopup>());
             NavBtn(2, "fish", "Kit/i_chest_w", L.T("보급품"), () => GM.FishOpen, "supply", () => Open<SupplyPopup>());
             NavBtn(3, "boss", null, L.T("보스"), () => GM.BossRaidOpen, "boss_raid", () => Confirm(ConfirmPopup.Kind.Boss));
-            NavBtn(4, "mine", "UI/icon_gem", L.T("광산"), () => GM.MineOpen, "mine", () => Confirm(ConfirmPopup.Kind.Mine));
+            NavBtn(4, "mine", "UI/icon_gem", MineNav, () => GM.MineOpen, "mine", () => Confirm(ConfirmPopup.Kind.Mine));
         }
 
         void NavBtn(int i, string id, string icon, string label, Func<bool> open, string lockText, Action click)
@@ -464,6 +464,9 @@ namespace KachiGun
             Open<QuitPopup>();
         }
 
+        /// <summary>아래 메뉴 버튼 이름: 영어 "Secret Dungeon 2/2" 는 칸에 안 들어가 글자가 너무 작아짐 → 버튼만 "Secret" (11-04)</summary>
+        static string MineNav => L.IsEn ? "Secret" : L.T("비밀던전");
+
         public void Bump(bool gem) { if (gem) gemBump = 1; else goldBump = 1; }
 
         public void Refresh()
@@ -514,7 +517,7 @@ namespace KachiGun
             ch.icon.color = cc > 0 ? Color.white : new Color(0.5f, 0.5f, 0.5f);
             challengeDot.SetActive(cc > 0);
             S.RefreshDaily();
-            side["mine"].label.text = GM.MineOpen ? $"{L.T("광산")} {S.mineTickets}/{Tables.Ci("MineTickets")}" : L.T("광산");
+            side["mine"].label.text = GM.MineOpen ? $"{MineNav} {S.mineTickets}/{Tables.Ci("MineTickets")}" : MineNav;
             side["boss"].label.text = GM.BossRaidOpen ? $"{L.T("보스")} {S.bossTickets}/{Tables.Ci("BossRaidTickets")}" : L.T("보스");
             side["mine"].dot.SetActive(GM.MineOpen && S.mineTickets > 0);
             side["boss"].dot.SetActive(GM.BossRaidOpen && S.bossTickets > 0);

@@ -168,5 +168,29 @@ namespace KachiGun
 
         static Sprite white;
         public static Sprite White => white ? white : (white = Get("Gen/white", 8f));
+
+        static Sprite glow;
+        /// <summary>둥근 빛 (가운데 진하고 바깥으로 흐려짐, 흰색 — 색은 SpriteRenderer.color). 크기 1 x 1 (11-04 네온 오오라·폭발 빛)</summary>
+        public static Sprite Glow
+        {
+            get
+            {
+                if (glow) return glow;
+                const int n = 64;
+                var t = new Texture2D(n, n, TextureFormat.RGBA32, false) { wrapMode = TextureWrapMode.Clamp, filterMode = FilterMode.Bilinear };
+                var px = new Color32[n * n];
+                for (int y = 0; y < n; y++)
+                    for (int x = 0; x < n; x++)
+                    {
+                        float dx = (x + 0.5f) / n * 2 - 1, dy = (y + 0.5f) / n * 2 - 1;
+                        float d = Mathf.Clamp01(Mathf.Sqrt(dx * dx + dy * dy));
+                        float a = Mathf.Pow(1 - d, 1.8f);
+                        px[y * n + x] = new Color32(255, 255, 255, (byte)(a * 255));
+                    }
+                t.SetPixels32(px);
+                t.Apply();
+                return glow = Sprite.Create(t, new Rect(0, 0, n, n), new Vector2(0.5f, 0.5f), n);
+            }
+        }
     }
 }

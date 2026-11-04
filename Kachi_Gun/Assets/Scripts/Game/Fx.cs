@@ -39,10 +39,26 @@ namespace KachiGun
         }
 
         Sprite[] boom;
-        public void Boom(Vector2 p, float radius)
+        Sprite[] glow, boomG;
+        /// <summary>grade = 미사일 등급 (11-04 요청_02: 터질 때 등급 색으로 — 뒤에 등급 색 빛 + 불꽃을 그 색으로 물들임). -1 = 원래 주황</summary>
+        public void Boom(Vector2 p, float radius, int grade = -1)
         {
             boom ??= new[] { Art.Get("Gen/boom_0", 100), Art.Get("Gen/boom_1", 100), Art.Get("Gen/boom_2", 100) };
-            Spawn(boom, p, 0.45f, Mathf.Max(0.6f, radius * 0.85f), 21000).fade = true;
+            float sc = Mathf.Max(0.6f, radius * 0.85f);
+            Anim a;
+            if (grade < 0) { a = Spawn(boom, p, 0.45f, sc, 21000); a.fade = true; }
+            else
+            {
+                // 흑백 폭발(boom_g, icon_gen.py)에 등급 색을 곱함 → 밝은 곳은 밝은 등급 색 · 가운데는 살짝 희게
+                boomG ??= new[] { Art.Get("Gen/boom_g_0", 100), Art.Get("Gen/boom_g_1", 100), Art.Get("Gen/boom_g_2", 100) };
+                var c = Tables.GradeColor(grade);
+                a = Spawn(boomG, p, 0.45f, sc, 21000); a.fade = true;
+                a.sr.color = Color.Lerp(c, Color.white, 0.12f);
+                glow ??= new[] { Art.Glow };
+                var g = Spawn(glow, p, 0.35f, radius * 2.6f + 0.6f, 20999);
+                g.fade = true; g.scale = -1;
+                g.sr.color = new Color(c.r, c.g, c.b, 0.85f);
+            }
             AudioManager.Play(AudioManager.Sfx.Boom);
             CamShake(0.12f);
         }

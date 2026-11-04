@@ -53,13 +53,13 @@ namespace KachiGun
         {
             var r = Tables.Skins.Find(x => x.id == id);
             if (S.skins.Contains(id)) { Msg(GM.BuySkin(id)); Refresh(); return; }
-            ConfirmPopup.Ask($"<size=46>{L.T(r.name)}</size>\n\n" + L.F("다이아 {0} 으로 살까요?", r.price) + "\n\n" + L.T("보유 효과") + "\n" + L.F("공격력 +{0}% · 공격속도 +{1}% · 돈 +{2}%", r.atk, r.spd, r.gold),
+            ConfirmPopup.Ask($"<size=46>{L.T(r.name)}</size>\n\n" + L.F("다이아 {0} 으로 살까요?", r.price) + "\n\n" + L.T("보유 효과") + "\n" + L.F("공격력 +{0}% · 공격속도 +{1}% · 금전 +{2}%", r.atk, r.spd, r.gold),
                 () => { Msg(GM.BuySkin(id)); H.Open<SkinPopup>(); }, "스킨 구매");
         }
 
         public override void Refresh()
         {
-            total.text = L.T("보유 효과 합계") + "\n" + L.F("공격력 +{0}% · 공격속도 +{1}% · 돈 획득량 +{2}%", Stats.SkinAtk, Stats.SkinSpd, Stats.SkinGold);
+            total.text = L.T("보유 효과 합계") + "\n" + L.F("공격력 +{0}% · 공격속도 +{1}% · 금전 획득량 +{2}%", Stats.SkinAtk, Stats.SkinSpd, Stats.SkinGold);
             foreach (var c in cells)
             {
                 bool own = S.skins.Contains(c.row.id), on = S.skin == c.row.id;
@@ -236,12 +236,12 @@ namespace KachiGun
                 () => { Msg(GM.BuySupply(id)); Refresh(); }, "보급품 구매");
         }
 
-        static string Effect(SupplyRow r) => L.F("공격 +{0}% · 속도 +{1}% · 돈 +{2}% · 보스 +{3}%", r.atk.ToString("0.#"), r.spd.ToString("0.#"), r.gold.ToString("0.#"), r.boss.ToString("0.#"));
+        static string Effect(SupplyRow r) => L.F("공격 +{0}% · 속도 +{1}% · 금전 +{2}% · 보스 +{3}%", r.atk.ToString("0.#"), r.spd.ToString("0.#"), r.gold.ToString("0.#"), r.boss.ToString("0.#"));
 
         public override void Refresh()
         {
             total.text = L.F("보유 효과 합계 ({0}/{1})", S.supplies.Count, Tables.Supplies.Count) + "\n" +
-                         L.F("공격력 +{0}% · 공격속도 +{1}% · 돈 +{2}% · 보스 +{3}%", Stats.SupplyAtk.ToString("0.#"), Stats.SupplySpd.ToString("0.#"), Stats.SupplyGold.ToString("0.#"), Stats.SupplyBoss.ToString("0.#"));
+                         L.F("공격력 +{0}% · 공격속도 +{1}% · 금전 +{2}% · 보스 +{3}%", Stats.SupplyAtk.ToString("0.#"), Stats.SupplySpd.ToString("0.#"), Stats.SupplyGold.ToString("0.#"), Stats.SupplyBoss.ToString("0.#"));
             foreach (var c in rows)
             {
                 bool own = S.supplies.Contains(c.row.id), open = GM.BestChapter >= c.row.unlockChapter;

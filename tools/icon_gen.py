@@ -223,13 +223,22 @@ def gem_gold():
     a[..., :3] = np.clip(col, 0, 255)
     Image.fromarray(a.astype(np.uint8)).save(os.path.join(OUT, 'gem_gold.png'))
 
+def boom_gray():
+    """11-04 요청_02: 미사일 폭발 등급 색용 흑백 폭발 boom_g_0~2 (게임에서 등급 색을 곱함 — 밝은 곳 = 밝은 등급 색)"""
+    for k in range(3):
+        a = np.array(Image.open(os.path.join(OUT, 'boom_%d.png' % k)).convert('RGBA')).astype(float)
+        lum = 0.299 * a[..., 0] + 0.587 * a[..., 1] + 0.114 * a[..., 2]
+        lum = np.clip((lum / 255) ** 0.8 * 255 * 1.05, 0, 255)
+        Image.fromarray(np.dstack([lum, lum, lum, a[..., 3]]).astype(np.uint8)).save(os.path.join(OUT, 'boom_g_%d.png' % k))
+
+
 if __name__ == '__main__':
     import sys
     if len(sys.argv) > 1:          # 이름을 주면 그것만: python tools/icon_gen.py gem_gold
         for n in sys.argv[1:]: globals()[n]()
         raise SystemExit
     out = [gear(), scroll(), lock(), arrow(), bolt(), moon(), crate(), auto(), spark()] + [boom(i) for i in range(3)]
-    white(); round_box(); skin_icon(); ore_rock(); gem_gold(); shadow()
+    white(); round_box(); skin_icon(); ore_rock(); gem_gold(); shadow(); boom_gray()
     W = 200
     pv = Image.new('RGBA', (W * 7, W * 2), (90, 90, 120, 255))
     for i, im in enumerate(out):

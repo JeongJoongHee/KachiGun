@@ -50,7 +50,7 @@ namespace KachiGun
             else body.localPosition = Vector3.zero;
         }
 
-        public override void Hit(double dmg, Vector2 from)
+        public override void Hit(double dmg, Vector2 from, bool knock = true)
         {
             if (dead) return;
             hp -= 1;        // 고정 피해 1
