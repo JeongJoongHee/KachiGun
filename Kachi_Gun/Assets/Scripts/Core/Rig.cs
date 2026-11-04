@@ -143,6 +143,10 @@ namespace KachiGun
     {
         public RigData data;
         public SpriteRenderer sr;
+        // 11-04 좀비마다 조금씩 다른 걸음 (Zombie.Spawn 에서 정함)
+        public float swing = 20f;      // 걸음 폭(허벅지가 앞뒤로 도는 각도 °) — 속도에 맞춰 발이 땅에서 안 미끄러지게
+        public float limp, lean, headTilt, armRaise;   // 절뚝임 0~0.3 · 앞으로 숙임 ° · 머리 기울임 ° · 팔 들기 °
+        float[] snapRot; Vector3[] snapPos, snapScl;
         SpriteSkin skin;
         Transform[] bones;
         Vector3[] restLocal;
@@ -208,22 +212,21 @@ namespace KachiGun
         {
             ResetPose();
             float f = phase * Mathf.PI * 2f;
-            float A = data.A("A", 18), Sw = data.A("S", 5);
+            float Sw = data.A("S", 5);
             switch (data.kind)
             {
                 case "walk":
                 {
-                    // 3/4 앞모습이라 두 다리가 좌우로 벌어져 있음 → 번갈아 발을 들어 내딛는 터벅터벅 걸음
-                    float sw = A * 0.5f;
-                    float lF = Mathf.Max(0, S(f)), lB = Mathf.Max(0, -S(f));
-                    Rot("thighF", sw * S(f) + 10 * lF);
-                    Rot("thighB", -sw * S(f) + 10 * lB);
-                    Rot("shinF", -26 * lF);
-                    Rot("shinB", -26 * lB);
-                    Rot("spine", -3 + 1.5f * S(2 * f + 0.5f));
-                    Rot("head", 2 - 3f * S(2 * f - 0.4f));
-                    Rot("armF", Sw * 0.5f * S(2 * f + 1.2f) - Sw * 0.6f * C(f));
-                    Rot("armB", Sw * C(f));
+                    // 11-04: 디딘 발은 앞(+swing)에서 뒤(-swing)로 곧게 쓸려 가고(땅에 붙음), 든 발은 무릎을 굽혀 앞으로 옮김.
+                    //   예전 사인 곡선은 디딘 발이 중간에 앞으로 되돌아와 미끄러져 보였음. 두 다리는 반 바퀴 차이.
+                    Leg("thighF", "shinF", phase, swing, 1f + limp);
+                    Leg("thighB", "shinB", phase + 0.5f, swing, 1f - limp);
+                    float st = 2 * f;   // 한 걸음에 한 번
+                    Rot("spine", -3 - lean + 2f * S(st + 0.5f) + limp * 6f * S(f));
+                    Rot("head", 2 + headTilt - 3.5f * S(st - 0.4f));
+                    Rot("armF", armRaise + Sw * 0.5f * S(st + 1.2f) - Sw * 0.6f * C(f));
+                    Rot("armB", armRaise * 0.6f + Sw * C(f));
+                    Move("pelvis", 1.2f * S(f), 0);
                     FootLift();
                     break;
                 }
@@ -235,13 +238,109 @@ namespace KachiGun
                     Rot("head", 2 - 2.5f * S(2 * f - 0.6f));
                     break;
                 case "crawl":
-                    Rot("armF", 14 * S(f)); Move("armF", 0, 2.5f * Mathf.Max(0, C(f)));
-                    Rot("armB", -14 * S(f)); Move("armB", 0, 2.5f * Mathf.Max(0, -C(f)));
-                    Rot("spine", 2f * S(2 * f + 0.6f));
-                    Rot("head", -2.5f * S(2 * f + 1.2f)); Move("head", 0, 1.5f * S(2 * f));
-                    Move("pelvis", 2f * S(2 * f), 0);
+                {
+                    // 11-04: 팔을 앞으로 뻗어 짚고(들어 올림) → 바닥을 당기며 뒤로 (두 팔 번갈아) · 당길 때 몸이 앞으로 밀림
+                    float lf = Arm("armF", phase, 12f), lb = Arm("armB", phase + 0.5f, 12f);
+                    float pull = 1f - Mathf.Max(lf, lb);
+                    Rot("spine", 2f * S(2 * f + 0.6f) - lean * 0.5f);
+                    Rot("head", headTilt * 0.5f - 2.5f * S(2 * f + 1.2f)); Move("head", 0, 1.5f * S(2 * f));
+                    Move("pelvis", 2.5f * pull - 1.2f, 0);
                     Rot("legs", 3f * S(f + 0.5f));
                     break;
+                }
+            }
+        }
+
+        /// <summary>다리 하나: p 0~0.5 = 디딤(앞 → 뒤 곧게), 0.5~1 = 들고 앞으로(부드럽게 · 무릎 굽힘)</summary>
+        void Leg(string thigh, string shin, float p, float sw, float liftMul)
+        {
+            p -= Mathf.Floor(p);
+            float ang, lift = 0;
+            if (p < 0.5f) ang = sw * (1f - 4f * p);
+            else
+            {
+                float u = (p - 0.5f) * 2f, e = u * u * (3f - 2f * u);
+                ang = sw * (-1f + 2f * e);
+                lift = S(Mathf.PI * u);
+            }
+            Rot(thigh, ang + 8f * lift * liftMul);
+            Rot(shin, -30f * lift * liftMul);
+        }
+
+        /// <summary>기어 오는 팔 하나: 디딜 땐 앞 → 뒤로 당김, 들 땐 들어 올려 앞으로 (돌려줌 = 든 정도 0~1)</summary>
+        float Arm(string arm, float p, float sw)
+        {
+            p -= Mathf.Floor(p);
+            float ang, lift = 0;
+            if (p < 0.5f) ang = sw * (1f - 4f * p);
+            else
+            {
+                float u = (p - 0.5f) * 2f, e = u * u * (3f - 2f * u);
+                ang = sw * (-1f + 2f * e);
+                lift = S(Mathf.PI * u);
+            }
+            Rot(arm, ang);
+            Move(arm, 0, 3f * lift);
+            return lift;
+        }
+
+        /// <summary>디딘 발이 안 미끄러지는 한 걸음 길이(칸 단위, 몸 크기 1 기준): 다리 길이 x sin(걸음 폭). 다리 없는 그림은 0</summary>
+        public float StepLen => data.kind == "walk" && data.A("L") > 0 ? data.A("L") * Mathf.Sin(swing * Mathf.Deg2Rad) / data.ppu : 0f;
+
+        /// <summary>
+        /// 좀비 자세 한 번에: 걷기(walkW 1) ↔ 멈춤 꿈틀(walkW 0)을 부드럽게 섞고, 맞음(hitK 0~1)은 뒤로 젖히는 자세를 더함.
+        /// 예전엔 걷기·멈춤이 한 프레임에 바뀌고, 맞으면 정지 그림(맞기)으로 바뀌어 툭툭 끊겨 보였음.
+        /// </summary>
+        public void ZombiePose(float walkPhase, float idleT, float walkW, float hitK)
+        {
+            if (walkW < 0.999f) { Idle(idleT); if (walkW > 0.001f) Snap(); }
+            if (walkW > 0.001f)
+            {
+                Walk(walkPhase);
+                if (walkW < 0.999f) BlendToSnap(1f - walkW);
+            }
+            if (hitK > 0.001f) HitAdd(hitK);
+        }
+
+        void Snap()
+        {
+            int n = bones.Length;
+            if (snapRot == null) { snapRot = new float[n]; snapPos = new Vector3[n]; snapScl = new Vector3[n]; }
+            for (int i = 0; i < n; i++)
+            {
+                snapRot[i] = bones[i].localEulerAngles.z;
+                snapPos[i] = bones[i].localPosition;
+                snapScl[i] = bones[i].localScale;
+            }
+        }
+
+        void BlendToSnap(float t)
+        {
+            for (int i = 0; i < bones.Length; i++)
+            {
+                var b = bones[i];
+                b.localPosition = Vector3.Lerp(b.localPosition, snapPos[i], t);
+                b.localRotation = Quaternion.Euler(0, 0, Mathf.LerpAngle(b.localEulerAngles.z, snapRot[i], t));
+                b.localScale = Vector3.Lerp(b.localScale, snapScl[i], t);
+            }
+        }
+
+        void AddRot(string n, float deg) { var t = Bone(n); if (t) t.localRotation = Quaternion.Euler(0, 0, t.localEulerAngles.z + deg); }
+
+        /// <summary>맞음: 몸통·머리가 뒤로 젖혀지고 팔이 들림 (k 1 → 0 으로 돌아옴)</summary>
+        void HitAdd(float k)
+        {
+            if (data.kind == "crawl")
+            {
+                AddRot("head", -12f * k); AddRot("spine", -5f * k); AddRot("armF", 10f * k);
+                Move("head", -2f * k, 1f * k);
+            }
+            else
+            {
+                AddRot("spine", -9f * k); AddRot("head", -13f * k);
+                AddRot("armF", 16f * k); AddRot("armB", 10f * k);
+                AddRot("robe1", -4f * k); AddRot("robe2", -6f * k);
+                Move("pelvis", -3f * k, 0);
             }
         }
 

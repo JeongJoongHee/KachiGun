@@ -58,6 +58,14 @@ namespace KachiGun.EditorTools
         }
         public static bool StoreOnly => SessionState.GetBool(Key + ".store", false);
 
+        /// <summary>좀비 움직임 비교 촬영: 12종을 제자리에서 걷기 → 맞기 → 멈춤 (게임 시간 0.04초 간격) → Logs/PlayTest/zshow/*.png + pos.json (11-04)</summary>
+        public static void RunZombie()
+        {
+            SessionState.SetBool(Key + ".zshow", true);
+            Run();
+        }
+        public static bool ZombieOnly => SessionState.GetBool(Key + ".zshow", false);
+
         public static void Run()
         {
             SaveData.ResetAll();
@@ -74,6 +82,7 @@ namespace KachiGun.EditorTools
             SessionState.SetBool(Key + ".rig", false);
             SessionState.SetBool(Key + ".en", false);
             SessionState.SetBool(Key + ".store", false);
+            SessionState.SetBool(Key + ".zshow", false);
             EditorApplication.Exit(errors == 0 ? 0 : 3);
         }
     }
@@ -103,6 +112,7 @@ namespace KachiGun.EditorTools
             if (PlayTest.RigOnly) { yield return RigShow(); yield break; }
             if (PlayTest.EnOnly) { yield return EnTour(); yield break; }
             if (PlayTest.StoreOnly) { yield return StoreTour(); yield break; }
+            if (PlayTest.ZombieOnly) { yield return ZombieShow(); yield break; }
 
             // 출석 창이 시험 중간(10초마다 날짜 확인)에 끼어들지 않게 — 출석은 11f 에서 따로
             Check(!GM.CheckAttend(true) && !S.AttendToday, "처음(첫 강화·메뉴 열리기 전) → 출석 창 없음");
@@ -787,6 +797,48 @@ namespace KachiGun.EditorTools
                 Capture($"walk/{i:00}", false);
                 yield return Wait(0.05f);
             }
+            Log($"DONE errors={errors}");
+            PlayTest.Finish(errors);
+        }
+
+        IEnumerator ZombieShow()
+        {
+            GameManager.Demo = true; Zombie.Treadmill = true;
+            S.attendDay = System.DateTime.Now.ToString("yyyyMMdd");
+            CloseAll(); GM.ClearTargets();
+            yield return Wait(0.3f);
+            var rows = Tables.Zombies;
+            var list = new System.Collections.Generic.List<Zombie>();
+            int n = rows.Count, nr = (n + 2) / 3;
+            for (int i = 0; i < n; i++)
+            {
+                int c = i % 3, r = i / 3;
+                float x = Mathf.Lerp(-Field.I.ViewHalfW + 1.7f, Field.I.ViewHalfW - 1.4f, c / 2f);
+                float y = Mathf.Lerp(Field.I.PlayTop - 2.2f, Field.I.PlayBottom + 1.0f, r / Mathf.Max(1f, nr - 1f));
+                list.Add(Zombie.Spawn(rows[i], new Vector2(x, y), 1e12, 0));
+            }
+            Time.captureDeltaTime = 0.04f;          // 한 프레임 = 게임 0.04초 (캡처가 느려도 같은 간격)
+            for (int i = 0; i < 25; i++) yield return null;
+            var cam = Camera.main;
+            var sb = new System.Text.StringBuilder("[");
+            for (int i = 0; i < list.Count; i++)
+            {
+                Vector3 sp = cam.WorldToScreenPoint(list[i].transform.position);
+                sb.Append($"{(i > 0 ? "," : "")}{{\"id\":\"{list[i].row.id}\",\"x\":{sp.x:0},\"y\":{rt.height - sp.y:0},\"s\":{list[i].row.scale:0.00}}}");
+            }
+            Directory.CreateDirectory($"{OutDir}/zshow");
+            File.WriteAllText($"{OutDir}/zshow/pos.json", sb.Append("]").ToString());
+            for (int i = 0; i < 30; i++) { Capture($"zshow/walk_{i:00}", false); yield return null; }
+            for (int i = 0; i < 30; i++)
+            {
+                if (i % 3 == 0) foreach (var z in list) if (z) z.Hit(1, z.Pos + Vector2.left * 3f, false);
+                Capture($"zshow/hit_{i:00}", false); yield return null;
+            }
+            for (int i = 0; i < 10; i++) { Capture($"zshow/stop_{i:00}", false); yield return null; }
+            Zombie.TreadmillStop = true;
+            for (int i = 0; i < 30; i++) { Capture($"zshow/stop_{i + 10:00}", false); yield return null; }
+            Time.captureDeltaTime = 0;
+            Zombie.Treadmill = Zombie.TreadmillStop = false; GameManager.Demo = false;
             Log($"DONE errors={errors}");
             PlayTest.Finish(errors);
         }

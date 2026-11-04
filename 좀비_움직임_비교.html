@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="ko"><head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>좀비 움직임 비교</title>
+<style>
+  :root{--bg:#f6f1e7;--card:#fffdf8;--ink:#2b2218;--soft:#6b5d4d;--line:#e0d5c2;--orange:#d9701a;--orange-bg:#fdebd6;--green:#2f8a45;--green-bg:#e1f2e4}
+  @media (prefers-color-scheme: dark){:root{--bg:#1b1713;--card:#262019;--ink:#f0e8da;--soft:#b3a48f;--line:#3d342a;--orange:#ff9d47;--orange-bg:#40290f;--green:#6fce85;--green-bg:#1a3421}}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.65 "Malgun Gothic","맑은 고딕",system-ui,sans-serif}
+  main{max-width:1180px;margin:0 auto;padding:28px 16px 80px}
+  h1{font-size:27px;margin:0 0 4px} .sub{color:var(--soft);margin:0 0 18px}
+  h2{font-size:20px;margin:36px 0 8px;padding-bottom:6px;border-bottom:2px solid var(--line)}
+  .pair{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  @media (max-width:760px){.pair{grid-template-columns:1fr}}
+  figure{margin:0;background:var(--card);border:1px solid var(--line);border-radius:10px;padding:10px}
+  figure img{width:100%;height:auto;display:block;border-radius:6px;image-rendering:pixelated}
+  figcaption{font-weight:bold;margin-bottom:6px} figcaption.after{color:var(--green)}
+  .tip{background:var(--green-bg);border-left:5px solid var(--green);border-radius:8px;padding:12px 16px;margin:14px 0}
+  .tip.o{background:var(--orange-bg);border-color:var(--orange)}
+  .tip ul{margin:6px 0 0;padding-left:22px}
+  code{background:var(--line);border-radius:4px;padding:0 4px;font-size:14px}
+  .f{color:var(--soft);font-size:14px}
+</style></head>
+<body><main>
+<h1>좀비 움직임 · 그림 마감 — 고치기 전 / 뒤</h1>
+<p class="sub">2026-11-04 · 좀비 12종을 제자리에서 걷게 해 찍은 것(게임 시간 0.04초 간격 = 실제 속도). 그림이 안 보이면 <code>python tools/zombie_compare.py</code> 를 한 번 돌리면 다시 만들어집니다.</p>
+
+<div class="tip">
+  <b>바꾼 것</b>
+  <ul>
+    <li><b>걸음</b>: 디딘 발이 앞에서 뒤로 곧게 쓸려 가서 땅에 붙어 보임(전엔 디딘 발이 중간에 앞으로 되돌아와 미끄러져 보였음) · 걸음 폭을 좀비 속도와 다리 길이에 맞춤 · 든 발은 무릎을 굽혀 옮김</li>
+    <li><b>좀비마다 조금씩 다르게</b>: 걸음 폭 · 앞으로 숙임 · 머리 기울임 · 팔 높이 · 10마리 중 3마리쯤 절뚝임</li>
+    <li><b>기어 오는 좀비</b>: 팔을 앞으로 뻗어 짚고 → 당기며 몸이 앞으로 밀림</li>
+    <li><b>출발 · 멈춤</b>: 멈출 자리 0.6칸 앞부터 천천히 서고, 걷는 자세 → 꿈틀 자세로 부드럽게 넘어감(전엔 한 프레임에 툭 바뀜)</li>
+    <li><b>맞을 때</b>: 정지 그림('맞기')으로 바뀌던 것 → 같은 몸이 뒤로 젖혀졌다 돌아옴 · 그 자리 멈춤 대신 비틀거리며 느리게(35%) 다가옴</li>
+    <li><b>번쩍임</b>: 자세가 안 맞는 '흰 실루엣' 그림을 덮던 것 → 지금 몸 모양 그대로 한 프레임 하얗게(새 셰이더 <code>Resources/Shaders/SpriteFlash</code>) · 계속 맞아도 0.14초(보스 0.22초)에 한 번만 → 레이저·속사에 하얀 덩어리로 덮이지 않음 · 쓰러질 때도 한 번</li>
+    <li><b>데미지 숫자</b>: 같은 좀비가 0.3초 안에 또 맞으면 새 숫자 대신 떠 있는 숫자에 더함 → 겹쳐 읽을 수 없던 것</li>
+    <li><b>스킨 창</b>: 카피바라 배에 남아 있던 회색 얼룩(총을 따로 그리려고 지운 자리) → 전투와 같은 그림 + 총을 들고 있게</li>
+  </ul>
+</div>
+
+<h2>1. 걷기</h2>
+<div class="pair">
+  <figure><figcaption>전</figcaption><img src="tools/_preview/zgif/walk_전.gif" alt="걷기 전"></figure>
+  <figure><figcaption class="after">뒤</figcaption><img src="tools/_preview/zgif/walk_뒤.gif" alt="걷기 뒤"></figure>
+</div>
+
+<h2>2. 맞기 (0.12초마다 한 발)</h2>
+<div class="pair">
+  <figure><figcaption>전 — 정지 그림 + 흰 실루엣이 덮임</figcaption><img src="tools/_preview/zgif/hit_전.gif" alt="맞기 전"></figure>
+  <figure><figcaption class="after">뒤 — 몸 모양 그대로 번쩍 · 뒤로 젖힘</figcaption><img src="tools/_preview/zgif/hit_뒤.gif" alt="맞기 뒤"></figure>
+</div>
+<figure style="margin-top:12px"><figcaption class="after">뒤 · 확대 (맞기 전 → 번쩍 → 빠짐 → 젖혔다 돌아옴)</figcaption><img src="tools/_preview/polish/hit_뒤_확대.png" alt="맞기 확대"></figure>
+
+<h2>3. 걷다가 멈춤</h2>
+<div class="pair">
+  <figure><figcaption>전</figcaption><img src="tools/_preview/zgif/stop_전.gif" alt="멈춤 전"></figure>
+  <figure><figcaption class="after">뒤</figcaption><img src="tools/_preview/zgif/stop_뒤.gif" alt="멈춤 뒤"></figure>
+</div>
+
+<h2>4. 보스 던전 (레이저로 계속 맞는 보스)</h2>
+<div class="pair">
+  <figure><figcaption>전 — 하얀 덩어리</figcaption><img src="tools/_preview/polish/boss_전.png" alt="보스 전"></figure>
+  <figure><figcaption class="after">뒤 — 색이 보임 (왼쪽 붉은 것은 SS 미사일 폭발)</figcaption><img src="tools/_preview/polish/boss_뒤.png" alt="보스 뒤"></figure>
+</div>
+
+<h2>5. 스킨 창</h2>
+<div class="pair">
+  <figure><figcaption>전 — 배에 회색 얼룩</figcaption><img src="tools/_preview/polish/skin_전.png" alt="스킨 전"></figure>
+  <figure><figcaption class="after">뒤 — 총을 들고 있음</figcaption><img src="tools/_preview/polish/skin_뒤.png" alt="스킨 뒤"></figure>
+</div>
+
+<div class="tip o">
+  <b>폰에서 봐 주실 것</b> (다음 빌드부터)
+  <ul>
+    <li>걸음이 너무 빠르거나(종종걸음) 너무 성큼성큼인 좀비 — 좀비 이름을 알려 주시면 그 좀비만 걸음 폭을 바꿉니다</li>
+    <li>번쩍임 세기 — 지금 일반 92% · 보스 60%. 더 약하게/강하게 원하시면 숫자 하나로 바뀝니다</li>
+    <li>맞을 때 느려지는 정도(35%) — 좀비는 분대를 공격하지 않아 진행 속도엔 영향이 거의 없음</li>
+  </ul>
+</div>
+<p class="f">도구: <code>PlayTest.RunZombie</code>(촬영 — <code>bash tools/unity_batch.sh KachiGun.EditorTools.PlayTest.RunZombie --play</code>) → <code>Logs/PlayTest/zshow</code> · 고치기 전 = <code>zshow_before</code> · <code>tools/zombie_compare.py</code>(GIF · 비교 그림)</p>
+</main></body></html>

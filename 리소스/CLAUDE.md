@@ -1,5 +1,13 @@
 # 카치건 (좀비 키우기) — 세로 방치형 분대 슈팅, Unity 6000.0.84f1 · 2D URP
 
+## ▶ 재개 메모 (2026-11-04 밤 4 — 좀비 움직임 · 그림 마감 → 3번 AAB 다시 구움)
+- 사용자: "이미지 마감·거칠게 빠진 부분 다듬기 + 좀비 움직임 자연스럽게" → **`좀비_움직임_비교.html`**(전·뒤 GIF, `tools/zombie_compare.py`, 촬영 `PlayTest.RunZombie` → Logs/PlayTest/zshow · 전 = zshow_before)
+  - `RigView`: 걷기 = 디딘 발 앞→뒤 곧게(Leg) · 걸음 길이 `StepLen`(다리 L x sin 걸음 폭)으로 stride → 발 안 미끄러짐 · 좀비마다 swing/lean/headTilt/armRaise/limp · 기어 오기 Arm · `ZombiePose`(걷기↔꿈틀 섞기 + HitAdd 뒤로 젖힘)
+  - `Zombie`: curSpeed 출발·멈춤 부드럽게(멈출 자리 0.6칸 앞부터) · 맞으면 35% 로 비틀(정지 그림 안 씀) · 번쩍임 = **새 셰이더 `Resources/Shaders/SpriteFlash`**(`Art.UseFlash/SetFlash`, MaterialPropertyBlock) · 쿨 0.14초(보스 0.22) · 세기 92%(보스 60%) · 죽을 때 한 번 · 옛 흰 실루엣은 셰이더 없을 때만
+  - `Fx.Damage(..., key)`: 같은 대상 0.3초 안이면 숫자 합침 · 스킨 창 = 칸 4 + 총(`SkinPopup.AddGun`) — 칸 0 배에 총 지운 얼룩
+  - 시험용: `GameManager.Demo`(생성·사격 멈춤) · `Zombie.Treadmill/TreadmillStop` — 게임에선 늘 false
+- 자동 시험 errors=0 · 영어 errors=0 · **3번 AAB 다시 구움**(1.9분, 점검 8개 통과, 22:00 판 백업 = 스크래치 kachizombie-1.0-3_2200.aab) — 사용자가 아직 안 올린 판이라 같은 버전 코드 3
+
 ## ▶ 재개 메모 (2026-11-04 22시 — 3번 AAB · 프로덕션 신청 답안)
 - 사용자: "남은 작업 모두 진행해줘 — 이대로 테스트 마무리하고 비공개 테스트 끝나면 프로덕션 신청" → 자동 시험 errors=0 · 영어 errors=0 (17_shop 광고 녹색 · 18d_offline 0.8배 확인) → **`Kachi_Gun/Builds/kachizombie-1.0-3.aab`**(versionCode 3, 실제 광고, 결제 꺼짐 = 라이선스 키 없음, 6.1분) aab_check 전부 통과
 - **`스토어 등록/프로덕션_신청_답안.html`** (불도깨비 답안 형식, 300자 안, [ ] = 모집 방법·인원·받은 의견·오류 여부 — 사용자가 채움)

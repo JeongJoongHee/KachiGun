@@ -13,7 +13,7 @@ namespace KachiGun
 
         class Anim { public Transform t; public SpriteRenderer sr; public Sprite[] frames; public float time, dur, scale; public Vector2 vel; public bool fade; }
         readonly List<Anim> anims = new();
-        class Pop { public RectTransform rt; public Text tx; public Vector2 vel; public float t, dur; }
+        class Pop { public RectTransform rt; public Text tx; public Vector2 vel; public float t, dur; public object key; public double val; }
         readonly List<Pop> pops = new();
         readonly Stack<Pop> popPool = new();
         class Bill { public RectTransform rt; public Vector2 start, mid, end; public float t, dur; public double gold; public bool gem; }
@@ -128,15 +128,30 @@ namespace KachiGun
         }
 
         // ---------- UI: 피해 숫자 ----------
-        public void Damage(Vector2 world, double dmg, bool big)
-        {
-            if (!uiLayer || pops.Count > 40) return;
-            Text(world, Num.F(dmg), big ? new Color(1f, 0.45f, 0.35f) : Color.white, big ? 50 : 38);
-        }
-
-        public void Text(Vector2 world, string s, Color c, int size, float dur = 0.7f)
+        /// <summary>피해 숫자. key(맞은 대상)가 같고 막 뜬 숫자(0.3초 안)가 있으면 새로 띄우지 않고 그 숫자에 더함
+        /// — 11-04: 레이저·속사로 빠르게 맞으면 숫자가 겹쳐 읽을 수 없던 것</summary>
+        public void Damage(Vector2 world, double dmg, bool big, object key = null)
         {
             if (!uiLayer) return;
+            if (key != null)
+                foreach (var q in pops)
+                    if (q.key == key && q.t < 0.3f)
+                    {
+                        q.val += dmg;
+                        q.tx.text = Num.F(q.val);
+                        q.t = Mathf.Min(q.t, 0.04f);     // 다시 톡 커짐
+                        return;
+                    }
+            if (pops.Count > 40) return;
+            var p = PopText(world, Num.F(dmg), big ? new Color(1f, 0.45f, 0.35f) : Color.white, big ? 50 : 38, 0.7f);
+            if (p != null) { p.key = key; p.val = dmg; }
+        }
+
+        public void Text(Vector2 world, string s, Color c, int size, float dur = 0.7f) => PopText(world, s, c, size, dur);
+
+        Pop PopText(Vector2 world, string s, Color c, int size, float dur)
+        {
+            if (!uiLayer) return null;
             var p = popPool.Count > 0 ? popPool.Pop() : null;
             if (p == null)
             {
@@ -149,8 +164,9 @@ namespace KachiGun
             p.tx.text = s; p.tx.color = c; p.tx.fontSize = size;
             p.rt.anchoredPosition = WorldToUi(world);
             p.vel = new Vector2(Random.Range(-30f, 30f), 260f);
-            p.t = 0; p.dur = dur;
+            p.t = 0; p.dur = dur; p.key = null; p.val = 0;
             pops.Add(p);
+            return p;
         }
 
         void UpdatePops(float dt)

@@ -33,7 +33,8 @@ namespace KachiGun
         bool dungeonOver;
         public bool eco;
 
-        public bool CanShoot => !dungeonOver;
+        public bool CanShoot => !dungeonOver && !Demo;
+        public static bool Demo;   // 시험 촬영(PlayTest.RunZombie): 좀비 생성·사격 멈춤
         public bool InputAllowed => !eco && !(HUD.I && HUD.I.PopupOpen);
 
         void Awake() { I = this; Tables.Load(); }
@@ -93,7 +94,7 @@ namespace KachiGun
 
             spawnT -= dt;
             bool want = alive < st.maxAlive && (bossPhase || S.bossFarm || S.kills + alive < Quota);
-            if (spawnT <= 0 && want)
+            if (spawnT <= 0 && want && !Demo)
             {
                 spawnT = st.spawn * Random.Range(0.7f, 1.3f);
                 SpawnZombie();

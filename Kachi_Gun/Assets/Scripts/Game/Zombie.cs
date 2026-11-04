@@ -22,8 +22,12 @@ namespace KachiGun
         RigView rig;           // 뼈대 그림(없으면 null)
         bool retreating;       // 보스 실패: 오른쪽으로 물러나는 중
         float fallFrom;        // 쓰러질 때 높이
+        // 11-04 움직임 다듬기: 지금 속도(출발·멈춤을 부드럽게) · 걷기↔멈춤 섞는 정도 · 번쩍임 쉬는 시간
+        float curSpeed, walkW, flashCool;
+        bool shaderFlash;      // 번쩍임 = 그림을 하얗게 물들임(SpriteFlash). false = 예전 흰 실루엣 덮기
 
         const float HitTime = 0.16f, FlashTime = 0.09f;
+        public static bool Treadmill, TreadmillStop;   // 시험 촬영: 제자리 걷기 · 그 자리에서 멈춤
 
         public static Zombie Spawn(ZombieRow r, Vector2 pos, double hp, double gold, float scaleMul = 1f, bool boss = false)
         {
@@ -40,8 +44,21 @@ namespace KachiGun
             z.speed = Random.Range(r.speedMin, r.speedMax);      // Zombie_Master Actual_Speed_Min~Max
             z.idlePhase = Random.value * 10f;
             z.walkDist = Random.value;
-            z.stride = 0.15f * z.scale;                 // 이만큼 걸을 때마다 다음 걷기 그림
+            z.stride = 0.15f * z.scale;                 // 이만큼 걸을 때마다 다음 걷기 그림 (뼈대는 아래에서 다리 길이로 다시 정함)
             z.stopDist = Random.Range(r.stopMin, r.stopMax);     // 멈춘 좀비가 한 줄로 겹치지 않게 앞뒤로 퍼짐 (StopDist_Min~Max)
+            if (z.rig)
+            {
+                // 11-04: 좀비마다 조금씩 다른 걸음 + 디딘 발이 안 미끄러지는 걸음 길이
+                var rv = z.rig;
+                float baseSw = Mathf.Max(rv.data.A("A", 18), 16f);
+                rv.swing = Mathf.Clamp(baseSw * Mathf.Clamp(z.speed / 1.1f, 0.85f, 1.25f) * Random.Range(0.92f, 1.08f), 12f, 26f);
+                rv.lean = Random.Range(0f, 4f);
+                rv.headTilt = Random.Range(-3f, 3f);
+                rv.armRaise = Random.Range(0f, 6f);
+                rv.limp = Random.value < 0.3f ? Random.Range(0.12f, 0.28f) : 0f;
+                float step = rv.StepLen;
+                z.stride = step > 0.01f ? step * z.scale : (rv.data.kind == "crawl" ? 0.12f : 0.15f) * z.scale;
+            }
             z.height = r.height * scaleMul;
             z.radius = r.radius * scaleMul;
             z.sr.flipX = true;      // 그림은 오른쪽을 봄 → 분대(왼쪽)를 보게
@@ -51,6 +68,13 @@ namespace KachiGun
             z.flash = fg.AddComponent<SpriteRenderer>();
             z.flash.sprite = z.f[Art.ZFlash];
             z.flash.color = new Color(1, 1, 1, 0);
+            if (Art.FlashMat)
+            {
+                z.shaderFlash = true;
+                Art.UseFlash(z.sr);
+                if (z.rig) Art.UseFlash(z.rig.sr);
+                z.flash.enabled = false;
+            }
             // 발밑 그림자 (기어 다니는 좀비는 몸이 길어서 넓게)
             z.shadow = Art.Shadow(go.transform, r.shadowW * scaleMul, r.shadowH * scaleMul);
             z.shadowScale = z.shadow.transform.localScale;
@@ -72,37 +96,62 @@ namespace KachiGun
 
             bool moving = false;
             var sq = Squad.I;
-            if (!standStill && hitT <= 0 && sq != null && sq.Leader != null)
+            float want = 0f;   // 가고 싶은 속도
+            if (!standStill && sq != null && sq.Leader != null)
             {
                 // 왼쪽으로 곧장 걸어와 분대 맨 앞(가장 오른쪽 카피바라)에서 stopDist 만큼 떨어져 멈춤 — 높이는 그대로
+                // 11-04: 멈출 자리 0.6칸 앞부터 천천히 · 맞으면 그 자리 정지 대신 비틀거리며 느리게(35%)
                 float front = float.MinValue;
                 foreach (var c in sq.cats) front = Mathf.Max(front, c.transform.position.x);
-                Vector2 to = new(front + stopDist - Pos.x, 0f);
-                if (to.x < 0f)
+                float left = Pos.x - (front + stopDist);
+                if (Treadmill) want = TreadmillStop ? 0f : speed;
+                else if (left > 0f) want = speed * Mathf.Clamp01(left / 0.6f + 0.15f);
+                if (hitT > 0) want *= 0.35f;
+            }
+            curSpeed = Mathf.MoveTowards(curSpeed, want, speed * 5f * dt);
+            if (curSpeed > 0.01f)
+            {
+                moving = true;
+                dir = -1;
+                if (Treadmill) walkDist += curSpeed * dt / stride;
+                else
                 {
-                    Vector2 step = new Vector2(-speed * dt, 0f);
+                    Vector2 step = new Vector2(-curSpeed * dt, 0f);
                     // 서로 겹치지 않게 살짝 밀기
                     foreach (var t in All)
                     {
                         if (t == this || !(t is Zombie) || t.dead) continue;
                         Vector2 d = Pos - t.Pos;
-                        float m = d.magnitude, want = (radius + t.radius) * 0.9f;
-                        if (m < want && m > 0.001f) step += d / m * (want - m) * dt * 4f;
+                        float m = d.magnitude, w = (radius + t.radius) * 0.9f;
+                        if (m < w && m > 0.001f) step += d / m * (w - m) * dt * 4f;
                     }
                     Vector2 before = Pos;
                     transform.position = Field.I.Clamp(Pos + step, 0.3f);
-                    walkDist += ((Vector2)transform.position - before).magnitude / stride;
-                    moving = true;
-                    if (Mathf.Abs(to.x) > 0.05f) dir = to.x < 0 ? -1 : 1;
+                    walkDist += Mathf.Max(0f, before.x - transform.position.x) / stride;   // 앞으로 간 만큼만 걸음 (옆으로 밀린 건 빼고)
                 }
             }
+            walkW = Mathf.MoveTowards(walkW, moving ? 1f : 0f, dt * (moving ? 6f : 3.5f));
             sr.flipX = flash.flipX = dir < 0;
 
-            if (hitT > 0)
+            if (hitT > 0) hitT -= dt;
+            float hitK = Mathf.Clamp01(hitT / HitTime);
+            if (rig)
             {
-                // 맞음: 맞기 그림 + 흰색 번쩍 + 찌그러졌다 돌아옴 + 뒤로 젖힘
-                hitT -= dt;
-                float k = Mathf.Clamp01(hitT / HitTime);
+                // 뼈대: 걷기 ↔ 꿈틀을 섞고, 맞으면 같은 그림이 뒤로 젖혀졌다 돌아옴 (정지 그림으로 안 바뀜)
+                ShowRig(true);
+                rig.Flip = dir < 0;
+                idlePhase += dt * (standStill ? 2.2f : 3.5f);
+                float hk = hitK * hitK * (3f - 2f * hitK);
+                rig.ZombiePose(walkDist / 4f % 1f, idlePhase, walkW, hk);
+                body.localScale = new Vector3(scale * (1f + hk * 0.06f), scale * (1f - hk * 0.05f), 1);
+                body.localPosition = Vector3.zero;
+                body.localRotation = Quaternion.Euler(0, 0, -dir * 1.5f * walkW);
+                shadow.transform.localScale = shadowScale;
+            }
+            else if (hitK > 0)
+            {
+                // (뼈대 없는 그림) 맞음: 맞기 그림 + 흰색 번쩍 + 찌그러졌다 돌아옴 + 뒤로 젖힘
+                float k = hitK;
                 sr.sprite = f[Art.ZHit];
                 ShowRig(false);
                 body.localScale = new Vector3(scale * (1f + k * 0.14f), scale * (1f - k * 0.12f), 1);
@@ -113,19 +162,7 @@ namespace KachiGun
             {
                 int frame = 1;
                 float bob = 0, rot = 0;
-                if (rig)
-                {
-                    // 뼈대: 걸은 거리로 걸음 위상(옛 걷기 4장 = 두 걸음), 멈추면 꿈틀
-                    ShowRig(true);
-                    rig.Flip = dir < 0;
-                    if (moving) rig.Walk(walkDist / 4f % 1f);
-                    else { idlePhase += dt * (standStill ? 2.2f : 3.5f); rig.Idle(idlePhase); }
-                    body.localScale = Vector3.one * scale;
-                    body.localPosition = Vector3.zero;
-                    body.localRotation = Quaternion.Euler(0, 0, moving ? -dir * 1.5f : 0f);
-                    shadow.transform.localScale = shadowScale;
-                }
-                else if (moving)
+                if (moving)
                 {
                     frame = (int)walkDist % 4;
                     float ph = walkDist * Mathf.PI;                 // 프레임 2장마다 한 번 오르내림
@@ -152,13 +189,25 @@ namespace KachiGun
                 }
             }
 
-            if (flashT > 0)
+            UpdateFlash(dt);
+        }
+
+        /// <summary>번쩍임: 셰이더면 몸 그림을 하얗게(보스는 약하게), 아니면 예전 흰 실루엣</summary>
+        void UpdateFlash(float dt)
+        {
+            if (flashCool > 0) flashCool -= dt;
+            if (flashT > 0) flashT -= dt;
+            float a = Mathf.Clamp01(flashT / FlashTime);
+            if (shaderFlash)
             {
-                flashT -= dt;
-                flash.sprite = f[Art.ZFlash];
-                flash.color = new Color(1, 1, 1, Mathf.Clamp01(flashT / FlashTime) * 0.85f);
+                // 짧게 또렷한 흰색으로 튀었다가(앞 40%) 빠짐 — 보스는 약하게
+                float amt = Mathf.Min(1f, a * 1.7f) * (isBoss ? 0.6f : 0.92f);
+                Art.SetFlash(sr, amt);
+                if (rig) Art.SetFlash(rig.sr, amt);
+                return;
             }
-            else flash.color = new Color(1, 1, 1, 0);
+            flash.sprite = f[Art.ZFlash];
+            flash.color = new Color(1, 1, 1, a * 0.85f);
         }
 
         protected override void LateUpdate()
@@ -190,7 +239,8 @@ namespace KachiGun
             body.localScale = Vector3.one * scale;
             body.localPosition = Vector3.zero;
             body.localRotation = Quaternion.identity;
-            if (rig) { ShowRig(true); rig.Flip = false; rig.Walk(walkDist / 4f % 1f); }
+            if (rig) { ShowRig(true); rig.Flip = false; rig.ZombiePose(walkDist / 4f % 1f, idlePhase, 1f, 0f); }
+            if (shaderFlash) { Art.SetFlash(sr, 0); if (rig) Art.SetFlash(rig.sr, 0); }
             else sr.sprite = f[Art.ZWalk + (int)walkDist % 4];
             if (p.x > Field.I.ViewHalfW + 3f) Destroy(gameObject);
         }
@@ -233,7 +283,8 @@ namespace KachiGun
             shadow.transform.localScale = new Vector3(shadowScale.x * (1f + spread * 0.6f), shadowScale.y, 1);
             shadow.color = new Color(1, 1, 1, sr.color.a);
             body.localRotation = Quaternion.identity;
-            flash.color = new Color(1, 1, 1, 0);
+            if (shaderFlash) UpdateFlash(dt);     // 쓰러지는 순간 한 번 하얗게
+            else flash.color = new Color(1, 1, 1, 0);
 
             if (dieT > 0.75f)
             {
@@ -249,9 +300,10 @@ namespace KachiGun
             if (dead) return;
             hp -= dmg;
             hitT = HitTime;
-            flashT = FlashTime;
+            // 11-04: 계속 맞아도(레이저·속사) 하얗게 덮이지 않게 — 번쩍임은 0.14초(보스 0.22초)에 한 번
+            if (flashCool <= 0) { flashT = FlashTime; flashCool = isBoss ? 0.22f : 0.14f; }
             if (!isBoss && knock) this.knock = (Pos - from).normalized * 1.1f;
-            Fx.I?.Damage(Center + Random.insideUnitCircle * 0.25f, dmg, isBoss);
+            Fx.I?.Damage(Center + Random.insideUnitCircle * 0.25f, dmg, isBoss, this);
             if (hp <= 0) Die(from, knock);
             else { AudioManager.Play(AudioManager.Sfx.Hit); ShowBar(isBoss); }
         }
@@ -264,6 +316,7 @@ namespace KachiGun
             sr.sprite = f[Art.ZDie];
             sr.color = Color.white;
             ShowRig(false);
+            if (shaderFlash) { flashT = FlashTime; if (rig) Art.SetFlash(rig.sr, 0); }
             fallFrom = 0.35f * scale;
             knock = push ? (Pos - from).normalized * (isBoss ? 0.5f : 1.8f) : Vector2.zero;   // 미사일로 죽으면 밀리지 않고 그 자리에 쓰러짐
             dir = (Pos - from).x > 0 ? 1 : -1;      // 맞은 쪽 반대로 쓰러짐 (죽기 그림은 머리가 오른쪽)

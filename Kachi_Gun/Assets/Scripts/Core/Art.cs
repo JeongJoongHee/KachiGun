@@ -23,6 +23,35 @@ namespace KachiGun
 
         public static Font Font => font ? font : (font = Resources.Load<Font>("Font/MonaS12TextKR"));
 
+        // ---------- 맞을 때 번쩍임 (11-04): 그림 모양 그대로 하얗게 (Resources/Shaders/SpriteFlash) ----------
+        static Material flashMat;
+        static MaterialPropertyBlock flashMpb;
+        static readonly int FlashId = Shader.PropertyToID("_Flash");
+        public static Material FlashMat
+        {
+            get
+            {
+                if (flashMat) return flashMat;
+                var sh = Resources.Load<Shader>("Shaders/SpriteFlash");
+                if (!sh) { Debug.LogError("셰이더 없음: Shaders/SpriteFlash"); return null; }
+                return flashMat = new Material(sh) { name = "SpriteFlash" };
+            }
+        }
+
+        /// <summary>번쩍임 셰이더를 씀 (없으면 그대로)</summary>
+        public static void UseFlash(SpriteRenderer r) { if (r && FlashMat) r.sharedMaterial = FlashMat; }
+
+        /// <summary>번쩍임 세기 0~1 (0 이면 블록을 비워 같은 재질끼리 묶여 그려지게)</summary>
+        public static void SetFlash(SpriteRenderer r, float amount)
+        {
+            if (!r) return;
+            flashMpb ??= new MaterialPropertyBlock();
+            if (amount <= 0.001f) { if (r.HasPropertyBlock()) r.SetPropertyBlock(null); return; }
+            r.GetPropertyBlock(flashMpb);
+            flashMpb.SetFloat(FlashId, amount);
+            r.SetPropertyBlock(flashMpb);
+        }
+
         public static Texture2D Tex(string path)
         {
             var t = Resources.Load<Texture2D>("Art/" + path);

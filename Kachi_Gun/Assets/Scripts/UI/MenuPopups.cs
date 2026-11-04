@@ -29,9 +29,12 @@ namespace KachiGun
                 int x = i % cols, y = i / cols;
                 var bg = UIKit.Row(inner, "Skin" + r.id);
                 bg.rectTransform.Place(0.5f, 1, new Vector2(-(cols - 1) * (cw + 10) / 2 + x * (cw + 10), -10 - y * (ch + 12)), new Vector2(cw, ch), new Vector2(0.5f, 1));
-                var pic = UIKit.Img(bg.transform, Art.Char(Art.ArtSkin(r.id))[0], new Vector2(200, 200), "Pic");
+                // 11-04: 전투와 같은 그림(칸 4 = 뼈대 그림) + 총 — 칸 0 만 쓰면 총을 지운 자리가 배에 얼룩으로 보였음
+                int art = Art.ArtSkin(r.id);
+                var pic = UIKit.Img(bg.transform, Art.Char(art)[4], new Vector2(200, 200), "Pic");
                 pic.rectTransform.Place(0.5f, 1, new Vector2(0, 0), new Vector2(200, 200), new Vector2(0.5f, 1));
                 pic.raycastTarget = false;
+                AddGun(pic.rectTransform, art, 200f);
                 if (!Art.HasSkinArt(r.id))
                 {
                     var wip = UIKit.Label(bg.transform, L.T("그림 준비 중"), 22, UIKit.Cream, TextAnchor.MiddleCenter, 2);
@@ -47,6 +50,17 @@ namespace KachiGun
                 b.onClick.AddListener(() => Tap(id));
                 cells.Add((r, bg, pic, nm, pr));
             }
+        }
+
+        /// <summary>캐릭터 칸 그림(size x size) 위에 그 스킨의 총을 전투 때 자리(칸 4)에 붙임</summary>
+        public static void AddGun(RectTransform pic, int skin, float size)
+        {
+            float k = size / Art.CharCell;
+            Vector2 gp = Art.GunPos(skin)[4];                                  // 발 기준 칸 단위
+            Vector2 px = new(gp.x * Art.CharPPU + Art.CharFootX, gp.y * Art.CharPPU + 8f);   // 칸 왼쪽 아래 기준 px
+            var g = UIKit.Img(pic, Art.Gun(skin), new Vector2(260 * k, 130 * k), "Gun");
+            g.raycastTarget = false;
+            g.rectTransform.Place(0, 0, px * k, new Vector2(260 * k, 130 * k), new Vector2(90f / 260f, 1f - 55f / 130f));
         }
 
         void Tap(int id)
@@ -67,6 +81,8 @@ namespace KachiGun
                 c.price.color = on ? UIKit.Gold : own ? UIKit.Green : UIKit.Sky;
                 c.bg.color = on ? new Color(1f, 0.86f, 0.45f) : own ? Color.white : new Color(0.78f, 0.74f, 0.7f);
                 c.pic.color = own ? Color.white : new Color(0.55f, 0.55f, 0.55f);
+                var gi = c.pic.transform.Find("Gun");
+                if (gi) gi.GetComponent<Image>().color = c.pic.color;
             }
         }
 
