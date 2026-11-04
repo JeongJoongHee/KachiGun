@@ -1,0 +1,141 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>프로덕션 신청 답안</title>
+<style>
+:root{--bg:#f6f7f9;--card:#fff;--ink:#1d2127;--sub:#5d6670;--line:#dde1e6;--acc:#1a73e8;--warn:#b3261e;--warnbg:#fdecea;--okbg:#e6f4ea;--fill:#fff4d6}
+@media (prefers-color-scheme:dark){:root{--bg:#15181c;--card:#1f2328;--ink:#e7eaee;--sub:#9aa3ad;--line:#343a42;--acc:#8ab4f8;--warn:#f2b8b5;--warnbg:#3a1f1d;--okbg:#1d3324;--fill:#3a3220}}
+body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.6 "Malgun Gothic",system-ui,sans-serif}
+main{max-width:860px;margin:0 auto;padding:24px 16px 60px}
+h1{font-size:22px;margin:0 0 4px}h2{font-size:18px;margin:32px 0 8px;border-bottom:2px solid var(--line);padding-bottom:4px}
+.sub{color:var(--sub);font-size:13px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:14px 16px;margin:12px 0}
+.q{font-weight:700;margin-bottom:6px}
+textarea{width:100%;box-sizing:border-box;min-height:130px;font:inherit;padding:8px;border:1px solid var(--line);border-radius:6px;background:var(--bg);color:var(--ink);resize:vertical}
+.row{display:flex;justify-content:space-between;align-items:center;margin-top:6px;gap:8px;flex-wrap:wrap}
+.cnt{font-size:13px;color:var(--sub)}.cnt.over{color:var(--warn);font-weight:700}
+button{border:0;background:var(--acc);color:#fff;border-radius:6px;padding:6px 14px;font:inherit;cursor:pointer}
+button.done{background:#188038}
+.note{font-size:13px;color:var(--sub);margin-top:6px}
+.warn{background:var(--warnbg);border-radius:8px;padding:10px 14px;margin:12px 0}
+.ok{background:var(--okbg);border-radius:8px;padding:10px 14px;margin:12px 0}
+mark{background:var(--fill);color:inherit;padding:0 2px}
+.pick{display:inline-block;background:var(--okbg);border-radius:6px;padding:2px 10px;font-weight:700}
+ol li,ul li{margin:4px 0}
+
+code{background:var(--line);border-radius:4px;padding:0 4px}</style>
+</head>
+<body>
+<main>
+<h1>카피바라vs좀비 · 프로덕션 액세스 신청 답안</h1>
+<div class="sub">2026-11-04 · 불도깨비 신청(10-31 → 11-01 승인) 답안 형식 그대로 · 칸마다 300자 제한 — 아래 글자 수가 그대로 세어 줍니다</div>
+
+<div class="card">
+<div class="q">신청하는 곳 · 언제</div>
+<b>zkfpf1</b> Play Console › 카피바라vs좀비 › <b>대시보드</b> › "프로덕션 액세스" 카드 › <b>[프로덕션 액세스 신청]</b><br>
+14일이 끝나는 <b>11-06 다음 날(11-07)부터</b> 버튼이 열립니다. 같은 카드의 <b>참여 테스터 수 · 테스트 일수</b>를 보고 ① 의 [12]명을 맞추세요.<br>
+<b>신청 전에</b>: 3번 AAB 를 비공개 트랙에 올려 검토가 끝나 있으면 좋습니다 — 아래 답에 "버전 3" 내용이 들어 있어서요.
+</div>
+
+<div class="warn"><b>꼭 채우실 곳 :</b> <mark>[ ]</mark> 대괄호는 제가 모르는 사실입니다 (모집 방법 · 참여 인원 · 받은 의견 · 오류 보고 여부).
+지어서 쓰면 안 되는 칸이라 비워 두었어요. 칸 안에서 바로 고치고 대괄호 기호를 지운 뒤 [복사]를 누르세요. (이 페이지를 닫으면 고친 내용은 사라져요)</div>
+
+<div class="ok"><b>제가 확인한 사실</b> : 비공개 테스트 시작 10-24 · 테스터 12명(10-24 확인) · 테스트 중 올린 버전 = 2번(11-04 올림)과 3번(올릴 예정) · 버전 2·3 에 들어간 기능은 git 기록 그대로.</div>
+
+<h2>1단계 · 비공개 테스트 정보 (실제 질문 4개)</h2>
+
+<div class="card">
+<div class="q">① 비공개 테스트에 참여할 사용자를 어떻게 모집하셨나요?</div>
+<textarea>1인 개발자라 주변에 안드로이드 사용자가 많지 않아 [비공개 테스트 모집 대행 서비스를 통해] 테스터를 모집했습니다.[ 지인 N명에게도 직접 부탁했습니다.] 받은 구글 계정을 테스터 목록에 등록하고 참여 링크로 설치하도록 안내했습니다. 10월 24일부터 14일 이상 테스트를 진행했고 [12]명이 참여했습니다.</textarea>
+<div class="row"><span class="cnt"></span><button>복사</button></div>
+<div class="note">대행 서비스를 쓰지 않았으면 그 부분을 실제 방법으로 바꾸세요. 지인에게 부탁한 적이 없으면 두 번째 대괄호 문장을 통째로 지우세요.</div>
+</div>
+
+<div class="card">
+<div class="q">② 게임 테스터를 얼마나 쉽게 모집했나요?</div>
+<div>추천 : <span class="pick">보통이었음</span></div>
+<div class="note">객관식이라 느낌대로 고르시면 됩니다. 점프점프·불도깨비도 "보통이었음"으로 내서 승인됐어요.</div>
+</div>
+
+<div class="card">
+<div class="q">③ 비공개 테스트 중 테스터의 참여도를 설명해 주세요. (모든 기능을 썼는지 · 실제 사용자와 같은지 · 다르면 어떤 차이)</div>
+<textarea>테스터들은 카피바라 분대가 좀비를 자동으로 쏘는 스테이지를 진행하며 공격력·공격속도·금전 강화, 총알 뽑기와 합성, 스킨, 미션, 보스전, 도전 던전, 보상형 광고 버프를 사용했고, 테스트 중 올린 새 버전으로도 플레이했습니다. 다만 오래 키워 가는 방치형 게임이라 14일 동안은 [초반 챕터 위주]로 플레이했습니다. 실제 사용자는 더 오래 플레이하며 후반 챕터와 보스 던전·보급품 수집까지 쓸 것으로 예상합니다.</textarea>
+<div class="row"><span class="cnt"></span><button>복사</button></div>
+<div class="note">대행사 보고서에 테스터가 어디까지 갔는지(챕터)가 있으면 [초반 챕터 위주] 를 그 내용으로 바꾸세요. 비밀던전은 4-1, 보스 던전은 10-1 부터 열려서 테스터가 못 갔을 수 있어 "실제 사용자는 더 오래" 쪽에 넣었습니다.</div>
+</div>
+
+<div class="card">
+<div class="q">④ 테스터로부터 받은 의견을 요약하고, 의견을 수집한 방법도 알려주세요.</div>
+<textarea>의견은 [대행사 테스트 보고서 / Play 콘솔 비공개 의견 / 지인 메신저]로 받았습니다. 주요 의견은 [ ]였습니다. 테스트 중 버전 2·3을 올려 홈 화면 앱 이름이 잘리던 것, 미사일에 맞은 좀비가 밀려나던 것을 고치고, 같은 총알끼리만 합성되게 바꿨으며, 게임 종료 확인 창, 끈 동안 쌓이는 방치 보상, 3일 출석 보상을 넣었습니다.</textarea>
+<div class="row"><span class="cnt"></span><button>복사</button></div>
+<div class="note"><b>[ ] 안에는 실제로 받은 의견만</b> 넣어 주세요 (대행사 보고서 · jjhfibe@gmail.com 메일 · Play 콘솔 › 품질 › 평점 및 리뷰 › 테스트 의견). 받은 방법 중 안 쓴 것은 지우세요. 뒤 문장(고친 것)은 실제로 바꾼 내용이라 그대로 두셔도 됩니다.
+의견을 거의 못 받았다면 아래 대안이 더 정직합니다.</div>
+<details style="margin-top:8px"><summary>의견을 거의 못 받았을 때 쓰는 대안</summary>
+<textarea>테스터 의견은 [대행사 보고서와 Play 콘솔 의견]으로 받았으며 [강제 종료나 진행이 막히는 오류 보고는 없었습니다]. 의견이 적어 직접 플레이와 자동 플레이 시험으로 함께 점검했고, 그 결과 홈 화면 앱 이름이 잘리던 것과 미사일 넉백을 고치고, 같은 총알끼리만 합성되게 바꿨으며, 게임 종료 확인 창, 방치 보상, 3일 출석 보상을 넣었습니다.</textarea>
+<div class="row"><span class="cnt"></span><button>복사</button></div>
+</details>
+</div>
+
+<h2>2 · 3단계 (불도깨비 때 나온 질문 기준 예상 답)</h2>
+<div class="warn">질문 문구가 다르면 화면을 캡처해 <code>게시 과정\</code> 에 넣고 말씀해 주세요 — 문구에 맞춰 고쳐 드릴게요.</div>
+
+<div class="card">
+<div class="q">2단계 · 게임의 대상 사용자는 누구인가요?</div>
+<textarea>좀비 무리를 쓸어 담는 쾌감과 꾸준한 성장을 좋아하는 13세 이상 한국 사용자입니다. 공격은 자동이고 화면 아래 강화 카드만 누르면 되어 액션 게임에 익숙하지 않은 사람도 바로 할 수 있으며, 총알 합성과 분대 조합을 고민하는 키우기 게임 사용자도 대상입니다.</textarea>
+<div class="row"><span class="cnt"></span><button>복사</button></div>
+</div>
+
+<div class="card">
+<div class="q">2단계 · 어떤 게임인가요? / 사용자에게 어떤 가치를 주나요?</div>
+<textarea>카피바라 분대가 몰려오는 좀비를 자동으로 쏘는 세로 화면 방치형 슈팅 게임입니다. 골드로 공격력·공격속도·금전을 강화하고, 다이아로 총알을 뽑아 같은 총알끼리 합성해 등급을 올립니다. 챕터마다 보스전이 있고 도전 던전·비밀던전·보스 던전, 스킨, 보급품 수집, 미션, 출석 보상이 있으며, 게임을 꺼 둔 동안에도 방치 보상이 쌓입니다.</textarea>
+<div class="row"><span class="cnt"></span><button>복사</button></div>
+</div>
+
+<div class="card">
+<div class="q">2단계 · 출시 첫해 예상 설치 수 (객관식이면)</div>
+<div>추천 : <span class="pick">가장 낮은 구간 (예: 0~1만)</span></div>
+<div class="note">마케팅 계획이 없는 1인 개발 게임이라 낮게 잡는 것이 자연스럽습니다. 이 답은 심사 결과를 바꾸지 않아요.</div>
+</div>
+
+<div class="card">
+<div class="q">3단계 · 비공개 테스트 결과로 무엇을 바꿨나요?</div>
+<textarea>테스트 중 두 번 업데이트했습니다. 버전 2: 보상형 광고(공격·금전 버프, 던전 보상, 무료 다이아), 자동 강화 기능, 효과음·배경음 다듬기를 넣었습니다. 버전 3: 방치 보상, 3일 출석, 게임 종료 확인 창과 뒤로 가기를 넣고, 홈 화면 앱 이름 잘림·미사일 넉백을 고쳤으며, 같은 총알끼리만 합성되게 바꾸고 스킨 가격과 효과를 다시 맞췄습니다.</textarea>
+<div class="row"><span class="cnt"></span><button>복사</button></div>
+<div class="note">3번을 비공개 트랙에 못 올리고 신청한다면 "버전 3:" 문장을 지우고 "한 번 업데이트"로 고치세요 (3번은 프로덕션 출시 때 올라감).</div>
+</div>
+
+<div class="card">
+<div class="q">3단계 · 게임이 출시 준비가 되었다고 어떻게 판단했나요?</div>
+<textarea>14일 이상 비공개 테스트에서 [강제 종료나 진행이 막히는 오류가 보고되지 않았고], 테스트 중 두 번 업데이트했습니다. 기능마다 자동 플레이 시험으로 전투·강화·보스전, 총알 뽑기·합성, 던전 세 종류, 상점·광고 보상, 방치 보상·출석, 영어 화면까지 확인했습니다. 개인정보처리방침도 갖췄고, 출시 뒤에도 의견을 받아 업데이트할 계획입니다.</textarea>
+<div class="row"><span class="cnt"></span><button>복사</button></div>
+<div class="note">대괄호 부분은 Play Console › <b>모니터링 및 개선 › Android vitals › 비정상 종료 및 ANR</b> 이 비어 있는지 보고 남기세요. 숫자가 있으면 알려 주세요 — 원인부터 볼게요.</div>
+</div>
+
+<h2>승인 뒤 순서 (<a href="출시_일정.html">출시_일정.html</a>)</h2>
+<div class="card">
+<ol>
+<li>검토는 보통 7일 안팎 — 점프점프 10-06 → 10-09, 불도깨비 10-31 → 11-01.</li>
+<li>프로덕션 › 대한민국 › [새 버전 만들기] › [라이브러리에서 추가] › <b>버전 3</b> (게임 변경 · 결제 꺼 둠, 새로 굽지 않음) → 검토 전송 → 게시 개요 "검토 중인 변경사항"에 "버전 3 전체 출시" 줄이 있는지 확인.</li>
+<li>공개되면 홍보 없이 두고 → AdMob 스토어 연결 → kachigoogoo 로 앱 이전 → 4번(라이선스 키) · 상품 5개 → <b>결제 켜진 서비스 시작</b>.</li>
+</ol>
+</div>
+</main>
+<script>
+document.querySelectorAll('.card, details').forEach(function(box){
+  box.querySelectorAll(':scope > textarea').forEach(function(ta){
+    var row=ta.nextElementSibling; if(!row) return;
+    var cnt=row.querySelector('.cnt'), btn=row.querySelector('button');
+    function upd(){var n=[...ta.value].length; cnt.textContent=n+' / 300자'; cnt.classList.toggle('over',n>300);}
+    ta.addEventListener('input',upd); upd();
+    btn.addEventListener('click',function(){
+      var done=function(){btn.textContent='복사됨';btn.classList.add('done');setTimeout(function(){btn.textContent='복사';btn.classList.remove('done');},1500);};
+      if(navigator.clipboard){navigator.clipboard.writeText(ta.value).then(done,function(){ta.select();document.execCommand('copy');done();});}
+      else{ta.select();document.execCommand('copy');done();}
+    });
+  });
+});
+</script>
+</body>
+</html>
