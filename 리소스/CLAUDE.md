@@ -1,5 +1,8 @@
 # 카치건 (좀비 키우기) — 세로 방치형 분대 슈팅, Unity 6000.0.84f1 · 2D URP
 
+## ▶ 재개 메모 (2026-11-04 밤 5 — 처음 켰을 때 출석)
+- 사용자: "최초 접속했을 때 출석이 뜨지 않음" → `GM.CheckAttend` 조건에서 첫 강화·메뉴 열림(1-2) 빼고 **스테이지 화면이면 처음 켠 날부터** · 처음 100 다이아로 무기 탭이 바로 열리는 것은 사용자 "그대로 둠(추천)" · PlayTest 맨 앞 "처음 켬 → 출석 창 · +100"(캡처 18h_attend_first), 촬영 모드는 시작 때 출석 창 닫음(`PlayTest.Main`) · errors=0 · 영어 0 · **3번 AAB 또 다시 구움**(1.4분, 점검 8 통과)
+
 ## ▶ 재개 메모 (2026-11-04 밤 4 — 좀비 움직임 · 그림 마감 → 3번 AAB 다시 구움)
 - 사용자: "이미지 마감·거칠게 빠진 부분 다듬기 + 좀비 움직임 자연스럽게" → **`좀비_움직임_비교.html`**(전·뒤 GIF, `tools/zombie_compare.py`, 촬영 `PlayTest.RunZombie` → Logs/PlayTest/zshow · 전 = zshow_before)
   - `RigView`: 걷기 = 디딘 발 앞→뒤 곧게(Leg) · 걸음 길이 `StepLen`(다리 L x sin 걸음 폭)으로 stride → 발 안 미끄러짐 · 좀비마다 swing/lean/headTilt/armRaise/limp · 기어 오기 Arm · `ZombiePose`(걷기↔꿈틀 섞기 + HitAdd 뒤로 젖힘)

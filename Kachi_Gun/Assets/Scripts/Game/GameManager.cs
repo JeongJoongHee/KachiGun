@@ -776,7 +776,7 @@ namespace KachiGun
 
         // =====================================================================
         // 출석 (11-04): 하루 한 번(기기 날짜) 접속 창 — Attend_Gems_1·2·3 다이아를 차례로, 다 받으면 1일차부터 다시
-        //   빠진 날이 있어도 끊기지 않고 다음 칸 · 메뉴가 열린 뒤(1-2)·첫 강화(튜토리얼) 뒤부터 · 스테이지 화면에서만
+        //   빠진 날이 있어도 끊기지 않고 다음 칸 · 처음 켠 날부터 · 스테이지 화면에서만(던전 중엔 끝난 뒤)
         // =====================================================================
         public static int AttendDays => Math.Max(1, Tables.Ci("Attend_Days"));
         public static double AttendGems(int i) => Tables.C("Attend_Gems_" + (i + 1), 100 * (i + 1));
@@ -785,7 +785,7 @@ namespace KachiGun
         public bool CheckAttend(bool overPopups)
         {
             if (!offlineReady || HUD.I == null || S.AttendToday) return false;
-            if (mode != Mode.Stage || !MenuOpen || !S.tutorialDone) return false;
+            if (mode != Mode.Stage) return false;   // 11-04 밤: 처음 켰을 때부터 (전엔 첫 강화·메뉴 열린 뒤부터라 처음엔 안 떴음)
             var cur = HUD.I.Get<AttendPopup>();
             if (cur != null && cur.gameObject.activeSelf) return false;
             if (!overPopups && HUD.I.PopupOpen) return false;

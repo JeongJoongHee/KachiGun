@@ -65,6 +65,7 @@ namespace KachiGun.EditorTools
             Run();
         }
         public static bool ZombieOnly => SessionState.GetBool(Key + ".zshow", false);
+        public static bool Main => !AnimOnly && !RigOnly && !EnOnly && !StoreOnly && !ZombieOnly;
 
         public static void Run()
         {
@@ -108,6 +109,7 @@ namespace KachiGun.EditorTools
             yield return null;
             SetupCapture();
             yield return Wait(0.5f);
+            if (!PlayTest.Main) { var ap0 = HUD.I.Get<AttendPopup>(); if (ap0 && ap0.gameObject.activeSelf) ap0.Close(); }   // 촬영 모드엔 출석 창이 안 끼게
             if (PlayTest.AnimOnly) { yield return Anim(); yield break; }
             if (PlayTest.RigOnly) { yield return RigShow(); yield break; }
             if (PlayTest.EnOnly) { yield return EnTour(); yield break; }
@@ -115,8 +117,16 @@ namespace KachiGun.EditorTools
             if (PlayTest.ZombieOnly) { yield return ZombieShow(); yield break; }
 
             // 출석 창이 시험 중간(10초마다 날짜 확인)에 끼어들지 않게 — 출석은 11f 에서 따로
-            Check(!GM.CheckAttend(true) && !S.AttendToday, "처음(첫 강화·메뉴 열리기 전) → 출석 창 없음");
-            S.attendDay = System.DateTime.Now.ToString("yyyyMMdd");
+            // 11-04 밤: 처음 켜자마자 출석 창(1일차) → 받기 → 다이아 +100 (뒤 시험에 영향 없게 다이아는 되돌림)
+            {
+                var ap0 = HUD.I.Get<AttendPopup>();
+                Check(ap0 != null && ap0.gameObject.activeSelf && ap0.index == 0, "처음 켬 → 출석 창 (1일차)");
+                Capture("18h_attend_first");
+                double fg = S.gems;
+                if (ap0) ap0.Close();
+                Check(S.gems - fg == 100 && S.AttendToday && !HUD.I.PopupOpen, $"처음 출석 → 다이아 +{S.gems - fg}");
+                S.gems = fg; S.attendCount = 0; GM.Notify();
+            }
 
             // 1) 시작 전투
             Log($"시작: Stage {SaveData.StageName(S.stage)}, 고양이 {Squad.I.cats.Count}, 총 {Tables.WeaponName(S.slots[0])}");
