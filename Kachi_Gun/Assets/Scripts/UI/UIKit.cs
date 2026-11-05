@@ -78,7 +78,7 @@ namespace KachiGun
             var t = rt.gameObject.AddComponent<Text>();
             t.font = Art.Font;
             t.text = s;
-            t.fontSize = size;
+            t.fontSize = Art.FontSize(size);
             t.color = c ?? Color.white;
             t.alignment = anchor;
             t.horizontalOverflow = HorizontalWrapMode.Overflow;

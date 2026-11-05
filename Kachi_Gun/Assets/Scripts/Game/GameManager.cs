@@ -70,7 +70,11 @@ namespace KachiGun
         // =====================================================================
         // 스테이지
         // =====================================================================
-        public int Quota { get { int q = Tables.Stage(S.stage).quota; return q > 0 ? q : Tables.Ci("KillsPerStage"); } }
+        // 11-05 몰려오기: 일반 스테이지 좀비 수 = 표 값 x Horde_Mul (처치 목표·동시 최대·나오는 속도),
+        // 좀비 하나 체력·골드는 ÷ Horde_Mul → 스테이지 전체 체력·골드는 그대로. Horde_Pack_Min~Max 마리씩 무리로 나옴.
+        // 보스전 동안은 예전대로(표 값 그대로 한 마리씩) — 졸개가 많아져 보스가 어려워지지 않게.
+        public static float HordeMul => Mathf.Max(1f, (float)Tables.C("Horde_Mul", 1));
+        public int Quota { get { int q = Tables.Stage(S.stage).quota; if (q <= 0) q = Tables.Ci("KillsPerStage"); return Mathf.Max(1, Mathf.RoundToInt(q * HordeMul)); } }
         public float StageProgress => bossPhase ? Mathf.Clamp01(bossTime / BossTimeMax) : S.bossFarm ? 1f : Mathf.Clamp01(S.kills / (float)Quota);
 
         void StageTick(float dt)
@@ -93,18 +97,40 @@ namespace KachiGun
             }
 
             spawnT -= dt;
-            bool want = alive < st.maxAlive && (bossPhase || S.bossFarm || S.kills + alive < Quota);
-            if (spawnT <= 0 && want && !Demo)
+            if (spawnT > 0 || Demo) return;
+            if (bossPhase)
             {
-                spawnT = st.spawn * Random.Range(0.7f, 1.3f);
-                SpawnZombie();
+                if (alive < st.maxAlive) { spawnT = st.spawn * Random.Range(0.7f, 1.3f); SpawnZombie(Field.I.SpawnPoint(), 1f); }
+                return;
+            }
+            float hm = HordeMul;
+            int room = Mathf.RoundToInt(st.maxAlive * hm) - alive;
+            int left = S.bossFarm ? int.MaxValue : Quota - S.kills - alive;
+            int pMin = Mathf.Max(1, Tables.Ci("Horde_Pack_Min")), pMax = Mathf.Max(pMin, Tables.Ci("Horde_Pack_Max"));
+            int need = Mathf.Min(pMin, left);       // 자리가 무리 하나만큼 빌 때까지 기다림 (한 마리씩 흘러나오지 않게)
+            if (need <= 0 || room < need) return;
+            int n = Mathf.Min(Random.Range(pMin, pMax + 1), Mathf.Min(room, left));
+            SpawnPack(n, hm);
+            spawnT = st.spawn / hm * n * Random.Range(0.8f, 1.2f);   // 평균 나오는 속도 = 표 속도 x Horde_Mul
+        }
+
+        /// <summary>무리: 화면 오른쪽 밖에서 한 높이를 중심으로 앞뒤·위아래로 퍼져 한꺼번에</summary>
+        void SpawnPack(int n, float hm)
+        {
+            var c = Field.I.SpawnPoint();
+            float spread = Tables.Cf("Horde_Pack_Spread") > 0 ? Tables.Cf("Horde_Pack_Spread") : 1.2f;
+            for (int i = 0; i < n; i++)
+            {
+                var p = c + new Vector2(Random.Range(0f, 0.3f * n), Random.Range(-spread, spread));
+                p.y = Field.I.SpawnPoint(p.y).y;     // 흙 띠 안으로
+                SpawnZombie(p, hm);
             }
         }
 
-        void SpawnZombie()
+        void SpawnZombie(Vector2 p, float hm)
         {
             var r = PickZombie(S.Chapter);
-            Zombie.Spawn(r, Field.I.SpawnPoint(), Stats.ZombieHp(S.stage) * r.hpMul, Stats.ZombieGold(S.stage) * r.goldMul);
+            Zombie.Spawn(r, p, Stats.ZombieHp(S.stage) * r.hpMul / hm, Stats.ZombieGold(S.stage) * r.goldMul / hm);
         }
 
         public static ZombieRow PickZombie(int chapter)
@@ -532,7 +558,12 @@ namespace KachiGun
             "statBossKills" => S.statBossKills, "statMerges" => S.statMerges, _ => 0
         };
 
-        public long MissionTarget(int i) => Tables.MissionTarget(i, S.missionTier[i]);
+        // 처치 미션 목표는 몰려오기 배수만큼 (좀비가 Horde_Mul 배로 많아져도 단계 속도는 그대로)
+        public long MissionTarget(int i)
+        {
+            long t = Tables.MissionTarget(i, S.missionTier[i]);
+            return Tables.Missions[i].statKey == "statKills" ? (long)Math.Round(t * (double)HordeMul) : t;
+        }
         public bool MissionDone(int i) => Tables.MissionDone(i, S.missionTier[i]);
 
         // 보상 = 다이아로 친 값(Mission_Master). 10-24 사용자 요청: 한 번에 한 종류만 — 단계마다 골드 → 다이아 → 골드 … 번갈아.

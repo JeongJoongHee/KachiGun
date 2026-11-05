@@ -65,7 +65,15 @@ namespace KachiGun.EditorTools
             Run();
         }
         public static bool ZombieOnly => SessionState.GetBool(Key + ".zshow", false);
-        public static bool Main => !AnimOnly && !RigOnly && !EnOnly && !StoreOnly && !ZombieOnly;
+
+        /// <summary>글꼴 비교 촬영(11-05): 한국어 메인·창들 → Logs/PlayTest/font/*.png — 글꼴은 환경 변수 KACHI_FONT · KACHI_FONT_SCALE</summary>
+        public static void RunFont()
+        {
+            SessionState.SetBool(Key + ".font", true);
+            Run();
+        }
+        public static bool FontOnly => SessionState.GetBool(Key + ".font", false);
+        public static bool Main => !AnimOnly && !RigOnly && !EnOnly && !StoreOnly && !ZombieOnly && !FontOnly;
 
         public static void Run()
         {
@@ -84,6 +92,7 @@ namespace KachiGun.EditorTools
             SessionState.SetBool(Key + ".en", false);
             SessionState.SetBool(Key + ".store", false);
             SessionState.SetBool(Key + ".zshow", false);
+            SessionState.SetBool(Key + ".font", false);
             EditorApplication.Exit(errors == 0 ? 0 : 3);
         }
     }
@@ -115,6 +124,7 @@ namespace KachiGun.EditorTools
             if (PlayTest.EnOnly) { yield return EnTour(); yield break; }
             if (PlayTest.StoreOnly) { yield return StoreTour(); yield break; }
             if (PlayTest.ZombieOnly) { yield return ZombieShow(); yield break; }
+            if (PlayTest.FontOnly) { yield return FontTour(); yield break; }
 
             // 출석 창이 시험 중간(10초마다 날짜 확인)에 끼어들지 않게 — 출석은 11f 에서 따로
             // 11-04 밤: 처음 켜자마자 출석 창(1일차) → 받기 → 다이아 +100 (뒤 시험에 영향 없게 다이아는 되돌림)
@@ -135,6 +145,29 @@ namespace KachiGun.EditorTools
             Log($"처치 {S.kills}, 골드 {S.gold:0}, 좀비 {Target.All.Count}");
             Check(S.kills >= 3, "좀비를 잡음");
             Capture("01_battle");
+
+            // 1b) 11-05 몰려오기: 처치 목표·한 마리 체력 · 무리로 한꺼번에 · 화면에 더 많이
+            {
+                float hm = GameManager.HordeMul;
+                var st0 = Tables.Stage(S.stage);
+                Check(hm > 1f && GM.Quota == Mathf.RoundToInt(st0.quota * hm), $"몰려오기 x{hm} → 처치 목표 {st0.quota} → {GM.Quota}");
+                int peak = 0, jump = 0, prev = -1; Zombie one = null;
+                for (float t = 0; t < 8f; t += 0.1f)
+                {
+                    int na = 0;
+                    foreach (var tg in Target.All) if (tg is Zombie z && z.Alive && !z.isBoss) { na++; if (!one) one = z; }
+                    peak = Mathf.Max(peak, na); if (prev >= 0) jump = Mathf.Max(jump, na - prev); prev = na;
+                    if (t > 0.5f && na >= peak && na >= 12) { Capture("01b_horde"); }
+                    yield return Wait(0.1f);
+                }
+                Log($"몰려오기: 화면 최대 {peak}마리 (예전 최대 {st0.maxAlive}) · 한 번에 늘어난 최대 {jump}마리");
+                Check(peak > st0.maxAlive, $"좀비가 예전 최대({st0.maxAlive})보다 많이 보임 ({peak})");
+                Check(jump >= Mathf.Min(3, Tables.Ci("Horde_Pack_Min")), $"무리로 한꺼번에 나옴 (+{jump})");
+                if (one) Check(System.Math.Abs(one.maxHp / one.row.hpMul - Stats.ZombieHp(S.stage) / hm) < 0.01 * Stats.ZombieHp(S.stage), $"좀비 한 마리 체력 = 표 ÷ {hm} ({one.maxHp:0.#})");
+                int mk = Tables.Missions.FindIndex(m => m.statKey == "statKills");
+                if (mk >= 0) Check(GM.MissionTarget(mk) == (long)System.Math.Round(Tables.MissionTarget(mk, S.missionTier[mk]) * (double)hm), $"처치 미션 목표 x{hm} ({GM.MissionTarget(mk)})");
+                if (!File.Exists($"{OutDir}/01b_horde.png")) Capture("01b_horde");
+            }
 
             // 2) 강화 (튜토리얼 발바닥 → 사라짐)
             S.gold += 5000; GM.Notify();
@@ -679,6 +712,32 @@ namespace KachiGun.EditorTools
             HUD.I.Open<MissionPopup>(); yield return Wait(0.3f); Capture("en/05_mission"); CloseAll();
             HUD.I.Open<ShopPopup>(); yield return Wait(0.3f); Capture("en/06_shop"); CloseAll();
             HUD.I.Open<SettingsPopup>(); yield return Wait(0.3f); Capture("en/07_settings"); CloseAll();
+            Log($"DONE errors={errors}");
+            PlayTest.Finish(errors);
+        }
+
+        /// <summary>글꼴 비교: 5챕터쯤 세이브 → 메인 · 강화 · 창 6개 (한국어)</summary>
+        IEnumerator FontTour()
+        {
+            DontDestroyOnLoad(gameObject);
+            S.stage = 22; S.bestEver = 22; S.gems = 5000; S.gold = 2.5e6;
+            S.lvAtk = 30; S.lvSpd = 40; S.lvGold = 25;
+            S.weaponUnlocked = true; S.tutorialDone = true;
+            S.attendDay = System.DateTime.Now.ToString("yyyyMMdd");
+            S.slots[0] = Tables.Code(4, "laser"); S.slots[1] = Tables.Code(3, "shotgun"); S.slots[2] = Tables.Code(5, "single");
+            S.inv[0] = Tables.Code(2, "pierce"); S.inv[1] = Tables.Code(6, "missile");
+            S.Save();
+            UnityEngine.SceneManagement.SceneManager.LoadScene(0);
+            yield return Wait(1.0f);
+            SetupCapture();
+            yield return Wait(3.0f);
+            Log($"글꼴 {Art.Font?.name} x{Art.FontScale}");
+            Capture("font/01_main");
+            HUD.I.Open<WeaponPopup>(); yield return Wait(0.3f); Capture("font/02_weapon"); CloseAll();
+            HUD.I.Open<MissionPopup>(); yield return Wait(0.3f); Capture("font/03_mission"); CloseAll();
+            HUD.I.Open<ShopPopup>(); yield return Wait(0.3f); Capture("font/04_shop"); CloseAll();
+            HUD.I.Open<SettingsPopup>(); yield return Wait(0.3f); Capture("font/05_settings"); CloseAll();
+            HUD.I.Open<SkinPopup>(); yield return Wait(0.3f); Capture("font/06_skin"); CloseAll();
             Log($"DONE errors={errors}");
             PlayTest.Finish(errors);
         }

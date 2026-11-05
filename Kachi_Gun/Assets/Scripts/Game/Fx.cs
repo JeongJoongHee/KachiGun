@@ -161,7 +161,7 @@ namespace KachiGun
                 p = new Pop { rt = tx.rectTransform, tx = tx };
             }
             p.rt.gameObject.SetActive(true);
-            p.tx.text = s; p.tx.color = c; p.tx.fontSize = size;
+            p.tx.text = s; p.tx.color = c; p.tx.fontSize = Art.FontSize(size);
             p.rt.anchoredPosition = WorldToUi(world);
             p.vel = new Vector2(Random.Range(-30f, 30f), 260f);
             p.t = 0; p.dur = dur; p.key = null; p.val = 0;

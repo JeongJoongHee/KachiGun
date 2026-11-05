@@ -90,6 +90,8 @@ namespace KachiGun
 
         /// <summary>좀비가 나오는 곳: 오른쪽 화면 바로 밖, 흙 띠 아무 높이</summary>
         public Vector2 SpawnPoint() => new(ViewHalfW + 0.9f, Random.Range(Bottom + 0.4f, Top - 0.8f));
+        /// <summary>정한 높이를 흙 띠 안으로 당긴 나오는 자리 (무리 생성용)</summary>
+        public Vector2 SpawnPoint(float y) => new(ViewHalfW + 0.9f, Mathf.Clamp(y, Bottom + 0.4f, Top - 0.8f));
 
         public void Tint(Color c) { if (map) map.color = c; }
 

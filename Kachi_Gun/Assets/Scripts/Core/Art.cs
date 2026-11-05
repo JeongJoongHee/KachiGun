@@ -21,7 +21,40 @@ namespace KachiGun
         static readonly Dictionary<string, Sprite[]> frames = new();
         static Font font;
 
-        public static Font Font => font ? font : (font = Resources.Load<Font>("Font/MonaS12TextKR"));
+        // 11-05 글꼴: Resources/Font/<FontName> · 글자 크기 x FontScale (글꼴마다 같은 크기에서 보이는 크기가 달라서).
+        // 에디터 비교 촬영은 환경 변수 KACHI_FONT(글꼴 이름) · KACHI_FONT_SCALE 로 바꿔 볼 수 있음 (폰에선 안 씀)
+        public const string FontName = "MonaS12TextKR";
+        const float FontScaleBase = 1f;
+        static float fontScale = -1f;
+        public static Font Font
+        {
+            get
+            {
+                if (font) return font;
+                string n = FontName;
+#if UNITY_EDITOR
+                var e = System.Environment.GetEnvironmentVariable("KACHI_FONT");
+                if (!string.IsNullOrEmpty(e) && Resources.Load<Font>("Font/" + e)) n = e;
+#endif
+                font = Resources.Load<Font>("Font/" + n);
+                return font;
+            }
+        }
+        public static float FontScale
+        {
+            get
+            {
+                if (fontScale > 0) return fontScale;
+                fontScale = FontScaleBase;
+#if UNITY_EDITOR
+                var e = System.Environment.GetEnvironmentVariable("KACHI_FONT_SCALE");
+                if (float.TryParse(e, System.Globalization.NumberStyles.Float, System.Globalization.CultureInfo.InvariantCulture, out var v) && v > 0) fontScale = v;
+#endif
+                return fontScale;
+            }
+        }
+        /// <summary>코드에 적힌 글자 크기 → 실제 크기 (FontScale 적용)</summary>
+        public static int FontSize(int size) => Mathf.Max(1, Mathf.RoundToInt(size * FontScale));
 
         // ---------- 맞을 때 번쩍임 (11-04): 그림 모양 그대로 하얗게 (Resources/Shaders/SpriteFlash) ----------
         static Material flashMat;
