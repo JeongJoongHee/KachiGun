@@ -5,6 +5,7 @@
 - 분대 자리 "리더 가운데 · 동료1 위 · 동료2 아래" 는 10-20 부터 이미 그렇게 되어 있음(Player_Base Leader/Sub1/Sub2_Screen_Pos) → PlayTest 4b 로 확인만
 - 사용자 2차 "리더 가운데 · 동료보다 조금 크게 · 총알 칸 타이트하게": 카드 순서 **동료1 | 리더 | 동료2**(리더 310x438 · 동료 276x392, 가운데 높이 맞춤) · 인벤토리 칸 172 · 사이 6 · 판 여백 10 · 창 높이 1590 — errors=0 · 영어 0
 - 사용자 3차 "+0 숫자 제거 · 슬롯 강화 기능 제거": `Stats.SlotEnchantOn = false`(옛 세이브 slotLv 도 효과 0, GM.EnchantSlot 은 "없어졌습니다") · 카드 +N 없음 · 장착 칸 정보 창 = [해제]만 · Weapon_Enchant 표·코드는 남김 · `balance_sim.py` SLOT_ENCHANT=False → **150챕터 못 감(3000일에 광고 안 봄 99챕터 · 광고 최대 117챕터, 전엔 1307일·486일)** — 밸런스 단계에서 다이아 쓸 곳/곡선 다시
+- 사용자 4차 "슬롯 제거한 버전으로 밸런스 다시": 총알 등급 공격력 x exp(0.02g + 0.044g²) (`tools/balance_noench_1105.py`, 원본 Table/_backup_1105/Weapon.xlsx, 늘 원본에서 계산) → 150챕터 광고 안 봄 1409일(전 1307) · 광고 최대 492일(전 486) · `밸런스_슬롯강화_제거.html` · 단발 S 가 A 의 1.125배뿐인 옛 표 그대로(사용자에게 물음)
 - 새 부품 `doodle_ui.py` window_plain · title_pill · btn_red · btn_x_red · i_bolt · i_trash_w · 시험 errors=0 · 영어 errors=0 · 커밋 5064163 · 폰 반영은 다음 AAB(7번)
 
 ## ▶ 재개 메모 (2026-11-05 마무리 — 사용자 "작업 패턴 학습하고 마무리", push 끝)

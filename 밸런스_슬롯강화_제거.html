@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>슬롯 강화 제거 밸런스</title>
+<style>
+:root{--bg:#fbf7ef;--card:#fff;--ink:#3a2a1c;--sub:#7a6a5a;--line:#e6dccb;--ok:#3f8a2e;--warn:#b0601a;--hd:#f3ead8}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#1d1915;--card:#27221c;--ink:#efe6d8;--sub:#b3a593;--line:#3d352c;--ok:#8fd27a;--warn:#f0a35a;--hd:#30291f}}
+:root[data-theme="dark"]{--bg:#1d1915;--card:#27221c;--ink:#efe6d8;--sub:#b3a593;--line:#3d352c;--ok:#8fd27a;--warn:#f0a35a;--hd:#30291f}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.6 "Malgun Gothic",system-ui,sans-serif}
+main{max-width:860px;margin:0 auto;padding:24px 16px 48px}
+h1{font-size:24px;margin:0 0 4px}h2{font-size:18px;margin:28px 0 8px}
+.sub{color:var(--sub);font-size:14px}
+.box{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px 16px;margin:12px 0}
+table{border-collapse:collapse;width:100%;font-size:14px;font-variant-numeric:tabular-nums}
+th,td{border-bottom:1px solid var(--line);padding:6px 8px;text-align:right}
+th:first-child,td:first-child{text-align:left}
+th{background:var(--hd);font-weight:600}
+.wrap{overflow-x:auto}
+.ok{color:var(--ok);font-weight:600}.warn{color:var(--warn);font-weight:600}
+code{background:var(--hd);padding:1px 5px;border-radius:4px;font-size:13px}
+li{margin:4px 0}
+</style>
+</head>
+<body><main>
+<h1>슬롯 강화 제거 뒤 밸런스</h1>
+<div class="sub">2026-11-05 밤 · 시뮬레이터 <code>tools/balance_sim.py</code> (하루 4시간 켜 둠 + 나머지 방치 보상) · 적용 도구 <code>tools/balance_noench_1105.py</code></div>
+
+<div class="box">
+<b>한 줄 요약</b>: 슬롯 강화가 주던 힘을 <b>총알 등급 공격력</b>으로 옮겨, 강화가 있던 때와 거의 같은 속도로 맞췄습니다.
+150챕터 = 광고 안 봄 <b>1,307 → 1,409일</b>(+8%) · 광고 최대 <b>486 → 492일</b>(+1%). 그대로 두면 3,000일이 지나도 99챕터 / 117챕터였습니다.
+</div>
+
+<h2>1. 챕터별 걸리는 날 (시뮬)</h2>
+<div class="wrap"><table>
+<tr><th>챕터</th><th>강화 있을 때<br>광고 안 봄</th><th>강화 없앰 + 이번 조정<br>광고 안 봄</th><th>강화 있을 때<br>광고 최대</th><th>강화 없앰 + 이번 조정<br>광고 최대</th></tr>
+<tr><td>10</td><td>19</td><td>17</td><td>3</td><td>3</td></tr>
+<tr><td>25</td><td>192</td><td>178</td><td>53</td><td>48</td></tr>
+<tr><td>50</td><td>458</td><td>451</td><td>140</td><td>144</td></tr>
+<tr><td>75</td><td>684</td><td>718</td><td>239</td><td>239</td></tr>
+<tr><td>100</td><td>928</td><td>1,013</td><td>375</td><td>357</td></tr>
+<tr><td>125</td><td>1,134</td><td>1,187</td><td>427</td><td>432</td></tr>
+<tr><td>150</td><td>1,307</td><td class="ok">1,409</td><td>486</td><td class="ok">492</td></tr>
+</table></div>
+<p class="sub">다른 경우(이번 조정 뒤): 광고 최대 · 하루 2시간 = 150챕터 516일 · 광고 안 봄 · 하루 10시간 = 1,309일.<br>
+강화 없이 아무것도 안 고치면: 광고 안 봄 3,000일에 99챕터 · 광고 최대 117챕터.</p>
+
+<h2>2. 바꾼 것 — 총알 등급 공격력 (단발탄 예)</h2>
+<p>모든 종류(단발·산탄·속사·관통·레이저·미사일)에 등급마다 같은 배율을 곱했습니다. 배율은 매끈한 곡선 <code>exp(0.02·등급 + 0.044·등급²)</code> — 높은 등급일수록 한 단계 오를 때 더 세게 뜁니다.</p>
+<div class="wrap"><table>
+<tr><th>등급</th><th>전</th><th>후</th><th>한 단계 위 배율 (후)</th></tr>
+<tr><td>D</td><td>100</td><td>100</td><td>-</td></tr>
+<tr><td>C</td><td>200</td><td>213</td><td>x2.13</td></tr>
+<tr><td>B</td><td>400</td><td>496</td><td>x2.33</td></tr>
+<tr><td>A</td><td>800</td><td>1,260</td><td>x2.54</td></tr>
+<tr><td>S</td><td>900</td><td>1,970</td><td>x1.56 *</td></tr>
+<tr><td>SS</td><td>1,800</td><td>5,980</td><td>x3.04</td></tr>
+<tr><td>SSS</td><td>3,600</td><td>19.8k</td><td>x3.31</td></tr>
+<tr><td>R</td><td>7,920</td><td>78.7k</td><td>x3.98</td></tr>
+<tr><td>SR</td><td>17.4k</td><td>342k</td><td>x4.35</td></tr>
+<tr><td>SSR</td><td>43.5k</td><td>1.84m</td><td>x5.38</td></tr>
+<tr><td>U</td><td>108k</td><td>10.8m</td><td>x5.87</td></tr>
+<tr><td>SU</td><td>304k</td><td>78.0m</td><td>x7.22</td></tr>
+<tr><td>SSU</td><td>914k</td><td>656m</td><td>x8.41</td></tr>
+</table></div>
+<p class="sub">* 단발탄 S 는 원래 표에서도 A 의 1.125배뿐이었음(다른 종류는 2.25배) — 이번엔 손대지 않음. 고칠지 알려 주세요.</p>
+
+<h2>3. 그 밖에</h2>
+<ul>
+<li>다이아는 이제 총알·코스튬·보급품에만 씀 (시뮬 끝까지: 총알 82만 · 코스튬 35만 · 보급품 16만, 광고 안 봄).</li>
+<li>골드 강화·스테이지 체력·보상 표는 그대로입니다.</li>
+<li>표 원본은 <code>Kachi_Gun/Table/_backup_1105/Weapon.xlsx</code>. 도구는 늘 원본에서 다시 계산해서, 두 번 돌려도 같은 값이 나옵니다.</li>
+<li>시뮬에서 강화를 다시 켜 보려면 <code>balance_sim.py</code> 의 <code>SLOT_ENCHANT = True</code>.</li>
+<li>자동 시험 오류 0. 폰에는 다음 AAB(7번)부터 들어갑니다.</li>
+</ul>
+</main></body>
+</html>
