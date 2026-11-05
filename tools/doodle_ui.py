@@ -206,7 +206,60 @@ def assets():
     bl('icon_missile', 252, 256, f'<g transform="rotate(-45 126 128) translate(-34,-8)">{puff(70, 136, 50, "#ffb04a", 6, 7, 4) + rr(96, 108, 160, 56, 28, "#e8735f", 7) + P("M248 110 Q298 136 248 162 Z", "#fff4dc", 7) + C(196, 136, 13, "#9fd6ff", 5)}</g>')
     bl('icon_pierce', 249, 256, C(150, 150, 90, '#fff4dc', 7) + C(150, 150, 60, '#e8735f', 7) + C(150, 150, 28, '#fff4dc', 7) + f'<g transform="rotate(40 110 110)">{P("M20 90 L170 110 L20 130 Z", "#c9d1da", 7)}</g>')
     bl('icon_shotgun', 256, 161, f'<g transform="translate(6,58) scale(1.3)">{P("M4 30 L40 22 L46 46 L10 52 Z", "#9a6a44", 6) + rr(40, 18, 60, 20, 4, "#6c7480", 6) + rr(96, 22, 60, 12, 4, "#8f97a3", 6)}</g>' + ''.join(C(x, y, 9, '#ffcf3a', 5) for x, y in ((214, 40), (236, 70), (212, 98), (240, 120), (196, 70))))
+    supplies(A)
     return A
+
+
+# ------------------------------------------------------------------ 보급품 25 (Supply_Collection 순서, 100 칸 안에 그림 → 원래 크기에 맞춰 늘림)
+def supply_svgs():
+    sw = 3.6
+    def syringe(liq):
+        return (f'<g transform="rotate(-45 50 50)">' + rr(22, 40, 50, 20, 4, '#eef4f8', sw) + rrf(26, 44, 34, 12, 2, liq)
+                + rr(72, 44, 10, 12, 2, '#c9d1da', sw) + L('M82 50 L94 50', sw) + L('M10 50 L22 50 M10 42 L10 58', sw) + L('M34 40 v6 M44 40 v6 M54 40 v6', 2) + '</g>')
+    S = {}
+    S[1] = (f'<g transform="rotate(-8 50 50)">{rr(14, 24, 48, 52, 6, "#e8c27a", sw)}</g>' + rr(38, 30, 48, 52, 6, '#f0cf8a', sw)
+            + ''.join(f'<circle cx="{x}" cy="{y}" r="2.6" fill="#b8874a"/>' for x in (50, 62, 74) for y in (44, 56, 68)))
+    S[2] = (rr(26, 18, 48, 66, 6, '#f2f2f2', sw) + rrf(28, 34, 44, 16, 0, '#e8735f') + rrf(28, 58, 44, 10, 0, '#e8735f')
+            + E(50, 18, 24, 6, '#d9dee6', sw) + E(50, 84, 24, 6, '#c9d1da', sw))
+    S[3] = (rr(30, 20, 40, 64, 10, '#8fbbe8', sw) + rr(36, 12, 28, 12, 4, '#6c7480', sw) + L('M34 44 H66 M34 60 H66', 3, '#5a8ac0') + rrf(38, 28, 6, 46, 3, '#ffffff', .5))
+    S[4] = (rr(18, 34, 64, 48, 10, '#8aa86a', sw) + rr(16, 28, 68, 12, 5, '#9cba7a', sw) + L('M30 28 Q50 6 70 28', 4.4) + L('M30 52 H70', 3, '#6f8a52'))
+    S[5] = (f'<g transform="rotate(-40 50 50)">' + rr(14, 38, 72, 24, 6, '#9a6a44', sw) + rr(30, 38, 40, 24, 2, '#ffcf3a', sw) + L('M14 38 l-6 -4 M14 62 l-6 4 M86 38 l6 -4 M86 62 l6 4', 3) + '</g>')
+    S[6] = (rr(14, 30, 72, 54, 8, '#e8735f', sw) + L('M38 30 L38 20 L62 20 L62 30', 4.4) + rrf(44, 40, 12, 34, 2, '#fff4dc') + rrf(33, 51, 34, 12, 2, '#fff4dc'))
+    S[7] = syringe('#ffa04a')
+    S[8] = (rr(30, 28, 40, 60, 8, '#7e9a6a', sw) + L('M38 28 L38 8', 4.4) + rr(36, 36, 28, 14, 3, '#cfe6a8', 3) + ''.join(C(x, y, 3.4, '#5d6470', 2) for x in (40, 50, 60) for y in (60, 72)))
+    S[9] = (rr(14, 36, 72, 30, 12, '#5d6470', sw) + C(32, 66, 14, '#8fe08a', sw) + C(68, 66, 14, '#8fe08a', sw) + L('M14 44 Q4 40 6 30 M86 44 Q96 40 94 30', 3.6) + C(28, 62, 4, '#ffffff', 0) + C(64, 62, 4, '#ffffff', 0))
+    S[10] = (P('M24 20 L40 20 Q50 32 60 20 L76 20 L82 84 L18 84 Z', '#7e9a6a', sw) + L('M18 50 H82 M18 66 H82', 3, '#5f7a4e') + ''.join(f'<ellipse cx="{x}" cy="{y}" rx="5" ry="3" fill="#5f7a4e"/>' for x, y in ((30, 36), (68, 40), (44, 74), (64, 76))))
+    S[11] = (L('M20 20 L80 80 M80 20 L20 80', 16) + L('M20 20 L80 80 M80 20 L20 80', 10, '#8aa86a') + ''.join(rr(x - 7, y - 7, 14, 14, 3, '#9cba7a', 3) for x, y in ((32, 32), (68, 32), (32, 68), (68, 68))))
+    S[12] = (f'<g transform="rotate(-40 50 50)">' + rr(20, 36, 50, 28, 8, '#eef4f8', sw) + rrf(24, 40, 40, 20, 4, '#8fe08a') + rr(70, 42, 12, 16, 3, '#6c7480', sw) + L('M82 50 L96 50', sw) + rr(8, 40, 12, 20, 3, '#6c7480', sw) + '</g>')
+    S[13] = (f'<g transform="rotate(-40 50 50)">' + P('M14 36 L66 36 Q92 40 96 50 Q92 60 66 64 L14 64 Z', '#ffcf3a', sw) + L('M66 36 L66 64', 3) + C(40, 50, 9, '#3b281c', 0) + C(40, 50, 3, '#ffcf3a', 0) + '</g>')
+    S[14] = (rr(16, 16, 68, 68, 10, '#8fbbe8', sw) + C(50, 50, 24, '#eef4f8', sw) + ''.join(f'<path d="M50 50 Q{50 + 20 * math.cos(math.radians(a))} {50 + 20 * math.sin(math.radians(a))} {50 + 22 * math.cos(math.radians(a + 40))} {50 + 22 * math.sin(math.radians(a + 40))} Z" fill="#8fbbe8" stroke="{INK}" stroke-width="2.4"/>' for a in range(0, 360, 72)) + C(50, 50, 5, '#6c7480', 2.4))
+    S[15] = (f'<g transform="rotate(-35 50 50)">' + rr(16, 30, 64, 40, 12, '#c9b0f0', sw) + rr(80, 40, 8, 20, 3, '#6c7480', sw) + L('M34 40 L46 50 L40 54 L56 62', 3.6, '#ffffff') + '</g>')
+    S[16] = (C(50, 50, 36, '#c9d1da', sw) + C(50, 50, 24, '#8fd6ff', sw) + C(50, 50, 10, '#ffffff', 0) + ''.join(C(50 + 36 * math.cos(math.radians(a)), 50 + 36 * math.sin(math.radians(a)), 5, '#6c7480', 2.4) for a in range(0, 360, 60)))
+    S[17] = (C(50, 50, 36, '#9a7ad8', sw) + L('M50 50 m-26 0 a26 26 0 0 1 26 -26 M50 50 m0 18 a18 18 0 0 1 -18 -18 M50 50 m10 0 a10 10 0 0 1 -10 10', 4, '#e6dcff') + C(50, 50, 5, '#ffffff', 0))
+    S[18] = syringe('#7fc4f0')
+    S[19] = (rr(28, 22, 44, 62, 10, '#eef4f8', sw) + rrf(32, 36, 36, 44, 6, '#8fe08a') + rr(24, 14, 52, 12, 4, '#6c7480', sw) + rr(24, 80, 52, 10, 4, '#6c7480', sw) + L('M28 40 Q10 40 10 60 Q10 80 26 80 M72 50 Q90 50 90 68', 3.6) + C(44, 60, 4, '#ffffff', 0) + C(56, 50, 3, '#ffffff', 0))
+    S[20] = (''.join(E(50, y, 26, 7, 'none' if False else '#d08a5a', 3.4) for y in range(26, 80, 9)) + L('M18 20 L10 30 L18 32 L10 42 M82 70 L92 62 L84 58 L92 50', 3.4, '#8fd6ff'))
+    S[21] = (rr(24, 18, 52, 66, 10, '#5d4a7a', sw) + E(50, 18, 26, 6, '#7a68a0', sw) + E(50, 84, 26, 6, '#4a3a62', sw) + L('M50 51 m-14 0 a14 14 0 0 1 14 -14 M50 51 m0 10 a10 10 0 0 1 -10 -10', 4, '#c9b0f0'))
+    S[22] = (f'<ellipse cx="50" cy="50" rx="40" ry="14" fill="none" stroke="{INK}" stroke-width="9" transform="rotate(30 50 50)"/><ellipse cx="50" cy="50" rx="40" ry="14" fill="none" stroke="#8fbbe8" stroke-width="4.6" transform="rotate(30 50 50)"/>'
+             f'<ellipse cx="50" cy="50" rx="40" ry="14" fill="none" stroke="{INK}" stroke-width="9" transform="rotate(-30 50 50)"/><ellipse cx="50" cy="50" rx="40" ry="14" fill="none" stroke="#c9b0f0" stroke-width="4.6" transform="rotate(-30 50 50)"/>'
+             + C(50, 50, 10, '#8fd6ff', sw))
+    S[23] = (burst(50, 50, 44, 12, '#ffb04a', sw, .78, 0) + C(50, 50, 30, '#ff8a4a', sw) + C(44, 44, 9, '#ffd84d', 0))
+    S[24] = (f'<g transform="translate(-8,-8) scale(1.16)">{ic_gear(100, 100, "#c9d1da", 2.6)}</g>' + L('M34 50 C34 38 46 38 50 50 C54 62 66 62 66 50 C66 38 54 38 50 50 C46 62 34 62 34 50 Z', 6, INK) + L('M34 50 C34 38 46 38 50 50 C54 62 66 62 66 50 C66 38 54 38 50 50 C46 62 34 62 34 50 Z', 2.6, '#8fd6ff'))
+    S[25] = (P('M22 14 L78 14 Q80 50 50 62 Q20 50 22 14 Z', GOLD, sw) + L('M22 22 Q6 22 10 36 Q14 46 28 44 M78 22 Q94 22 90 36 Q86 46 72 44', 3.6) + rr(44, 60, 12, 14, 2, GOLD, sw) + rr(30, 74, 40, 12, 4, GOLD, sw)
+             + f'<g transform="translate(36,20) scale(.17)">{capy_head(167, 131)}</g>')
+    return S
+
+
+def supplies(A):
+    sizes = {}
+    for k, svg in supply_svgs().items():
+        n = 'supply_%02d' % k
+        p = os.path.join(ART, 'Supply', n + '.png')
+        bp = os.path.join(ROOT, 'tools', '_build', 'pixel_orig', 'Supply', n + '.png')
+        w, h = Image.open(bp if os.path.exists(bp) else p).size
+        dw = {2: 56, 3: 48, 8: 46}.get(k, 100)      # 세로로 긴 그림은 폭이 좁으니 높이에 맞춰 키움
+        s = min(w / dw, h / 100.0)
+        A[n] = ('Supply', w, h, f'<g transform="translate({(w - 100 * s) / 2:.1f},{(h - 100 * s) / 2:.1f}) scale({s:.3f})">{svg}</g>', 1.6)
 
 
 def main(keys):

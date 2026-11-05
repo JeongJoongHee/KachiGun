@@ -94,7 +94,7 @@ def crawl_rig(name):
 # 카피바라(스킨 0~16): 시트 4번 칸(사격 자세, 총은 떼어 냄), 칸 360, 발 = (160, 바닥 8px 위)
 CAPY = dict(neck=198, hip=300, crotch=318, split=165)
 # 11-05 낙서풍으로 다시 그린 스킨(tools/doodle_art.py) 은 자리가 다름
-CAPY_BY_SKIN = {0: dict(neck=212, hip=288, crotch=326, split=160)}
+CAPY_BY_SKIN = {k: dict(neck=212, hip=288, crotch=326, split=160) for k in range(18)}
 
 
 def load_cell_grid(path, idx, cell):

@@ -4,7 +4,7 @@
 벡터(SVG)로 그린 뒤 Edge 헤드리스로 투명 PNG 를 뽑아, 지금 게임 그림과 같은 칸 크기·발 위치·총구 위치로 저장한다.
 → 게임 코드는 그대로, 그림만 바뀜. 뼈대는 그 다음 tools/rig_gen.py 로 다시 심음(ZOMBIE_RIG · CRAWL_RIG · CAPY_BY_SKIN).
 
-사용: PYTHONUTF8=1 python tools/doodle_art.py [capy] [zombie] [map]     (없으면 전부)
+사용: PYTHONUTF8=1 python tools/doodle_art.py [capy] [skins] [zombie] [map] [icon]     (없으면 capy·zombie·map) — PowerShell 에서(Bash 에선 Edge 가 안 뜸)
       → Kachi_Gun/Assets/Resources/Art/{Char,Zombie,Map}/...  · 미리보기 tools/_preview/doodle_*.png
 원래 도트 그림 백업: tools/_build/pixel_orig/ (git 에는 원래 그림이 기록에 있음)
 
@@ -27,7 +27,7 @@ def render(svg_body, w, h, wob=3.0, freq=0.022):
     tmp = tempfile.mkdtemp(prefix='doodle_')
     try:
         svg = f'''<svg xmlns="http://www.w3.org/2000/svg" width="{w}" height="{h}" viewBox="0 0 {w} {h}">
-<defs><filter id="wob" x="-5%" y="-5%" width="110%" height="110%">
+<defs><filter id="wob" filterUnits="userSpaceOnUse" x="0" y="0" width="{w}" height="{h}">
 <feTurbulence type="fractalNoise" baseFrequency="{freq}" numOctaves="2" seed="7"/>
 <feDisplacementMap in="SourceGraphic" scale="{wob}"/></filter></defs>
 <g filter="url(#wob)">{svg_body}</g></svg>'''
@@ -91,25 +91,132 @@ CS, CX0, CY0 = 1.65, 41.0, 74.0
 CAPY_BODY = '#c49a6e'; CAPY_DARK = '#a97f58'; CAPY_BELLY = '#d9b88f'; CAPY_FAR = '#b9906a'
 
 
-def capy_body_svg(sw=3.2):
-    """몸(총·손 빼고) — 로컬 좌표. 오른팔은 어깨~팔뚝 가운데까지(나머지 팔뚝·손은 총 그림에)"""
+BODY_D = 'M38 156 C20 144 18 112 26 92 C30 74 32 52 42 36 C52 22 70 14 90 15 C108 16 121 24 127 38 C133 50 133 66 127 75 C121 82 116 83 116 89 C124 108 122 138 106 154 C92 166 54 166 38 156 Z'
+
+
+def capy_body_svg(sw=3.2, cos=None):
+    """몸(총·손 빼고) — 로컬 좌표. 오른팔은 어깨~팔뚝 가운데까지(나머지 팔뚝·손은 총 그림에)
+    cos(스킨 의상): body·dark·belly 색, back(몸 뒤), front(몸 위), top(맨 위), onesie(잠옷: 몸 전체 의상색 + 얼굴 구멍), ears(귀 대신)"""
+    cos = cos or {}
+    body = cos.get('body', CAPY_BODY); dark = cos.get('dark', CAPY_DARK); belly = cos.get('belly', CAPY_BELLY)
+    one = cos.get('onesie')
+    ears = cos.get('ears')
+    if ears is None:
+        ears = P('M50 32 Q44 20 54 18 Q60 20 59 28', dark, sw) + P('M78 18 Q78 6 88 7 Q93 10 90 17', dark, sw)
+    snout = F('M110 51 C123 49 132 57 131 67 C130 76 121 81 110 80 C104 72 104 58 110 51 Z', CAPY_DARK)
+    face = ''
+    if one:   # 잠옷: 얼굴 쪽만 카피바라 색 (몸 모양 안으로 자름) + 모자 테두리
+        face = (f'<clipPath id="bodyClip"><path d="{BODY_D}"/></clipPath><g clip-path="url(#bodyClip)">'
+                f'<ellipse cx="106" cy="56" rx="33" ry="31" fill="{CAPY_BODY}" stroke="{INK}" stroke-width="{sw}"/>'
+                + snout + '</g>'
+                + f'<path d="{BODY_D}" fill="none" stroke="{INK}" stroke-width="{sw}" stroke-linejoin="round"/>')
+    eyes = L('M84 46 H93', 3.4) + L('M103 44 H112', 3.4) if one else L('M75 40 H86', 3.4) + L('M97 38 H107', 3.4)
+    blush = f'<ellipse cx="{92 if one else 80}" cy="{62 if one else 60}" rx="6.5" ry="3.8" fill="#e08f7c" opacity=".55"/>'
     return ''.join([
-        E(90, 161, 14, 7.5, CAPY_DARK, sw),
-        E(54, 160, 14, 7.5, CAPY_DARK, sw),
-        P('M38 156 C20 144 18 112 26 92 C30 74 32 52 42 36 C52 22 70 14 90 15 C108 16 121 24 127 38 C133 50 133 66 127 75 C121 82 116 83 116 89 C124 108 122 138 106 154 C92 166 54 166 38 156 Z', CAPY_BODY, sw),
-        f'<ellipse cx="72" cy="126" rx="27" ry="29" fill="{CAPY_BELLY}"/>',
-        F('M110 51 C123 49 132 57 131 67 C130 76 121 81 110 80 C104 72 104 58 110 51 Z', CAPY_DARK),
-        P('M50 32 Q44 20 54 18 Q60 20 59 28', CAPY_DARK, sw),
-        P('M78 18 Q78 6 88 7 Q93 10 90 17', CAPY_DARK, sw),
+        cos.get('back', ''),
+        E(90, 161, 14, 7.5, dark, sw),
+        E(54, 160, 14, 7.5, dark, sw),
+        ears if one else '',
+        P(BODY_D, body, sw),
+        f'<ellipse cx="72" cy="126" rx="27" ry="29" fill="{belly}"/>',
+        face if one else snout,
+        '' if one else ears,
         L('M125 56 q3 2 3 5', 2.6), L('M124 75 q-5 3 -10 0', 2.6),
-        L('M75 40 H86', 3.4), L('M97 38 H107', 3.4),
-        f'<ellipse cx="80" cy="60" rx="6.5" ry="3.8" fill="#e08f7c" opacity=".55"/>',
+        eyes, blush,
+        cos.get('front', ''),
         # 오른팔 위쪽 (팔뚝 가운데 x 52 까지, 나머지는 총 그림)
         '<clipPath id="armUp"><rect x="0" y="0" width="54" height="200"/></clipPath>',
         f'<g clip-path="url(#armUp)">'
-        + F('M36 88 Q40 104 48 111 Q55 117 63 116 Q75 115 79 109 L79 97 Q76 91 69 90 Q62 88 57 82 Z', CAPY_BODY)
+        + F('M36 88 Q40 104 48 111 Q55 117 63 116 Q75 115 79 109 L79 97 Q76 91 69 90 Q62 88 57 82 Z', cos.get('arm', body))
         + L('M36 88 Q40 104 48 111 Q55 117 63 116', sw) + L('M57 82 Q59 88 65 90', sw) + '</g>',
+        cos.get('top', ''),
     ])
+
+
+def _tri(x, y, w, h, fill, sw=3.2):
+    return P(f'M{x} {y} L{x + w / 2} {y - h} L{x + w} {y} Z', fill, sw)
+
+
+def rr_(x, y, w, h, r, fill, sw=3.2):
+    return f'<rect x="{x}" y="{y}" width="{w}" height="{h}" rx="{r}" fill="{fill}" stroke="{INK}" stroke-width="{sw}"/>'
+
+
+def _teeth(x0, x1, y):
+    return L(' '.join(f'M{x} {y} l3 5 l3 -5' for x in range(x0, x1, 6)), 2.2)
+
+
+def costumes():
+    """스킨 1~17 의상 (Skin_Table 이름 순서)"""
+    sw = 3.2
+    C_ = {}
+    # 1 밀짚모자
+    C_[1] = dict(top=P('M30 24 Q86 6 140 22 Q144 30 132 30 Q86 20 38 34 Q24 32 30 24 Z', '#f0c86a', sw)
+                 + P('M58 24 Q60 0 86 -2 Q112 0 114 20 Q86 14 58 24 Z', '#f0c86a', sw) + L('M60 20 Q86 12 113 16', 3.4, '#d0603e'))
+    # 2 천사 날개
+    C_[2] = dict(back=P('M30 70 Q-14 40 -20 74 Q-14 86 0 86 Q-16 96 -8 108 Q6 112 14 104 Q4 118 18 124 Q32 118 32 100 Z', '#fffaf0', sw)
+                 + L('M0 86 Q12 84 22 82 M14 104 Q22 98 28 94', 2.4),
+                 top=f'<ellipse cx="86" cy="2" rx="24" ry="6.5" fill="none" stroke="{INK}" stroke-width="7"/>'
+                 f'<ellipse cx="86" cy="2" rx="24" ry="6.5" fill="none" stroke="#ffd34d" stroke-width="3.6"/>')
+    # 3 새싹
+    C_[3] = dict(top=L('M88 16 Q86 4 90 -6', 3.2) + P('M90 -4 Q104 -18 114 -8 Q104 4 90 -4 Z', '#8fcf6a', sw)
+                 + P('M88 -2 Q72 -16 64 -6 Q74 4 88 -2 Z', '#8fcf6a', sw))
+    # 4 꿀꿀 돼지 (잠옷)
+    C_[4] = dict(onesie=1, body='#f2b8c0', dark='#e597a3', belly='#f8d3d8', paw='#f2b8c0',
+                 ears=P('M44 36 L40 12 L62 26 Z', '#e597a3', sw) + P('M76 18 L82 -4 L98 16 Z', '#e597a3', sw),
+                 back=L('M24 128 q-10 -2 -8 -10 q6 -6 10 2 q2 8 -8 8', 3.2))
+    # 5 악어 잠옷
+    C_[5] = dict(onesie=1, body='#86bf6a', dark='#6aa452', belly='#cfe6a8', paw='#86bf6a',
+                 ears=C(60, 22, 7, '#86bf6a', sw) + C(84, 14, 7, '#86bf6a', sw)
+                 + f'<circle cx="60" cy="21" r="2.4" fill="{INK}"/><circle cx="84" cy="13" r="2.4" fill="{INK}"/>',
+                 top=_teeth(80, 128, 25))
+    # 6 원시인
+    C_[6] = dict(front=P('M24 100 L106 80 L118 102 Q122 138 106 154 Q84 166 52 162 Q32 156 26 132 Z', '#e0a050', sw)
+                 + ''.join(f'<ellipse cx="{x}" cy="{y}" rx="4.5" ry="3" fill="#9a5e2a"/>' for x, y in ((48, 112), (72, 104), (96, 98), (60, 132), (86, 126), (104, 120), (52, 150), (80, 150))),
+                 top=L('M46 32 Q86 16 126 30', 7, INK) + L('M46 32 Q86 16 126 30', 3.6, '#d0603e'))
+    # 7 검은 두건
+    C_[7] = dict(top=P('M38 42 Q46 12 90 11 Q122 12 130 40 Q92 26 40 48 Z', '#3a3440', sw)
+                 + P('M40 40 Q24 34 18 44 Q28 48 38 46 Z', '#3a3440', sw) + P('M40 44 Q26 52 26 62 Q36 58 42 48 Z', '#3a3440', sw))
+    # 8 그림자 망토
+    C_[8] = dict(back=P('M44 74 Q10 100 4 168 L70 168 Q40 120 60 76 Z', '#4a4458', sw),
+                 front=P('M40 78 Q70 94 104 82 L100 92 Q70 104 42 88 Z', '#4a4458', sw),
+                 top=P('M40 38 Q48 6 90 6 Q126 8 132 40 Q118 22 90 20 Q58 22 40 38 Z', '#4a4458', sw))
+    # 9 공룡 잠옷 (등 가시)
+    spikes = ''.join(_tri(x, y, 14, 14, '#f2a35a') for x, y in ((78, 16), (56, 20), (36, 36), (22, 60), (16, 88)))
+    C_[9] = dict(onesie=1, body='#8fcf7a', dark='#73b25e', belly='#d6eeb4', paw='#8fcf7a', ears='', back=spikes)
+    # 10 모험가 배낭
+    C_[10] = dict(back=P('M-2 76 Q-4 64 10 64 L34 64 Q42 66 40 78 L38 136 Q36 142 28 142 L4 142 Q-4 142 -4 134 Z', '#b07a48', sw)
+                  + P('M-2 76 Q14 70 40 78 L38 96 Q16 94 -2 98 Z', '#c99060', sw) + rr_(12, 108, 16, 12, 3, '#ffd34d', 2.4),
+                  front=L('M40 76 Q50 98 46 128', 6.4, INK) + L('M40 76 Q50 98 46 128', 3, '#8a5a36'))
+    # 11 박쥐 날개
+    C_[11] = dict(back=P('M34 68 Q4 30 -22 54 Q-10 62 -6 74 Q-18 78 -12 92 Q0 88 6 96 Q4 108 16 108 Q22 92 34 92 Z', '#5d4a7a', sw)
+                  + L('M32 72 L-4 60 M30 80 L-4 82 M30 88 L8 100', 2.4))
+    # 12 멜빵바지
+    C_[12] = dict(front=P('M28 116 Q72 108 118 112 Q122 140 106 154 Q84 166 52 162 Q32 156 26 132 Z', '#6f8fc8', sw)
+                  + P('M52 92 L94 88 L96 114 L54 118 Z', '#6f8fc8', sw) + L('M54 94 L42 70 M92 90 L102 72', 6, INK)
+                  + L('M54 94 L42 70 M92 90 L102 72', 2.6, '#6f8fc8') + C(56, 96, 3.4, '#ffd34d', 2) + C(91, 92, 3.4, '#ffd34d', 2))
+    # 13 꼬꼬 잠옷
+    C_[13] = dict(onesie=1, body='#fff6e6', dark='#ecdcc0', belly='#ffffff', paw='#fff6e6', ears='',
+                  top=P('M76 16 Q74 -2 84 2 Q88 -8 96 0 Q104 -6 106 6 Q108 14 100 18 Z', '#e8735f', sw)
+                  + P('M128 34 L140 38 L128 42 Z', '#ffcf3a', 2.6))
+    # 14 빨간 망토
+    C_[14] = dict(back=P('M44 74 Q12 104 10 166 L64 166 Q38 120 58 78 Z', '#d9604e', sw),
+                  front=P('M44 80 Q70 94 104 84 L100 92 Q70 102 46 88 Z', '#d9604e', sw)
+                  + P('M70 92 L62 104 L74 100 L82 108 L80 94 Z', '#d9604e', sw))
+    # 15 상어 잠옷 (등지느러미)
+    C_[15] = dict(onesie=1, body='#8fb8d8', dark='#7299bb', belly='#e6f0f8', paw='#8fb8d8', ears='',
+                  back=P('M58 22 Q60 -6 84 -12 Q76 4 82 16 Z', '#8fb8d8', sw), top=_teeth(80, 128, 25))
+    # 16 줄무늬 고양이 (잠옷)
+    C_[16] = dict(onesie=1, body='#f0b26a', dark='#d8964e', belly='#f8dcb4', paw='#f0b26a',
+                  ears=P('M42 38 L44 8 L66 24 Z', '#f0b26a', sw) + P('M76 18 L90 -8 L102 16 Z', '#f0b26a', sw),
+                  back=L('M24 140 Q0 140 2 116 Q4 100 14 104', 7.4, INK) + L('M24 140 Q0 140 2 116 Q4 100 14 104', 3.4, '#f0b26a'),
+                  front=L('M30 70 l14 4 M24 96 l16 2 M26 122 l16 0', 4, '#c47a3a'))
+    # 17 해적 선장
+    C_[17] = dict(top=P('M30 30 Q40 2 86 0 Q132 2 142 30 Q120 22 112 26 Q86 12 60 26 Q50 22 30 30 Z', '#3a3440', sw)
+                  + C(86, 14, 6, '#fff4dc', 2.2) + L('M83 13 h2 M88 13 h2', 1.6)
+                  + f'<ellipse cx="102" cy="39" rx="8" ry="7" fill="{INK}"/>' + L('M96 34 L70 26 M108 36 L126 30', 2.4),
+                  front=P('M24 96 Q60 84 112 86 Q122 120 106 154 Q84 166 52 162 Q30 156 26 132 Z', '#c75a4a', sw)
+                  + L('M60 90 L58 160', 2.4) + C(64, 110, 3, '#ffd34d', 1.6) + C(64, 130, 3, '#ffd34d', 1.6))
+    return C_
 
 
 # 총 그림 260x130, 회전 중심(손목) = (90,55), 총구 = 중심 + (137.6, 위 17.6) — Art.GunMuzzle 그대로 쓰려고 맞춤
@@ -137,9 +244,12 @@ def capy_gun_svg(sw=3.2, paw=CAPY_BODY, far=CAPY_FAR):
 
 
 def make_capy(skin=0):
-    body = render(f'<g transform="translate({CX0},{CY0}) scale({CS})">{capy_body_svg()}</g>', 360, 360, wob=3.0)
+    cos = costumes().get(skin, {}) if skin else {}
+    body = render(f'<g transform="translate({CX0},{CY0}) scale({CS})">{capy_body_svg(cos=cos)}</g>', 360, 360, wob=3.0)
     gx, gy = 90 - GPX * CS, 55 - GPY * CS
-    gun = render(f'<g transform="translate({gx:.2f},{gy:.2f}) scale({CS})">{capy_gun_svg()}</g>', 260, 130, wob=2.4)
+    paw = cos.get('paw', CAPY_BODY)
+    far = shade(paw, .94) if 'paw' in cos else CAPY_FAR
+    gun = render(f'<g transform="translate({gx:.2f},{gy:.2f}) scale({CS})">{capy_gun_svg(paw=paw, far=far)}</g>', 260, 130, wob=2.4)
     # 시트 16칸: 0~11 = 같은 몸 (뼈대가 움직임), 12~15 = 쓰러짐(옆으로 눕힘)
     sheet = Image.new('RGBA', (1440, 1440), (0, 0, 0, 0))
     b = Image.fromarray(body)
@@ -391,11 +501,59 @@ def make_map():
     print('map')
 
 
+
+# ------------------------------------------------------------------ 앱 아이콘 (11-05 낙서풍) — Kachi_Gun/Assets/Art/AppIcon/ (연결은 Editor/AppIconSetup.cs)
+def _fg_layer(size):
+    """카피바라(총 든 자세) + 뒤에서 오는 좀비 — size 정사각형 투명"""
+    capy = Image.open(os.path.join(ART, 'Char', 'skin_00.png')).convert('RGBA').crop((0, 0, 360, 360))
+    gun = Image.open(os.path.join(ART, 'Char', 'gun_00.png')).convert('RGBA')
+    px, py = CX0 + GPX * CS, CY0 + GPY * CS
+    capy.alpha_composite(gun, (int(round(px - 90)), int(round(py - 55))))
+    z = Image.open(os.path.join(ART, 'Zombie', 'z_basic.png')).convert('RGBA').crop((0, 0, 400, 380)).transpose(Image.FLIP_LEFT_RIGHT)
+    lay = Image.new('RGBA', (600, 600), (0, 0, 0, 0))
+    lay.alpha_composite(z.resize((300, 285), Image.LANCZOS), (300, 150))
+    lay.alpha_composite(capy.resize((560, 560), Image.LANCZOS), (-60, 20))
+    return lay.resize((size, size), Image.LANCZOS)
+
+
+def make_app_icon():
+    dst = os.path.join(ROOT, 'Kachi_Gun', 'Assets', 'Art', 'AppIcon')
+    bg_svg = lambda s: (f'<rect width="{s}" height="{s}" fill="#ffe3a0"/>'
+                        f'<circle cx="{s * .5}" cy="{s * .42}" r="{s * .36}" fill="#fff1c8"/>'
+                        f'<path d="M0 {s * .78} Q{s * .25} {s * .72} {s * .5} {s * .77} Q{s * .75} {s * .82} {s} {s * .76} L{s} {s} L0 {s} Z" fill="#a9cf86" stroke="{INK}" stroke-width="{s * .014}"/>')
+    # 512 정사각형 · 동그라미
+    bg = Image.fromarray(render(bg_svg(512), 512, 512, wob=4, freq=.01))
+    fg = _fg_layer(512)
+    sq = bg.copy(); sq.alpha_composite(fg)
+    sq.convert('RGB').save(os.path.join(dst, 'app_icon.png'))
+    mask = Image.new('L', (512, 512), 0)
+    from PIL import ImageDraw
+    ImageDraw.Draw(mask).ellipse((0, 0, 511, 511), fill=255)
+    rd = Image.new('RGBA', (512, 512), (0, 0, 0, 0)); rd.paste(sq, (0, 0), mask)
+    rd.save(os.path.join(dst, 'app_icon_round.png'))
+    # 적응형 432: 바탕 + 앞 그림(가운데 66% 안전 영역에 들어가게 작게)
+    Image.fromarray(render(bg_svg(432), 432, 432, wob=4, freq=.01)).convert('RGB').save(os.path.join(dst, 'app_icon_bg.png'))
+    f2 = Image.new('RGBA', (432, 432), (0, 0, 0, 0))
+    f2.alpha_composite(_fg_layer(300), (66, 70))
+    f2.save(os.path.join(dst, 'app_icon_fg.png'))
+    sq.convert('RGB').resize((256, 256)).save(os.path.join(PREV, 'doodle_app_icon.png'))
+    print('app icon')
+
+
 if __name__ == '__main__':
     what = set(sys.argv[1:]) or {'capy', 'zombie', 'map'}
     if 'capy' in what:
         make_capy(0)
+    if 'skins' in what:
+        for k in range(1, 18):
+            make_capy(k)
+        pv = Image.new('RGBA', (360 * 6, 360 * 3), (233, 220, 188, 255))
+        for k in range(18):
+            pv.alpha_composite(Image.open(os.path.join(PREV, 'doodle_capy%02d.png' % k)), ((k % 6) * 360, (k // 6) * 360))
+        pv.save(os.path.join(PREV, 'doodle_skins.png'))
     if 'zombie' in what:
         make_zombies()
     if 'map' in what:
         make_map()
+    if 'icon' in what:
+        make_app_icon()
