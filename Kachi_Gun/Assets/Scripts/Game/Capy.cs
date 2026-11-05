@@ -28,7 +28,8 @@ namespace KachiGun
         float angryT;
         /// <summary>지금 화난 얼굴인지 (시험용)</summary>
         public bool Angry => angrySr && angrySr.enabled;
-        static float AngryDist => (float)Tables.C("Capy_Angry_Dist", 3.0);
+        /// <summary>화난 얼굴 거리 = 장착 총알 사정거리 x Capy_Angry_Range (11-05 사용자: 사정거리 절반 이하)</summary>
+        float AngryDist => (weapon != null ? weapon.range : 8f) * (float)Tables.C("Capy_Angry_Range", 0.5);
         Vector3 shadowScale;
         int frame;
 
@@ -147,7 +148,7 @@ namespace KachiGun
             }
             if (target != null) aimT = 0.6f; else aimT -= dt;    // 대상이 사라져도 잠깐은 겨눈 채로
 
-            // 11-05 좀비가 Capy_Angry_Dist 안으로 오면 화난 얼굴 (멀어져도 0.6초는 그대로)
+            // 11-05 좀비가 사정거리 절반(Capy_Angry_Range) 안으로 오면 화난 얼굴 (멀어져도 0.6초는 그대로)
             if (angrySr)
             {
                 if (ZombieNear(AngryDist)) angryT = 0.6f; else angryT -= dt;

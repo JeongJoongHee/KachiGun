@@ -95,6 +95,8 @@ def zig(x0, x1, y, n, amp):
 # 샘플 좌표(로컬) → 칸(360) : X = 41 + x*1.65, Y = 74 + y*1.65   (발 가운데 x 72 → 칸 160, 발바닥 → 바닥 8px 위)
 CS, CX0, CY0 = 1.65, 41.0, 74.0
 CAPY_BODY = '#c49a6e'; CAPY_DARK = '#a97f58'; CAPY_BELLY = '#d9b88f'; CAPY_FAR = '#b9906a'
+# 11-05 카피바라 선은 더 진하고 굵고 덜 흔들리게 (사용자 "캐릭터 선을 조금 더 진하고 선명하게")
+CAPY_INK, CAPY_SW, CAPY_WOB, GUN_WOB = '#24160e', 3.6, 1.4, 1.0
 
 
 # 11-05 두상 = 추가 요청 5번 (눈 높이~턱 앞쪽 윤곽을 5번 그림에서 따옴, 위·뒤통수·몸은 그대로)
@@ -164,7 +166,7 @@ def _teeth(x0, x1, y):
 
 def costumes():
     """스킨 1~17 의상 (Skin_Table 이름 순서)"""
-    sw = 3.2
+    sw = CAPY_SW
     C_ = {}
     # 1 밀짚모자
     C_[1] = dict(top=P('M30 24 Q86 6 140 22 Q144 30 132 30 Q86 20 38 34 Q24 32 30 24 Z', '#f0c86a', sw)
@@ -261,8 +263,9 @@ def capy_gun_svg(sw=3.2, paw=CAPY_BODY, far=CAPY_FAR):
 
 def make_capy(skin=0):
     cos = costumes().get(skin, {}) if skin else {}
-    body = render(f'<g transform="translate({CX0},{CY0}) scale({CS})">{capy_body_svg(cos=cos)}</g>', 360, 360, wob=3.0)
-    angry = render(f'<g transform="translate({CX0},{CY0}) scale({CS})">{capy_body_svg(cos=dict(cos, angry=1))}</g>', 360, 360, wob=3.0)
+    ink = lambda svg: svg.replace(INK, CAPY_INK)
+    body = render(ink(f'<g transform="translate({CX0},{CY0}) scale({CS})">{capy_body_svg(CAPY_SW, cos=cos)}</g>'), 360, 360, wob=CAPY_WOB)
+    angry = render(ink(f'<g transform="translate({CX0},{CY0}) scale({CS})">{capy_body_svg(CAPY_SW, cos=dict(cos, angry=1))}</g>'), 360, 360, wob=CAPY_WOB)
     x0, y0, x1, y1 = FACE_RECT
     diff = np.abs(body.astype(int) - angry.astype(int)).sum(axis=2) > 24
     outside = diff.copy(); outside[y0:y1, x0:x1] = False
@@ -272,7 +275,7 @@ def make_capy(skin=0):
     gx, gy = 90 - GPX * CS, 55 - GPY * CS
     paw = cos.get('paw', CAPY_BODY)
     far = shade(paw, .94) if 'paw' in cos else CAPY_FAR
-    gun = render(f'<g transform="translate({gx:.2f},{gy:.2f}) scale({CS})">{capy_gun_svg(paw=paw, far=far)}</g>', 260, 130, wob=2.4)
+    gun = render(ink(f'<g transform="translate({gx:.2f},{gy:.2f}) scale({CS})">{capy_gun_svg(CAPY_SW, paw=paw, far=far)}</g>'), 260, 130, wob=GUN_WOB)
     # 시트 16칸: 0~11 = 같은 몸 (뼈대가 움직임), 12~15 = 쓰러짐(옆으로 눕힘)
     sheet = Image.new('RGBA', (1440, 1440), (0, 0, 0, 0))
     b = Image.fromarray(body)
