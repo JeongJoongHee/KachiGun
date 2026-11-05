@@ -14,7 +14,7 @@ namespace KachiGun
     /// </summary>
     public class WeaponPopup : Popup
     {
-        protected override Vector2 Size => new(1010, 1660);
+        protected override Vector2 Size => new(1010, 1590);
         protected override string Title => "총알 관리";
         protected override bool PillTitle => true;
         readonly WeaponCell[] slots = new WeaponCell[SaveData.SlotCount];
@@ -40,35 +40,41 @@ namespace KachiGun
 
         protected override void Build()
         {
-            // ---- 장착 카드 3장 ----
+            // ---- 장착 카드 3장 (11-05 밤: 동료1 | 리더 | 동료2 — 리더가 가운데 · 조금 더 크게, 게임 화면의 위·가운데·아래와 같은 순서) ----
             string[] names = { L.T("리더"), L.T("동료 1"), L.T("동료 2") };
+            float[] cardX = { 0, -306, 306 };
             for (int i = 0; i < 3; i++)
             {
-                var card = UIKit.KitImg(content, "panel_tan", new Vector2(286, 440), "Card" + i);
-                card.rectTransform.Place(0.5f, 1, new Vector2(-304 + i * 304, -4), new Vector2(286, 440), new Vector2(0.5f, 1));
-                if (i == 0)
+                bool lead = i == 0;
+                float w = lead ? 310 : 276, h = lead ? 438 : 392, ts = lead ? 246 : 210, k = lead ? 1.08f : 0.94f;
+                float top = lead ? -4 : -4 - (438 - 392) / 2f;                  // 동료 카드는 리더 카드와 가운데 높이를 맞춤
+                var card = UIKit.KitImg(content, "panel_tan", new Vector2(w, h), "Card" + i);
+                card.rectTransform.Place(0.5f, 1, new Vector2(cardX[i], top), new Vector2(w, h), new Vector2(0.5f, 1));
+                if (lead)
                 {
                     // 리더 카드 = 금색 테두리
-                    var gl = UIKit.KitImg(card.transform, "outline", new Vector2(300, 454), "LeaderGlow");
+                    var gl = UIKit.KitImg(card.transform, "outline", new Vector2(w + 18, h + 18), "LeaderGlow");
                     gl.rectTransform.Fill(-9, -9, -9, -9);
                     gl.color = UIKit.Gold;
                     gl.raycastTarget = false;
                 }
-                var c = WeaponCell.Make(card.transform, this, true, i, 226);
-                c.rt.Place(0.5f, 1, new Vector2(0, -18), new Vector2(226, 226), new Vector2(0.5f, 1));
-                var t = UIKit.Label(card.transform, names[i], 38, UIKit.Ink, TextAnchor.MiddleCenter, 0);
-                t.rectTransform.Place(0.5f, 1, new Vector2(0, -284), new Vector2(260, 50), new Vector2(0.5f, 0.5f));
-                // 공격력 · 연사
-                var sw = UIKit.Img(card.transform, Art.Get("UI/icon_swords"), new Vector2(46, 42), "AtkIcon");
-                sw.rectTransform.Place(0.5f, 1, new Vector2(-104, -356), new Vector2(46, 42), new Vector2(0.5f, 0.5f));
-                slotAtk[i] = UIKit.Label(card.transform, "", 34, UIKit.Ink, TextAnchor.MiddleLeft, 0);
-                slotAtk[i].rectTransform.Place(0.5f, 1, new Vector2(-78, -356), new Vector2(96, 46), new Vector2(0, 0.5f));
-                UIKit.Fit(slotAtk[i], 20);
-                var bo = UIKit.KitImg(card.transform, "i_bolt", new Vector2(34, 42), "SpdIcon");
-                bo.rectTransform.Place(0.5f, 1, new Vector2(34, -356), new Vector2(34, 42), new Vector2(0.5f, 0.5f));
-                slotSpd[i] = UIKit.Label(card.transform, "", 34, UIKit.Ink, TextAnchor.MiddleLeft, 0);
-                slotSpd[i].rectTransform.Place(0.5f, 1, new Vector2(54, -356), new Vector2(86, 46), new Vector2(0, 0.5f));
-                UIKit.Fit(slotSpd[i], 20);
+                var c = WeaponCell.Make(card.transform, this, true, i, ts);
+                c.rt.Place(0.5f, 1, new Vector2(0, -16), new Vector2(ts, ts), new Vector2(0.5f, 1));
+                float ny = -16 - ts - 36, sy = ny - 64;
+                var t = UIKit.Label(card.transform, names[i], (int)(38 * k), UIKit.Ink, TextAnchor.MiddleCenter, 0);
+                t.rectTransform.Place(0.5f, 1, new Vector2(0, ny), new Vector2(w - 20, 50), new Vector2(0.5f, 0.5f));
+                // 공격력 · 연사 (카드 폭에 맞춰 왼쪽 반 · 오른쪽 반)
+                float q = w / 2f;
+                var sw = UIKit.Img(card.transform, Art.Get("UI/icon_swords"), new Vector2(46, 42) * k, "AtkIcon");
+                sw.rectTransform.Place(0.5f, 1, new Vector2(-q + 34 * k, sy), new Vector2(46, 42) * k, new Vector2(0.5f, 0.5f));
+                slotAtk[i] = UIKit.Label(card.transform, "", (int)(34 * k), UIKit.Ink, TextAnchor.MiddleLeft, 0);
+                slotAtk[i].rectTransform.Place(0.5f, 1, new Vector2(-q + 60 * k, sy), new Vector2(q - 60 * k - 4, 46), new Vector2(0, 0.5f));
+                UIKit.Fit(slotAtk[i], 18);
+                var bo = UIKit.KitImg(card.transform, "i_bolt", new Vector2(34, 42) * k, "SpdIcon");
+                bo.rectTransform.Place(0.5f, 1, new Vector2(18 * k, sy), new Vector2(34, 42) * k, new Vector2(0.5f, 0.5f));
+                slotSpd[i] = UIKit.Label(card.transform, "", (int)(34 * k), UIKit.Ink, TextAnchor.MiddleLeft, 0);
+                slotSpd[i].rectTransform.Place(0.5f, 1, new Vector2(38 * k, sy), new Vector2(q - 38 * k - 10, 46), new Vector2(0, 0.5f));
+                UIKit.Fit(slotSpd[i], 18);
                 slots[i] = c;
                 // 카드 아무 데나 눌러도 그 칸 정보
                 int si = i;
@@ -77,20 +83,22 @@ namespace KachiGun
                 cb.onClick.AddListener(() => { AudioManager.Play(AudioManager.Sfx.UiClick); Select(slots[si]); });
             }
 
-            // ---- 인벤토리 5x4 ----
+            // ---- 인벤토리 5x4 (11-05 밤: 판에 꽉 차게 — 칸 172 · 사이 6 · 판 안쪽 여백 10) ----
+            const float cs = 172, gap = 6, pad = 10, gridTop = -460;
+            float gw = 5 * cs + 4 * gap + 2 * pad, gh = 4 * cs + 3 * gap + 2 * pad;
             var gridBg = UIKit.Box(content, new Color(0.95f, 0.89f, 0.76f), "GridBg");
-            gridBg.rectTransform.Place(0.5f, 1, new Vector2(0, -470), new Vector2(904, 726), new Vector2(0.5f, 1));
+            gridBg.rectTransform.Place(0.5f, 1, new Vector2(0, gridTop), new Vector2(gw, gh), new Vector2(0.5f, 1));
             gridBg.raycastTarget = false;
             for (int i = 0; i < SaveData.InvSize; i++)
             {
                 int r = i / 5, c = i % 5;
-                var cell = WeaponCell.Make(content, this, false, i, 160);
-                cell.rt.Place(0.5f, 1, new Vector2(-344 + c * 172, -486 - r * 174), new Vector2(160, 160), new Vector2(0.5f, 1));
+                var cell = WeaponCell.Make(content, this, false, i, cs);
+                cell.rt.Place(0.5f, 1, new Vector2((c - 2) * (cs + gap), gridTop - pad - r * (cs + gap)), new Vector2(cs, cs), new Vector2(0.5f, 1));
                 inv[i] = cell;
             }
 
             hint = UIKit.Label(content, "", 34, UIKit.Ink, TextAnchor.MiddleCenter, 0);
-            hint.rectTransform.Place(0.5f, 1, new Vector2(0, -1250), new Vector2(900, 60), new Vector2(0.5f, 0.5f));
+            hint.rectTransform.Place(0.5f, 1, new Vector2(0, -1236), new Vector2(900, 60), new Vector2(0.5f, 0.5f));
             UIKit.Fit(hint, 22);
 
             // ---- 아래 버튼 3개 ----
