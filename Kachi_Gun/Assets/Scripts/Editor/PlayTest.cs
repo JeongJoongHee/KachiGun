@@ -321,8 +321,15 @@ namespace KachiGun.EditorTools
                 if (t is Ore o && o.row.kind == "Big" && o.Alive) { for (int i = 0; i < 60 && o.Alive; i++) GM.Damage(o, 1e9, o.Pos); break; }
             Log($"큰 보석 부숨: {before:0.0} → {GM.dungeonGems:0.0} (고정 피해 1이라 40번 때림)");
             Check(GM.dungeonGems - before >= 0.99, "큰 보석 +1");
-            GM.dungeonTime = 0.05f;
-            yield return Wait(0.4f);
+            // 11-05 보상 있는 광석을 모두 깨면 시간이 남아도 자동으로 끝
+            foreach (var t in Target.All.ToArray())
+                if (t is Ore o2 && o2.Alive && o2.reward > 0) for (int i = 0; i < 80 && o2.Alive; i++) GM.Damage(o2, 1e9, o2.Pos);
+            float tLeft = GM.dungeonTime;
+            yield return Wait(0.3f);
+            Check(HUD.I.Get<ResultPopup>() == null || !HUD.I.Get<ResultPopup>().gameObject.activeSelf, "다 깬 직후엔 아직 안 끝남 (0.8초 기다림)");
+            yield return Wait(0.8f);
+            var mineRp = HUD.I.Get<ResultPopup>();
+            Check(GM.MineRewardLeft == 0 && mineRp != null && mineRp.gameObject.activeSelf && tLeft > 5f, $"보상 광석 다 깸 → 자동 끝 (남은 시간 {tLeft:0}초, 다이아 {GM.dungeonGems:0.0})");
             Capture("11_mine_result");
             HUD.I.Get<ResultPopup>()?.Close();
             yield return Wait(0.3f);

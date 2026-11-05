@@ -275,6 +275,8 @@ namespace KachiGun
                     dungeonGems += o.reward;
                     Fx.I?.Text(o.Center + Vector2.up * 0.4f, "+" + o.reward.ToString("0.#"), new Color(0.5f, 0.85f, 1f), 40, 0.9f);
                 }
+                // 11-05 보상 있는 광석(다이아)을 모두 깨면 잠깐 뒤 자동으로 끝 (회색 바위 = 보상 0 은 안 셈)
+                if (MineRewardLeft == 0 && mineDoneT <= 0) mineDoneT = MineDoneDelay;
                 StageChanged?.Invoke();
             }
         }
@@ -668,6 +670,7 @@ namespace KachiGun
             S.statMines++;
             BeginDungeon(Mode.Mine, Tables.Cf("MineTime"));
             dungeonGems = 0;
+            mineDoneT = 0;
             // Mine_Ore_Spec 줄마다 Spawn_Count 개 (Spawn_X_Near~Far: 0 = 분대 바로 앞 ~ 1 = 오른쪽 끝), 보상 x Mine_Scaling 배율
             // 큰 보석 = 오른쪽 끝(멀리) 밀집, 작은 보석 = 곳곳, 회색 바위 = 분대 가까이(AI 가 먼저 때리는 함정)
             double mul = Tables.MineMul(S.Chapter);
@@ -707,9 +710,19 @@ namespace KachiGun
             StageChanged?.Invoke();
         }
 
+        /// <summary>비밀던전에 남은 보상 있는 광석 수</summary>
+        public int MineRewardLeft { get { int n = 0; foreach (var t in Target.All) if (t is Ore o && o.Alive && o.reward > 0) n++; return n; } }
+        const float MineDoneDelay = 0.8f;   // 마지막 +다이아 글자를 보고 끝나게
+        float mineDoneT;
+
         void DungeonTick(float dt)
         {
             if (dungeonOver) return;
+            if (mode == Mode.Mine && mineDoneT > 0)
+            {
+                mineDoneT -= dt;
+                if (mineDoneT <= 0) { EndDungeon(true); return; }
+            }
             dungeonTime -= dt;
             if (dungeonTime <= 0)
             {
