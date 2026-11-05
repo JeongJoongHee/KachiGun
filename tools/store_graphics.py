@@ -16,7 +16,7 @@ ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 GAME = os.path.join(ROOT, 'Kachi_Gun')
 SHOT_DIR = os.path.join(GAME, 'Logs', 'PlayTest', 'store')
 ART = os.path.join(GAME, 'Assets', 'Resources', 'Art')
-FONT = os.path.join(GAME, 'Assets', 'Resources', 'Font', 'Galmuri11-Bold.ttf')
+FONT = os.path.join(GAME, 'Assets', 'Resources', 'Font', 'Jua-Regular.ttf')
 OUT = os.path.join(ROOT, '스토어 등록')
 
 # (캡처 이름, 문구 1줄, 문구 2줄)

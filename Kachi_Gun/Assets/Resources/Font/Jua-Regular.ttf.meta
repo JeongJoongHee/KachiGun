@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: d5fd5181382c8d0409285ea92779b8a4
+guid: c758aaf51759e5c4e917626efa8062ce
 TrueTypeFontImporter:
   externalObjects: {}
   serializedVersion: 4
@@ -9,7 +9,7 @@ TrueTypeFontImporter:
   characterPadding: 1
   includeFontData: 1
   fontNames:
-  - Galmuri11
+  - Jua
   fallbackFontReferences: []
   customCharacters: 
   fontRenderingMode: 0

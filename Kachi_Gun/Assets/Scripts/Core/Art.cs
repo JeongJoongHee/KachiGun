@@ -23,8 +23,8 @@ namespace KachiGun
 
         // 11-05 글꼴: Resources/Font/<FontName> · 글자 크기 x FontScale (글꼴마다 같은 크기에서 보이는 크기가 달라서).
         // 에디터 비교 촬영은 환경 변수 KACHI_FONT(글꼴 이름) · KACHI_FONT_SCALE 로 바꿔 볼 수 있음 (폰에선 안 씀)
-        public const string FontName = "Galmuri11-Bold";   // 11-05 사용자 고름 (갈무리11 굵게, OFL) · 전 = MonaS12TextKR
-        const float FontScaleBase = 1f;
+        public const string FontName = "Jua-Regular";   // 11-05 낙서풍 그림에 맞춰 주아(OFL) · 전 = Galmuri11-Bold, MonaS12TextKR
+        const float FontScaleBase = 1.07f;   // 주아는 같은 크기에서 한글이 조금 작아 보여서
         static float fontScale = -1f;
         public static Font Font
         {

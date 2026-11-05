@@ -26,24 +26,25 @@ G = 8                       # 그물 칸(px)
 #   neck 목 · hip 엉덩이(골반) · crotch 가랑이(이 아래부터 두 다리 분리) · knee 무릎 · split 앞/뒷다리 나누는 x
 #   armB / armF = ([(x0, y0, x1, y1), ...], (어깨x, 어깨y)) 팔(+든 무기) 범위 상자들, 없으면 None. swing = 팔 흔들기 세기
 ZOMBIE_RIG = {
-    'armor':  dict(neck=212, hip=292, crotch=306, knee=338, split=215, armB=([(70, 185, 144, 345)], (132, 205)), armF=([(290, 185, 362, 345)], (296, 205)), legA=14, swing=9),
-    'basic':  dict(neck=250, hip=304, crotch=316, knee=343, split=186, armB=None, armF=([(218, 252, 290, 300)], (205, 266)), legA=20, swing=4),
-    'bat':    dict(neck=226, hip=300, crotch=312, knee=340, split=224, armB=([(118, 232, 178, 336)], (172, 242)), armF=([(280, 236, 400, 318), (318, 150, 400, 236)], (276, 248)), legA=18, swing=6),
-    'farmer': dict(neck=236, hip=300, crotch=312, knee=340, split=212, armB=([(110, 242, 168, 334)], (164, 250)), armF=([(262, 244, 400, 318), (300, 170, 400, 244)], (252, 252)), legA=18, swing=6),
-    'fat':    dict(neck=202, hip=318, crotch=326, knee=350, split=210, armB=([(80, 196, 134, 322)], (128, 208)), armF=([(282, 196, 336, 322)], (284, 208)), legA=12, swing=7),
-    'hat':    dict(neck=240, hip=302, crotch=315, knee=342, split=212, armB=None, armF=([(232, 256, 310, 302)], (218, 268)), legA=19, swing=4),
-    'knife':  dict(neck=236, hip=300, crotch=312, knee=340, split=215, armB=([(110, 240, 164, 336)], (160, 250)), armF=([(282, 244, 400, 318), (330, 160, 400, 244)], (278, 252)), legA=18, swing=6),
-    'mummy':  dict(neck=222, hip=298, crotch=310, knee=340, split=178, armB=None, armF=([(232, 246, 300, 332)], (220, 258)), legA=19, swing=4),
-    'ogre':   dict(neck=236, hip=310, crotch=320, knee=346, split=190, armB=([(20, 196, 132, 370)], (128, 214)), armF=([(262, 262, 350, 362)], (262, 266)), legA=12, swing=7),
-    'reaper': dict(neck=262, hip=300, crotch=999, knee=340, split=200, armB=None, armF=None, legA=0, swing=0, robe=True),
+    # 11-05 밝은 낙서풍 그림(tools/doodle_art.py) 기준. 도트 그림 때 값 = tools/_build/pixel_orig/rig_gen_pixel.py
+    'basic':  dict(neck=238, hip=300, crotch=312, knee=338, split=201, armB=([(238, 232, 316, 256)], (226, 247)), armF=([(238, 256, 324, 282)], (218, 266)), legA=14, swing=6),
+    'hat':    dict(neck=238, hip=300, crotch=312, knee=338, split=201, armB=([(238, 232, 316, 256)], (226, 247)), armF=([(238, 256, 324, 282)], (218, 266)), legA=14, swing=6),
+    'mummy':  dict(neck=238, hip=300, crotch=312, knee=338, split=201, armB=([(238, 232, 316, 256)], (226, 247)), armF=([(238, 256, 324, 282)], (218, 266)), legA=14, swing=6),
+    'knife':  dict(neck=238, hip=300, crotch=312, knee=338, split=201, armB=([(238, 232, 316, 256)], (226, 247)), armF=([(238, 256, 324, 282), (296, 196, 362, 256)], (218, 266)), legA=14, swing=6),
+    'bat':    dict(neck=238, hip=300, crotch=312, knee=338, split=201, armB=None, armF=([(238, 256, 324, 282), (296, 124, 362, 256)], (218, 266)), legA=14, swing=6),
+    'farmer': dict(neck=238, hip=300, crotch=312, knee=338, split=201, armB=([(238, 232, 316, 256)], (226, 247)), armF=([(238, 256, 324, 282), (312, 108, 362, 340)], (218, 266)), legA=14, swing=6),
+    'armor':  dict(neck=238, hip=300, crotch=312, knee=338, split=201, armB=([(254, 230, 320, 256)], (232, 247)), armF=([(254, 256, 330, 284)], (226, 266)), legA=12, swing=6),
+    'fat':    dict(neck=234, hip=300, crotch=316, knee=340, split=201, armB=([(282, 232, 320, 256)], (262, 247)), armF=([(282, 256, 326, 282)], (262, 266)), legA=11, swing=6),
+    'ogre':   dict(neck=214, hip=310, crotch=322, knee=346, split=191, armB=([(20, 196, 118, 370)], (128, 216)), armF=([(280, 262, 340, 372)], (262, 266)), legA=12, swing=7),
+    'reaper': dict(neck=236, hip=300, crotch=999, knee=340, split=210, armB=None, armF=None, legA=0, swing=0, robe=True),
 }
 CRAWL_RIG = {
     # 기어 다니는 좀비: 몸이 가로 — legs(뒤로 끌리는 다리) · pelvis(엉덩이) · spine(몸) · head · armB/armF(번갈아 뻗는 팔)
-    #   legs_x 왼쪽 = 다리, neck_x 오른쪽·arm_top 위 = 머리, 팔 = (상자들, 어깨)
-    'crawler': dict(hip=(125, 318), legs_x=118, neck_x=182, arm_top=318,
-                    armB=([(165, 318, 228, 380)], (195, 320)), armF=([(228, 316, 300, 380)], (238, 320))),
-    'bucket':  dict(hip=(130, 318), legs_x=125, neck_x=186, arm_top=318,
-                    armB=([(175, 318, 236, 380)], (202, 320)), armF=([(236, 316, 304, 380)], (246, 320))),
+    #   legs_x 왼쪽 = 다리, neck_x 오른쪽·arm_top 위 = 머리, 팔 = (상자들, 어깨)   (11-05 낙서풍 그림 기준)
+    'crawler': dict(hip=(122, 330), legs_x=116, neck_x=196, arm_top=338,
+                    armB=([(196, 344, 238, 380)], (202, 326)), armF=([(242, 344, 300, 380)], (240, 332))),
+    'bucket':  dict(hip=(122, 330), legs_x=116, neck_x=196, arm_top=338,
+                    armB=([(196, 344, 238, 380)], (202, 326)), armF=([(242, 344, 300, 380)], (240, 332))),
 }
 
 
@@ -92,6 +93,8 @@ def crawl_rig(name):
 
 # 카피바라(스킨 0~16): 시트 4번 칸(사격 자세, 총은 떼어 냄), 칸 360, 발 = (160, 바닥 8px 위)
 CAPY = dict(neck=198, hip=300, crotch=318, split=165)
+# 11-05 낙서풍으로 다시 그린 스킨(tools/doodle_art.py) 은 자리가 다름
+CAPY_BY_SKIN = {0: dict(neck=212, hip=288, crotch=326, split=160)}
 
 
 def load_cell_grid(path, idx, cell):
@@ -101,7 +104,7 @@ def load_cell_grid(path, idx, cell):
 
 
 def capy_rig(skin):
-    p = CAPY
+    p = CAPY_BY_SKIN.get(skin, CAPY)
     img = load_cell_grid(os.path.join(ART, 'Char', 'skin_%02d.png' % skin), 4, 360)
     rig = Rig('c_%02d' % skin, img, 'capy', 150, (160, 8))
     rig.crotch_img = p['crotch']
