@@ -22,8 +22,14 @@ INK = '#3b281c'
 
 
 # ------------------------------------------------------------------ SVG → 투명 PNG
-def render(svg_body, w, h, wob=3.0, freq=0.022):
-    """svg_body(그림 조각들)를 w x h 투명 PNG(np RGBA)로. wob = 손그림 흔들림 세기(px)"""
+WOB_K = 0.5     # 11-05 테두리 매끈하게: 흔들림 절반 (사용자 "테두리를 조금 매끈하게")
+SS = 2          # 2배로 그려 줄임 = 가장자리 부드럽게 (흔들림 효과가 가장자리를 계단처럼 깨뜨려서)
+
+
+def render(svg_body, w, h, wob=3.0, freq=0.022, ss=None):
+    """svg_body(그림 조각들)를 w x h 투명 PNG(np RGBA)로. wob = 손그림 흔들림 세기(px, WOB_K 를 곱함) · ss = 몇 배로 그려 줄일지"""
+    ss = ss or SS
+    wob = wob * WOB_K
     tmp = tempfile.mkdtemp(prefix='doodle_')
     try:
         svg = f'''<svg xmlns="http://www.w3.org/2000/svg" width="{w}" height="{h}" viewBox="0 0 {w} {h}">
@@ -36,13 +42,13 @@ def render(svg_body, w, h, wob=3.0, freq=0.022):
         out = os.path.join(tmp, 'a.png')
         url = 'file:///' + hp.replace('\\', '/')
         subprocess.run([EDGE, '--headless=new', '--disable-gpu', '--hide-scrollbars', '--default-background-color=00000000',
-                        f'--window-size={w},{h}', '--force-device-scale-factor=1', '--virtual-time-budget=2000',
+                        f'--window-size={w},{h}', f'--force-device-scale-factor={ss}', '--virtual-time-budget=2000',
                         f'--user-data-dir={os.path.join(tmp, "prof")}', f'--screenshot={out}', url],
                        stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, timeout=120)
-        im = np.array(Image.open(out).convert('RGBA'))
-        if im.shape[0] != h or im.shape[1] != w:
-            im = np.array(Image.fromarray(im).crop((0, 0, w, h)))
-        return im
+        big = Image.open(out).convert('RGBA').crop((0, 0, w * ss, h * ss))
+        if ss != 1:   # 미리 곱한 알파로 줄여야 가장자리에 검은 테가 안 생김
+            big = big.convert('RGBa').resize((w, h), Image.LANCZOS).convert('RGBA')
+        return np.array(big)
     finally:
         shutil.rmtree(tmp, ignore_errors=True)
 
@@ -110,8 +116,12 @@ def capy_body_svg(sw=3.2, cos=None):
                 f'<ellipse cx="106" cy="56" rx="33" ry="31" fill="{CAPY_BODY}" stroke="{INK}" stroke-width="{sw}"/>'
                 + snout + '</g>'
                 + f'<path d="{BODY_D}" fill="none" stroke="{INK}" stroke-width="{sw}" stroke-linejoin="round"/>')
-    eyes = L('M84 46 H93', 3.4) + L('M103 44 H112', 3.4) if one else L('M75 40 H86', 3.4) + L('M97 38 H107', 3.4)
-    blush = f'<ellipse cx="{92 if one else 80}" cy="{62 if one else 60}" rx="6.5" ry="3.8" fill="#e08f7c" opacity=".55"/>'
+    ex = 8 if one else 0      # 잠옷은 얼굴 구멍 안으로 눈을 옮김
+    eyes = f'<circle cx="{80.4 + ex}" cy="43" r="2.7" fill="{INK}"/>'
+    if cos.get('angry'):      # 4번: 눈썹 + 찡그린 코 + 처진 입
+        eyes += L(f'M{79.8 + ex - 1} 32.8 L{88.9 + ex} 38.4', 2.8)
+    blush = ''
+
     return ''.join([
         cos.get('back', ''),
         E(90, 161, 14, 7.5, dark, sw),
@@ -121,16 +131,21 @@ def capy_body_svg(sw=3.2, cos=None):
         f'<ellipse cx="72" cy="126" rx="27" ry="29" fill="{belly}"/>',
         face if one else snout,
         '' if one else ears,
-        L('M125 56 q3 2 3 5', 2.6), L('M124 75 q-5 3 -10 0', 2.6),
+        face_marks(cos.get('angry')),
         eyes, blush,
         cos.get('front', ''),
-        # 오른팔 위쪽 (팔뚝 가운데 x 52 까지, 나머지는 총 그림)
-        '<clipPath id="armUp"><rect x="0" y="0" width="54" height="200"/></clipPath>',
-        f'<g clip-path="url(#armUp)">'
-        + F('M36 88 Q40 104 48 111 Q55 117 63 116 Q75 115 79 109 L79 97 Q76 91 69 90 Q62 88 57 82 Z', cos.get('arm', body))
-        + L('M36 88 Q40 104 48 111 Q55 117 63 116', sw) + L('M57 82 Q59 88 65 90', sw) + '</g>',
+        # 오른팔 전체 (11-05: 몸 그림에 둠 — 총 그림엔 손만, 손이 팔 끝을 덮음)
+        F('M36 88 Q40 104 48 111 Q55 117 63 116 Q75 115 79 109 L79 97 Q76 91 69 90 Q62 88 57 82 Z', cos.get('arm', body))
+        + L('M36 88 Q40 104 48 111 Q55 117 63 116 Q75 115 79 109', sw) + L('M57 82 Q59 88 65 90 Q69 91 70 94', sw),
         cos.get('top', ''),
     ])
+
+
+def face_marks(angry=False):
+    """주둥이의 코·입 (3번 = Y자 코 + ㅅ 입, 4번 = 찡그린 코 + 처진 입)"""
+    if angry:
+        return L('M113.2 53 L117.2 55.8 M124.8 54.3 L128.3 52.3', 2.6) + L('M120.7 57 L120.7 74.8', 2.4) + L('M114.1 78.8 L120.7 74.8 L124.3 77.8', 2.6)
+    return L('M113.9 60.3 L119.5 64.9 L125.6 59.8 M119.5 64.9 L119.5 74.5', 2.4) + L('M112.9 77.6 L119.5 74.5 L123 77.6', 2.6)
 
 
 def _tri(x, y, w, h, fill, sw=3.2):
@@ -222,15 +237,14 @@ def costumes():
 # 총 그림 260x130, 회전 중심(손목) = (90,55), 총구 = 중심 + (137.6, 위 17.6) — Art.GunMuzzle 그대로 쓰려고 맞춤
 #   로컬 총구 (162, 98) · 회전 중심 로컬 (78.6, 108.7)
 GPX, GPY = 78.6, 108.7
+# 화난 얼굴 조각 = 칸(360) 안 이 사각형 (x0, y0, x1, y1) — 게임은 머리 뼈에 붙여 좀비가 가까우면 켬 (Art.FaceRect 와 같게)
+FACE_RECT = (140, 110, 290, 216)
 
 
 def capy_gun_svg(sw=3.2, paw=CAPY_BODY, far=CAPY_FAR):
     return ''.join([
-        P('M34 98 L60 94 L64 108 L40 112 Q32 110 34 98 Z', '#8a5a36', sw),       # 개머리판 (팔뚝 뒤)
-        '<clipPath id="armLo"><rect x="46" y="0" width="200" height="200"/></clipPath>',
-        f'<g clip-path="url(#armLo)">'
-        + F('M36 88 Q40 104 48 111 Q55 117 63 116 Q75 115 79 109 L79 97 Q76 91 69 90 Q62 88 57 82 Z', paw)
-        + L('M36 88 Q40 104 48 111 Q55 117 63 116 Q75 115 79 109', sw) + L('M57 82 Q59 88 65 90 Q69 91 70 94', sw) + '</g>',
+        '<clipPath id="stockTip"><rect x="0" y="0" width="41" height="200"/></clipPath>',   # 개머리판은 팔 밖으로 나온 끝만 (나머지는 팔 뒤)
+        '<g clip-path="url(#stockTip)">' + P('M34 98 L60 94 L64 108 L40 112 Q32 110 34 98 Z', '#8a5a36', sw) + '</g>',
         f'<rect x="66" y="92" width="34" height="13" rx="3" fill="#5d6470" stroke="{INK}" stroke-width="{sw}"/>',
         f'<rect x="96" y="94" width="66" height="8" rx="3" fill="#7b8592" stroke="{INK}" stroke-width="{sw}"/>',
         f'<rect x="98" y="102" width="42" height="6" rx="2.5" fill="#8a5a36" stroke="{INK}" stroke-width="{sw}"/>',
@@ -246,6 +260,13 @@ def capy_gun_svg(sw=3.2, paw=CAPY_BODY, far=CAPY_FAR):
 def make_capy(skin=0):
     cos = costumes().get(skin, {}) if skin else {}
     body = render(f'<g transform="translate({CX0},{CY0}) scale({CS})">{capy_body_svg(cos=cos)}</g>', 360, 360, wob=3.0)
+    angry = render(f'<g transform="translate({CX0},{CY0}) scale({CS})">{capy_body_svg(cos=dict(cos, angry=1))}</g>', 360, 360, wob=3.0)
+    x0, y0, x1, y1 = FACE_RECT
+    diff = np.abs(body.astype(int) - angry.astype(int)).sum(axis=2) > 24
+    outside = diff.copy(); outside[y0:y1, x0:x1] = False
+    if outside.sum() > 40:
+        print('  주의: 화난 얼굴이 조각 밖에서도 다름', int(outside.sum()))
+    Image.fromarray(angry[y0:y1, x0:x1]).save(os.path.join(ART, 'Char', 'face_angry_%02d.png' % skin))
     gx, gy = 90 - GPX * CS, 55 - GPY * CS
     paw = cos.get('paw', CAPY_BODY)
     far = shade(paw, .94) if 'paw' in cos else CAPY_FAR

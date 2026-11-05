@@ -148,6 +148,12 @@ namespace KachiGun
         public static readonly Vector2 FlashPivot = new(4f / 59f, 1f - 55f / 110f);
         static Dictionary<int, Vector2[]> gunPos;
 
+        // 11-05 화난 얼굴 조각 (tools/doodle_art.py FACE_RECT 와 같게): 칸(360) 안 (140,110)~(290,216) 을 잘라 둔 그림, 머리 뼈에 붙임
+        public static readonly RectInt FaceRect = new(140, 110, 150, 106);
+        /// <summary>화난 얼굴 조각 가운데 (발 기준, 오른쪽을 볼 때, 칸 단위)</summary>
+        public static Vector2 FaceCenter => new((FaceRect.x + FaceRect.width * 0.5f - CharFootX) / CharPPU, (CharCell - 8 - (FaceRect.y + FaceRect.height * 0.5f)) / CharPPU);
+        public static Sprite FaceAngry(int skin) => Resources.Load<Texture2D>($"Art/Char/face_angry_{skin:00}") != null ? Get($"Char/face_angry_{skin:00}", CharPPU) : null;
+
         public static Sprite Gun(int skin) => Get($"Char/gun_{skin:00}", CharPPU, new Vector2(90f / 260f, 1f - 55f / 130f));
         public static Sprite MuzzleFlash => Get("Char/muzzle_flash", CharPPU, FlashPivot);
 

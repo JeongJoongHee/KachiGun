@@ -24,6 +24,11 @@ namespace KachiGun
         Vector2 gunLocal;      // 뼈대일 때: 몸통 뼈 기준 총 자리
         float walk01;
         SpriteRenderer gunSr, flashSr, shadow;
+        SpriteRenderer angrySr;   // 11-05 좀비가 가까우면 켜는 화난 얼굴 (머리 뼈에 붙음)
+        float angryT;
+        /// <summary>지금 화난 얼굴인지 (시험용)</summary>
+        public bool Angry => angrySr && angrySr.enabled;
+        static float AngryDist => (float)Tables.C("Capy_Angry_Dist", 3.0);
         Vector3 shadowScale;
         int frame;
 
@@ -76,11 +81,22 @@ namespace KachiGun
             if (rig) Destroy(rig.gameObject);
             rig = RigView.Create(body, $"c_{skin:00}");
             sr.enabled = rig == null;
+            if (angrySr) { Destroy(angrySr.gameObject); angrySr = null; }
             if (rig)
             {
                 var sp = rig.Bone("spine");
                 gun.SetParent(sp, false);
                 gunLocal = gunPos[4] - rig.RestPos("spine");
+                var face = Art.FaceAngry(skin);
+                var head = rig.Bone("head");
+                if (face && head)
+                {
+                    angrySr = new GameObject("Angry").AddComponent<SpriteRenderer>();
+                    angrySr.transform.SetParent(head, false);
+                    angrySr.transform.localPosition = Art.FaceCenter - rig.RestPos("head");
+                    angrySr.sprite = face;
+                    angrySr.enabled = false;
+                }
             }
             PlaceGun();
         }
@@ -130,6 +146,13 @@ namespace KachiGun
                 flash.localScale = Vector3.one * Random.Range(0.85f, 1.1f);
             }
             if (target != null) aimT = 0.6f; else aimT -= dt;    // 대상이 사라져도 잠깐은 겨눈 채로
+
+            // 11-05 좀비가 Capy_Angry_Dist 안으로 오면 화난 얼굴 (멀어져도 0.6초는 그대로)
+            if (angrySr)
+            {
+                if (ZombieNear(AngryDist)) angryT = 0.6f; else angryT -= dt;
+                angrySr.enabled = angryT > 0;
+            }
 
             // ---------- 그림 ----------
             // 사격: 5 → 6 → 7 → 겨눔 유지(4). 대상이 없으면 숨 쉬는 대기(0~3)
@@ -219,12 +242,21 @@ namespace KachiGun
             gun.localRotation = Quaternion.Euler(0, 0, ang * fc);
         }
 
+        bool ZombieNear(float d)
+        {
+            Vector2 p = transform.position;
+            foreach (var t in Target.All)
+                if (t is Zombie z && z.Alive && ((Vector2)z.transform.position - p).sqrMagnitude < d * d) return true;
+            return false;
+        }
+
         void LateUpdate()
         {
             sr.sortingOrder = Mathf.RoundToInt(-transform.position.y * 100f);
             if (rig) rig.sr.sortingOrder = sr.sortingOrder;
-            gunSr.sortingOrder = sr.sortingOrder + 1;
-            flashSr.sortingOrder = sr.sortingOrder + 2;
+            if (angrySr) angrySr.sortingOrder = sr.sortingOrder + 1;   // 얼굴 조각 = 몸 위 · 총 아래
+            gunSr.sortingOrder = sr.sortingOrder + 2;
+            flashSr.sortingOrder = sr.sortingOrder + 3;
         }
 
         void Fire()

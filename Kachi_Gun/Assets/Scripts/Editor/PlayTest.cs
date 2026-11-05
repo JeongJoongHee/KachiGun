@@ -142,6 +142,7 @@ namespace KachiGun.EditorTools
             // 1) 시작 전투
             Log($"시작: Stage {SaveData.StageName(S.stage)}, 고양이 {Squad.I.cats.Count}, 총 {Tables.WeaponName(S.slots[0])}");
             Check(Squad.I.cats.Count == 1, "처음 분대 1마리");
+            Check(!Squad.I.cats[0].Angry, "처음엔 평소 얼굴 (좀비가 멀리)");
             yield return WaitUntil(() => S.kills >= 3, 40f);
             Log($"처치 {S.kills}, 골드 {S.gold:0}, 좀비 {Target.All.Count}");
             Check(S.kills >= 3, "좀비를 잡음");
@@ -162,6 +163,8 @@ namespace KachiGun.EditorTools
                     if (t > 0.5f && na >= peak && na >= 12) { Capture("01b_horde"); }
                     yield return Wait(0.1f);
                 }
+                Check(Squad.I.cats[0].Angry, "좀비가 가까이 오면 화난 얼굴");
+                Capture("01c_angry");
                 Log($"몰려오기: 화면 최대 {peak}마리 (예전 최대 {st0.maxAlive}) · 한 번에 늘어난 최대 {jump}마리");
                 Check(peak > st0.maxAlive, $"좀비가 예전 최대({st0.maxAlive})보다 많이 보임 ({peak})");
                 Check(jump >= Mathf.Min(3, Tables.Ci("Horde_Pack_Min")), $"무리로 한꺼번에 나옴 (+{jump})");
