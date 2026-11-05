@@ -10,7 +10,7 @@
 
 그림 규칙: 선 #3b281c · 굵은 선 + 단색 · 살짝 흔들리는 선(feTurbulence) · 파스텔(쨍한 색 피함)
 """
-import os, sys, subprocess, tempfile, shutil
+import os, sys, subprocess, tempfile, shutil, math
 import numpy as np
 from PIL import Image
 
@@ -566,6 +566,53 @@ def make_app_icon():
     print('app icon')
 
 
+
+# ------------------------------------------------------------------ 앱 아이콘 2 (11-05 저녁): 아이콘 크기로 바로 그림 (선명) — A 상반신 크게 · B 전신
+def _icon_bg(s):
+    rays = ''.join(f'<path d="M{s/2} {s*.46} L{s/2 + s*.9*math.cos(math.radians(a - 7)):.1f} {s*.46 + s*.9*math.sin(math.radians(a - 7)):.1f} '
+                   f'L{s/2 + s*.9*math.cos(math.radians(a + 7)):.1f} {s*.46 + s*.9*math.sin(math.radians(a + 7)):.1f} Z" fill="#ffe9b0"/>' for a in range(0, 360, 30))
+    return (f'<rect width="{s}" height="{s}" fill="#ffd98a"/>{rays}'
+            f'<circle cx="{s*.5}" cy="{s*.46}" r="{s*.3}" fill="#fff3d0"/>'
+            f'<path d="M0 {s*.8} Q{s*.25} {s*.75} {s*.5} {s*.79} Q{s*.75} {s*.83} {s} {s*.78} L{s} {s} L0 {s} Z" fill="#a9cf86" stroke="{INK}" stroke-width="{s*.012}"/>')
+
+
+def _icon_fg(s, variant):
+    capy = (capy_body_svg(CAPY_SW, cos={'angry': 1}) + capy_gun_svg(CAPY_SW)).replace(INK, CAPY_INK)
+    zom = zombies()['basic']
+    flash = lambda x, y, r: (f'<g transform="translate({x},{y})">' + ''.join(
+        f'<path d="M0 0 L{r*math.cos(math.radians(a-14)):.1f} {r*math.sin(math.radians(a-14)):.1f} L{r*1.5*math.cos(math.radians(a)):.1f} {r*1.5*math.sin(math.radians(a)):.1f} L{r*math.cos(math.radians(a+14)):.1f} {r*math.sin(math.radians(a+14)):.1f} Z" fill="#ffd84d" stroke="{CAPY_INK}" stroke-width="{r*.12:.1f}" stroke-linejoin="round"/>'
+        for a in (-50, 0, 50)) + f'<circle r="{r*.55:.1f}" fill="#fff3b0"/></g>')
+    if variant == 'A':
+        k = s / 512
+        return (f'<g transform="translate({660*k:.1f},{60*k:.1f}) scale({-0.95*k:.3f},{0.95*k:.3f})">{zom}</g>'   # 좀비 (왼쪽을 봄, 오른쪽 끝)
+                + flash(458 * k, 334 * k, s * .05)
+                + f'<g transform="translate({-40*k:.1f},{40*k:.1f}) scale({3.0*k:.3f})">{capy}</g>')
+    k = s / 512
+    return (f'<g transform="translate({612*k:.1f},{s*.36:.1f}) scale({-0.85*k:.3f},{0.85*k:.3f})">{zom}</g>'
+            + flash((10 + 162 * 2.35) * k, (100 + 98 * 2.35) * k, s * .035)
+            + f'<g transform="translate({10*k:.1f},{100*k:.1f}) scale({2.35*k:.3f})">{capy}</g>')
+
+
+def make_app_icon2(variant='A', apply=True):
+    from PIL import ImageDraw
+    dst = os.path.join(ROOT, 'Kachi_Gun', 'Assets', 'Art', 'AppIcon')
+    sq = Image.fromarray(render(_icon_bg(512) + _icon_fg(512, variant), 512, 512, wob=2.0, freq=.01))
+    sq.convert('RGB').save(os.path.join(PREV, f'icon_{variant}.png'))
+    if not apply:
+        return
+    sq.convert('RGB').save(os.path.join(dst, 'app_icon.png'))
+    mask = Image.new('L', (512, 512), 0); ImageDraw.Draw(mask).ellipse((0, 0, 511, 511), fill=255)
+    rd = Image.new('RGBA', (512, 512), (0, 0, 0, 0)); rd.paste(sq, (0, 0), mask)
+    rd.save(os.path.join(dst, 'app_icon_round.png'))
+    # 적응형 432: 바탕 + 앞 그림(가운데 66% 안전 영역 안으로 줄여서)
+    Image.fromarray(render(_icon_bg(432), 432, 432, wob=2.0, freq=.01)).convert('RGB').save(os.path.join(dst, 'app_icon_bg.png'))
+    fg = Image.fromarray(render(_icon_fg(512, variant), 512, 512, wob=2.0, freq=.01))
+    f2 = Image.new('RGBA', (432, 432), (0, 0, 0, 0))
+    f2.alpha_composite(fg.resize((330, 330), Image.LANCZOS), (51, 62))   # 아래 잘린 몸 끝이 보이는 영역(72~360) 밖으로
+    f2.save(os.path.join(dst, 'app_icon_fg.png'))
+    print('app icon', variant)
+
+
 if __name__ == '__main__':
     what = set(sys.argv[1:]) or {'capy', 'zombie', 'map'}
     if 'capy' in what:
@@ -582,4 +629,5 @@ if __name__ == '__main__':
     if 'map' in what:
         make_map()
     if 'icon' in what:
-        make_app_icon()
+        make_app_icon2('B', apply=False)
+        make_app_icon2('A')   # 11-05 저녁: A(상반신) 적용, B 는 미리보기만
