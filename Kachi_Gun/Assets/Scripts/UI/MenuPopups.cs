@@ -8,7 +8,7 @@ namespace KachiGun
     public class SkinPopup : Popup
     {
         protected override Vector2 Size => new(1010, 1660);
-        protected override string Title => "스킨";
+        protected override string Title => "코스튬";   // 11-05 아래 탭 이름 스킨 → 코스튬
         Text total;
         readonly List<(SkinRow row, Image bg, Image pic, Text name, Text price)> cells = new();
 
@@ -68,7 +68,7 @@ namespace KachiGun
             var r = Tables.Skins.Find(x => x.id == id);
             if (S.skins.Contains(id)) { Msg(GM.BuySkin(id)); Refresh(); return; }
             ConfirmPopup.Ask($"<size=46>{L.T(r.name)}</size>\n\n" + L.F("다이아 {0} 으로 살까요?", r.price) + "\n\n" + L.T("보유 효과") + "\n" + L.F("공격력 +{0}% · 공격속도 +{1}% · 금전 +{2}%", r.atk, r.spd, r.gold),
-                () => { Msg(GM.BuySkin(id)); H.Open<SkinPopup>(); }, "스킨 구매");
+                () => { Msg(GM.BuySkin(id)); H.Open<SkinPopup>(); }, "코스튬 구매");
         }
 
         public override void Refresh()

@@ -382,6 +382,51 @@ namespace KachiGun
             return null;
         }
 
+        /// <summary>11-05 [일괄 합성] (추가 요청/UI 수정.png "조건이 맞는 1단계씩만"): 인벤토리의 같은 탄알(종류·등급) 두 개씩 한 번만 합성.
+        /// 이번에 새로 나온 총알은 다시 합치지 않음(한 번 누르면 한 단계) · 장착 중인 총알 · 최고 등급은 빼고. 결과는 앞 칸에. 돌려줌 = 결과가 생긴 칸들</summary>
+        public List<int> MergeAll()
+        {
+            var made = new List<int>();
+            var snap = new List<int>(S.inv);
+            var used = new bool[snap.Count];
+            for (int i = 0; i < snap.Count; i++)
+            {
+                int c = snap[i];
+                if (c < 0 || used[i] || Tables.GradeOf(c) >= Tables.MaxGrade) continue;
+                for (int j = i + 1; j < snap.Count; j++)
+                {
+                    if (used[j] || snap[j] != c) continue;
+                    used[i] = used[j] = true;
+                    int g = Tables.GradeOf(c);
+                    S.inv[j] = -1;
+                    S.inv[i] = Tables.Code(g + 1, Tables.RandomType(g + 1));   // Merge 와 같은 규칙
+                    S.statMerges++;
+                    made.Add(i);
+                    break;
+                }
+            }
+            if (made.Count > 0) { AudioManager.Play(AudioManager.Sfx.Merge); Notify(); }
+            return made;
+        }
+
+        /// <summary>11-05 [분해] 여러 개 고르기: 고른 인벤토리 칸들을 한 번에 분해 → 받은 다이아 합</summary>
+        public double SalvageMany(IEnumerable<int> invIdx)
+        {
+            double sum = 0; int n = 0;
+            foreach (int i in invIdx)
+            {
+                if (i < 0 || i >= S.inv.Count || S.inv[i] < 0) continue;
+                sum += Tables.Grade(Tables.GradeOf(S.inv[i])).salvage;
+                S.inv[i] = -1; n++;
+            }
+            if (n == 0) return 0;
+            S.gems += sum;
+            AudioManager.Play(AudioManager.Sfx.Coin);
+            HUD.I?.Bump(true);
+            Notify();
+            return sum;
+        }
+
         /// <summary>인벤토리 총알 분해 → 다이아 (Grade_Enchant_Multiplier 의 Salvage_Gems_Reward)</summary>
         public string Salvage(int invIdx)
         {

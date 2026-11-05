@@ -225,6 +225,7 @@ namespace KachiGun
             ["btn_green"] = new(5, 5, 5, 4), ["btn_green_hi"] = new(5, 5, 5, 4), ["sq_green"] = new(6, 7, 6, 5),
             ["outline"] = new(4, 4, 4, 4), ["bar_track"] = new(2, 1, 2, 1), ["bar_red"] = new(2, 1, 2, 1),
             ["bar_teal"] = new(2, 1, 2, 1), ["bar_green"] = new(2, 1, 2, 1), ["check_on"] = new(4, 4, 4, 4), ["check_off"] = new(4, 4, 4, 4),
+            ["window_plain"] = new(6, 6, 6, 6), ["title_pill"] = new(11, 11, 11, 11), ["btn_red"] = new(5, 5, 5, 4),   // 11-05 총알 관리 창
         };
 
         /// <summary>UI 팩 부품 (테두리가 있는 것은 9-slice 로 늘려도 모서리 그대로)</summary>

@@ -66,8 +66,8 @@
 금전 획득량,Gold Gain,UI/HUD.cs
 총알 {0},Ammo {0},UI/HUD.cs
 비어 있음,Empty,UI/HUD.cs
-무기,Weapons,UI/HUD.cs
-스킨,Skins,UI/HUD.cs
+총알,Ammo,UI/HUD.cs
+코스튬,Costumes,UI/HUD.cs
 보급품,Supplies,UI/HUD.cs
 보스,Boss,UI/HUD.cs
 포기,Give Up,UI/HUD.cs
@@ -82,7 +82,7 @@
 다이아 {0} 으로 살까요?,Buy for {0} gems?,UI/MenuPopups.cs
 보유 효과,Owned bonus,UI/MenuPopups.cs
 공격력 +{0}% · 공격속도 +{1}% · 금전 +{2}%,ATK +{0}% · SPD +{1}% · Gold +{2}%,UI/MenuPopups.cs
-스킨 구매,Buy Skin,UI/MenuPopups.cs
+코스튬 구매,Buy Costume,UI/MenuPopups.cs
 보유 효과 합계,Total owned bonus,UI/MenuPopups.cs
 공격력 +{0}% · 공격속도 +{1}% · 금전 획득량 +{2}%,ATK +{0}% · SPD +{1}% · Gold +{2}%,UI/MenuPopups.cs
 입는 중,Wearing,UI/MenuPopups.cs
@@ -145,16 +145,25 @@
 내일 또 받을 수 있어요!,Come back tomorrow for more!,UI/Popup.cs
 {0}일을 다 받으면 1일차부터 다시 시작합니다,"After Day {0}, it starts again from Day 1",UI/Popup.cs
 돌아가기,Back,UI/Popup.cs
-총알,Ammo,UI/WeaponPopup.cs
+총알 관리,Ammo,UI/WeaponPopup.cs
 리더,Leader,UI/WeaponPopup.cs
 동료 1,Ally 1,UI/WeaponPopup.cs
 동료 2,Ally 2,UI/WeaponPopup.cs
-장착,Equip,UI/WeaponPopup.cs
-강화,Enhance,UI/WeaponPopup.cs
+일괄 합성,Merge All,UI/WeaponPopup.cs
 D 등급 총알 획득!,Got D grade ammo!,UI/WeaponPopup.cs
-같은 탄알 두 개를 끌어다 겹치면 합성!\n장착 칸을 누르면 슬롯 강화 · 남는 총알은 분해 → 다이아,Drag two identical ammo together to merge!\nTap an equipped slot to enhance · Salvage spares → gems,UI/WeaponPopup.cs
 뽑기,Draw,UI/WeaponPopup.cs
-총알을 누르면 정보가 나옵니다.\n장착 칸으로 끌어다 놓으면 장착!,Tap ammo to see its info.\nDrag it onto an equip slot to equip!,UI/WeaponPopup.cs
+분해할 총알을 눌러 고르세요 (여러 개 가능),Tap ammo to salvage (pick several),UI/WeaponPopup.cs
+{0}개 고름 → 다이아 +{1},{0} picked → +{1} gems,UI/WeaponPopup.cs
+분해,Salvage,UI/WeaponPopup.cs
+같은 탄알을 겹쳐서 합성하세요!,Drop matching ammo together to merge!,UI/WeaponPopup.cs
+장착 중인 총알은 분해할 수 없습니다,Equipped ammo can't be salvaged,UI/WeaponPopup.cs
+합성할 수 있는 같은 탄알이 없습니다,No matching ammo to merge,UI/WeaponPopup.cs
+{0}번 합성!,{0} merged!,UI/WeaponPopup.cs
+분해할 총알이 없습니다,No ammo to salvage,UI/WeaponPopup.cs
+총알 {0}개를 분해할까요?,Salvage {0} ammo?,UI/WeaponPopup.cs
+합성!,Merged!,UI/WeaponPopup.cs
+장착 중인 총알은 해제한 뒤 합성할 수 있습니다,Unequip ammo before merging it,UI/WeaponPopup.cs
+총알 정보,Ammo Info,UI/WeaponPopup.cs
 {0}발,{0} pellets,UI/WeaponPopup.cs
 {0}마리 관통,pierces {0},UI/WeaponPopup.cs
 범위 {0},radius {0},UI/WeaponPopup.cs
@@ -163,18 +172,15 @@ D 등급 총알 획득!,Got D grade ammo!,UI/WeaponPopup.cs
 넘친 공속 → 공격 x{0},Excess speed → ATK x{0},UI/WeaponPopup.cs
 "(칸 +{0}, 이 등급은 +{1}까지)","(slot +{0}, this grade caps at +{1})",UI/WeaponPopup.cs
 최대 +{0},max +{0},UI/WeaponPopup.cs
-슬롯 강화 +{0},Slot +{0},UI/WeaponPopup.cs
 공격 +{0}% · 속도 +{1}% · 보스 +{2}%,ATK +{0}% · SPD +{1}% · Boss +{2}%,UI/WeaponPopup.cs
-분해,Salvage,UI/WeaponPopup.cs
-해제,Unequip,UI/WeaponPopup.cs
-{0} 을(를) 분해할까요?,Salvage {0}?,UI/WeaponPopup.cs
-슬롯 강화,Slot Enhance,UI/WeaponPopup.cs
 성공 확률 {0}%,Success rate {0}%,UI/WeaponPopup.cs
-공격속도 +{0}% · 보스 피해 +{1}%,SPD +{0}% · Boss DMG +{1}%,UI/WeaponPopup.cs
+슬롯 강화 +{0},Slot +{0},UI/WeaponPopup.cs
+해제,Unequip,UI/WeaponPopup.cs
+강화,Enhance,UI/WeaponPopup.cs
+장착,Equip,UI/WeaponPopup.cs
+{0} 을(를) 분해할까요?,Salvage {0}?,UI/WeaponPopup.cs
 강화 성공!,Enhanced!,UI/WeaponPopup.cs
 강화 실패… (재료만 사라짐),Enhance failed… (materials lost),UI/WeaponPopup.cs
-합성!,Merged!,UI/WeaponPopup.cs
-장착 중인 총알은 해제한 뒤 합성할 수 있습니다,Unequip ammo before merging it,UI/WeaponPopup.cs
 기본 카피,Classic Capy,Skin_Table.Name
 밀짚모자,Straw Hat,Skin_Table.Name
 천사 날개,Angel Wings,Skin_Table.Name
@@ -325,10 +331,10 @@ D 등급 총알 획득!,Got D grade ammo!,UI/WeaponPopup.cs
 얼어붙은 설원,Frozen Snowfield,Chapter_Summary.Biome_Name
 지하 연구소,Underground Lab,Chapter_Summary.Biome_Name
 오염 구역,Contaminated Zone,Chapter_Summary.Biome_Name
-무기는 다이아 100 또는 도전 클리어 에서 열립니다,Weapons unlock with 100 gems or a challenge clear,Unlock_Roadmap.Lock_Toast_Message
-무기 메뉴가 열렸습니다!,Weapons unlocked!,Unlock_Roadmap.Unlock_Banner_Message
+총알은 다이아 100 또는 도전 클리어 에서 열립니다,Ammo unlocks with 100 gems or a challenge clear,Unlock_Roadmap.Lock_Toast_Message
+총알 메뉴가 열렸습니다!,Ammo unlocked!,Unlock_Roadmap.Unlock_Banner_Message
 Stage 1-2 에서 열립니다,Unlocks at Stage 1-2,Unlock_Roadmap.Lock_Toast_Message
-스킨이 열렸습니다!,Skins unlocked!,Unlock_Roadmap.Unlock_Banner_Message
+코스튬이 열렸습니다!,Costumes unlocked!,Unlock_Roadmap.Unlock_Banner_Message
 Stage 4-1 에서 열립니다,Unlocks at Stage 4-1,Unlock_Roadmap.Lock_Toast_Message
 비밀던전이 열렸습니다!,Secret Dungeon unlocked!,Unlock_Roadmap.Unlock_Banner_Message
 Stage 6-1 에서 열립니다,Unlocks at Stage 6-1,Unlock_Roadmap.Lock_Toast_Message
@@ -339,6 +345,16 @@ Stage 10-1 에서 열립니다,Unlocks at Stage 10-1,Unlock_Roadmap.Lock_Toast_M
 작은 푸른 보석,Small Blue Gem,Mine_Ore_Spec.Name_KR
 회색 바위,Gray Rock,Mine_Ore_Spec.Name_KR
 거대 황금 크리스탈,Huge Gold Crystal,Mine_Ore_Spec.Name_KR
+무기는 다이아 100 또는 도전 클리어 에서 열립니다,Weapons unlock with 100 gems or a challenge clear,(지금은 안 씀) Unlock_Roadmap.Lock_Toast_Message
+무기 메뉴가 열렸습니다!,Weapons unlocked!,(지금은 안 씀) Unlock_Roadmap.Unlock_Banner_Message
+스킨이 열렸습니다!,Skins unlocked!,(지금은 안 씀) Unlock_Roadmap.Unlock_Banner_Message
+무기,Weapons,(지금은 안 씀) UI/HUD.cs
+스킨,Skins,(지금은 안 씀) UI/HUD.cs
+스킨 구매,Buy Skin,(지금은 안 씀) UI/MenuPopups.cs
+같은 탄알 두 개를 끌어다 겹치면 합성!\n장착 칸을 누르면 슬롯 강화 · 남는 총알은 분해 → 다이아,Drag two identical ammo together to merge!\nTap an equipped slot to enhance · Salvage spares → gems,(지금은 안 씀) UI/WeaponPopup.cs
+총알을 누르면 정보가 나옵니다.\n장착 칸으로 끌어다 놓으면 장착!,Tap ammo to see its info.\nDrag it onto an equip slot to equip!,(지금은 안 씀) UI/WeaponPopup.cs
+슬롯 강화,Slot Enhance,(지금은 안 씀) UI/WeaponPopup.cs
+공격속도 +{0}% · 보스 피해 +{1}%,SPD +{0}% · Boss DMG +{1}%,(지금은 안 씀) UI/WeaponPopup.cs
 광산 플레이하기,Play the mine,(지금은 안 씀) Mission_Master.Mission_Name
 돈 획득량 x2 (5분),Gold x2 (5 min),(지금은 안 씀) Shop_Products.Name
 다이아 광산이 열렸습니다!,Gem Mine unlocked!,(지금은 안 씀) Unlock_Roadmap.Unlock_Banner_Message

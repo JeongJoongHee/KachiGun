@@ -312,8 +312,8 @@ namespace KachiGun
         {
             navBar = UIKit.Rect(root, "NavBar").Place(0.5f, 0, new Vector2(0, NavY), new Vector2(NavStep * 5, NavH), new Vector2(0.5f, 0));
             // 잠금 글 = Unlock_Roadmap 의 Lock_Toast_Message
-            NavBtn(0, "weapon", "UI/icon_pistol", L.T("무기"), () => GM.WeaponOpen, "weapon", () => Open<WeaponPopup>());
-            NavBtn(1, "skin", "Gen/capy_head", L.T("스킨"), () => GM.SkinOpen, "skin", () => Open<SkinPopup>());
+            NavBtn(0, "weapon", "UI/icon_pistol", L.T("총알"), () => GM.WeaponOpen, "weapon", () => Open<WeaponPopup>());
+            NavBtn(1, "skin", "Gen/capy_head", L.T("코스튬"), () => GM.SkinOpen, "skin", () => Open<SkinPopup>());
             NavBtn(2, "fish", "Kit/i_chest_w", L.T("보급품"), () => GM.FishOpen, "supply", () => Open<SupplyPopup>());
             NavBtn(3, "boss", null, L.T("보스"), () => GM.BossRaidOpen, "boss_raid", () => Confirm(ConfirmPopup.Kind.Boss));
             NavBtn(4, "mine", "UI/icon_gem", MineNav, () => GM.MineOpen, "mine", () => Confirm(ConfirmPopup.Kind.Mine));

@@ -13,6 +13,8 @@ namespace KachiGun
         protected virtual Vector2 Size => new(1000, 1500);
         protected virtual string Title => "";
         protected virtual bool CloseOnDim => true;
+        /// <summary>11-05 (추가 요청/UI 수정.png): 띠 없는 크림 창 + 위 가운데 노란 제목 띠 + 오른쪽 위 빨간 X</summary>
+        protected virtual bool PillTitle => false;
 
         protected static SaveData S => SaveData.Cur;
         protected static GameManager GM => GameManager.I;
@@ -28,18 +30,32 @@ namespace KachiGun
             db.transition = Selectable.Transition.None;
             db.onClick.AddListener(() => { if (p.CloseOnDim) p.Close(); });
 
-            var pan = UIKit.Img(rt, UIKit.Panel, p.Size, "Panel");
+            var pan = UIKit.Img(rt, p.PillTitle ? Art.Kit("window_plain") : UIKit.Panel, p.Size, "Panel");
             pan.rectTransform.Place(0.5f, 0.5f, new Vector2(0, -20), p.Size, new Vector2(0.5f, 0.5f));
             pan.gameObject.AddComponent<Button>().transition = Selectable.Transition.None;   // 판 누름이 바탕까지 안 가게
             p.panel = pan.rectTransform;
 
-            // 제목 = 초록 제목줄 위 (창 그림 위쪽 14칸 x 5px = 70)
-            p.title = UIKit.Label(p.panel, L.T(p.Title), 46, Color.white, TextAnchor.MiddleCenter, 4);
-            p.title.rectTransform.Place(0.5f, 1, new Vector2(0, -36), new Vector2(p.Size.x - 260, 70), new Vector2(0.5f, 0.5f));
-            // 닫기 = 제목줄 오른쪽의 X 칸 위에 투명 버튼(누르기 쉽게 넓게)
-            var xb = UIKit.Rect(p.panel, "Close").Place(1, 1, new Vector2(4, 4), new Vector2(120, 100), new Vector2(1, 1));
-            var xi = xb.gameObject.AddComponent<Image>(); xi.color = new Color(0, 0, 0, 0.001f);
-            xb.gameObject.AddComponent<Button>().onClick.AddListener(p.Close);
+            if (p.PillTitle)
+            {
+                // 노란 제목 띠 = 창 위 끝에 걸침 · X = 오른쪽 위 빨간 버튼
+                float pw = Mathf.Min(p.Size.x - 300, 620);
+                var pill = UIKit.KitImg(p.panel, "title_pill", new Vector2(pw, 118), "TitlePill");
+                pill.rectTransform.Place(0.5f, 1, new Vector2(0, 26), new Vector2(pw, 118), new Vector2(0.5f, 0.5f));
+                p.title = UIKit.Label(pill.transform, L.T(p.Title), 50, Color.white, TextAnchor.MiddleCenter, 4);
+                p.title.rectTransform.Fill(20, 14, 20, 4);
+                var xr = UIKit.KitBtn(p.panel, "btn_x_red", new Vector2(96, 96), null, 0, p.Close, "Close");
+                ((RectTransform)xr.transform).Place(1, 1, new Vector2(18, 18), new Vector2(96, 96), new Vector2(1, 1));
+            }
+            else
+            {
+                // 제목 = 초록 제목줄 위 (창 그림 위쪽 14칸 x 5px = 70)
+                p.title = UIKit.Label(p.panel, L.T(p.Title), 46, Color.white, TextAnchor.MiddleCenter, 4);
+                p.title.rectTransform.Place(0.5f, 1, new Vector2(0, -36), new Vector2(p.Size.x - 260, 70), new Vector2(0.5f, 0.5f));
+                // 닫기 = 제목줄 오른쪽의 X 칸 위에 투명 버튼(누르기 쉽게 넓게)
+                var xb = UIKit.Rect(p.panel, "Close").Place(1, 1, new Vector2(4, 4), new Vector2(120, 100), new Vector2(1, 1));
+                var xi = xb.gameObject.AddComponent<Image>(); xi.color = new Color(0, 0, 0, 0.001f);
+                xb.gameObject.AddComponent<Button>().onClick.AddListener(p.Close);
+            }
 
             p.content = UIKit.Rect(p.panel, "Content").Fill(44, 50, 44, 100);
             p.Build();

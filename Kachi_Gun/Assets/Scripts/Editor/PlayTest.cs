@@ -153,7 +153,7 @@ namespace KachiGun.EditorTools
                 float hm = GameManager.HordeMul;
                 var st0 = Tables.Stage(S.stage);
                 Check(hm > 1f && GM.Quota == Mathf.RoundToInt(st0.quota * hm), $"몰려오기 x{hm} → 처치 목표 {st0.quota} → {GM.Quota}");
-                int peak = 0, jump = 0, prev = -1; Zombie one = null;
+                int peak = 0, jump = 0, prev = -1; Zombie one = null; bool angrySeen = false;
                 var seen = new System.Collections.Generic.HashSet<Zombie>(); spawnYs.Clear();
                 for (float t = 0; t < 8f; t += 0.1f)
                 {
@@ -161,9 +161,10 @@ namespace KachiGun.EditorTools
                     foreach (var tg in Target.All) if (tg is Zombie z && z.Alive && !z.isBoss) { na++; if (!one) one = z; if (seen.Add(z)) spawnYs.Add(z.transform.position.y); }
                     peak = Mathf.Max(peak, na); if (prev >= 0) jump = Mathf.Max(jump, na - prev); prev = na;
                     if (t > 0.5f && na >= peak && na >= 12) { Capture("01b_horde"); }
+                    if (Squad.I.cats[0].Angry) angrySeen = true;   // 11-05: 한 순간만 보면 가까운 좀비가 막 죽었을 때 실패 → 8초 동안 한 번이라도
                     yield return Wait(0.1f);
                 }
-                Check(Squad.I.cats[0].Angry, "좀비가 가까이 오면 화난 얼굴");
+                Check(angrySeen, "좀비가 가까이 오면 화난 얼굴");
                 Capture("01c_angry");
                 Log($"몰려오기: 화면 최대 {peak}마리 (예전 최대 {st0.maxAlive}) · 한 번에 늘어난 최대 {jump}마리");
                 Check(peak > st0.maxAlive, $"좀비가 예전 최대({st0.maxAlive})보다 많이 보임 ({peak})");
@@ -270,6 +271,53 @@ namespace KachiGun.EditorTools
             yield return Wait(0.4f);
             Capture("04_weapon");
             CloseAll();
+
+            // 4b) 11-05 추가 요청/UI 수정.png: 분대 자리 · 아래 탭 이름 · 일괄 합성(한 단계만) · 분해 여러 개 고르기
+            {
+                var cs = Squad.I.cats;
+                float ly = cs[0].transform.position.y, y1 = cs[1].transform.position.y, y2 = cs[2].transform.position.y;
+                Log($"분대 자리 y: 리더 {ly:0.00} · 동료1 {y1:0.00} · 동료2 {y2:0.00}");
+                Check(cs[0].slot == 0 && cs[1].slot == 1 && cs[2].slot == 2 && y1 > ly && ly > y2, "분대 자리: 리더 가운데 · 동료1 위 · 동료2 아래");
+                string NavText(string id) { var g = GameObject.Find("Nav_" + id); var t = g ? g.GetComponentInChildren<Text>() : null; return t ? t.text : ""; }
+                Check(NavText("weapon") == "총알" && NavText("skin") == "코스튬", $"아래 탭 이름 총알 · 코스튬 ({NavText("weapon")} · {NavText("skin")})");
+
+                for (int k = 0; k < S.inv.Count; k++) S.inv[k] = -1;
+                int dS = Tables.Code(0, "single"), dF = Tables.Code(0, "fast"), cS = Tables.Code(1, "single");
+                S.inv[0] = dS; S.inv[3] = dS; S.inv[5] = dS; S.inv[6] = dS; S.inv[7] = dS;   // D 단발 5개 → 2번 합성 + 1개 남음
+                S.inv[8] = dF;                                                          // 짝 없음
+                S.inv[9] = cS; S.inv[10] = cS;                                          // C 두 개 → 1번
+                long mg0 = S.statMerges;
+                var made = GM.MergeAll();
+                Log($"일괄 합성: {made.Count}번 → {Inv()}");
+                Check(made.Count == 3 && S.statMerges == mg0 + 3, $"일괄 합성 3번 ({made.Count})");
+                Check(Tables.GradeOf(S.inv[0]) == 1 && Tables.GradeOf(S.inv[5]) == 1 && S.inv[3] < 0 && S.inv[6] < 0 && S.inv[7] == dS && S.inv[8] == dF
+                      && Tables.GradeOf(S.inv[9]) == 2 && S.inv[10] < 0, "일괄 합성: 같은 것 두 개씩 · 결과는 앞 칸 · 짝 없는 것 그대로");
+                Check(S.inv.FindAll(x => x >= 0 && Tables.GradeOf(x) >= 2).Count == 1, "일괄 합성: 새로 나온 C 는 이번엔 다시 안 합침(한 단계만)");
+
+                var wpu = HUD.I.Open<WeaponPopup>();
+                yield return Wait(0.3f);
+                Check(wpu.title.text == "총알 관리" && GameObject.Find("MergeAll") && GameObject.Find("Gacha") && GameObject.Find("Salvage"), "총알 관리 창: 제목 · 아래 버튼 3개");
+                GameObject.Find("Salvage").GetComponent<Button>().onClick.Invoke();
+                Check(wpu.Picking, "[분해] 누름 → 고르기");
+                var c7 = GameObject.Find("Inv7").GetComponent<WeaponCell>(); var c8 = GameObject.Find("Inv8").GetComponent<WeaponCell>();
+                wpu.Select(c7); wpu.Select(c8); wpu.Select(GameObject.Find("Slot0").GetComponent<WeaponCell>());
+                Check(wpu.picked.Count == 2, $"분해 고르기 2개(장착 칸은 안 됨) ({wpu.picked.Count})");
+                yield return Wait(0.2f);
+                Capture("04c_salvage_pick");
+                double sg = S.gems, want = Tables.Grade(0).salvage * 2;
+                double got = GM.SalvageMany(new System.Collections.Generic.List<int>(wpu.picked));
+                Check(S.inv[7] < 0 && S.inv[8] < 0 && System.Math.Abs(S.gems - sg - want) < 0.01 && System.Math.Abs(got - want) < 0.01, $"여러 개 분해 → 다이아 +{got}");
+                GameObject.Find("MergeAll").GetComponent<Button>().onClick.Invoke();   // 고르기 중 = [취소]
+                Check(!wpu.Picking, "고르기 중 왼쪽 버튼 = 취소");
+                wpu.Select(GameObject.Find("Inv0").GetComponent<WeaponCell>());
+                yield return Wait(0.3f);
+                var info = HUD.I.Get<WeaponInfoPopup>();
+                Check(info != null && info.gameObject.activeSelf && !info.isSlot && info.index == 0, "인벤토리 총알 누름 → 정보 창");
+                Capture("04d_info_inv");
+                CloseAll();
+                // 다시 3칸 채우기(뒤 시험용)
+                for (int k = 0; k < 3; k++) if (S.slots[k] < 0) { int ix = S.inv.FindIndex(x => x >= 0); if (ix >= 0) GM.Equip(ix, k); }
+            }
 
             // 5) 스킨
             S.gems += Tables.Skins.Find(r => r.id == 3).price + Tables.Skins.Find(r => r.id == 2).price;   // 표 가격대로 (11-04 스킨 재밸런스)
