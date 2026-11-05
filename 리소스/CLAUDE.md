@@ -1,5 +1,10 @@
 # 카치건 (좀비 키우기) — 세로 방치형 분대 슈팅, Unity 6000.0.84f1 · 2D URP
 
+## ▶ 재개 메모 (2026-11-05 밤 — `추가 요청/UI 수정.png` 총알 관리 창)
+- 그림대로: 노란 제목 띠 "총알 관리" + 빨간 X(`Popup.PillTitle`, 다른 창은 그대로) · 카드 3장(등급 · +강화(+0 도) · 공격력 · 연사 · 리더 금색 테두리) · 카드 [강화] 버튼 없음 → 카드/총알 누르면 `WeaponInfoPopup`(장착 칸 = [해제] · [강화] 바로 · 인벤토리 = [장착] · [분해 +n]) · [일괄 합성] = 같은 탄알 두 개씩 한 단계만(`GM.MergeAll`) · [분해] = 여러 개 고르기 → [분해 N] → 확인(`GM.SalvageMany`), 고르기 중 왼쪽 = [취소] · 아래 탭 무기 → **총알**, 스킨 → **코스튬**(창 제목 · Unlock 글자 · 영어 Ammo/Costumes)
+- 분대 자리 "리더 가운데 · 동료1 위 · 동료2 아래" 는 10-20 부터 이미 그렇게 되어 있음(Player_Base Leader/Sub1/Sub2_Screen_Pos) → PlayTest 4b 로 확인만
+- 새 부품 `doodle_ui.py` window_plain · title_pill · btn_red · btn_x_red · i_bolt · i_trash_w · 시험 errors=0 · 영어 errors=0 · 커밋 5064163 · 폰 반영은 다음 AAB(7번)
+
 ## ▶ 재개 메모 (2026-11-05 마무리 — 사용자 "작업 패턴 학습하고 마무리", push 끝)
 - 작업 기록 md = `D:\00 WorkPatterns\inbox\2026-11-05_카치건 (카피바라vs좀비).md` · 재개하면 `PYTHONUTF8=1 python tools/todo_checks.py` → 체크·의견, 사용자가 6번을 비공개 트랙에 올렸는지 · 그림을 또 고치면 PowerShell 에서 `python tools/doodle_art.py …` / `tools/doodle_ui.py …` → `tools/rig_gen.py` → 배치 시험
 
