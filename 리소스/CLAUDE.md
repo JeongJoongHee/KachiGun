@@ -1,5 +1,14 @@
 # 카치건 (좀비 키우기) — 세로 방치형 분대 슈팅, Unity 6000.0.84f1 · 2D URP
 
+## ▶ 재개 메모 (2026-11-05 — 좀비 몰려오기 · 낙서풍 화풍 전체 교체)
+- **3번 AAB 는 사용자가 비공개 트랙에 올림 → 다음 AAB = 4번** (ProjectSettings 버전 코드 4). 그래서 `출시_일정.html`·`남은_작업_정리.html` 의 "4번 빌드(라이선스 키)" 는 이제 **5번** — 문서 번호 아직 안 고침
+- 좀비 몰려오기: Config `Horde_Mul` 3.5(처치 목표·동시 최대·나오는 속도 x, 한 마리 체력·골드 ÷ → 스테이지 전체 그대로, 처치 미션 목표 x) · `Horde_Pack_Min/Max` 6~10 · `Horde_Pack_Depth` 2 · 흙 띠를 마릿수만큼 칸으로 나눠 위아래 고르게 · 보스전 중엔 예전대로. PlayTest 1b(화면 최대 28 · 세 칸 고르게)
+- **화풍 = 밝은 낙서풍** (사용자 "이 화풍대로 모두 다", `화풍_샘플.html` · 추가 요청/메인 캐릭터 이미지_02·04): 카피바라 선 자세·눈 "- -"·오른손 뒤 손잡이·왼손 앞 받침 아래 주먹
+  - `tools/doodle_art.py` [capy skins zombie map icon] · `tools/doodle_ui.py` [kit gen ui bullet supply 또는 이름] — **PowerShell 에서 실행**(Bash 에선 Edge 헤드리스가 안 뜸), SVG → Edge 투명 PNG, 지금 그림과 같은 칸·크기·발/총구 위치라 코드 그대로
+  - 뼈대: `tools/rig_gen.py` ZOMBIE_RIG·CRAWL_RIG·CAPY_BY_SKIN 새 값 → 그림 바꾸면 `PYTHONUTF8=1 python tools/rig_gen.py` 다시
+  - 원래 도트 그림·뼈대 = `tools/_build/pixel_orig/` (.gitignore, git 기록에도 있음) · 글꼴 주아(Jua-Regular, FontScale 1.07, 전 = 갈무리·모나) · 모든 그림 Bilinear(ArtImport) · 챕터 색 `Map_Tint_Strength` 0.3
+  - 시험: 자동 시험·스토어 촬영·영어 화면 errors=0. 4번 AAB 는 아직 안 구움 · 스토어 스크린샷·그래픽 이미지는 아직 옛 그림(Play Console 스토어 등록정보 바꿀 때 다시)
+
 ## ▶ 재개 메모 (2026-11-04 마무리 — 사용자 "작업 학습하고 마무리")
 - **오늘 끝난 것**: 아래 11-04 메모들 전부 · 3번 AAB `Kachi_Gun/Builds/kachizombie-1.0-3.aab`(versionCode 3, 실제 광고, 결제 꺼짐, 좀비 다듬기·처음 출석까지 포함, 점검 8 통과) · 작업 기록 md = `D:\00 WorkPatterns\inbox\2026-11-04_카치건 (카피바라vs좀비).md`
 - **사용자 차례** (`출시_일정.html` · `남은_작업_정리.html`): 2번 검토 끝 → `r-up3` 3번 비공개 트랙 → 11-06 까지 12명 유지 → 11-07(토)~ `스토어 등록/프로덕션_신청_답안.html` [ ] 채워 신청 → 승인 → 프로덕션 3번 → 이전 → 4번(라이선스 키)·상품 → 서비스 시작 ~11-27 · 그동안 kachigoogoo 사업자 정보 3칸·세금·계좌(`b-korea`·`b-payout`) · 거래 ID 2개(`mv-ids`)
