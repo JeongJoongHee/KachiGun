@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: b4f83f88e61763044ae83464166c7183
+guid: d5fd5181382c8d0409285ea92779b8a4
 TrueTypeFontImporter:
   externalObjects: {}
   serializedVersion: 4
@@ -9,7 +9,7 @@ TrueTypeFontImporter:
   characterPadding: 1
   includeFontData: 1
   fontNames:
-  - MonaS12 Text KR
+  - Galmuri11
   fallbackFontReferences: []
   customCharacters: 
   fontRenderingMode: 0

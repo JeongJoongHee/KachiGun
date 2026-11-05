@@ -78,13 +78,15 @@ namespace KachiGun
         // ---------- 위 ----------
         void BuildTop()
         {
-            // 맨 위 진행 막대 (지금 서브 스테이지 처치 %)
-            var bar = UIKit.KitImg(root, "bar_track", new Vector2(1060, 40), "TopBar");
-            bar.rectTransform.Place(0.5f, 1f, new Vector2(0, -52), new Vector2(1060, 40), new Vector2(0.5f, 1f));
+            // 맨 위 진행 막대 (지금 서브 스테이지 처치 %) — 11-05: 금화 줄과 같은 나무 판 테두리 안에 어두운 홈 + 녹색 막대
+            var frame = UIKit.KitImg(root, "plank_thin", new Vector2(1064, 52), "TopBar");
+            frame.rectTransform.Place(0.5f, 1f, new Vector2(0, -34), new Vector2(1064, 52), new Vector2(0.5f, 1f));   // 아래 카피바라 표시가 글자를 안 가리게 얇게·위로
+            var bar = UIKit.KitImg(frame.transform, "bar_track", new Vector2(10, 10), "Track");
+            bar.rectTransform.Fill(10, 10, 10, 10);
             pctFill = UIKit.KitImg(bar.transform, "bar_green", new Vector2(10, 10), "Fill");
             pctFill.rectTransform.anchorMin = new Vector2(0, 0); pctFill.rectTransform.anchorMax = new Vector2(0.4f, 1);
-            pctFill.rectTransform.offsetMin = Vector2.zero; pctFill.rectTransform.offsetMax = Vector2.zero;
-            pctText = UIKit.Label(bar.transform, "0%", 30, Color.white, TextAnchor.MiddleCenter, 2);
+            pctFill.rectTransform.offsetMin = new Vector2(2, 2); pctFill.rectTransform.offsetMax = new Vector2(-2, -2);
+            pctText = UIKit.Label(frame.transform, "0%", 28, Color.white, TextAnchor.MiddleCenter, 2);
             pctText.rectTransform.Fill();
 
             // 설정

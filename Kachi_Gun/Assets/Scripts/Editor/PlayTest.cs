@@ -101,6 +101,7 @@ namespace KachiGun.EditorTools
     {
         int errors;
         RenderTexture rt;
+        readonly System.Collections.Generic.List<float> spawnYs = new();
         const string OutDir = "Logs/PlayTest";
         static SaveData S => SaveData.Cur;
         static GameManager GM => GameManager.I;
@@ -152,10 +153,11 @@ namespace KachiGun.EditorTools
                 var st0 = Tables.Stage(S.stage);
                 Check(hm > 1f && GM.Quota == Mathf.RoundToInt(st0.quota * hm), $"몰려오기 x{hm} → 처치 목표 {st0.quota} → {GM.Quota}");
                 int peak = 0, jump = 0, prev = -1; Zombie one = null;
+                var seen = new System.Collections.Generic.HashSet<Zombie>(); spawnYs.Clear();
                 for (float t = 0; t < 8f; t += 0.1f)
                 {
                     int na = 0;
-                    foreach (var tg in Target.All) if (tg is Zombie z && z.Alive && !z.isBoss) { na++; if (!one) one = z; }
+                    foreach (var tg in Target.All) if (tg is Zombie z && z.Alive && !z.isBoss) { na++; if (!one) one = z; if (seen.Add(z)) spawnYs.Add(z.transform.position.y); }
                     peak = Mathf.Max(peak, na); if (prev >= 0) jump = Mathf.Max(jump, na - prev); prev = na;
                     if (t > 0.5f && na >= peak && na >= 12) { Capture("01b_horde"); }
                     yield return Wait(0.1f);
@@ -167,6 +169,14 @@ namespace KachiGun.EditorTools
                 int mk = Tables.Missions.FindIndex(m => m.statKey == "statKills");
                 if (mk >= 0) Check(GM.MissionTarget(mk) == (long)System.Math.Round(Tables.MissionTarget(mk, S.missionTier[mk]) * (double)hm), $"처치 미션 목표 x{hm} ({GM.MissionTarget(mk)})");
                 if (!File.Exists($"{OutDir}/01b_horde.png")) Capture("01b_horde");
+                // 11-05 2차: 위아래 고르게 — 지금까지 나온 좀비 높이를 흙 띠 세 칸(위·가운데·아래)으로 나눠 셈
+                {
+                    float y0 = Field.I.SpawnPoint(-999f).y, y1 = Field.I.SpawnPoint(999f).y;
+                    var cnt = new int[3]; int tot = 0;
+                    foreach (var y in spawnYs) { int k = Mathf.Clamp((int)((y - y0) / (y1 - y0 + 0.001f) * 3), 0, 2); cnt[k]++; tot++; }
+                    Log($"나온 높이: 아래 {cnt[0]} · 가운데 {cnt[1]} · 위 {cnt[2]} (모두 {tot})");
+                    Check(tot >= 12 && Mathf.Min(cnt[0], Mathf.Min(cnt[1], cnt[2])) >= tot * 0.2f, "좀비가 위아래 고르게 나옴 (세 칸 모두 20% 이상)");
+                }
             }
 
             // 2) 강화 (튜토리얼 발바닥 → 사라짐)

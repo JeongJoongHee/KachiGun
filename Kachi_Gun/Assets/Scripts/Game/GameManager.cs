@@ -114,15 +114,20 @@ namespace KachiGun
             spawnT = st.spawn / hm * n * Random.Range(0.8f, 1.2f);   // 평균 나오는 속도 = 표 속도 x Horde_Mul
         }
 
-        /// <summary>무리: 화면 오른쪽 밖에서 한 높이를 중심으로 앞뒤·위아래로 퍼져 한꺼번에</summary>
+        /// <summary>무리 (11-05 2차): 흙 띠 높이를 n 칸으로 나눠 칸마다 한 마리씩(칸 안에서 조금 흔듦) → 한곳에 쏠리지 않고 위아래 고르게.
+        /// 앞뒤는 0 ~ Horde_Pack_Depth 칸 사이로 흩어져 줄줄이 들이닥침. 좀비는 나온 높이 그대로 걸어옴.</summary>
         void SpawnPack(int n, float hm)
         {
-            var c = Field.I.SpawnPoint();
-            float spread = Tables.Cf("Horde_Pack_Spread") > 0 ? Tables.Cf("Horde_Pack_Spread") : 1.2f;
+            float y0 = Field.I.SpawnPoint(-999f).y, y1 = Field.I.SpawnPoint(999f).y;
+            float depth = Tables.C("Horde_Pack_Depth", 2.0) > 0 ? Tables.Cf("Horde_Pack_Depth") : 2f;
+            var lanes = new List<int>();
+            for (int i = 0; i < n; i++) lanes.Add(i);
+            for (int i = n - 1; i > 0; i--) { int j = Random.Range(0, i + 1); (lanes[i], lanes[j]) = (lanes[j], lanes[i]); }
+            float h = (y1 - y0) / n;
             for (int i = 0; i < n; i++)
             {
-                var p = c + new Vector2(Random.Range(0f, 0.3f * n), Random.Range(-spread, spread));
-                p.y = Field.I.SpawnPoint(p.y).y;     // 흙 띠 안으로
+                float y = y0 + h * (lanes[i] + 0.5f + Random.Range(-0.4f, 0.4f));
+                var p = Field.I.SpawnPoint(y) + new Vector2(Random.Range(0f, depth), 0);
                 SpawnZombie(p, hm);
             }
         }
