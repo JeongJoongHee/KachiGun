@@ -71,7 +71,7 @@ namespace KachiGun
             var gi = UIKit.Img(g.transform, Art.Get("UI/icon_gem"), new Vector2(60, 60), "Gem");
             gi.rectTransform.Place(0, 0.5f, new Vector2(40, 0), new Vector2(60, 60), new Vector2(0, 0.5f));
             var hint = UIKit.Label(content, L.T("같은 탄알 두 개를 끌어다 겹치면 합성!\n장착 칸을 누르면 슬롯 강화 · 남는 총알은 분해 → 다이아"), 30, UIKit.Ink, TextAnchor.MiddleCenter, 0);
-            hint.rectTransform.Place(0.5f, 0, new Vector2(0, 260), new Vector2(880, 80), new Vector2(0.5f, 0.5f));
+            hint.rectTransform.Place(0.5f, 0, new Vector2(0, 196), new Vector2(880, 80), new Vector2(0.5f, 0.5f));   // 11-05 인벤토리 4줄이라 아래로
 
             ghost = UIKit.Img(transform, null, new Vector2(150, 150), "Ghost").rectTransform;
             ghost.GetComponent<Image>().raycastTarget = false;

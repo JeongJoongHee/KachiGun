@@ -9,7 +9,7 @@ namespace KachiGun
     public class SaveData
     {
         public const string Key = "KachiGun.Save.v1";
-        public const int InvSize = 15, SlotCount = 3;
+        public const int InvSize = 20, SlotCount = 3;      // 11-05 인벤토리 한 줄 늘림 (5 x 3 → 5 x 4) · 옛 세이브는 Fix() 가 빈칸 채움
 
         public double gold, gems;
         public int stage;            // 서브 스테이지 번호 0 = 1-1, 4 = 1-5, 5 = 2-1 …
@@ -18,7 +18,7 @@ namespace KachiGun
         public int lvAtk, lvSpd, lvGold;
         public bool bossFarm;        // 보스 실패 → 지금 스테이지 반복 사냥 중 ([보스 도전] 누르면 다시)
 
-        public List<int> inv = new();      // 15칸, -1 = 빈칸, 그 외 총알 코드(Tables.Code)
+        public List<int> inv = new();      // InvSize 칸, -1 = 빈칸, 그 외 총알 코드(Tables.Code)
         public List<int> slots = new();    // 장착 3칸 (0 = 리더)
         public List<int> skins = new();    // 가진 스킨 번호
         public int skin;                   // 입은 스킨
