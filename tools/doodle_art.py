@@ -96,7 +96,7 @@ def zig(x0, x1, y, n, amp):
 CS, CX0, CY0 = 1.65, 41.0, 74.0
 CAPY_BODY = '#c49a6e'; CAPY_DARK = '#a97f58'; CAPY_BELLY = '#d9b88f'; CAPY_FAR = '#b9906a'
 # 11-05 카피바라 선은 더 진하고 굵고 덜 흔들리게 (사용자 "캐릭터 선을 조금 더 진하고 선명하게")
-CAPY_INK, CAPY_SW, CAPY_WOB, GUN_WOB = '#24160e', 3.6, 1.4, 1.0
+CAPY_INK, CAPY_SW, CAPY_WOB, GUN_WOB = '#1c110a', 4.4, 1.0, 0.8
 
 
 # 11-05 두상 = 추가 요청 5번 (눈 높이~턱 앞쪽 윤곽을 5번 그림에서 따옴, 위·뒤통수·몸은 그대로)
