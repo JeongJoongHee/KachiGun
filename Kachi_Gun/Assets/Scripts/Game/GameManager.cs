@@ -231,7 +231,7 @@ namespace KachiGun
                 Mode.Mine => new Color(0.55f, 0.62f, 0.85f),
                 Mode.Challenge => new Color(1f, 0.82f, 0.8f),
                 Mode.Boss => new Color(0.8f, 0.68f, 0.68f),
-                _ => Tables.Chapter(S.Chapter).tint,
+                _ => Field.ChapterTint(S.Chapter),
             };
             Field.I.Tint(c);
         }

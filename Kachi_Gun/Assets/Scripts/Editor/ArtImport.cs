@@ -21,8 +21,8 @@ namespace KachiGun.EditorTools
             ti.textureCompression = TextureImporterCompression.Uncompressed;
             ti.maxTextureSize = 4096;
             ti.wrapMode = TextureWrapMode.Clamp;
-            // 작은 도트 아이콘(Gen)·UI 팩 부품(Kit)은 또렷하게, 나머지는 크기를 줄여 쓰므로 부드럽게
-            ti.filterMode = p.Contains("/Art/Gen/") && !p.EndsWith("/arrow.png") ? FilterMode.Point : FilterMode.Bilinear;   // 화살표는 매끈하게 그린 그림   // Kit 는 ui_kit.py 가 매끈하게 키워 둠 → 부드럽게
+            // 모두 부드럽게
+            ti.filterMode = FilterMode.Bilinear;   // 11-05 낙서풍(매끈한 벡터 그림) — 전엔 Gen 도트 아이콘만 Point
             ti.npotScale = TextureImporterNPOTScale.None;
         }
     }

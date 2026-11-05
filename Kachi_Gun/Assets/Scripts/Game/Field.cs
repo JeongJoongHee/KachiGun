@@ -96,6 +96,7 @@ namespace KachiGun
         public void Tint(Color c) { if (map) map.color = c; }
 
         /// <summary>챕터 맵 색 = Chapter_Summary 의 Map_Tint_Hex</summary>
-        public static Color ChapterTint(int chapter) => Tables.Chapter(chapter).tint;
+        /// 11-05 밝은 낙서풍 맵이라 표 색을 Map_Tint_Strength 만큼만 섞음 (1 = 표 색 그대로)
+        public static Color ChapterTint(int chapter) => Color.Lerp(Color.white, Tables.Chapter(chapter).tint, Mathf.Clamp01((float)Tables.C("Map_Tint_Strength", 0.45)));
     }
 }
