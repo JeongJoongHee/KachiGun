@@ -41,8 +41,11 @@ namespace KachiGun
             int g = code >= 0 ? Tables.GradeOf(code) : 0;
             return Math.Min(Tables.EnchantTop, Tables.Grade(g).maxEnchant);
         }
+        /// <summary>11-05 밤 사용자 "슬롯 강화 기능은 제거": 꺼 두면 강화 버튼·+N 표시가 없고, 옛 세이브의 강화 레벨도 효과 0.
+        /// 코드·Weapon_Enchant 표는 남겨 둠 (true 로 바꾸면 효과는 돌아오지만 강화 버튼은 다시 만들어야 함)</summary>
+        public static readonly bool SlotEnchantOn = false;
         /// <summary>실제로 적용되는 강화 레벨 (낮은 등급 총알로 바꾸면 그 등급 최대까지만)</summary>
-        public static int SlotLvEff(int slot) => Math.Min(S.slotLv[slot], SlotMax(slot));
+        public static int SlotLvEff(int slot) => SlotEnchantOn ? Math.Min(S.slotLv[slot], SlotMax(slot)) : 0;
         static double SlotGradeMul(int slot) { int c = S.slots[slot]; return Tables.Grade(c >= 0 ? Tables.GradeOf(c) : 0).enchantMul; }
         public static double SlotAtkPct(int slot) => Tables.Enchant(SlotLvEff(slot)).atk * SlotGradeMul(slot);
         public static double SlotSpdPct(int slot) => Tables.Enchant(SlotLvEff(slot)).spd * SlotGradeMul(slot);

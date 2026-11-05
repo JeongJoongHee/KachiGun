@@ -448,6 +448,7 @@ namespace KachiGun
         public string EnchantSlot(int slot, out bool ok)
         {
             ok = false;
+            if (!Stats.SlotEnchantOn) return L.T("슬롯 강화는 없어졌습니다");   // 11-05 밤 제거
             int code = S.slots[slot];
             if (code < 0) return L.T("총알을 장착한 칸만 강화할 수 있습니다");
             int lv = S.slotLv[slot], max = Stats.SlotMax(slot);

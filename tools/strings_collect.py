@@ -163,7 +163,7 @@ EN.update({'총알 관리': 'Ammo', '총알 정보': 'Ammo Info', '코스튬': '
            '일괄 합성': 'Merge All', '같은 탄알을 겹쳐서 합성하세요!': 'Drop matching ammo together to merge!', '합성할 수 있는 같은 탄알이 없습니다': 'No matching ammo to merge',
            '{0}번 합성!': '{0} merged!', '분해할 총알을 눌러 고르세요 (여러 개 가능)': 'Tap ammo to salvage (pick several)', '{0}개 고름 → 다이아 +{1}': '{0} picked → +{1} gems',
            '총알 {0}개를 분해할까요?': 'Salvage {0} ammo?', '분해할 총알이 없습니다': 'No ammo to salvage', '장착 중인 총알은 분해할 수 없습니다': "Equipped ammo can't be salvaged",
-           '취소': 'Cancel'})
+           '취소': 'Cancel', '슬롯 강화는 없어졌습니다': 'Slot enhancing has been removed'})
 
 
 def code_strings():

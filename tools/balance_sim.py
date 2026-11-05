@@ -8,6 +8,9 @@ ads=True = 광고를 최대로 봄: 공격·골드 버프 늘 켜짐 · 던전 �
 """
 import csv, io, math, json, sys, re, os
 
+# 11-05 밤: 사용자 "슬롯 강화 기능은 제거" → 게임에서 꺼짐(Stats.SlotEnchantOn). 옛 규칙으로 재려면 True
+SLOT_ENCHANT = False
+
 T = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'Kachi_Gun', 'Assets', 'Resources', 'Tables') + os.sep
 
 
@@ -218,7 +221,7 @@ class P:
                 cost = 100 if g < 0 else 100 * 2 ** g
                 old = s.slot[i]; s.slot[i] = g + 1; nb = s.dps(True); s.slot[i] = old
                 opts.append((val(nb, base_g) / cost, cost, 0, 'weapon', i))
-            if g >= 0 and s.ench[i] < min(int(GENCH[g]['Max_Enchant_Lv']), len(ENCH)):
+            if SLOT_ENCHANT and g >= 0 and s.ench[i] < min(int(GENCH[g]['Max_Enchant_Lv']), len(ENCH)):
                 e = ENCH[s.ench[i]]
                 rate = e['Success_Rate'] / 100
                 if e['Cost_Gold'] / rate > s.grate * 1800: continue      # 골드 30분 수입보다 비싸면 아직 안 함

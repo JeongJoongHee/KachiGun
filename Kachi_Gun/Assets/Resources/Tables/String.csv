@@ -31,6 +31,7 @@
 인벤토리가 가득 찼습니다,Inventory is full,Game/GameManager.cs
 같은 탄알끼리만 합성할 수 있습니다,Only identical ammo can be merged,Game/GameManager.cs
 최고 등급입니다,Already the highest grade,Game/GameManager.cs
+슬롯 강화는 없어졌습니다,Slot enhancing has been removed,Game/GameManager.cs
 총알을 장착한 칸만 강화할 수 있습니다,Only slots with ammo equipped can be enhanced,Game/GameManager.cs
 최고 강화입니다,Already max enhancement,Game/GameManager.cs
 {0} 등급 총알은 +{1} 까지 — 더 높은 등급을 장착하세요,{0} grade ammo caps at +{1} — equip a higher grade,Game/GameManager.cs
@@ -170,17 +171,9 @@ D 등급 총알 획득!,Got D grade ammo!,UI/WeaponPopup.cs
 일직선 전부,hits the whole line,UI/WeaponPopup.cs
 공격력 {0} · 연사 {1}초,ATK {0} · fires every {1}s,UI/WeaponPopup.cs
 넘친 공속 → 공격 x{0},Excess speed → ATK x{0},UI/WeaponPopup.cs
-"(칸 +{0}, 이 등급은 +{1}까지)","(slot +{0}, this grade caps at +{1})",UI/WeaponPopup.cs
-최대 +{0},max +{0},UI/WeaponPopup.cs
-공격 +{0}% · 속도 +{1}% · 보스 +{2}%,ATK +{0}% · SPD +{1}% · Boss +{2}%,UI/WeaponPopup.cs
-성공 확률 {0}%,Success rate {0}%,UI/WeaponPopup.cs
-슬롯 강화 +{0},Slot +{0},UI/WeaponPopup.cs
 해제,Unequip,UI/WeaponPopup.cs
-강화,Enhance,UI/WeaponPopup.cs
 장착,Equip,UI/WeaponPopup.cs
 {0} 을(를) 분해할까요?,Salvage {0}?,UI/WeaponPopup.cs
-강화 성공!,Enhanced!,UI/WeaponPopup.cs
-강화 실패… (재료만 사라짐),Enhance failed… (materials lost),UI/WeaponPopup.cs
 기본 카피,Classic Capy,Skin_Table.Name
 밀짚모자,Straw Hat,Skin_Table.Name
 천사 날개,Angel Wings,Skin_Table.Name
@@ -345,6 +338,14 @@ Stage 10-1 에서 열립니다,Unlocks at Stage 10-1,Unlock_Roadmap.Lock_Toast_M
 작은 푸른 보석,Small Blue Gem,Mine_Ore_Spec.Name_KR
 회색 바위,Gray Rock,Mine_Ore_Spec.Name_KR
 거대 황금 크리스탈,Huge Gold Crystal,Mine_Ore_Spec.Name_KR
+"(칸 +{0}, 이 등급은 +{1}까지)","(slot +{0}, this grade caps at +{1})",(지금은 안 씀) UI/WeaponPopup.cs
+최대 +{0},max +{0},(지금은 안 씀) UI/WeaponPopup.cs
+공격 +{0}% · 속도 +{1}% · 보스 +{2}%,ATK +{0}% · SPD +{1}% · Boss +{2}%,(지금은 안 씀) UI/WeaponPopup.cs
+성공 확률 {0}%,Success rate {0}%,(지금은 안 씀) UI/WeaponPopup.cs
+슬롯 강화 +{0},Slot +{0},(지금은 안 씀) UI/WeaponPopup.cs
+강화,Enhance,(지금은 안 씀) UI/WeaponPopup.cs
+강화 성공!,Enhanced!,(지금은 안 씀) UI/WeaponPopup.cs
+강화 실패… (재료만 사라짐),Enhance failed… (materials lost),(지금은 안 씀) UI/WeaponPopup.cs
 무기는 다이아 100 또는 도전 클리어 에서 열립니다,Weapons unlock with 100 gems or a challenge clear,(지금은 안 씀) Unlock_Roadmap.Lock_Toast_Message
 무기 메뉴가 열렸습니다!,Weapons unlocked!,(지금은 안 씀) Unlock_Roadmap.Unlock_Banner_Message
 스킨이 열렸습니다!,Skins unlocked!,(지금은 안 씀) Unlock_Roadmap.Unlock_Banner_Message

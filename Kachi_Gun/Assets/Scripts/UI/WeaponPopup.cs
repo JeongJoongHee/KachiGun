@@ -9,7 +9,8 @@ namespace KachiGun
     /// 총알 관리 창 (기획서 6장 · 11-05 추가 요청/UI 수정.png 모양): 장착 카드 3장(리더·동료1·동료2 — 등급 · +강화 · 공격력 · 연사) + 5x4 인벤토리
     /// + 아래 버튼 [일괄 합성] · [다이아 100 뽑기] · [분해].
     /// 같은 탄알(종류·등급 같음) 두 개를 끌어다 겹치면 한 단계 위 등급의 랜덤 종류로 합성 (11-04: 종류가 다르면 안 됨). 장착 중인 총알은 해제한 뒤 합성.
-    /// 장착 카드를 누르면 슬롯 강화 창(WeaponInfoPopup: [해제] · [강화]), 인벤토리 총알을 누르면 정보 창([장착] · [분해]) — 카드의 [강화] 버튼은 빼고 기능은 그대로.
+    /// 장착 카드를 누르면 정보 창(WeaponInfoPopup: [해제]), 인벤토리 총알을 누르면 정보 창([장착] · [분해]).
+    /// 11-05 밤 사용자 "+0 숫자 제거 · 슬롯 강화 기능 제거" → 카드의 +N 없음 · 강화 없음 (Stats.SlotEnchantOn = false).
     /// [일괄 합성] = 같은 탄알 두 개씩 한 단계만(GM.MergeAll) · [분해] = 누르면 여러 개 고르기 → 다시 누르면 고른 것 한 번에 분해(GM.SalvageMany).
     /// </summary>
     public class WeaponPopup : Popup
@@ -137,8 +138,6 @@ namespace KachiGun
 
         public override void Open() { Picking = false; picked.Clear(); base.Open(); }
 
-        public void PopSlot(int i) { if (i >= 0 && i < slots.Length) slots[i].Pop(); }
-
         public override void Refresh()
         {
             for (int i = 0; i < slots.Length; i++)
@@ -245,11 +244,11 @@ namespace KachiGun
         }
     }
 
-    /// <summary>총알 정보 창 (11-05): 장착 카드 = 슬롯 강화 정보 + [해제] · [강화](바로 강화, 창은 그대로 — 여러 번 누르기 좋게),
+    /// <summary>총알 정보 창 (11-05): 장착 카드 = 정보 + [해제](가운데 하나, 슬롯 강화는 11-05 밤 제거),
     /// 인벤토리 총알 = 정보 + [장착] · [분해](확인 창)</summary>
     public class WeaponInfoPopup : Popup
     {
-        protected override Vector2 Size => new(880, 860);
+        protected override Vector2 Size => new(880, 660);   // 11-05 밤 강화 줄이 빠져 낮춤
         protected override string Title => "총알 정보";
         protected override bool PillTitle => true;
         Image tileBg, tileIcon;
@@ -308,21 +307,10 @@ namespace KachiGun
             {
                 string[] names = { "리더", "동료 1", "동료 2" };
                 title.text = L.T(names[Mathf.Clamp(index, 0, 2)]);
-                int lv = Stats.SlotLvEff(index), max = Stats.SlotMax(index);
-                string cap = S.slotLv[index] > lv ? " " + L.F("(칸 +{0}, 이 등급은 +{1}까지)", S.slotLv[index], lv) : " / " + L.F("최대 +{0}", max);
-                string now = lv > 0 ? L.F("공격 +{0}% · 속도 +{1}% · 보스 +{2}%", Stats.SlotAtkPct(index).ToString("0.#"), Stats.SlotSpdPct(index).ToString("0.#"), Stats.SlotBossPct(index).ToString("0.#")) : "";
-                string next;
-                if (S.slotLv[index] >= max || lv >= Tables.EnchantTop) next = $"<color=#B07A10>{L.T("최고 강화입니다")}</color>";
-                else
-                {
-                    var e = Tables.Enchant(lv + 1);
-                    double gm = Tables.Grade(g).enchantMul;
-                    next = $"<color=#3F8A2E>+{lv + 1}: {L.T("공격력")} +{e.atk * gm:0.#}%</color>\n{L.T("다이아")} {Num.Gem(e.gems)} · {L.T("골드")} {Num.F(e.gold)} · {L.F("성공 확률 {0}%", e.rate.ToString("0"))}";
-                }
-                body.text = $"{line1}\n{line2}\n<color=#B07A10>{L.F("슬롯 강화 +{0}", lv)}</color>{cap}" + (now != "" ? "\n" + now : "") + "\n" + next;
+                body.text = $"{line1}\n{line2}";
                 UIKit.LabelOf(left).text = L.T("해제");
-                UIKit.LabelOf(right).text = L.T("강화");
-                rb.sprite = Art.Kit("plank"); rb.color = Color.white;
+                right.gameObject.SetActive(false);
+                ((RectTransform)left.transform).anchoredPosition = new Vector2(0, 10);
             }
             else
             {
@@ -330,14 +318,10 @@ namespace KachiGun
                 body.text = $"{line1}\n{line2}";
                 UIKit.LabelOf(left).text = L.T("장착");
                 UIKit.LabelOf(right).text = L.T("분해") + $" +{Tables.Grade(g).salvage:0}";
+                right.gameObject.SetActive(true);
+                ((RectTransform)left.transform).anchoredPosition = new Vector2(-185, 10);
                 rb.sprite = Art.Kit("btn_red"); rb.color = Color.white;
             }
-        }
-
-        void AfterChange()
-        {
-            H.Get<WeaponPopup>()?.Refresh();
-            Refresh();
         }
 
         void OnLeft()
@@ -360,7 +344,7 @@ namespace KachiGun
         {
             int code = Code;
             if (code < 0) return;
-            if (!isSlot)
+            if (!isSlot)   // 장착 칸은 오른쪽 버튼이 없음 (슬롯 강화 제거)
             {
                 int g = Tables.GradeOf(code), i = index;
                 ConfirmPopup.Ask($"<size=46>{L.T("분해")}</size>\n\n" + L.F("{0} 을(를) 분해할까요?", $"<color=#{ColorUtility.ToHtmlStringRGB(WeaponPopup.GradeColor(g))}>{Tables.WeaponName(code)}</color>") + $"\n\n{L.T("다이아")} +{Tables.Grade(g).salvage:0}", () =>
@@ -371,13 +355,6 @@ namespace KachiGun
                 }, "분해");
                 return;
             }
-            string err = GM.EnchantSlot(index, out bool ok);
-            if (err != null) { Msg(err); return; }
-            H.Toast(ok ? L.T("강화 성공!") + $" +{S.slotLv[index]}" : L.T("강화 실패… (재료만 사라짐)"));
-            Squad.I.Rebuild();
-            AfterChange();
-            var wp = H.Get<WeaponPopup>();
-            if (ok && wp) wp.PopSlot(index);
         }
     }
 
@@ -424,8 +401,7 @@ namespace KachiGun
             bool has = c >= 0;
             icon.gameObject.SetActive(has);
             grade.text = has ? Tables.GradeName(Tables.GradeOf(c)) : "";
-            int lv = isSlot && index < SaveData.Cur.slotLv.Count ? SaveData.Cur.slotLv[index] : 0;
-            plus.text = isSlot ? "+" + (has ? Stats.SlotLvEff(index) : lv) : "";   // 11-05: 장착 카드는 +0 도 보임
+            plus.text = "";   // 11-05 밤: +N 숫자 제거 (슬롯 강화 없음)
             bg.sprite = Art.Kit(has ? "slot" : "slot_light");
             if (has)
             {

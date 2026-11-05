@@ -451,12 +451,12 @@ namespace KachiGun.EditorTools
             // 10-3) 총알 슬롯 강화 (Weapon_Enchant) · 분해
             S.slots[0] = Tables.Code(4, "laser"); Squad.I.Rebuild();
             S.gold += 1e7;
-            int lv0 = S.slotLv[0];
+            // 11-05 밤 사용자 "슬롯 강화 기능은 제거": 강화 안 됨 · 옛 세이브의 강화 레벨도 효과 0
+            S.slotLv[0] = 5;
             var ee = GM.EnchantSlot(0, out bool eok);
-            Log($"슬롯 강화: {lv0} → {S.slotLv[0]} ({(ee ?? (eok ? "성공" : "실패"))}), 공격 +{Stats.SlotAtkPct(0):0.#}%, 최대 +{Stats.SlotMax(0)}");
-            Check(ee == null && eok && S.slotLv[0] == lv0 + 1 && Stats.SlotAtkPct(0) > 0 && Stats.SlotMax(0) == 58, "슬롯 강화");
-            S.slotLv[1] = 12; S.slots[1] = Tables.Code(0, "single");
-            Check(GM.EnchantSlot(1, out _) != null && Stats.SlotLvEff(1) == 12, "D 등급 슬롯 최대 +12");
+            Log($"슬롯 강화 시도: {ee} · 옛 레벨 {S.slotLv[0]} → 효과 레벨 {Stats.SlotLvEff(0)}, 공격 +{Stats.SlotAtkPct(0):0.#}%");
+            Check(!Stats.SlotEnchantOn && ee != null && !eok && S.slotLv[0] == 5 && Stats.SlotLvEff(0) == 0 && Stats.SlotAtkPct(0) == 0 && Stats.BossMul(0) == Stats.BossMul(), "슬롯 강화 없음(옛 레벨도 효과 0)");
+            S.slotLv[0] = 0;
             S.slotLv[1] = 0; S.slots[1] = Tables.Code(5, "missile");
             int fi = S.inv.IndexOf(-1);
             if (fi >= 0)
@@ -473,6 +473,13 @@ namespace KachiGun.EditorTools
             if (cell0) wp.Select(cell0);
             yield return Wait(0.2f);
             Capture("04b_enchant");
+            {
+                var ip = HUD.I.Get<WeaponInfoPopup>();
+                var rbtn = ip ? ip.transform.Find("Panel/Content/Right") : null;
+                var plusT = cell0 ? cell0.GetComponentsInChildren<Text>() : new Text[0];
+                bool noPlus = true; foreach (var t in plusT) if (t.text.StartsWith("+")) noPlus = false;
+                Check(ip != null && ip.gameObject.activeSelf && rbtn != null && !rbtn.gameObject.activeSelf && noPlus, "장착 카드: +N 없음 · 정보 창에 [강화] 없음");
+            }
             CloseAll();
 
             // 10-4) 상점 골드 상자 (다이아 100)
