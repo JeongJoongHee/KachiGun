@@ -2,6 +2,13 @@
 [테스트] 광고 대신 바로 지급,[Test] Reward given without an ad,Core/AdService.cs
 광고를 불러오는 중입니다. 잠시 뒤 다시 눌러 주세요,Loading the ad. Please tap again in a moment.,Core/AdService.cs
 광고를 띄우지 못했습니다. 잠시 뒤 다시 해 주세요,Couldn't show the ad. Please try again later.,Core/AdService.cs
+테스트 계정,Test Account,Core/Cloud.cs
+클라우드를 읽지 못했습니다. 잠시 뒤 다시 해 주세요,Couldn't read the cloud. Please try again later,Core/Cloud.cs
+클라우드에 저장했습니다,Saved to the cloud,Core/Cloud.cs
+클라우드에 저장하지 못했습니다,Couldn't save to the cloud,Core/Cloud.cs
+클라우드 데이터를 읽지 못했습니다,Couldn't read the cloud data,Core/Cloud.cs
+클라우드에서 불러왔습니다,Loaded from the cloud,Core/Cloud.cs
+클라우드에 저장된 데이터가 없습니다,No data saved in the cloud,Core/Cloud.cs
 {0} 구매 완료!,{0} purchased!,Core/Iap.cs
 결제는 준비 중입니다,Purchases are coming soon,Core/Iap.cs
 이미 가지고 있습니다,Already owned,Core/Iap.cs
@@ -55,6 +62,30 @@
 시간 초과,Time's up,Game/GameManager.cs
 채굴 끝!,Mining done!,Game/GameManager.cs
 보스 처치!,Boss defeated!,Game/GameManager.cs
+세이브를 읽지 못해 예비 세이브로 불러왔습니다,Couldn't read your save - loaded the backup save,Game/GameManager.cs
+클라우드 저장,Cloud Save,UI/CloudPopups.cs
+지금 저장,Save Now,UI/CloudPopups.cs
+불러오기,Load,UI/CloudPopups.cs
+구글 계정 연결,Connect Google Account,UI/CloudPopups.cs
+구글 계정에 진행을 저장해 두면\n폰을 바꾸거나 다시 설치해도 이어서 할 수 있어요.,Save your progress to your Google account\nto keep playing after changing phones or reinstalling.,UI/CloudPopups.cs
+클라우드 저장은 다음 업데이트에서 열립니다,Cloud save opens in the next update,UI/CloudPopups.cs
+연결하는 중…,Connecting…,UI/CloudPopups.cs
+연결된 계정: {0},Account: {0},UI/CloudPopups.cs
+마지막 클라우드 저장: {0},Last cloud save: {0},UI/CloudPopups.cs
+1분마다 · 게임을 내릴 때 자동으로 저장됩니다,Saved automatically every minute and when you leave the game,UI/CloudPopups.cs
+저장하는 중…,Saving…,UI/CloudPopups.cs
+다시 연결,Reconnect,UI/CloudPopups.cs
+구글 계정에 연결하지 못했습니다,Couldn't connect to your Google account,UI/CloudPopups.cs
+클라우드에 저장된 진행으로 바꿀까요?\n이 기기의 지금 진행은 지워집니다.,Replace with the progress saved in the cloud?\nThe current progress on this device will be lost.,UI/CloudPopups.cs
+진행 고르기,Choose Progress,UI/CloudPopups.cs
+이 기기와 클라우드의 진행이 다릅니다.\n이어서 할 진행을 골라 주세요.,This device and the cloud have different progress.\nChoose which one to continue.,UI/CloudPopups.cs
+이 기기,This Device,UI/CloudPopups.cs
+클라우드,Cloud,UI/CloudPopups.cs
+{0} 쓰기,Use {0},UI/CloudPopups.cs
+스테이지,Stage,UI/CloudPopups.cs
+코스튬 {0}개,{0} costumes,UI/CloudPopups.cs
+저장,Save,UI/CloudPopups.cs
+{0} 진행으로 이어서 할까요?\n{1}의 진행은 지워집니다.,Continue with the {0} progress?\nThe {1} progress will be lost.,UI/CloudPopups.cs
 절전모드,Eco,UI/HUD.cs
 상점,Shop,UI/HUD.cs
 미션,Missions,UI/HUD.cs
@@ -111,12 +142,8 @@
 설정,Settings,UI/MenuPopups.cs
 배경음,Music,UI/MenuPopups.cs
 효과음,Sound,UI/MenuPopups.cs
-진동,Vibration,UI/MenuPopups.cs
 던전에서는 바꿀 수 없습니다,Can't change during a dungeon,UI/MenuPopups.cs
-저장,Save,UI/MenuPopups.cs
 저장했습니다 (기기 안),Saved (on this device),UI/MenuPopups.cs
-불러오기 · 구매 복원 · 문의,Load · Restore · Contact,UI/MenuPopups.cs
-클라우드 저장·결제 복원·문의는 준비 중입니다,"Cloud save, restore and contact are coming soon",UI/MenuPopups.cs
 게임 종료,Quit Game,UI/MenuPopups.cs
 켜짐,On,UI/MenuPopups.cs
 꺼짐,Off,UI/MenuPopups.cs
@@ -137,7 +164,6 @@
 종료,Quit,UI/Popup.cs
 방치 보상,Offline Reward,UI/Popup.cs
 오프라인 시간,Time away,UI/Popup.cs
-스테이지,Stage,UI/Popup.cs
 보상,Reward,UI/Popup.cs
 최대 {0}시간까지 쌓입니다,Stacks up to {0} hours,UI/Popup.cs
 광고 보고,Watch ad,UI/Popup.cs
@@ -156,7 +182,7 @@ D 등급 총알 획득!,Got D grade ammo!,UI/WeaponPopup.cs
 분해할 총알을 눌러 고르세요 (여러 개 가능),Tap ammo to salvage (pick several),UI/WeaponPopup.cs
 {0}개 고름 → 다이아 +{1},{0} picked → +{1} gems,UI/WeaponPopup.cs
 분해,Salvage,UI/WeaponPopup.cs
-같은 탄알을 겹쳐서 합성하세요!,Drop matching ammo together to merge!,UI/WeaponPopup.cs
+카드로 끌어다 놓아 장착 · 같은 탄알끼리 겹쳐 합성,Drag onto a card to equip · Drop matching ammo together to merge,UI/WeaponPopup.cs
 장착 중인 총알은 분해할 수 없습니다,Equipped ammo can't be salvaged,UI/WeaponPopup.cs
 합성할 수 있는 같은 탄알이 없습니다,No matching ammo to merge,UI/WeaponPopup.cs
 {0}번 합성!,{0} merged!,UI/WeaponPopup.cs
@@ -172,7 +198,7 @@ D 등급 총알 획득!,Got D grade ammo!,UI/WeaponPopup.cs
 공격력 {0} · 연사 {1}초,ATK {0} · fires every {1}s,UI/WeaponPopup.cs
 넘친 공속 → 공격 x{0},Excess speed → ATK x{0},UI/WeaponPopup.cs
 해제,Unequip,UI/WeaponPopup.cs
-장착,Equip,UI/WeaponPopup.cs
+장착: 총알을 위 카드로 끌어다 놓으세요,To equip: drag the ammo onto a card above,UI/WeaponPopup.cs
 {0} 을(를) 분해할까요?,Salvage {0}?,UI/WeaponPopup.cs
 기본 카피,Classic Capy,Skin_Table.Name
 밀짚모자,Straw Hat,Skin_Table.Name
@@ -338,6 +364,11 @@ Stage 10-1 에서 열립니다,Unlocks at Stage 10-1,Unlock_Roadmap.Lock_Toast_M
 작은 푸른 보석,Small Blue Gem,Mine_Ore_Spec.Name_KR
 회색 바위,Gray Rock,Mine_Ore_Spec.Name_KR
 거대 황금 크리스탈,Huge Gold Crystal,Mine_Ore_Spec.Name_KR
+진동,Vibration,(지금은 안 씀) UI/MenuPopups.cs
+불러오기 · 구매 복원 · 문의,Load · Restore · Contact,(지금은 안 씀) UI/MenuPopups.cs
+클라우드 저장·결제 복원·문의는 준비 중입니다,"Cloud save, restore and contact are coming soon",(지금은 안 씀) UI/MenuPopups.cs
+같은 탄알을 겹쳐서 합성하세요!,Drop matching ammo together to merge!,(지금은 안 씀) UI/WeaponPopup.cs
+장착,Equip,(지금은 안 씀) UI/WeaponPopup.cs
 "(칸 +{0}, 이 등급은 +{1}까지)","(slot +{0}, this grade caps at +{1})",(지금은 안 씀) UI/WeaponPopup.cs
 최대 +{0},max +{0},(지금은 안 씀) UI/WeaponPopup.cs
 공격 +{0}% · 속도 +{1}% · 보스 +{2}%,ATK +{0}% · SPD +{1}% · Boss +{2}%,(지금은 안 씀) UI/WeaponPopup.cs

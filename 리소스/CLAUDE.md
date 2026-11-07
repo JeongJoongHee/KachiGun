@@ -1,5 +1,11 @@
 # 카치건 (좀비 키우기) — 세로 방치형 분대 슈팅, Unity 6000.0.84f1 · 2D URP
 
+## ▶ 재개 메모 (2026-11-07 밤 — 버그 점검 의견대로 고침)
+- 사용자 의견(버그_점검.html 17개)대로: **클라우드 저장**(`Core/Cloud.cs` CloudAuth·CloudSave·CloudSync·CloudRunner + `UI/CloudPopups.cs` 설정 [클라우드 저장] 창·진행 고르기 창 — 불도깨비 GPGS 2.2.1 플러그인 복사 `Assets/GooglePlayGames`(App ID 설정 파일은 뺌) · 안드로이드 정의 `KACHI_GPGS` · mainTemplate.gradle 에 games-v2·nearby 줄) — **폰에선 App ID 없으면 꺼짐[초안]**, 이전 뒤 kachigoogoo Play 게임즈 설정 → App ID(Window > Google Play Games > Setup) · "저장된 게임" 켜기 → 8번
+- 날짜 비교 `SaveData.IsLaterDay`(출석·티켓·광고 다이아) · lastSeen 앞으로만 · 예비 세이브(`.bak` 1분마다 · `.broken`) · `ClampTimers`(버프 대기 12초·남은 1시간 최대) · 처치마다 StageChanged 안 부름 · 진동 삭제 · 정보 창 [장착] 삭제(끌어다 놓기만 · 카드 전체 `CardDrop`) · 코스튬 가격 쉼표 · Buff `dungeon_ad_x3`→`dungeon_ad_x2`(영구 줄 3→2) · 버전 이름 1.0.버전코드(BuildAab.VersionName)
+- 그대로: 던전 중 꺼짐 · 창 열린 동안 보스 시간 · 환불 · 카드 공격력
+- 시험 137줄 errors=0 (PlayTest CloudTest — 끝에서 씬 다시 불러옴) · 안드로이드 컴파일 통과 · AAB 는 안 구움 · `출시_일정.html` 이전 끝난 날에 Play 게임즈 설정 줄 · 개인정보처리방침·데이터 보안에 클라우드 저장 문장 필요(8번 때)
+
 ## ▶ 재개 메모 (2026-11-07 — 버그 점검)
 - 사용자 "버그·결함·이상한 점 모두 체크해서 리스팅" → **`버그_점검.html`**(키 kachigun-bugs-1107, `python tools/todo_checks.py 버그_점검.html`) 17항목: 높음 1(클라우드 저장 없음 → 산 다이아 사라짐, 8번 전 추천 · 불도깨비 GPGS 재사용) · 보통 4(날짜 바꾸기로 출석·티켓·광고 다이아 다시 · 시간 되돌리기로 방치 8시간 반복 · 세이브 못 읽으면 조용히 새 게임) · 낮음 6 · 이상한 점 6(진동 스위치 효과 없음 등). 멈춤·꺼짐 버그는 못 찾음(시험 118줄 errors=0). **답 대기** — "추천대로"면 보통 4개부터
 

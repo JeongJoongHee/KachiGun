@@ -64,7 +64,8 @@ namespace KachiGun.EditorTools
         public static void Setup()
         {
             PlayerSettings.SetApplicationIdentifier(NamedBuildTarget.Android, PackageName);
-            if (string.IsNullOrEmpty(PlayerSettings.bundleVersion) || PlayerSettings.bundleVersion == "0.1") PlayerSettings.bundleVersion = "1.0";
+            // 11-07: 버전 이름 = 1.0.버전코드 (전엔 모든 빌드가 1.0 이라 테스터가 몇 번을 깔았는지 구분이 안 됐음)
+            PlayerSettings.bundleVersion = VersionName(PlayerSettings.Android.bundleVersionCode);
             PlayerSettings.Android.minSdkVersion = AndroidSdkVersions.AndroidApiLevel24;
             PlayerSettings.Android.targetSdkVersion = (AndroidSdkVersions)36;
             PlayerSettings.SetScriptingBackend(NamedBuildTarget.Android, ScriptingImplementation.IL2CPP);
@@ -84,6 +85,9 @@ namespace KachiGun.EditorTools
             Debug.Log($"[BuildAab] 설정 — {PackageName} · 버전 {PlayerSettings.bundleVersion} ({PlayerSettings.Android.bundleVersionCode}) · API 24~36 · IL2CPP ARM64 · 세로 · 키 {(PlayerSettings.Android.useCustomKeystore ? KeyAlias : "없음")}");
         }
 
+        /// <summary>버전 이름 (스토어·폰 설정 앱에 보이는 것): 1.0.버전코드</summary>
+        public static string VersionName(int code) => $"1.0.{code}";
+
         /// <summary>배치용: 설정만 맞추고 끝냄</summary>
         public static void SetupBatch() => ExitAfter(() => { Setup(); return true; });
 
@@ -91,6 +95,7 @@ namespace KachiGun.EditorTools
         public static void BumpVersionCode()
         {
             PlayerSettings.Android.bundleVersionCode += 1;
+            PlayerSettings.bundleVersion = VersionName(PlayerSettings.Android.bundleVersionCode);
             AssetDatabase.SaveAssets();
             Debug.Log($"[BuildAab] versionCode → {PlayerSettings.Android.bundleVersionCode}");
         }

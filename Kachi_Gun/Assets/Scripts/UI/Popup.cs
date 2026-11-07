@@ -403,7 +403,7 @@ namespace KachiGun
         public override void Close() { Claim(); base.Close(); }
     }
 
-    /// <summary>던전 결과: 받기 · 광고 보고 x3</summary>
+    /// <summary>던전 결과: 받기 · 광고 보고 x2 (Buff_Table dungeon_ad_x2 — 11-07 이름 x3 → x2)</summary>
     public class ResultPopup : Popup
     {
         protected override Vector2 Size => new(860, 760);
@@ -435,8 +435,8 @@ namespace KachiGun
             gemIcon = gem;
             take = UIKit.ColorBtn(content, new Color(0.45f, 0.7f, 0.3f), new Vector2(330, 110), L.T("받기"), 42, () => Claim(1));
             ((RectTransform)take.transform).Place(0.5f, 0, new Vector2(-180, 10), new Vector2(330, 110), new Vector2(0.5f, 0));
-            ad = UIKit.ColorBtn(content, new Color(0.95f, 0.6f, 0.15f), new Vector2(330, 110), L.T("광고 보고") + " x" + Tables.Buff("dungeon_ad_x3").mul.ToString("0.#"), 40, () =>
-                AdService.Show("dungeon", () => Claim(Tables.Buff("dungeon_ad_x3").mul)));
+            ad = UIKit.ColorBtn(content, new Color(0.95f, 0.6f, 0.15f), new Vector2(330, 110), L.T("광고 보고") + " x" + Tables.Buff("dungeon_ad_x2").mul.ToString("0.#"), 40, () =>
+                AdService.Show("dungeon", () => Claim(Tables.Buff("dungeon_ad_x2").mul)));
             ((RectTransform)ad.transform).Place(0.5f, 0, new Vector2(180, 10), new Vector2(330, 110), new Vector2(0.5f, 0));
         }
 

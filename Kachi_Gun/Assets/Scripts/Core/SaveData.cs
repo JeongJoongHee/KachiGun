@@ -35,7 +35,7 @@ namespace KachiGun
         public long statKills, statStages, statMines, statBossKills, statMerges;
         public List<int> missionTier = new();   // Mission_Master 줄 순서
 
-        public bool bgm = true, sfx = true, vibe = true;
+        public bool bgm = true, sfx = true;     // 11-07 진동 스위치 삭제 (진동 코드가 없었음)
         public string lang = "ko";              // 화면 언어 (L.Ko · L.En)
         public int adGemUsed;                   // 오늘 광고로 받은 무료 다이아 횟수 (상점, Global_Config AdGems_Daily)
         public bool tutorialDone;
@@ -53,26 +53,71 @@ namespace KachiGun
         // 출석 (11-04): 하루 한 번 접속 창 → 1·2·3일차 다이아를 차례로, 다 받으면 1일차부터 다시 (빠진 날이 있어도 이어서)
         public string attendDay = "";            // 마지막으로 받은 날 (yyyyMMdd, 기기 시간)
         public int attendCount;                  // 지금까지 받은 횟수 (다음 칸 = attendCount % Attend_Days)
-        public bool AttendToday => attendDay == DateTime.Now.ToString("yyyyMMdd");
+        /// <summary>오늘 이미 받음. 11-07: 받은 날보다 "뒤의 날짜"일 때만 다시 받음 — 전엔 날짜가 다르기만 하면 줘서
+        /// 폰 날짜를 내일로 → 받기 → 오늘로 되돌리면 또 받을 수 있었음 (앞당겨 받으면 그 날짜가 될 때까지 못 받음)</summary>
+        public bool AttendToday => !IsLaterDay(Today, attendDay);
+
+        // 클라우드 저장 (11-07): 같은 진행인지(saveId) · 어느 쪽이 새것인지(savedAt) 비교
+        public string saveId = "";               // 이 진행의 번호 (처음 시작할 때 만듦)
+        public long savedAt;                     // 마지막 저장 시각 (유닉스 초)
 
         // ---------- 불러오기·저장 ----------
         static SaveData cur;
         public static SaveData Cur => cur ??= LoadOrNew();
 
+        // 11-07 예비 세이브: 본 세이브를 못 읽으면 예비 칸(1분마다 같은 내용을 한 벌 더)에서 불러옴 · 못 읽은 글자는 broken 칸에 남김
+        public const string BakKey = Key + ".bak", BrokenKey = Key + ".broken";
+        /// <summary>이번에 켤 때 본 세이브를 못 읽어 예비 세이브로 불러왔음 (HUD 가 한 번 알림)</summary>
+        public static bool LoadedFromBackup;
+        static float lastBak = -999f;
+        /// <summary>마지막 클라우드 올리기 뒤 저장한 적이 있음 (CloudSync 가 올리고 false 로)</summary>
+        public static bool Dirty;
+
         static SaveData LoadOrNew()
         {
-            SaveData d = null;
             var json = PlayerPrefs.GetString(Key, "");
-            if (!string.IsNullOrEmpty(json))
+            SaveData d = Parse(json);
+            if (d == null && !string.IsNullOrEmpty(json))
             {
-                try { d = JsonUtility.FromJson<SaveData>(json); }
-                catch (Exception e) { Debug.LogWarning("세이브 읽기 실패, 새로 시작: " + e.Message); }
+                PlayerPrefs.SetString(BrokenKey, json);   // 나중에 살펴볼 수 있게 남김
+                d = Parse(PlayerPrefs.GetString(BakKey, ""));
+                LoadedFromBackup = d != null;
+                Debug.LogWarning(d != null ? "세이브 읽기 실패 → 예비 세이브로 불러옴" : "세이브·예비 세이브 둘 다 읽기 실패 → 새로 시작");
             }
             d ??= new SaveData();
             d.Fix();
             d.loadedLastSeen = d.lastSeen;
             return d;
         }
+
+        /// <summary>세이브 글자 → 데이터 (못 읽으면 null)</summary>
+        public static SaveData Parse(string json)
+        {
+            if (string.IsNullOrEmpty(json)) return null;
+            try
+            {
+                var d = JsonUtility.FromJson<SaveData>(json);
+                return d != null && d.inv != null && d.slots != null ? d : null;
+            }
+            catch (Exception e) { Debug.LogWarning("세이브 읽기 실패: " + e.Message); return null; }
+        }
+
+        /// <summary>클라우드에서 받은 세이브로 통째로 바꿈 (저장까지) — 부르는 쪽이 씬을 다시 불러 화면을 새로 만듦</summary>
+        public static bool ReplaceWith(string json)
+        {
+            var d = Parse(json);
+            if (d == null) return false;
+            d.Fix();
+            // 방치 보상은 이 기기에서 마지막으로 본 시각 기준으로만 (클라우드 저장 시각으로 또 주지 않게)
+            d.lastSeen = Math.Max(d.lastSeen, cur != null ? cur.lastSeen : 0);
+            d.loadedLastSeen = 0;
+            cur = d;
+            d.Save();
+            Dirty = false;
+            return true;
+        }
+
+        public string ToJson() => JsonUtility.ToJson(this);
 
         void Fix()
         {
@@ -86,34 +131,66 @@ namespace KachiGun
             while (missionTier.Count < 8) missionTier.Add(0);
             if (firstPlay == 0) firstPlay = Now;
             if (lang != L.Ko && lang != L.En) lang = L.Ko;
+            if (string.IsNullOrEmpty(saveId)) saveId = Guid.NewGuid().ToString("N");
         }
 
         public void Save()
         {
-            lastSeen = Now;
-            PlayerPrefs.SetString(Key, JsonUtility.ToJson(this));
+            // 11-07: 마지막으로 본 시각은 앞으로만 — 폰 시간을 뒤로 돌렸다 되돌리면 오래 비운 것처럼 계산돼 방치 8시간을 계속 받았음
+            lastSeen = Math.Max(lastSeen, Now);
+            savedAt = Now;
+            string json = ToJson();
+            PlayerPrefs.SetString(Key, json);
+            float t = Time.realtimeSinceStartup;
+            if (t - lastBak >= 60f || t < lastBak) { PlayerPrefs.SetString(BakKey, json); lastBak = t; }
             PlayerPrefs.Save();
+            Dirty = true;
         }
+
+        /// <summary>시험용: 다음 Cur 때 PlayerPrefs 에서 다시 읽음 (예비 세이브 시험)</summary>
+        public static void ReloadForTest() { cur = null; LoadedFromBackup = false; }
 
         public static void ResetAll()
         {
             PlayerPrefs.DeleteKey(Key);
+            PlayerPrefs.DeleteKey(BakKey);
+            PlayerPrefs.DeleteKey(BrokenKey);
             PlayerPrefs.Save();
             cur = null;
+            lastBak = -999f;
+            LoadedFromBackup = false;
         }
 
         public static long Now => DateTimeOffset.UtcNow.ToUnixTimeSeconds();
         public static double NowD => DateTimeOffset.UtcNow.ToUnixTimeMilliseconds() / 1000.0;
 
-        /// <summary>하루가 바뀌었으면 던전 티켓을 채운다 (기기 시간 기준)</summary>
+        /// <summary>오늘 날짜 yyyyMMdd (기기 시간, 어느 나라 설정이든 같은 모양)</summary>
+        public static string Today => DateTime.Now.ToString("yyyyMMdd", System.Globalization.CultureInfo.InvariantCulture);
+        /// <summary>a 가 b 보다 뒤의 날짜인지 (yyyyMMdd 글자 비교, b 가 비었으면 true)</summary>
+        public static bool IsLaterDay(string a, string b) => string.CompareOrdinal(a, b ?? "") > 0;
+
+        /// <summary>하루가 바뀌었으면 던전 티켓·광고 다이아 횟수를 채운다 (기기 시간 기준).
+        /// 11-07: 마지막으로 채운 날보다 뒤의 날짜일 때만 — 날짜를 앞뒤로 바꿔 다시 채우는 것을 막음</summary>
         public void RefreshDaily()
         {
-            string today = DateTime.Now.ToString("yyyyMMdd");
-            if (ticketDay == today) return;
+            string today = Today;
+            if (!IsLaterDay(today, ticketDay)) return;
             ticketDay = today;
             adGemUsed = 0;
             mineTickets = Math.Max(mineTickets, Tables.Ci("MineTickets"));
             bossTickets = Math.Max(bossTickets, Tables.Ci("BossRaidTickets"));
+        }
+
+        /// <summary>11-07: 폰 시간이 뒤로 고쳐졌을 때 광고 버프의 남은 시간·다시 보기 대기가 표의 최대보다 길면 최대로 줄임
+        /// (하루 앞서 있던 시계가 바로잡히면 "86400초 뒤에 다시"가 떴음)</summary>
+        public void ClampTimers()
+        {
+            double now = NowD;
+            var a = Tables.Buff("buff_atk"); var g = Tables.Buff("buff_gold");
+            if (a.maxStack > 0) buffAtkEnd = Math.Min(buffAtkEnd, now + a.maxStack);
+            if (g.maxStack > 0) buffGoldEnd = Math.Min(buffGoldEnd, now + g.maxStack);
+            buffAtkCool = Math.Min(buffAtkCool, now + Math.Max(0, a.cooldown));
+            buffGoldCool = Math.Min(buffGoldCool, now + Math.Max(0, g.cooldown));
         }
 
         public int Chapter => stage / 5 + 1;

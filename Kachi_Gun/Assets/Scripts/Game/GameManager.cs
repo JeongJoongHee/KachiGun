@@ -42,6 +42,7 @@ namespace KachiGun
         void Start()
         {
             S.RefreshDaily();
+            S.ClampTimers();
             ApplyTint();
             Squad.I.Rebuild();
             Squad.I.ResetPosition();
@@ -58,7 +59,7 @@ namespace KachiGun
             saveT += Time.unscaledDeltaTime;
             if (saveT > 5f) { saveT = 0; S.Save(); }
             dailyT += Time.unscaledDeltaTime;
-            if (dailyT > 10f) { dailyT = 0; S.RefreshDaily(); CheckAttend(false); }   // 켜 둔 채 날이 바뀜 → 창이 없을 때 출석 창
+            if (dailyT > 10f) { dailyT = 0; S.RefreshDaily(); S.ClampTimers(); CheckAttend(false); }   // 켜 둔 채 날이 바뀜 → 창이 없을 때 출석 창
 
             switch (mode)
             {
@@ -258,14 +259,13 @@ namespace KachiGun
                     Fx.I?.Money(z.Center, g, z.isBoss ? 5 : 2);
                     if (z.isBoss) { S.statBossKills++; AdvanceStage(); return; }
                     if (!bossPhase && !S.bossFarm) S.kills++;   // 반복 사냥 중엔 골드만
-                    StageChanged?.Invoke();
+                    // 11-07: 처치마다 StageChanged(화면 전체 다시 그림)를 부르지 않음 — 진행 막대는 HUD 가 0.1초마다 갱신
                 }
                 else if (mode == Mode.Challenge || mode == Mode.Boss)
                 {
                     int left = 0;
                     foreach (var o in Target.All) if (o.Alive) left++;
                     if (left == 0) EndDungeon(true);
-                    StageChanged?.Invoke();
                 }
             }
             else if (t is Ore o && mode == Mode.Mine)
@@ -277,7 +277,6 @@ namespace KachiGun
                 }
                 // 11-05 보상 있는 광석(다이아)을 모두 깨면 잠깐 뒤 자동으로 끝 (회색 바위 = 보상 0 은 안 셈)
                 if (MineRewardLeft == 0 && mineDoneT <= 0) mineDoneT = MineDoneDelay;
-                StageChanged?.Invoke();
             }
         }
 
@@ -585,6 +584,7 @@ namespace KachiGun
         // =====================================================================
         public string Buff(bool atk)
         {
+            S.ClampTimers();
             double now = SaveData.NowD;
             double cool = atk ? S.buffAtkCool : S.buffGoldCool;
             if (cool > now) return L.F("{0}초 뒤에 다시 볼 수 있습니다", Math.Ceiling(cool - now));
@@ -851,7 +851,7 @@ namespace KachiGun
             if (!offlineReady || HUD.I == null) return false;
             long last = S.loadedLastSeen > 0 ? S.loadedLastSeen : S.lastSeen;
             S.loadedLastSeen = 0;
-            S.lastSeen = SaveData.Now;
+            S.lastSeen = Math.Max(S.lastSeen, SaveData.Now);   // 11-07 앞으로만 (시간을 뒤로 돌려도 줄지 않음)
             if (last <= 0) return false;
             long away = SaveData.Now - last;
             if (away < Tables.C("Offline_MinMinutes", 5) * 60) return false;   // 기기 시간을 뒤로 돌린 경우(음수)도 여기서 걸림
@@ -865,8 +865,11 @@ namespace KachiGun
         {
             yield return null;   // HUD 가 다 만들어진 뒤
             offlineReady = true;
+            if (SaveData.LoadedFromBackup) { SaveData.LoadedFromBackup = false; HUD.I?.Toast(L.T("세이브를 읽지 못해 예비 세이브로 불러왔습니다")); }
+            if (CloudSync.pendingToast != null) { HUD.I?.Toast(CloudSync.pendingToast); CloudSync.pendingToast = null; }
             CheckOffline();
             CheckAttend(true);   // 방치 보상 창 위에 출석 창 (출석부터 받고 → 방치 보상)
+            CloudSync.AutoStart();   // 11-07 클라우드: 연결해 둔 기기면 자동 로그인 → 클라우드와 맞춤
         }
 
         // =====================================================================
@@ -895,7 +898,7 @@ namespace KachiGun
             int i = S.attendCount % AttendDays;
             S.gems += AttendGems(i);
             S.attendCount++;
-            S.attendDay = DateTime.Now.ToString("yyyyMMdd");
+            S.attendDay = SaveData.Today;
             S.Save();
             Notify();
             return i;

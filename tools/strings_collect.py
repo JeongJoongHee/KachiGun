@@ -164,6 +164,23 @@ EN.update({'총알 관리': 'Ammo', '총알 정보': 'Ammo Info', '코스튬': '
            '{0}번 합성!': '{0} merged!', '분해할 총알을 눌러 고르세요 (여러 개 가능)': 'Tap ammo to salvage (pick several)', '{0}개 고름 → 다이아 +{1}': '{0} picked → +{1} gems',
            '총알 {0}개를 분해할까요?': 'Salvage {0} ammo?', '분해할 총알이 없습니다': 'No ammo to salvage', '장착 중인 총알은 분해할 수 없습니다': "Equipped ammo can't be salvaged",
            '취소': 'Cancel', '슬롯 강화는 없어졌습니다': 'Slot enhancing has been removed'})
+# 11-07 버그 점검: 클라우드 저장 · 예비 세이브 · 끌어다 놓아 장착
+EN.update({'세이브를 읽지 못해 예비 세이브로 불러왔습니다': "Couldn't read your save - loaded the backup save",
+           '클라우드 저장': 'Cloud Save', '지금 저장': 'Save Now', '불러오기': 'Load', '구글 계정 연결': 'Connect Google Account', '다시 연결': 'Reconnect',
+           '구글 계정에 진행을 저장해 두면\\n폰을 바꾸거나 다시 설치해도 이어서 할 수 있어요.': 'Save your progress to your Google account\\nto keep playing after changing phones or reinstalling.',
+           '클라우드 저장은 다음 업데이트에서 열립니다': 'Cloud save opens in the next update', '연결하는 중…': 'Connecting…',
+           '연결된 계정: {0}': 'Account: {0}', '마지막 클라우드 저장: {0}': 'Last cloud save: {0}',
+           '1분마다 · 게임을 내릴 때 자동으로 저장됩니다': 'Saved automatically every minute and when you leave the game', '저장하는 중…': 'Saving…',
+           '구글 계정에 연결하지 못했습니다': "Couldn't connect to your Google account", '클라우드에 저장했습니다': 'Saved to the cloud',
+           '클라우드에 저장하지 못했습니다': "Couldn't save to the cloud",
+           '클라우드에 저장된 진행으로 바꿀까요?\\n이 기기의 지금 진행은 지워집니다.': 'Replace with the progress saved in the cloud?\\nThe current progress on this device will be lost.',
+           '진행 고르기': 'Choose Progress', '이 기기와 클라우드의 진행이 다릅니다.\\n이어서 할 진행을 골라 주세요.': 'This device and the cloud have different progress.\\nChoose which one to continue.',
+           '이 기기': 'This Device', '클라우드': 'Cloud', '{0} 쓰기': 'Use {0}', '코스튬 {0}개': '{0} costumes',
+           '{0} 진행으로 이어서 할까요?\\n{1}의 진행은 지워집니다.': 'Continue with the {0} progress?\\nThe {1} progress will be lost.',
+           '클라우드를 읽지 못했습니다. 잠시 뒤 다시 해 주세요': "Couldn't read the cloud. Please try again later", '클라우드 데이터를 읽지 못했습니다': "Couldn't read the cloud data",
+           '클라우드에서 불러왔습니다': 'Loaded from the cloud', '클라우드에 저장된 데이터가 없습니다': 'No data saved in the cloud', '테스트 계정': 'Test Account',
+           '카드로 끌어다 놓아 장착 · 같은 탄알끼리 겹쳐 합성': 'Drag onto a card to equip · Drop matching ammo together to merge',
+           '장착: 총알을 위 카드로 끌어다 놓으세요': 'To equip: drag the ammo onto a card above'})
 
 
 def code_strings():

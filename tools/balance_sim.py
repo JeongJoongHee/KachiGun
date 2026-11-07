@@ -48,7 +48,7 @@ def load():
     MT = rd('Mission_Tier')
     BUFF = {r['Buff_Id']: r for r in rd('Buff_Table')}
     AD = BUFF['buff_atk']['Multiplier'] if 'buff_atk' in BUFF else 3      # 광고 버프 배율 (표)
-    ADD = BUFF['dungeon_ad_x3']['Multiplier'] if 'dungeon_ad_x3' in BUFF else 3
+    ADD = BUFF['dungeon_ad_x2']['Multiplier'] if 'dungeon_ad_x2' in BUFF else 2
     MAXG = len(GRADE) - 1
     TYPES = {}
     for w in WEAP: TYPES.setdefault(int(w['Grade_Idx']), []).append(w)

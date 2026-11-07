@@ -9,7 +9,8 @@ namespace KachiGun
     /// 총알 관리 창 (기획서 6장 · 11-05 추가 요청/UI 수정.png 모양): 장착 카드 3장(리더·동료1·동료2 — 등급 · +강화 · 공격력 · 연사) + 5x4 인벤토리
     /// + 아래 버튼 [일괄 합성] · [다이아 100 뽑기] · [분해].
     /// 같은 탄알(종류·등급 같음) 두 개를 끌어다 겹치면 한 단계 위 등급의 랜덤 종류로 합성 (11-04: 종류가 다르면 안 됨). 장착 중인 총알은 해제한 뒤 합성.
-    /// 장착 카드를 누르면 정보 창(WeaponInfoPopup: [해제]), 인벤토리 총알을 누르면 정보 창([장착] · [분해]).
+    /// 장착 카드를 누르면 정보 창(WeaponInfoPopup: [해제]), 인벤토리 총알을 누르면 정보 창([분해]).
+    /// 11-07 사용자 "장착 버튼은 제거, 드래그앤드롭으로만 착용": 인벤토리 총알을 카드(어디든)로 끌어다 놓으면 장착 — 정보 창의 [장착] 없음.
     /// 11-05 밤 사용자 "+0 숫자 제거 · 슬롯 강화 기능 제거" → 카드의 +N 없음 · 강화 없음 (Stats.SlotEnchantOn = false).
     /// [일괄 합성] = 같은 탄알 두 개씩 한 단계만(GM.MergeAll) · [분해] = 누르면 여러 개 고르기 → 다시 누르면 고른 것 한 번에 분해(GM.SalvageMany).
     /// </summary>
@@ -77,7 +78,8 @@ namespace KachiGun
                 slotSpd[i].rectTransform.Place(0.5f, 1, new Vector2(38 * k, sy), new Vector2(q - 38 * k - 10, 46), new Vector2(0, 0.5f));
                 UIKit.Fit(slotSpd[i], 18);
                 slots[i] = c;
-                // 카드 아무 데나 눌러도 그 칸 정보
+                // 카드 아무 데나 눌러도 그 칸 정보 · 11-07 카드 어디에 끌어다 놓아도 그 칸에 장착
+                card.gameObject.AddComponent<CardDrop>().cell = c;
                 int si = i;
                 var cb = card.gameObject.AddComponent<Button>();
                 cb.transition = Selectable.Transition.None;
@@ -168,7 +170,7 @@ namespace KachiGun
             }
             else
             {
-                hint.text = L.T("같은 탄알을 겹쳐서 합성하세요!");
+                hint.text = L.T("카드로 끌어다 놓아 장착 · 같은 탄알끼리 겹쳐 합성");
                 mergeLabel.text = L.T("일괄 합성");
                 mergeBtn.GetComponent<Image>().color = Color.white;
                 salvageLabel.text = L.T("분해");
@@ -309,32 +311,28 @@ namespace KachiGun
                 title.text = L.T(names[Mathf.Clamp(index, 0, 2)]);
                 body.text = $"{line1}\n{line2}";
                 UIKit.LabelOf(left).text = L.T("해제");
+                left.gameObject.SetActive(true);
                 right.gameObject.SetActive(false);
                 ((RectTransform)left.transform).anchoredPosition = new Vector2(0, 10);
             }
             else
             {
+                // 11-07: [장착] 없음 — 장착은 카드로 끌어다 놓기만
                 title.text = L.T("총알 정보");
-                body.text = $"{line1}\n{line2}";
-                UIKit.LabelOf(left).text = L.T("장착");
+                body.text = $"{line1}\n{line2}\n<size=28><color=#8A6A50>{L.T("장착: 총알을 위 카드로 끌어다 놓으세요")}</color></size>";
+                left.gameObject.SetActive(false);
                 UIKit.LabelOf(right).text = L.T("분해") + $" +{Tables.Grade(g).salvage:0}";
                 right.gameObject.SetActive(true);
-                ((RectTransform)left.transform).anchoredPosition = new Vector2(-185, 10);
+                ((RectTransform)right.transform).anchoredPosition = new Vector2(0, 10);
                 rb.sprite = Art.Kit("btn_red"); rb.color = Color.white;
             }
         }
 
+        /// <summary>장착 칸의 [해제] (인벤토리 총알은 왼쪽 버튼이 없음 — 11-07 장착은 끌어다 놓기만)</summary>
         void OnLeft()
         {
-            if (Code < 0) return;
-            string e;
-            if (isSlot) e = GM.Unequip(index);
-            else
-            {
-                int slot = S.slots.IndexOf(-1);
-                if (slot < 0) slot = SaveData.SlotCount - 1;   // 다 차 있으면 마지막 칸과 바꿈
-                e = GM.Equip(index, slot);
-            }
+            if (Code < 0 || !isSlot) return;
+            string e = GM.Unequip(index);
             Msg(e);
             if (string.IsNullOrEmpty(e)) base.Close();
             H.Get<WeaponPopup>()?.Refresh();
@@ -462,7 +460,11 @@ namespace KachiGun
             pop.ghost.gameObject.SetActive(false);
             var go = e.pointerCurrentRaycast.gameObject;
             var to = go ? go.GetComponentInParent<WeaponCell>() : null;
+            if (!to && go) { var cd = go.GetComponentInParent<CardDrop>(); if (cd) to = cd.cell; }   // 카드 빈 곳(이름·공격력 글자)에 놓아도 그 칸
             pop.Drop(this, to);
         }
     }
+
+    /// <summary>장착 카드 전체를 놓는 자리로 (11-07) — 카드 안 총알 칸이 작아서, 카드 어디에 놓아도 그 칸에 장착</summary>
+    public class CardDrop : MonoBehaviour { public WeaponCell cell; }
 }

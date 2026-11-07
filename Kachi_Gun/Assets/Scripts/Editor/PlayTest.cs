@@ -78,14 +78,26 @@ namespace KachiGun.EditorTools
         public static void Run()
         {
             SaveData.ResetAll();
+            ResetCloud();
             SessionState.SetBool(Key, true);
             EditorSceneManager.OpenScene("Assets/Scenes/Main.unity");
             EditorApplication.EnterPlaymode();
         }
 
+        /// <summary>11-07 클라우드 시험 흔적(연결 상태 · 가짜 클라우드 칸) 지우기</summary>
+        public static void ResetCloud()
+        {
+            CloudAuth.ResetForTest();
+            PlayerPrefs.DeleteKey(CloudSave.FakeKey);
+            CloudSave.SimulateFail = false;
+            CloudAuth.SimulateCancel = false;
+            PlayerPrefs.Save();
+        }
+
         public static void Finish(int errors)
         {
             SaveData.ResetAll();
+            ResetCloud();
             SessionState.SetBool(Key, false);
             SessionState.SetBool(Key + ".anim", false);
             SessionState.SetBool(Key + ".rig", false);
@@ -314,7 +326,26 @@ namespace KachiGun.EditorTools
                 var info = HUD.I.Get<WeaponInfoPopup>();
                 Check(info != null && info.gameObject.activeSelf && !info.isSlot && info.index == 0, "인벤토리 총알 누름 → 정보 창");
                 Capture("04d_info_inv");
+                {
+                    bool equipBtn = false;
+                    foreach (var b in info.GetComponentsInChildren<Button>(false)) { var lt = UIKit.LabelOf(b); if (lt != null && lt.text == L.T("장착")) equipBtn = true; }
+                    Check(!equipBtn, "인벤토리 총알 정보 창: [장착] 버튼 없음 (11-07 끌어다 놓기만)");
+                }
                 CloseAll();
+                {
+                    // 11-07 카드 아무 데나 끌어다 놓아도 그 칸에 장착
+                    var wp2 = HUD.I.Open<WeaponPopup>();
+                    yield return Wait(0.2f);
+                    CardDrop card1 = null;
+                    foreach (var cd in wp2.GetComponentsInChildren<CardDrop>(true)) if (cd.cell != null && cd.cell.index == 1) card1 = cd;
+                    int from = S.inv.FindIndex(x => x >= 0);
+                    WeaponCell fromCell = null;
+                    foreach (var wc in wp2.GetComponentsInChildren<WeaponCell>(true)) if (!wc.isSlot && wc.index == from) fromCell = wc;
+                    int code = from >= 0 ? S.inv[from] : -1, old1 = S.slots[1];
+                    if (card1 != null && fromCell != null) wp2.Drop(fromCell, card1.cell);
+                    Check(card1 != null && code >= 0 && S.slots.Contains(code) && S.inv[from] == old1, $"카드에 끌어다 놓기 → 장착 (동료 1 칸 {Tables.WeaponName(code)})");
+                    CloseAll();
+                }
                 // 다시 3칸 채우기(뒤 시험용)
                 for (int k = 0; k < 3; k++) if (S.slots[k] < 0) { int ix = S.inv.FindIndex(x => x >= 0); if (ix >= 0) GM.Equip(ix, k); }
             }
@@ -613,6 +644,9 @@ namespace KachiGun.EditorTools
                 Check(!GM.CheckOffline(), "2분 비움 → 없음");
                 S.lastSeen = SaveData.Now + 7200;
                 Check(!GM.CheckOffline(), "기기 시계를 뒤로 돌림 → 없음");
+                Check(S.lastSeen >= SaveData.Now + 7000, "시계를 뒤로 돌려도 마지막으로 본 시각은 줄지 않음 (11-07 — 되돌릴 때 8시간을 또 주지 않게)");
+                S.Save();
+                Check(S.lastSeen >= SaveData.Now + 7000, "저장해도 마지막으로 본 시각은 앞으로만");
 
                 S.lastSeen = SaveData.Now - 3600;
                 GM.CheckOffline(); yield return Wait(0.2f);
@@ -760,6 +794,38 @@ namespace KachiGun.EditorTools
             var buff = GM.Buff(true);
             Check(buff == null && Stats.BuffAtk, "버프");
 
+            // 11-07 버그 점검: 기기 날짜·시간을 바꿔 다시 받기 막음
+            {
+                string ad0 = S.attendDay, td0 = S.ticketDay; int mt0 = S.mineTickets, bt0 = S.bossTickets, ag0 = S.adGemUsed;
+                S.attendDay = "29991231";
+                Check(S.AttendToday && GM.ClaimAttend() < 0, "출석: 받은 날이 오늘보다 뒤(날짜를 되돌림) → 다시 못 받음");
+                S.attendDay = "20000101";
+                Check(!S.AttendToday, "출석: 받은 날이 지난날 → 받을 수 있음");
+                S.attendDay = ad0;
+                S.ticketDay = "29991231"; S.mineTickets = 0; S.adGemUsed = 3; S.RefreshDaily();
+                Check(S.mineTickets == 0 && S.adGemUsed == 3, "티켓·광고 다이아: 채운 날이 오늘보다 뒤 → 다시 안 채움");
+                S.ticketDay = "20000101"; S.RefreshDaily();
+                Check(S.mineTickets == Tables.Ci("MineTickets") && S.adGemUsed == 0 && S.ticketDay == SaveData.Today, "티켓·광고 다이아: 다음 날 → 채움");
+                S.mineTickets = mt0; S.bossTickets = bt0; S.adGemUsed = ag0; S.ticketDay = td0;
+                double now = SaveData.NowD;
+                S.buffAtkCool = now + 86400; S.buffGoldEnd = now + 86400 * 2; S.ClampTimers();
+                Check(S.buffAtkCool - now <= Tables.Buff("buff_atk").cooldown + 1 && S.buffGoldEnd - now <= Tables.Buff("buff_gold").maxStack + 1,
+                    $"버프: 시계가 뒤로 고쳐져도 대기 {S.buffAtkCool - now:0}초 · 남은 {S.buffGoldEnd - now:0}초 (표 최대까지)");
+                S.buffAtkCool = 0; S.buffGoldEnd = 0;
+            }
+            {
+                // 예비 세이브: 본 세이브가 깨지면 예비에서
+                S.Save();
+                PlayerPrefs.SetString(SaveData.BakKey, PlayerPrefs.GetString(SaveData.Key));
+                double bakGold = S.gold; int st0 = S.stage;
+                PlayerPrefs.SetString(SaveData.Key, "{깨진 세이브");
+                SaveData.ReloadForTest();
+                bool fromBak = S != null && SaveData.LoadedFromBackup;
+                Check(fromBak && System.Math.Abs(S.gold - bakGold) < 1 && S.stage == st0 && PlayerPrefs.GetString(SaveData.BrokenKey, "") == "{깨진 세이브",
+                    "세이브가 깨짐 → 예비 세이브로 불러옴 · 깨진 글자는 따로 남김");
+                S.Save();
+            }
+
             // 12) 세이브 왕복
             S.Save();
             string json = PlayerPrefs.GetString(SaveData.Key);
@@ -770,8 +836,94 @@ namespace KachiGun.EditorTools
             Check(Num.F(1850) == "1.85k" && Num.F(14100000) == "14.1m" && Num.F(396) == "396" && Num.F(1600) == "1.6k" && Num.F(2.5e9) == "2.5b" && Num.F(1e12) == "1t" && Num.F(1e15) == "1aa" && Num.F(999999) == "999k" && Num.F(1e6) == "1m",
                 "숫자 표기 " + Num.F(1850) + " " + Num.F(14100000) + " " + Num.F(2.5e9) + " " + Num.F(1e15));
 
+            yield return CloudTest();
+
             Log($"DONE errors={errors}");
             PlayTest.Finish(errors);
+        }
+
+        /// <summary>11-07 클라우드 저장 (에디터 가짜 로그인·가짜 클라우드): 연결 → 올림 · 다른 진행이면 고르기 창 · 불러오기(씬 다시 불러옴)</summary>
+        IEnumerator CloudTest()
+        {
+            DontDestroyOnLoad(gameObject);   // 불러오기가 씬을 다시 불러도 시험은 이어서
+            PlayTest.ResetCloud();
+            CloseAll();
+            var sp = HUD.I.Open<SettingsPopup>();
+            yield return Wait(0.2f);
+            Button cloudRow = null;
+            foreach (var b in sp.GetComponentsInChildren<Button>(true)) { var lt = UIKit.LabelOf(b); if (lt != null && lt.text == L.T("클라우드 저장")) cloudRow = b; }
+            bool vibeRow = false;
+            foreach (var t in sp.GetComponentsInChildren<Text>(true)) if (t.text == L.T("진동")) vibeRow = true;
+            Check(cloudRow != null && !vibeRow, "설정: [클라우드 저장] 줄 · 진동 줄 없음");
+            Capture("18_settings");
+            cloudRow?.onClick.Invoke();
+            yield return Wait(0.3f);
+            var cp = HUD.I.Get<CloudPopup>();
+            Button link = null;
+            foreach (var b in cp.GetComponentsInChildren<Button>(false)) { var lt = UIKit.LabelOf(b); if (lt != null && lt.text == L.T("구글 계정 연결")) link = b; }
+            Check(cp != null && cp.gameObject.activeSelf && link != null, "클라우드 창: [구글 계정 연결]");
+            Capture("19a_cloud_unlinked");
+            link?.onClick.Invoke();
+            yield return Wait(1.5f);
+            var up = SaveData.Parse(PlayerPrefs.GetString(CloudSave.FakeKey, ""));
+            Check(CloudAuth.Linked && CloudSync.Synced && up != null && up.saveId == S.saveId, "연결 → 클라우드 비어 있음 → 이 기기 진행을 올림");
+            Capture("19b_cloud_linked");
+
+            // 다른 폰의 진행(다른 saveId · 둘 다 진행함) → 고르기 창 → [이 기기 쓰기] → 확인 → 이 기기 것을 올림
+            var other = SaveData.Parse(S.ToJson());
+            other.saveId = "other-phone"; other.stage = S.stage + 5; other.bestEver = other.stage; other.gems = 54321; other.savedAt = SaveData.Now - 600;
+            PlayerPrefs.SetString(CloudSave.FakeKey, other.ToJson());
+            CloseAll();
+            CloudSync.ResetState();
+            CloudSync.AfterLogin(null);
+            yield return Wait(0.8f);
+            var cf = HUD.I.Get<CloudConflictPopup>();
+            Check(cf != null && cf.gameObject.activeSelf, "다른 진행 → 고르기 창");
+            Capture("19c_cloud_conflict");
+            Button useLocal = null;
+            if (cf) foreach (var b in cf.GetComponentsInChildren<Button>(true)) { var lt = UIKit.LabelOf(b); if (lt != null && lt.text == L.F("{0} 쓰기", L.T("이 기기"))) useLocal = b; }
+            useLocal?.onClick.Invoke();
+            yield return Wait(0.2f);
+            var ask = HUD.I.Get<ConfirmPopup>();
+            Button ok = null;
+            if (ask) foreach (var b in ask.GetComponentsInChildren<Button>(false)) { var lt = UIKit.LabelOf(b); if (lt != null && lt.text == L.T("확인")) ok = b; }
+            ok?.onClick.Invoke();
+            yield return Wait(0.8f);
+            up = SaveData.Parse(PlayerPrefs.GetString(CloudSave.FakeKey, ""));
+            Check(up != null && up.saveId == S.saveId && S.gems != 54321, "[이 기기 쓰기] → 확인 → 이 기기 진행을 클라우드에 올림");
+
+            // 같은 진행인데 클라우드가 더 새것(다른 폰에서 더 함) → 불러오기 → 씬 다시 불러옴
+            var newer = SaveData.Parse(S.ToJson());
+            newer.gems = 77777; newer.stage = S.stage + 1; newer.savedAt = SaveData.Now + 60;
+            PlayerPrefs.SetString(CloudSave.FakeKey, newer.ToJson());
+            CloudSync.ResetState();
+            CloudSync.AfterLogin(null, true);
+            yield return Wait(2.0f);
+            SetupCapture();
+            yield return Wait(0.5f);
+            Check(System.Math.Abs(S.gems - 77777) < 0.5 && S.stage == newer.stage && GameManager.I != null && HUD.I != null, $"같은 진행 · 클라우드가 더 새것 → 불러와 화면 다시 만듦 (다이아 {Num.Gem(S.gems)})");
+            Check(CloudSync.pendingToast == null, "불러온 뒤 알림 띄움");
+
+            // 자동 올리기: 저장하면 1분 뒤 올림 → [지금 저장]은 바로
+            S.gems = 88888; S.Save();
+            bool done = false, okUp = false;
+            CloudSync.Upload(r => { done = true; okUp = r; });
+            yield return Wait(0.6f);
+            up = SaveData.Parse(PlayerPrefs.GetString(CloudSave.FakeKey, ""));
+            Check(done && okUp && up != null && System.Math.Abs(up.gems - 88888) < 0.5 && CloudSync.LastUploadAt > 0, "[지금 저장] → 클라우드에 올림");
+
+            // 클라우드 읽기 실패 → 안내만 (데이터 그대로)
+            CloudSave.SimulateFail = true;
+            CloudSync.ResetState();
+            CloudSync.AfterLogin(null);
+            yield return Wait(0.6f);
+            Check(!CloudSync.Synced && System.Math.Abs(S.gems - 88888) < 0.5, "클라우드 읽기 실패 → 이 기기 진행 그대로 · 올리지 않음");
+            CloudSave.SimulateFail = false;
+            HUD.I.Open<CloudPopup>();
+            yield return Wait(0.3f);
+            Capture("19d_cloud_popup");
+            CloseAll();
+            PlayTest.ResetCloud();
         }
 
         /// <summary>영어 화면: 진행을 조금 해 둔 세이브 + English → 씬 다시 불러 메인·창 촬영</summary>

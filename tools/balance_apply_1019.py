@@ -77,7 +77,7 @@ ws = wb['Buff_Table']
 head = [c.value for c in ws[1]]
 c = {h: i + 1 for i, h in enumerate(head)}
 for row in ws.iter_rows(min_row=2):
-    if row[0].value in ('buff_atk', 'buff_gold', 'dungeon_ad_x3'):
+    if row[0].value in ('buff_atk', 'buff_gold', 'dungeon_ad_x2'):
         row[c['Multiplier'] - 1].value = 2
         row[c['Name'] - 1].value = x2(row[c['Name'] - 1].value)
         row[c['Description'] - 1].value = x2(row[c['Description'] - 1].value)
