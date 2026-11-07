@@ -1,0 +1,19 @@
+2026-11-07 사용자가 붙여 준 구글 답변 (앱 이전과 12명·14일 테스트)
+
+If you transfer an app to another personal developer account created after Nov 13, 2023 before publishing it to production, the app will not retain its production access status, and you will need to meet the closed testing requirements again on the target account.
+
+Here is why this occurs:
+
+Testing requirements are account-specific: Under Testing requirements for personal accounts, personal accounts created after Nov 13, 2023 must test apps with at least 12 opted-in testers continuously for 14 days and apply for production access before distributing to production.
+Test groups do not transfer: According to the Transfer apps to a different developer account guide, test groups (closed, open, internal test, and internal sharing) do not transfer between developer accounts. Any closed test groups must be recreated in the receiving account, and testers need to opt in again.
+To avoid repeating the 14-day closed testing period, the recommended approach is:
+
+Wait for production access approval on your current account.
+Release the app to the Production track on the original account.
+Submit the transfer request through the App transfer page after the production release is live on Google Play. Apps already published to production transfer their production status and user base without requiring testing again.
+
+---
+한글 요약
+- 프로덕션 출시 전에 kachigoogoo(2023-11-13 뒤 만든 개인 계정)로 옮기면 → 프로덕션 액세스가 안 넘어가고 12명·14일을 새 계정에서 다시
+- 테스트 그룹은 안 넘어감 → 테스터가 다시 참여해야 함
+- 추천 순서: 옛 계정에서 프로덕션 액세스 승인 → 프로덕션 출시 → 스토어에 실제로 보인 뒤 이전 신청 → 프로덕션 상태·사용자 그대로 넘어감
