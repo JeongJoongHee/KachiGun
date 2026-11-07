@@ -33,8 +33,9 @@ namespace KachiGun
         bool dungeonOver;
         public bool eco;
 
-        public bool CanShoot => !dungeonOver && !Demo;
+        public bool CanShoot => !dungeonOver && !Demo && !HoldFire;
         public static bool Demo;   // 시험 촬영(PlayTest.RunZombie): 좀비 생성·사격 멈춤
+        public static bool HoldFire;   // 스토어 촬영(PlayTest.RunStore, 11-07): 좀비가 화면 안으로 걸어 들어올 때까지 사격만 멈춤 — 게임에선 늘 false
         public bool InputAllowed => !eco && !(HUD.I && HUD.I.PopupOpen);
 
         void Awake() { I = this; Tables.Load(); }

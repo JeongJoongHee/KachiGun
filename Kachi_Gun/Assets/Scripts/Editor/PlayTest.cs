@@ -105,6 +105,7 @@ namespace KachiGun.EditorTools
             SessionState.SetBool(Key + ".store", false);
             SessionState.SetBool(Key + ".zshow", false);
             SessionState.SetBool(Key + ".font", false);
+            GameManager.HoldFire = false;   // 11-07 스토어 촬영 사격 멈춤 풀기
             EditorApplication.Exit(errors == 0 ? 0 : 3);
         }
     }
@@ -1000,8 +1001,13 @@ namespace KachiGun.EditorTools
             UnityEngine.SceneManagement.SceneManager.LoadScene(0);
             yield return Wait(1.0f);
             SetupCapture();
-            yield return WaitUntil(() => Target.All.Count >= 14, 20f);
-            yield return Wait(0.5f);
+            // 11-07: 좀비가 오른쪽 끝에서 바로 죽어 화면이 비어 보였음 → 사격을 잠깐 멈추고(HoldFire) 좀비가 화면 가운데까지 걸어오면 쏘기 시작 → 잠깐 뒤 찍음
+            int Near(float frac) { int n = 0; foreach (var t in Target.All) if (t is Zombie z && z.Alive && !z.isBoss && z.Pos.x < Field.I.ViewHalfW * frac) n++; return n; }
+            GameManager.HoldFire = true;
+            yield return WaitUntil(() => Near(0.3f) >= 10, 25f);
+            GameManager.HoldFire = false;
+            yield return Wait(0.45f);
+            Log($"01 전투: 가운데까지 온 좀비 {Near(0.3f)} · 전체 {Target.All.Count}");
             Capture("store/01_battle");
 
             // 보스 (챕터 마지막 스테이지 11-5 = 54)
@@ -1020,8 +1026,11 @@ namespace KachiGun.EditorTools
             S.slots[0] = Tables.Code(9, "laser"); S.slots[1] = Tables.Code(9, "missile"); S.slots[2] = Tables.Code(8, "laser");
             S.lvAtk = 0; S.lvSpd = 0;   // 상위 총알이라 강화를 빼야 좀비가 화면에 남아 보임
             Squad.I.Rebuild(); GM.Notify();
-            yield return WaitUntil(() => Target.All.Count >= 16, 20f);
-            yield return Wait(0.3f);
+            GameManager.HoldFire = true;
+            yield return WaitUntil(() => Near(0.3f) >= 10, 25f);
+            GameManager.HoldFire = false;
+            yield return Wait(0.35f);
+            Log($"04 상위 총알: 가운데까지 온 좀비 {Near(0.3f)} · 전체 {Target.All.Count}");
             Capture("store/04_high");
 
             HUD.I.Open<SupplyPopup>(); yield return Wait(0.4f); Capture("store/05_supply"); CloseAll();
@@ -1029,11 +1038,14 @@ namespace KachiGun.EditorTools
 
             // 광산
             S.RefreshDaily();
-            if (GM.StartMine() == null) { yield return Wait(0.9f); Capture("store/07_mine"); GM.dungeonTime = 0.05f; yield return Wait(0.5f); HUD.I.Get<ResultPopup>()?.Close(); yield return Wait(0.4f); }
+            // 11-07: "비밀던전" 알림 글자가 사라진 뒤 찍음 (전엔 0.9초라 글자가 가운데를 가렸음)
+            if (GM.StartMine() == null) { yield return Wait(2.2f); Capture("store/07_mine"); GM.dungeonTime = 0.05f; yield return Wait(0.5f); HUD.I.Get<ResultPopup>()?.Close(); yield return Wait(0.4f); }
             else Log("광산 못 들어감");
 
             // 도전
-            if (GM.StartChallenge() == null) { yield return Wait(3f); Capture("store/08_challenge"); GM.ExitDungeon(); }
+            // 11-07: 3초면 이미 다 잡아 결과 창이 찍혔음 → 싸우는 중에 (알림 글자가 흐려질 때쯤)
+            GameManager.HoldFire = true;   // 도전 좀비는 제자리에 서 있음 → 알림 글자가 사라질 때까지 쏘지 않고 기다렸다가 잠깐 쏨
+            if (GM.StartChallenge() == null) { yield return Wait(1.9f); GameManager.HoldFire = false; yield return Wait(0.12f); Log($"08 도전: 남은 좀비 {GM.DungeonLeft}"); Capture("store/08_challenge"); HUD.I.Get<ResultPopup>()?.Close(); GM.ExitDungeon(); }
             else Log("도전 못 들어감");
             Log($"DONE errors={errors}");
             PlayTest.Finish(errors);
