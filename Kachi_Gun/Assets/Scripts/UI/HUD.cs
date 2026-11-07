@@ -235,12 +235,13 @@ namespace KachiGun
             }
 
             // 총알 1·2·3 칸 = 카피바라 1·2·3 이 장착한 총알 (누르면 무기 창)
+            // 11-07 사용자 "카피바라 위치와 동일하게": 화면의 위(동료1)·가운데(리더)·아래(동료2) 순서대로 왼쪽부터 동료1 | 리더 | 동료2 (총알 관리 창 카드와 같음)
             for (int i = 0; i < SaveData.SlotCount; i++)
             {
                 var v = new SlotView();
                 var bg = UIKit.KitImg(root, "panel_brown", new Vector2(300, SlotH), "AmmoSlot" + i);
                 v.bg = bg;
-                v.rt = bg.rectTransform.Place(0.5f, 0, new Vector2(-CardStep + i * CardStep, SlotY), new Vector2(300, SlotH), new Vector2(0.5f, 0));
+                v.rt = bg.rectTransform.Place(0.5f, 0, new Vector2(-CardStep + SlotColumn(i) * CardStep, SlotY), new Vector2(300, SlotH), new Vector2(0.5f, 0));
                 var btn = bg.gameObject.AddComponent<Button>();
                 btn.transition = Selectable.Transition.None;
                 btn.onClick.AddListener(() =>
@@ -269,6 +270,9 @@ namespace KachiGun
             }
         }
 
+        /// <summary>장착 칸 → 아래 줄 몇 번째 자리 (0 왼쪽 · 1 가운데 · 2 오른쪽): 리더 가운데 · 동료1 왼쪽 · 동료2 오른쪽</summary>
+        public static int SlotColumn(int slot) => slot == 0 ? 1 : slot == 1 ? 0 : 2;
+
         void RefreshSlots()
         {
             for (int i = 0; i < slotViews.Length; i++)
@@ -295,7 +299,8 @@ namespace KachiGun
                 {
                     v.frame.color = new Color(1, 1, 1, 0f);
                     v.bg.color = new Color(1, 1, 1, 0.75f);
-                    v.name.text = L.F("총알 {0}", i + 1) + "\n<size=24>" + L.T("비어 있음") + "</size>";
+                    string[] roles = { "리더", "동료 1", "동료 2" };   // 11-07: 칸 순서가 동료1 | 리더 | 동료2 라 번호 대신 역할 이름
+                    v.name.text = L.T(roles[Mathf.Clamp(i, 0, 2)]) + "\n<size=24>" + L.T("비어 있음") + "</size>";
                     v.name.rectTransform.offsetMin = new Vector2(10, 4);
                     v.name.alignment = TextAnchor.MiddleCenter;
                 }

@@ -41,12 +41,15 @@ namespace KachiGun
         int Facing => sr.flipX ? -1 : 1;
         /// <summary>카피바라 크기 (몸·총·그림자·총구 위치가 같이 커짐)</summary>
         public static float Scale => Tables.P("Capy_Scale", 1.2f);     // Player_Base
+        /// <summary>11-07 사용자 "리더 카피바라 조금 크게": 리더(장착 칸 0)만 이 배율을 더 곱함 (Player_Base Leader_Scale_Mul)</summary>
+        public static float LeaderMul => Tables.P("Leader_Scale_Mul", 1.12f);
+        public static float ScaleOf(int slot) => Scale * (slot == 0 ? LeaderMul : 1f);
 
         public static Capy Make(int slot, Transform parent)
         {
             var go = new GameObject("Capy" + slot);
             go.transform.SetParent(parent, false);
-            go.transform.localScale = Vector3.one * Scale;
+            go.transform.localScale = Vector3.one * ScaleOf(slot);
             var c = go.AddComponent<Capy>();
             c.slot = slot;
             c.body = new GameObject("Body").transform;

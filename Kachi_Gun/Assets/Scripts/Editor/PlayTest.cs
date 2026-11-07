@@ -290,6 +290,11 @@ namespace KachiGun.EditorTools
                 float ly = cs[0].transform.position.y, y1 = cs[1].transform.position.y, y2 = cs[2].transform.position.y;
                 Log($"분대 자리 y: 리더 {ly:0.00} · 동료1 {y1:0.00} · 동료2 {y2:0.00}");
                 Check(cs[0].slot == 0 && cs[1].slot == 1 && cs[2].slot == 2 && y1 > ly && ly > y2, "분대 자리: 리더 가운데 · 동료1 위 · 동료2 아래");
+                // 11-07 사용자: 리더 카피바라 조금 크게 · 아래 총알 3칸 = 카피바라 위치 순서(동료1 | 리더 | 동료2)
+                float ls = cs[0].transform.localScale.x, ss = cs[1].transform.localScale.x;
+                Check(Mathf.Abs(ls / ss - Capy.LeaderMul) < 0.01f && Capy.LeaderMul > 1f, $"리더 카피바라 크기 x{ls / ss:0.00} (동료 대비)");
+                float ax(int k) { var g = GameObject.Find("AmmoSlot" + k); return g ? ((RectTransform)g.transform).anchoredPosition.x : float.NaN; }
+                Check(ax(1) < ax(0) && ax(0) < ax(2) && Mathf.Abs(ax(0)) < 1f, $"아래 총알 칸: 동료1 {ax(1):0} | 리더 {ax(0):0} | 동료2 {ax(2):0}");
                 string NavText(string id) { var g = GameObject.Find("Nav_" + id); var t = g ? g.GetComponentInChildren<Text>() : null; return t ? t.text : ""; }
                 Check(NavText("weapon") == "총알" && NavText("skin") == "코스튬", $"아래 탭 이름 총알 · 코스튬 ({NavText("weapon")} · {NavText("skin")})");
 
