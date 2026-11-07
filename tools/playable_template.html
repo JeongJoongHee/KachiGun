@@ -1,0 +1,593 @@
+<!DOCTYPE html>
+<html lang="ko"><head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<!--HEAD_EXTRA-->
+<title>카피바라 vs 좀비</title>
+<style>
+  html,body{margin:0;padding:0;width:100%;height:100%;overflow:hidden;background:#3a2a1c;touch-action:none;-webkit-user-select:none;user-select:none;-webkit-tap-highlight-color:transparent}
+  canvas{position:absolute;left:0;top:0;display:block}
+</style></head>
+<body>
+<canvas id="c"></canvas>
+<script>
+/* 카피바라 vs 좀비 — 플레이어블 광고 (11-08, tools/playable_build.py 가 그림·글꼴을 넣어 한 파일로 만듦)
+   흐름: 좀비 떼 → [공격력 카드 탭] 강화 → [같은 총알 끌어다 겹치기] 레이저 → 보스 연타 → 끝 화면(스토어)
+   아무것도 안 누르면 몇 초 뒤 손가락 안내가 대신 해서 끝까지 감 */
+var ASSETS = /*ASSETS*/{};
+var FONT = "/*FONT*/";
+var STORE = "https://play.google.com/store/apps/details?id=com.zkfpf.kachizombie";
+var W = 540, H = 960;
+
+// ---------------------------------------------------------------- 스토어로 (광고 네트워크마다 다른 창구)
+var ctaDone = false;
+function cta() {
+  try { if (window.mraid && mraid.open) { mraid.open(STORE); return; } } catch (e) {}
+  try { if (window.FbPlayableAd && FbPlayableAd.onCTAClick) { FbPlayableAd.onCTAClick(); return; } } catch (e) {}
+  try { if (window.ExitApi && ExitApi.exit) { ExitApi.exit(); return; } } catch (e) {}
+  try { if (window.dapi && dapi.openStoreUrl) { dapi.openStoreUrl(); return; } } catch (e) {}
+  try { if (window.install) { window.install(); return; } } catch (e) {}
+  window.open(STORE, "_blank");
+}
+
+// ---------------------------------------------------------------- 그림
+var IMG = {};
+function loadImages(done) {
+  var keys = Object.keys(ASSETS), n = keys.length;
+  if (!n) { done(); return; }
+  keys.forEach(function (k) {
+    var im = new Image();
+    im.onload = im.onerror = function () { if (--n === 0) done(); };
+    im.src = ASSETS[k];
+    IMG[k] = im;
+  });
+}
+
+// ---------------------------------------------------------------- 소리 (첫 터치 뒤 · 코드로 합성 — 파일 없음)
+var AC = null, muted = false;
+function audioOn() {
+  if (AC) { if (AC.state === "suspended") AC.resume(); return; }
+  try { AC = new (window.AudioContext || window.webkitAudioContext)(); } catch (e) { AC = null; }
+}
+function tone(f0, f1, dur, type, vol, delay) {
+  if (!AC || muted) return;
+  var t = AC.currentTime + (delay || 0), o = AC.createOscillator(), g = AC.createGain();
+  o.type = type || "square"; o.frequency.setValueAtTime(f0, t); o.frequency.exponentialRampToValueAtTime(Math.max(30, f1), t + dur);
+  g.gain.setValueAtTime(vol, t); g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+  o.connect(g); g.connect(AC.destination); o.start(t); o.stop(t + dur + 0.02);
+}
+function noise(dur, vol) {
+  if (!AC || muted) return;
+  var len = Math.floor(AC.sampleRate * dur), b = AC.createBuffer(1, len, AC.sampleRate), d = b.getChannelData(0);
+  for (var i = 0; i < len; i++) d[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / len, 2);
+  var s = AC.createBufferSource(), g = AC.createGain(), f = AC.createBiquadFilter();
+  f.type = "lowpass"; f.frequency.value = 900; s.buffer = b; g.gain.value = vol;
+  s.connect(f); f.connect(g); g.connect(AC.destination); s.start();
+}
+var lastShot = 0;
+var SFX = {
+  shot: function () { var n = performance.now(); if (n - lastShot < 45) return; lastShot = n; tone(900, 260, 0.05, "square", 0.025); },
+  laser: function () { var n = performance.now(); if (n - lastShot < 60) return; lastShot = n; tone(1500, 500, 0.09, "sawtooth", 0.025); },
+  coin: function () { tone(1320, 1320, 0.05, "sine", 0.05); tone(1760, 1760, 0.07, "sine", 0.05, 0.05); },
+  up: function () { tone(520, 1040, 0.12, "triangle", 0.12); },
+  merge: function () { [523, 659, 784, 1047].forEach(function (f, i) { tone(f, f, 0.12, "square", 0.06, i * 0.07); }); },
+  boom: function () { noise(0.3, 0.35); tone(140, 40, 0.3, "sine", 0.3); },
+  boss: function () { tone(110, 70, 0.6, "sawtooth", 0.12); tone(82, 55, 0.6, "square", 0.08, 0.15); },
+  win: function () { [523, 659, 784, 1047, 1319].forEach(function (f, i) { tone(f, f, 0.18, "triangle", 0.12, i * 0.09); }); }
+};
+
+// ---------------------------------------------------------------- 화면 맞추기 (세로 540x960 을 화면에 꼭 맞게, 남는 곳은 어둡게)
+var cv = document.getElementById("c"), cx = cv.getContext("2d"), scale = 1, offX = 0, offY = 0, dpr = 1;
+function resize() {
+  var vw = window.innerWidth || W, vh = window.innerHeight || H;
+  dpr = Math.min(window.devicePixelRatio || 1, 2);
+  cv.width = Math.round(vw * dpr); cv.height = Math.round(vh * dpr);
+  cv.style.width = vw + "px"; cv.style.height = vh + "px";
+  scale = Math.min(vw / W, vh / H); offX = (vw - W * scale) / 2; offY = (vh - H * scale) / 2;
+}
+window.addEventListener("resize", resize);
+
+// ---------------------------------------------------------------- 게임 상태
+var S = {
+  t: 0, phase: "intro", phaseT: 0, idle: 0, gold: 32000, atkLv: 40, atk: 1200, laser: false,
+  kills: 0, shake: 0, flash: 0, ended: false, taps: 0, merged: false, bossDead: false
+};
+var Z = [], B = [], BEAMS = [], FX = [], NUM = [], COINS = [], RIP = [];
+var SQUAD = [
+  { x: 66, y: 402, s: 0.40, fire: 0, shoot: 0 },     // 동료 1 (위)
+  { x: 54, y: 538, s: 0.46, fire: 0.17, shoot: 0 },  // 리더 (가운데 · 조금 크게)
+  { x: 66, y: 674, s: 0.40, fire: 0.33, shoot: 0 }   // 동료 2 (아래)
+];
+var ZTYPES = ["z_basic", "z_hat", "z_bucket", "z_fat"];
+var CARD = { atk: { x: 14, y: 790, w: 170, h: 127, pop: 0 }, spd: { x: 185, y: 790, w: 170, h: 127, pop: 0 }, gold: { x: 356, y: 790, w: 170, h: 127, pop: 0 } };
+var SLOT_Y = 744;
+var MERGE = { a: { x: 140, y: 470 }, b: { x: 330, y: 470 }, drag: null, dragX: 0, dragY: 0, anim: 0, show: 0 };
+var BOSS = null;
+var HAND = { x: 0, y: 0, vis: 0, press: 0 };
+var INSTALL = { x: W - 132, y: 14, w: 118, h: 46 };
+
+function fmt(v) {
+  if (v < 1000) return Math.floor(v) + "";
+  var u = ["", "k", "m", "b", "t"], k = Math.floor(Math.log10(v) / 3); k = Math.min(k, 4);
+  var m = v / Math.pow(10, k * 3);
+  var s = m < 10 ? (Math.floor(m * 100) / 100).toFixed(2) : m < 100 ? (Math.floor(m * 10) / 10).toFixed(1) : Math.floor(m) + "";
+  if (s.indexOf(".") >= 0) s = s.replace(/0+$/, "").replace(/\.$/, "");
+  return s + u[k];
+}
+function rnd(a, b) { return a + Math.random() * (b - a); }
+function setPhase(p) { S.phase = p; S.phaseT = 0; S.idle = 0; }
+
+function spawnZombie(x, y, type, hp) {
+  var tp = type || ZTYPES[Math.floor(Math.random() * ZTYPES.length)];
+  var hpv = hp || (tp === "z_fat" ? 9000 : tp === "z_bucket" ? 6000 : 4000);
+  Z.push({ x: x, y: y, tp: tp, hp: hpv, max: hpv, sp: rnd(38, 58) * (tp === "z_fat" ? 0.7 : 1), walk: Math.random() * 4, hit: 0, dead: false, deadT: 0, kb: 0, stop: rnd(175, 215) });
+}
+function spawnPack(n, near) {
+  for (var i = 0; i < n; i++) {
+    var y = 380 + (300 * (i + rnd(0.1, 0.9))) / n;
+    spawnZombie((near ? rnd(330, 520) : rnd(570, 650)) + i * 4, y);   // near = 이미 화면 안 (시작 장면)
+  }
+}
+// 총구 = 칸(360) 안 총 회전 중심 (171,253) + 총구 (137.6,-17.6) → (308.6, 235.4) · 그림 왼쪽 위 = 발 (160, 352) 기준
+function muzzle(c) { return { x: c.x + (308.6 - 160) * c.s, y: c.y - (352 - 235.4) * c.s }; }
+
+function nearest(c) {
+  var best = null, bd = 1e9;
+  for (var i = 0; i < Z.length; i++) {
+    var z = Z[i]; if (z.dead || z.x > 560) continue;
+    var d = Math.abs(z.y - c.y) * 1.4 + (z.x - c.x);
+    if (d < bd) { bd = d; best = z; }
+  }
+  if (BOSS && !BOSS.dead && BOSS.x < 540) { var db = Math.abs(BOSS.y - c.y) * 1.4 + (BOSS.x - c.x) - 120; if (db < bd) best = BOSS; }
+  return best;
+}
+
+function damage(z, d, x, y) {
+  if (z.dead) return;
+  z.hp -= d; z.hit = 0.12; if (!z.boss) z.kb = 10;
+  NUM.push({ x: x + rnd(-12, 12), y: y - 30 + rnd(-10, 10), v: d, t: 0, big: d >= 20000 || z.boss });
+  if (z.hp <= 0) {
+    z.dead = true; z.deadT = 0; S.kills++;
+    FX.push({ x: z.x, y: z.y - 50 * (z.boss ? 2.4 : 1), t: 0, s: z.boss ? 2.6 : 0.8 });
+    var nc = z.boss ? 14 : 2;
+    for (var k = 0; k < nc; k++) COINS.push({ x: z.x + rnd(-20, 20), y: z.y - 60, vx: rnd(-90, 90), vy: rnd(-260, -120), t: 0, v: z.boss ? 250000 : 900 });
+    if (z.boss) { SFX.boom(); S.shake = 0.6; S.flash = 0.5; } else if (Math.random() < 0.5) SFX.boom();
+  }
+}
+
+function fireSquad(dt) {
+  for (var i = 0; i < SQUAD.length; i++) {
+    var c = SQUAD[i];
+    c.shoot = Math.max(0, c.shoot - dt);
+    c.fire -= dt;
+    if (c.fire > 0) continue;
+    var tg = nearest(c);
+    if (!tg) { c.fire = 0.1; continue; }
+    var m = muzzle(c);
+    c.shoot = 0.12;
+    if (S.laser) {
+      c.fire = 0.26;
+      var tx = Math.max(m.x + 60, tg.x), ty = tg.boss ? tg.y - 110 : tg.y - 40;
+      var slope = (ty - m.y) / (tx - m.x);
+      BEAMS.push({ x: m.x, y: m.y, ex: 580, ey: m.y + slope * (580 - m.x), t: 0 });
+      SFX.laser();
+      // 레이저 = 그 줄 위 좀비 전부
+      for (var k = 0; k < Z.length; k++) {
+        var z = Z[k]; if (z.dead || z.x < m.x) continue;
+        var ly = m.y + slope * (z.x - m.x);
+        if (Math.abs(ly - (z.y - 40)) < 46) damage(z, 30000, z.x, z.y - 60);
+      }
+      if (BOSS && !BOSS.dead) damage(BOSS, 42000, BOSS.x - 40, BOSS.y - 160);
+    } else {
+      c.fire = 0.42;
+      var dx = tg.x - m.x, dy = (tg.y - (tg.boss ? 120 : 45)) - m.y, L = Math.sqrt(dx * dx + dy * dy) || 1;
+      B.push({ x: m.x, y: m.y, vx: dx / L * 1000, vy: dy / L * 1000, d: S.atk, tg: tg });
+      SFX.shot();
+    }
+  }
+}
+
+// ---------------------------------------------------------------- 진행 단계
+function update(dt) {
+  S.t += dt; S.phaseT += dt; S.idle += dt;
+  S.shake = Math.max(0, S.shake - dt); S.flash = Math.max(0, S.flash - dt);
+  for (var k in CARD) CARD[k].pop = Math.max(0, CARD[k].pop - dt);
+  HAND.press = Math.max(0, HAND.press - dt);
+
+  var ph = S.phase;
+  if (ph === "intro") {
+    if (S.phaseT < 0.05 && Z.length === 0) { spawnPack(9, true); spawnPack(6, false); }
+    if (S.phaseT > 2.6) setPhase("upgrade");
+  } else if (ph === "upgrade") {
+    if (Z.filter(function (z) { return !z.dead; }).length < 7 && Math.random() < dt * 3) spawnPack(4, false);
+    // 안 누르면 손가락이 대신 (2.6초 뒤부터 0.55초마다)
+    if (S.idle > 2.6 && S.phaseT > 0.4) { doUpgrade("atk", true); S.idle = 2.05; }
+    if (S.taps >= 4 && S.phaseT > 0.5) { setPhase("merge"); }
+  } else if (ph === "merge") {
+    if (!S.merged) MERGE.show = Math.min(1, MERGE.show + dt * 4);   // 열기 (합성 뒤엔 닫기만 — 둘이 같이 돌면 안 닫혔음)
+    if (!S.merged && S.idle > 3.4 && !MERGE.drag) { MERGE.anim = 0.001; S.idle = -99; }   // 자동 끌기 시작
+    if (MERGE.anim > 0) {
+      MERGE.anim += dt;
+      var u = Math.min(1, MERGE.anim / 0.8);
+      HAND.vis = 1;
+      HAND.x = MERGE.a.x + (MERGE.b.x - MERGE.a.x) * u; HAND.y = MERGE.a.y + (MERGE.b.y - MERGE.a.y) * u - Math.sin(u * Math.PI) * 40;
+      MERGE.dragX = HAND.x; MERGE.dragY = HAND.y;
+      if (u >= 1) { MERGE.anim = 0; doMerge(); }
+    }
+    if (S.merged && S.t - S.mergeT > 1.0) {   // "합성 성공" 1초 보여 준 뒤 닫음
+      MERGE.show = Math.max(0, MERGE.show - dt * 3);
+      if (MERGE.show <= 0) setPhase("laser");
+    }
+  } else if (ph === "laser") {
+    if (S.phaseT > 0.8 && S.phaseT < 3.0 && Math.random() < dt * 2.5) spawnPack(7, false);
+    if (S.phaseT > 4.2) {
+      setPhase("boss"); SFX.boss(); S.flash = 0.35;
+      BOSS = { x: 640, y: 560, tp: "z_ogre", hp: 2600000, max: 2600000, sp: 70, walk: 0, hit: 0, dead: false, deadT: 0, kb: 0, boss: true, stop: 330 };
+    }
+  } else if (ph === "boss") {
+    if (Math.random() < dt * 1.2) spawnPack(3, false);
+    if (S.phaseT > 1.6 && S.idle > 2.2) { bossTap(true); S.idle = 1.9; }   // 안 누르면 손가락이 대신 연타
+    if (BOSS && BOSS.dead && BOSS.deadT > 1.5) { setPhase("clear"); SFX.win(); }
+  } else if (ph === "clear") {
+    if (S.phaseT > 1.6) { setPhase("end"); S.ended = true; }
+  }
+  if (S.t > 45 && !S.ended) { setPhase("end"); S.ended = true; }
+
+  // 합성 창이 열린 동안은 쏘지 않음 → 창 뒤에 좀비 떼가 모였다가, 닫히면 레이저로 한 번에 (11-08)
+  if (ph !== "end" && ph !== "merge") fireSquad(dt);
+
+  // 좀비
+  var all = BOSS ? Z.concat([BOSS]) : Z;
+  for (var i = 0; i < all.length; i++) {
+    var z = all[i];
+    z.hit = Math.max(0, z.hit - dt);
+    if (z.dead) { z.deadT += dt; continue; }
+    if (z.kb > 0) { z.x += z.kb * dt * 10; z.kb = Math.max(0, z.kb - dt * 60); }
+    if (z.x > z.stop) { z.x -= z.sp * dt * (z.hit > 0 ? 0.4 : 1); z.walk += dt * 7; }
+  }
+  for (var j = Z.length - 1; j >= 0; j--) if (Z[j].dead && Z[j].deadT > 1.0) Z.splice(j, 1);
+  if (BOSS && !BOSS.dead && BOSS.x > BOSS.stop) BOSS.walk += 0;
+
+  // 총알
+  for (var b = B.length - 1; b >= 0; b--) {
+    var o = B[b]; o.x += o.vx * dt; o.y += o.vy * dt;
+    var tg = o.tg;
+    if (!tg.dead && Math.abs(o.x - tg.x) < 30 && Math.abs(o.y - (tg.y - (tg.boss ? 120 : 45))) < (tg.boss ? 120 : 50)) { damage(tg, o.d, tg.x, tg.y - (tg.boss ? 200 : 60)); B.splice(b, 1); continue; }
+    if (o.x > 600 || o.y < 200 || o.y > 760 || (tg.dead && o.x > tg.x + 40)) B.splice(b, 1);
+  }
+  for (var e = BEAMS.length - 1; e >= 0; e--) { BEAMS[e].t += dt; if (BEAMS[e].t > 0.14) BEAMS.splice(e, 1); }
+  for (var f = FX.length - 1; f >= 0; f--) { FX[f].t += dt; if (FX[f].t > 0.42) FX.splice(f, 1); }
+  for (var n = NUM.length - 1; n >= 0; n--) { NUM[n].t += dt; if (NUM[n].t > 0.75) NUM.splice(n, 1); }
+  for (var r = RIP.length - 1; r >= 0; r--) { RIP[r].t += dt; if (RIP[r].t > 0.4) RIP.splice(r, 1); }
+  for (var c = COINS.length - 1; c >= 0; c--) {
+    var q = COINS[c]; q.t += dt;
+    if (q.t < 0.35) { q.x += q.vx * dt; q.y += q.vy * dt; q.vy += 900 * dt; }
+    else { var k2 = Math.min(1, (q.t - 0.35) / 0.45); q.x += (52 - q.x) * k2; q.y += (34 - q.y) * k2; }
+    if (q.t > 0.8) { S.gold += q.v; COINS.splice(c, 1); if (Math.random() < 0.4) SFX.coin(); }
+  }
+
+  // 손가락 안내 위치
+  if (ph === "upgrade") { HAND.vis = 1; HAND.x = CARD.atk.x + 92; HAND.y = CARD.atk.y + 40; }
+  else if (ph === "merge" && !MERGE.anim) {
+    if (!S.merged && !MERGE.drag) {   // 끌기 시범 (반복)
+      var u2 = (S.phaseT % 1.6) / 1.1; if (u2 > 1) u2 = 1;
+      HAND.vis = 1; HAND.x = MERGE.a.x + (MERGE.b.x - MERGE.a.x) * u2; HAND.y = MERGE.a.y + (MERGE.b.y - MERGE.a.y) * u2 - Math.sin(u2 * Math.PI) * 40;
+    } else HAND.vis = 0;
+  } else if (ph === "boss") { HAND.vis = S.phaseT > 1.2 ? 1 : 0; HAND.x = 300 + Math.sin(S.t * 2) * 30; HAND.y = 420; }
+  else HAND.vis = 0;
+}
+
+function doUpgrade(which, auto) {
+  var c = CARD[which];
+  c.pop = 0.15;
+  if (which === "atk") { S.atkLv++; S.atk = Math.round(S.atk * 1.6); S.taps++; }
+  else if (which === "spd") { S.spdLv = (S.spdLv || 60) + 1; }
+  else { S.goldLv = (S.goldLv || 150) + 1; }
+  S.gold = Math.max(0, S.gold - 900);
+  RIP.push({ x: c.x + c.w / 2, y: c.y + c.h / 2, t: 0 });
+  if (auto) HAND.press = 0.18;
+  SFX.up();
+}
+function doMerge() {
+  if (S.merged) return;
+  S.merged = true; S.laser = true; S.flash = 0.25; S.shake = 0.2; S.mergeT = S.t;
+  MERGE.drag = null;
+  FX.push({ x: MERGE.b.x, y: MERGE.b.y + 10, t: 0, s: 1.4, ui: true });
+  SFX.merge();
+  // 창 뒤(안 보이는 동안)에 좀비 떼를 화면 안에 깔아 둠 → 창이 닫히면 레이저가 한 번에 쓸어버림
+  for (var i = 0; i < 24; i++) spawnZombie(rnd(300, 560), 380 + 300 * (i + rnd(0.1, 0.9)) / 24);
+  setTimeout(function () {}, 0);
+}
+function bossTap(auto) {
+  if (!BOSS || BOSS.dead) return;
+  S.taps++;
+  for (var i = 0; i < SQUAD.length; i++) SQUAD[i].fire = Math.min(SQUAD[i].fire, 0.02);
+  damage(BOSS, 95000, BOSS.x - 30 + rnd(-30, 30), BOSS.y - 180 + rnd(-40, 40));
+  FX.push({ x: BOSS.x - 40 + rnd(-40, 40), y: BOSS.y - 140 + rnd(-60, 60), t: 0, s: 0.9 });
+  S.shake = Math.max(S.shake, 0.12);
+  RIP.push({ x: auto ? HAND.x : lastPX, y: auto ? HAND.y : lastPY, t: 0 });
+  if (auto) HAND.press = 0.15;
+  SFX.boom();
+}
+
+// ---------------------------------------------------------------- 입력
+var lastPX = 0, lastPY = 0;
+function toLogic(e) {
+  var p = e.touches && e.touches[0] ? e.touches[0] : (e.changedTouches && e.changedTouches[0]) || e;
+  return { x: (p.clientX - offX) / scale, y: (p.clientY - offY) / scale };
+}
+function inRect(p, r) { return p.x >= r.x && p.x <= r.x + r.w && p.y >= r.y && p.y <= r.y + r.h; }
+function near(p, q, d) { return Math.abs(p.x - q.x) < d && Math.abs(p.y - q.y) < d; }
+function down(e) {
+  e.preventDefault(); audioOn();
+  var p = toLogic(e); lastPX = p.x; lastPY = p.y; S.idle = 0;
+  if (S.phase === "end") { ctaDone = true; cta(); return; }
+  if (inRect(p, INSTALL)) { cta(); return; }
+  if (S.phase === "intro") {   // 시작 장면에서 바로 카드를 눌러도 강화로 (11-08 — 전엔 2.6초 동안 무시됨)
+    for (var k0 in CARD) if (inRect(p, CARD[k0])) { setPhase("upgrade"); doUpgrade(k0, false); return; }
+  }
+  if (S.phase === "upgrade") {
+    for (var k in CARD) if (inRect(p, CARD[k])) { doUpgrade(k, false); return; }
+  } else if (S.phase === "merge" && !S.merged) {
+    if (near(p, MERGE.a, 70)) { MERGE.drag = "a"; MERGE.dragX = p.x; MERGE.dragY = p.y; MERGE.anim = 0; }
+    else if (near(p, MERGE.b, 70)) { MERGE.drag = "b"; MERGE.dragX = p.x; MERGE.dragY = p.y; MERGE.anim = 0; }
+  } else if (S.phase === "boss") { bossTap(false); }
+  else if (S.phase === "intro" || S.phase === "laser") { RIP.push({ x: p.x, y: p.y, t: 0 }); }
+}
+function move(e) {
+  if (!MERGE.drag) return;
+  e.preventDefault();
+  var p = toLogic(e); MERGE.dragX = p.x; MERGE.dragY = p.y; S.idle = 0;
+}
+function up(e) {
+  if (!MERGE.drag) return;
+  var p = toLogic(e), other = MERGE.drag === "a" ? MERGE.b : MERGE.a;
+  if (near(p, other, 80)) doMerge();
+  MERGE.drag = null;
+}
+cv.addEventListener("touchstart", down, { passive: false });
+cv.addEventListener("touchmove", move, { passive: false });
+cv.addEventListener("touchend", up);
+cv.addEventListener("mousedown", function (e) { if (!("ontouchstart" in window)) down(e); });
+window.addEventListener("mousemove", function (e) { if (!("ontouchstart" in window)) move(e); });
+window.addEventListener("mouseup", function (e) { if (!("ontouchstart" in window)) up(e); });
+
+// ---------------------------------------------------------------- 그리기
+function txt(s, x, y, size, fill, stroke, sw, align) {
+  cx.font = size + "px Jua, 'Malgun Gothic', sans-serif";
+  cx.textAlign = align || "center"; cx.textBaseline = "middle";
+  cx.lineJoin = "round"; cx.lineWidth = sw || Math.max(3, size * 0.16); cx.strokeStyle = stroke || "#1C110A";
+  cx.strokeText(s, x, y); cx.fillStyle = fill || "#fff"; cx.fillText(s, x, y);
+}
+function img(k, x, y, w, h, a) {
+  var im = IMG[k]; if (!im || !im.width) return;
+  if (a !== undefined) { cx.globalAlpha = a; }
+  cx.drawImage(im, x, y, w, h);
+  cx.globalAlpha = 1;
+}
+function frame(k, i, n, x, y, w, h, flip) {
+  var im = IMG[k]; if (!im || !im.width) return;
+  var fw = im.width / n;
+  cx.save();
+  if (flip) { cx.translate(x + w, y); cx.scale(-1, 1); x = 0; y = 0; }
+  cx.drawImage(im, fw * i, 0, fw, im.height, x, y, w, h);
+  cx.restore();
+}
+function roundRect(x, y, w, h, r, fill, stroke, sw) {
+  cx.beginPath(); cx.moveTo(x + r, y); cx.arcTo(x + w, y, x + w, y + h, r); cx.arcTo(x + w, y + h, x, y + h, r); cx.arcTo(x, y + h, x, y, r); cx.arcTo(x, y, x + w, y, r); cx.closePath();
+  if (fill) { cx.fillStyle = fill; cx.fill(); }
+  if (stroke) { cx.lineWidth = sw || 4; cx.strokeStyle = stroke; cx.stroke(); }
+}
+function banner(s1, s2, t) {
+  var a = Math.min(1, t / 0.15), y = 168 - (1 - a) * 20;
+  cx.globalAlpha = a;
+  var g = cx.createLinearGradient(0, 110, 0, 250); g.addColorStop(0, "rgba(20,12,8,0)"); g.addColorStop(0.3, "rgba(20,12,8,0.62)"); g.addColorStop(0.8, "rgba(20,12,8,0.62)"); g.addColorStop(1, "rgba(20,12,8,0)");
+  cx.fillStyle = g; cx.fillRect(0, 110, W, 140);
+  txt(s1, W / 2, y, 50, "#FFCD50", "#1C110A", 8);
+  if (s2) txt(s2, W / 2, y + 50, 28, "#FFF4D6", "#1C110A", 5);
+  cx.globalAlpha = 1;
+}
+function drawZombie(z) {
+  var boss = !!z.boss, sc = boss ? 1.0 : 0.33, w = 400 * sc, h = 380 * sc;
+  var fi = z.dead ? 4 : Math.floor(z.walk) % 4;
+  var a = z.dead ? Math.max(0, 1 - Math.max(0, z.deadT - 0.5) / 0.5) : 1;
+  cx.globalAlpha = a;
+  // 그림자
+  cx.fillStyle = "rgba(60,40,20,0.22)"; cx.beginPath(); cx.ellipse(z.x, z.y - 4, w * 0.22, h * 0.05, 0, 0, Math.PI * 2); cx.fill();
+  frame(z.tp, fi, 5, z.x - w * 0.45, z.y - h + (z.dead ? h * 0.05 : 0), w, h, true);
+  if (z.hit > 0 && !z.dead) { cx.globalCompositeOperation = "lighter"; cx.globalAlpha = 0.5 * z.hit / 0.12; frame(z.tp, fi, 5, z.x - w * 0.45, z.y - h, w, h, true); cx.globalCompositeOperation = "source-over"; }
+  cx.globalAlpha = 1;
+  if (!z.dead && (boss || z.hp < z.max)) {
+    var bw = boss ? 200 : 54, bx = z.x - bw / 2 + (boss ? 0 : 6), by = z.y - h - (boss ? 2 : 6);
+    roundRect(bx - 2, by - 2, bw + 4, (boss ? 18 : 9) + 4, 6, "#1C110A");
+    roundRect(bx, by, bw * Math.max(0, z.hp / z.max), boss ? 18 : 9, 5, boss ? "#E5533D" : "#7CD65A");
+  }
+}
+function drawCapy(c) {
+  var w = 360 * c.s, h = 360 * c.s, bob = Math.sin(S.t * 6 + c.y) * 1.5;
+  cx.fillStyle = "rgba(60,40,20,0.22)"; cx.beginPath(); cx.ellipse(c.x + 4, c.y - 2, w * 0.2, h * 0.04, 0, 0, Math.PI * 2); cx.fill();
+  img(c.shoot > 0 ? "capy_shoot" : "capy_idle", c.x - 160 * c.s, c.y - 352 * c.s + bob - (c.shoot > 0 ? 1 : 0), w, h);
+  if (c.shoot > 0.06) { var m = muzzle(c); img("muzzle", m.x - 10, m.y - 22, 54, 44); }
+}
+function drawCard(k, label, lv, val, cost) {
+  var c = CARD[k], p = 1 + c.pop * 0.6, w = c.w * p, h = c.h * p, x = c.x + c.w / 2 - w / 2, y = c.y + c.h / 2 - h / 2;
+  img("card_" + k, x, y, w, h);
+  var s = w / 170;
+  txt(label, x + w / 2, y - 14 * s, 21 * s, "#fff", "#1C110A", 4);
+  txt("Lv." + lv, x + w - 14 * s, y + 25 * s, 17 * s, "#fff", "#1C110A", 3, "right");
+  txt(fmt(val), x + w / 2 - 4 * s, y + 55 * s, 31 * s, "#fff", "#1C110A", 5);
+  txt(fmt(cost), x + w / 2 + 11 * s, y + h - 39 * s, 20 * s, "#fff", "#1C110A", 3);
+}
+function drawSlotRow() {
+  var names = [S.laser ? "레이저탄_SS" : "기본탄_C", S.laser ? "레이저탄_SS" : "기본탄_C", S.laser ? "레이저탄_SS" : "기본탄_C"];
+  var cols = ["#3fae64", "#3fae64", "#3fae64"], xs = [14, 185, 356];
+  for (var i = 0; i < 3; i++) {
+    var gc = S.laser ? "#E5533D" : "#5FB04B";
+    roundRect(xs[i], SLOT_Y - 18, 170, 40, 10, "rgba(255,244,214,0.93)", gc, 4);
+    img(S.laser ? "icon_laser" : "icon_single", xs[i] + 8, SLOT_Y - 14, 40, 32);
+    txt(names[i], xs[i] + 106, SLOT_Y + 2, 17, gc, "#1C110A", 3);
+  }
+}
+function drawMergePanel() {
+  var a = MERGE.show; if (a <= 0) return;
+  cx.globalAlpha = a * 0.55; cx.fillStyle = "#140c08"; cx.fillRect(0, 0, W, H); cx.globalAlpha = a;
+  var py = 330 - (1 - a) * 40;
+  roundRect(60, py, W - 120, 300, 26, "#FFF4D6", "#1C110A", 6);
+  roundRect(W / 2 - 130, py - 26, 260, 52, 26, "#FFCD50", "#1C110A", 5);
+  txt("총알 합성", W / 2, py, 30, "#fff", "#1C110A", 5);
+  txt(S.merged ? "합성 성공!" : "같은 총알을 끌어다 겹치세요", W / 2, py + 62, 25, "#3a2a1c", "#FFF4D6", 2);
+  function tile(x, y, grade, icon, col) {
+    roundRect(x - 62, y - 62, 124, 124, 16, col, "#1C110A", 5);
+    img(icon, x - 46, y - 34, 92, 74);
+    txt(grade, x - 40, y - 42, 30, "#fff", "#1C110A", 5);
+  }
+  if (!S.merged) {
+    if (MERGE.drag !== "a" && !MERGE.anim) tile(MERGE.a.x, MERGE.a.y, "C", "icon_single", "#6aa84f");
+    if (MERGE.drag !== "b") tile(MERGE.b.x, MERGE.b.y, "C", "icon_single", "#6aa84f");
+    txt("+", (MERGE.a.x + MERGE.b.x) / 2, MERGE.a.y, 54, "#FFCD50", "#1C110A", 6);
+    if (MERGE.drag || MERGE.anim) tile(MERGE.dragX, MERGE.dragY, "C", "icon_single", "#6aa84f");
+  } else {
+    var pp = 1 + Math.max(0, 0.3 - (S.t - S.mergeT)) * 1.2;
+    cx.save(); cx.translate(W / 2, MERGE.a.y); cx.scale(pp, pp);
+    tile(0, 0, "SS", "icon_laser", "#c0392b");
+    cx.restore();
+    txt("레이저탄_SS", W / 2, MERGE.a.y + 92, 30, "#FFCD50", "#1C110A", 5);
+  }
+  cx.globalAlpha = 1;
+}
+function drawEnd() {
+  var a = Math.min(1, S.phaseT / 0.3);
+  cx.globalAlpha = a * 0.82; cx.fillStyle = "#1a110b"; cx.fillRect(0, 0, W, H); cx.globalAlpha = a;
+  var g = cx.createLinearGradient(0, 120, 0, 900); g.addColorStop(0, "#FFE8C0"); g.addColorStop(1, "#E1A452");
+  roundRect(34, 90, W - 68, 800, 34, g, "#1C110A", 6);
+  // 아이콘(120~260) · 제목 로고(275~ 높이에 맞춤) · 캐릭터(아래 728 까지) — 서로 안 겹치게 (11-08)
+  var ic = IMG.icon; if (ic) { cx.save(); roundRect(W / 2 - 70, 118, 140, 140, 30); cx.clip(); cx.drawImage(ic, W / 2 - 70, 118, 140, 140); cx.restore(); roundRect(W / 2 - 70, 118, 140, 140, 30, null, "#1C110A", 5); }
+  var lg = IMG.logo; if (lg && lg.width) { var lh = 210, lw = lh * lg.width / lg.height; if (lw > 380) { lw = 380; lh = lw * lg.height / lg.width; } cx.drawImage(lg, W / 2 - lw / 2, 272, lw, lh); }
+  var kv = IMG.kv; if (kv && kv.width) { var kh = 200, kw = kh * kv.width / kv.height; if (kw > 400) { kw = 400; kh = kw * kv.height / kv.width; } cx.drawImage(kv, W / 2 - kw / 2 - 6, 728 - kh, kw, kh); }
+  var p = 1 + Math.sin(S.t * 6) * 0.05, bw = 360 * p, bh = 92 * p;
+  roundRect(W / 2 - bw / 2, 742 + 6, bw, bh, bh / 2, "#3c6e28");
+  roundRect(W / 2 - bw / 2, 742, bw, bh, bh / 2, "#6EBE46", "#1C110A", 6);
+  txt("지금 무료 플레이", W / 2, 742 + bh / 2 - 2, 40 * p, "#fff", "#1C110A", 6);
+  txt("Google Play 에서 다운로드", W / 2, 862, 22, "#1C110A", "#FFF4D6", 3);
+  cx.globalAlpha = 1;
+}
+
+function render() {
+  cx.setTransform(1, 0, 0, 1, 0, 0);
+  cx.fillStyle = "#2b1d12"; cx.fillRect(0, 0, cv.width, cv.height);
+  var sh = S.shake > 0 ? (Math.random() - 0.5) * 14 * S.shake / 0.6 : 0;
+  cx.setTransform(scale * dpr, 0, 0, scale * dpr, (offX + sh) * dpr, (offY + sh * 0.5) * dpr);
+  cx.save(); cx.beginPath(); cx.rect(0, 0, W, H); cx.clip();
+
+  // 배경 (숲 · 흙길 · 덤불)
+  img("map", -69, 0, 678, 960);
+
+  // 위: 진행 막대 · 스테이지 · 금화
+  roundRect(14, 12, W - 160, 28, 12, "#5a3d24", "#1C110A", 4);
+  var prog = Math.min(1, S.kills / 60);
+  roundRect(18, 16, (W - 168) * Math.max(0.04, prog), 20, 9, BOSS && !BOSS.dead ? "#E5533D" : "#6EBE46");
+  txt(BOSS && !BOSS.dead ? "보스!" : Math.floor(prog * 100) + "%", (W - 160) / 2 + 14, 27, 18, "#fff", "#1C110A", 3);
+  roundRect(14, 50, 150, 42, 18, "rgba(255,244,214,0.92)", "#1C110A", 4);
+  img("coin", 18, 51, 40, 40);
+  txt(fmt(S.gold), 152, 72, 24, "#3a2a1c", "#FFF4D6", 3, "right");
+  txt("Stage 11-2", W / 2, 72, 32, "#fff", "#1C110A", 6);
+  // 설치 버튼 (언제나)
+  roundRect(INSTALL.x, INSTALL.y + 3, INSTALL.w, INSTALL.h, 22, "#3c6e28");
+  roundRect(INSTALL.x, INSTALL.y, INSTALL.w, INSTALL.h, 22, "#6EBE46", "#1C110A", 4);
+  txt("설치", INSTALL.x + INSTALL.w / 2, INSTALL.y + INSTALL.h / 2, 24, "#fff", "#1C110A", 4);
+
+  // 좀비 · 보스 · 분대 (아래에 있을수록 앞)
+  var list = Z.slice(); if (BOSS) list.push(BOSS);
+  list.sort(function (p, q) { return p.y - q.y; });
+  var drawn = false;
+  for (var i = 0; i < list.length; i++) drawZombie(list[i]);
+  for (var j = 0; j < SQUAD.length; j++) drawCapy(SQUAD[j]);
+
+  // 총알 · 레이저
+  for (var b = 0; b < B.length; b++) { var o = B[b]; cx.save(); cx.translate(o.x, o.y); cx.rotate(Math.atan2(o.vy, o.vx)); img("bullet", -20, -11, 40, 22); cx.restore(); }
+  for (var e = 0; e < BEAMS.length; e++) {
+    var bm = BEAMS[e], a = 1 - bm.t / 0.14;
+    cx.globalCompositeOperation = "lighter";
+    cx.strokeStyle = "rgba(120,240,255," + (0.85 * a) + ")"; cx.lineWidth = 22 * a + 4; cx.lineCap = "round";
+    cx.beginPath(); cx.moveTo(bm.x, bm.y); cx.lineTo(bm.ex, bm.ey); cx.stroke();
+    cx.strokeStyle = "rgba(255,255,255," + a + ")"; cx.lineWidth = 7 * a + 1;
+    cx.beginPath(); cx.moveTo(bm.x, bm.y); cx.lineTo(bm.ex, bm.ey); cx.stroke();
+    cx.globalCompositeOperation = "source-over";
+  }
+  // 폭발
+  for (var f = 0; f < FX.length; f++) {
+    var fx = FX[f], fi = Math.min(2, Math.floor(fx.t / 0.14)), s = 110 * fx.s * (0.8 + fx.t);
+    img("boom" + fi, fx.x - s / 2, fx.y - s / 2, s, s, 1 - fx.t / 0.42 * 0.5);
+  }
+  // 데미지 숫자
+  for (var n = 0; n < NUM.length; n++) {
+    var nm = NUM[n], al = 1 - Math.max(0, nm.t - 0.45) / 0.3;
+    cx.globalAlpha = Math.max(0, al);
+    txt(fmt(nm.v), nm.x, nm.y - nm.t * 50, nm.big ? 34 : 24, nm.big ? "#FFCD50" : "#fff", "#1C110A", nm.big ? 6 : 4);
+    cx.globalAlpha = 1;
+  }
+  // 금화
+  for (var c = 0; c < COINS.length; c++) img("coin", COINS[c].x - 14, COINS[c].y - 14, 28, 28);
+
+  // 아래 UI: 총알 칸 · 강화 카드 3장
+  roundRect(4, 718, W - 8, 236, 20, "rgba(120,78,44,0.95)", "#1C110A", 5);
+  drawSlotRow();
+  drawCard("atk", "공격력", S.atkLv, 100 * Math.pow(1.6, S.atkLv - 40) * 2.79, 12100 * Math.pow(1.3, S.atkLv - 40));
+  drawCard("spd", "공격속도", S.spdLv || 60, 467, 188000);
+  drawCard("gold", "금전 획득량", S.goldLv || 150, 2030, 642000000);
+
+  // 장면 문구
+  var ph = S.phase;
+  if (ph === "intro") banner("좀비 떼가 몰려온다!", "카피바라 분대, 발사!", S.phaseT);
+  else if (ph === "upgrade") banner("공격력 카드를 탭!", "누를수록 세지는 분대 (" + Math.min(S.taps, 4) + "/4)", S.phaseT);
+  else if (ph === "laser") banner("레이저로 쓸어버려!", "D부터 SSU까지 13등급 합성", S.phaseT);
+  else if (ph === "boss") {
+    if (S.phaseT < 1.2) { cx.globalAlpha = 0.25 + 0.2 * Math.sin(S.t * 18); cx.fillStyle = "#E5533D"; cx.fillRect(0, 0, W, H); cx.globalAlpha = 1; txt("보스 등장!", W / 2, 360, 72, "#FFCD50", "#7a1b10", 10); }
+    else banner("화면을 연타!", "보스를 쓰러뜨려라", S.phaseT - 1.2);
+  } else if (ph === "clear") { txt("STAGE CLEAR!", W / 2, 360, 64, "#FFCD50", "#1C110A", 10); }
+
+  drawMergePanel();
+
+  // 탭 물결 · 손가락
+  for (var r = 0; r < RIP.length; r++) {
+    var rp = RIP[r], ra = 1 - rp.t / 0.4;
+    cx.strokeStyle = "rgba(255,255,255," + ra + ")"; cx.lineWidth = 6; cx.beginPath(); cx.arc(rp.x, rp.y, 14 + 50 * rp.t / 0.4, 0, Math.PI * 2); cx.stroke();
+  }
+  if (HAND.vis && ph !== "end") {
+    var bob = (ph === "upgrade" || ph === "boss") ? Math.abs(Math.sin(S.t * 6)) * 16 : 0, pr = HAND.press > 0 ? 10 : 0;
+    img("arrow", HAND.x - 34, HAND.y - 96 - bob + pr, 68, 68);
+  }
+  if (S.flash > 0) { cx.globalAlpha = S.flash * 1.2; cx.fillStyle = "#fff"; cx.fillRect(0, 0, W, H); cx.globalAlpha = 1; }
+  if (ph === "end") drawEnd();
+  cx.restore();
+}
+
+// ---------------------------------------------------------------- 시작
+var last = 0;
+function loop(ts) {
+  var dt = last ? Math.min(0.05, (ts - last) / 1000) : 0.016; last = ts;
+  update(dt); render();
+  requestAnimationFrame(loop);
+}
+function start() {
+  resize();
+  // 시험용: ?jump=초 → 그만큼 미리 진행(손가락 자동)한 화면부터
+  var m = /[?&]jump=([\d.]+)/.exec(location.search);
+  if (m) { var n = Math.round(parseFloat(m[1]) * 60); for (var i = 0; i < n; i++) update(1 / 60); }
+  requestAnimationFrame(loop);
+}
+function boot() {
+  var go = function () { loadImages(start); };
+  if (FONT && FONT.length > 20 && window.FontFace) {
+    try {
+      var ff = new FontFace("Jua", "url(data:font/woff2;base64," + FONT + ")");
+      ff.load().then(function (f) { document.fonts.add(f); go(); }, go);
+      return;
+    } catch (e) {}
+  }
+  go();
+}
+if (window.mraid && mraid.getState && mraid.getState() === "loading") mraid.addEventListener("ready", boot);
+else if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", boot);
+else boot();
+</script>
+</body></html>
