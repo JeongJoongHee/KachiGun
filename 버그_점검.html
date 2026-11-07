@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="ko"><head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>버그 점검</title>
+<style>
+  :root{
+    --bg:#f6f1e7; --card:#fffdf8; --ink:#2b2218; --soft:#6b5d4d; --line:#e0d5c2;
+    --orange:#d9701a; --orange-bg:#fdebd6; --red:#c23a2b; --red-bg:#fbe4df;
+    --blue:#2f63b8; --blue-bg:#e2ebf9; --green:#2f8a45; --green-bg:#e1f2e4; --gray-bg:#ece6da;
+  }
+  @media (prefers-color-scheme: dark){
+    :root{
+      --bg:#1b1713; --card:#262019; --ink:#f0e8da; --soft:#b3a48f; --line:#3d342a;
+      --orange:#ff9d47; --orange-bg:#40290f; --red:#ff7c6b; --red-bg:#40201b;
+      --blue:#7fa8f0; --blue-bg:#1c2a44; --green:#6fce85; --green-bg:#1a3421; --gray-bg:#322a21;
+    }
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.65 "Malgun Gothic","맑은 고딕",system-ui,sans-serif}
+  main{max-width:920px;margin:0 auto;padding:28px 16px 80px}
+  h1{font-size:28px;margin:0 0 4px}
+  .sub{color:var(--soft);margin:0 0 20px}
+  h2{font-size:21px;margin:40px 0 6px;padding-bottom:6px;border-bottom:2px solid var(--line)}
+  h2 small{font-size:14px;font-weight:normal;color:var(--soft);margin-left:8px}
+  h3{font-size:16px;margin:20px 0 6px;color:var(--orange)}
+  p.note{color:var(--soft);margin:4px 0 10px;font-size:15px}
+  .sum{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin:16px 0}
+  .sum a{display:block;background:var(--card);border:1px solid var(--line);border-radius:10px;padding:12px 14px;text-decoration:none;color:var(--ink)}
+  .sum b{display:block;font-size:26px;line-height:1.2}
+  .sum span{color:var(--soft);font-size:14px}
+  .tip{background:var(--orange-bg);border-left:5px solid var(--orange);border-radius:8px;padding:12px 16px;margin:14px 0}
+  .tip ol,.tip ul{margin:6px 0 0;padding-left:22px}
+  .tip.green{background:var(--green-bg);border-color:var(--green)}
+  .tip.red{background:var(--red-bg);border-color:var(--red)}
+  .tip.blue{background:var(--blue-bg);border-color:var(--blue)}
+  /* 일정 띠 */
+  .flow{display:grid;grid-template-columns:repeat(auto-fit,minmax(128px,1fr));gap:8px;margin:14px 0 6px;counter-reset:st}
+  .flow div{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:10px 12px;font-size:14px;position:relative}
+  .flow div b{display:block;font-size:15px}
+  .flow div i{font-style:normal;color:var(--soft);font-size:13px;display:block}
+  .flow div.today{border:2px solid var(--orange)}
+  .flow div::before{counter-increment:st;content:counter(st);position:absolute;top:8px;right:10px;color:var(--soft);font-weight:bold}
+  ul.todo{list-style:none;margin:0;padding:0;background:var(--card);border:1px solid var(--line);border-radius:10px}
+  ul.todo li{border-top:1px solid var(--line)}
+  ul.todo li:first-child{border-top:0}
+  ul.todo .row{display:flex;align-items:flex-start}
+  ul.todo label{flex:1;display:flex;gap:10px;padding:10px 4px 10px 14px;cursor:pointer;align-items:flex-start}
+  ul.todo input{margin-top:6px;width:17px;height:17px;flex:none;accent-color:var(--orange)}
+  ul.todo input:checked + span{color:var(--soft);text-decoration:line-through}
+  li.pick label span{cursor:pointer}
+  li.pick label:hover span.txt{text-decoration:underline dotted var(--orange)}
+  .pen{flex:none;margin:8px 10px 0 0;border:1px solid var(--line);background:transparent;color:var(--soft);border-radius:6px;padding:1px 8px;font:13px/1.6 inherit;cursor:pointer}
+  .pen:hover{color:var(--orange);border-color:var(--orange)}
+  li.has-note .pen{background:var(--orange-bg);color:var(--orange);border-color:var(--orange);font-weight:bold}
+  .notebox{display:none;padding:0 14px 12px 41px}
+  li.open .notebox{display:block}
+  .notebox textarea{width:100%;min-height:76px;resize:vertical;border:1px solid var(--orange);border-radius:8px;padding:8px 10px;background:var(--bg);color:var(--ink);font:15px/1.55 inherit}
+  .notebox .hint{color:var(--soft);font-size:13px;margin:4px 0 0}
+  .f{color:var(--soft);font-size:14px}
+  .rec{color:var(--green);font-weight:bold}
+  .warn{color:var(--red);font-weight:bold}
+  .tag{display:inline-block;font-size:12px;border-radius:5px;padding:0 7px;margin-right:6px;font-weight:bold;white-space:nowrap}
+  .t-see{background:var(--blue-bg);color:var(--blue)}
+  .t-pick{background:var(--orange-bg);color:var(--orange)}
+  .t-me{background:var(--green-bg);color:var(--green)}
+  .t-wait{background:var(--gray-bg);color:var(--soft)}
+  .t-you{background:var(--orange);color:#fff}
+  .time{display:inline-block;font-size:12px;color:var(--soft);border:1px solid var(--line);border-radius:5px;padding:0 6px;margin-left:4px;white-space:nowrap}
+  ol.opts{margin:4px 0 0;padding-left:22px}
+  ol.opts li{margin:2px 0;border:0}
+  ol.opts ul{margin:2px 0;padding-left:18px}
+  code{background:var(--gray-bg);border-radius:4px;padding:0 5px;font-size:14px;word-break:break-all}
+  table.mini{border-collapse:collapse;width:100%;font-size:14px;margin:6px 0}
+  table.mini th,table.mini td{border:1px solid var(--line);padding:5px 8px;text-align:left;vertical-align:top}
+  table.mini th{background:var(--gray-bg)}
+  .bar{position:sticky;bottom:0;display:flex;gap:10px;align-items:center;justify-content:flex-end;margin-top:24px;padding:18px 0 12px;background:linear-gradient(transparent,var(--bg) 45%)}
+  .bar button{border:0;border-radius:8px;padding:9px 16px;background:var(--orange);color:#fff;font:bold 15px/1.4 inherit;cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,.18)}
+  .bar span{color:var(--soft);font-size:14px;background:var(--card);border-radius:6px;padding:2px 8px}
+  footer{margin-top:40px;color:var(--soft);font-size:14px}
+  details{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:10px 16px}
+  summary{cursor:pointer}
+</style>
+<style>
+  .sev{display:inline-block;font-size:12px;border-radius:5px;padding:0 7px;margin-right:6px;font-weight:bold;white-space:nowrap}
+  .s-hi{background:var(--red);color:#fff}
+  .s-mid{background:var(--orange);color:#fff}
+  .s-lo{background:var(--gray-bg);color:var(--soft)}
+  .s-odd{background:var(--blue-bg);color:var(--blue)}
+  .how{display:block;color:var(--soft);font-size:14px;margin-top:3px}
+  .fix{display:block;font-size:14px;margin-top:3px}
+</style>
+</head><body><main>
+<h1>버그·결함 점검</h1>
+<p class="sub">카치건 (카피바라vs좀비) · 2026-11-07 · 게임 코드 약 7천 줄(저장 · 진행 · 결제 · 광고 · 화면 · 전투)과 표 23개를 직접 읽고, 배치 자동 시험(118줄 통과 · errors=0 · 로그 경고 0)을 돌려 확인했습니다. 체크·의견은 이 브라우저에 저장되고 제가 읽어서 이어 갑니다.</p>
+
+<div class="sum">
+  <a href="#hi"><b>1</b><span>높음 — 결제 켜기 전에</span></a>
+  <a href="#mid"><b>4</b><span>보통 — 기기 시간 악용 · 저장</span></a>
+  <a href="#lo"><b>6</b><span>낮음</span></a>
+  <a href="#odd"><b>6</b><span>이상한 점 (동작은 맞음)</span></a>
+</div>
+
+<div class="tip green">
+  <b>요약</b>
+  <ul>
+    <li><b>게임이 멈추거나 꺼지는 버그는 찾지 못했습니다.</b> 시험 118줄 모두 통과 · 로그에 오류·경고 없음 · 표 범위를 넘는 스테이지(150챕터 뒤)도 안전하게 계산됨</li>
+    <li>가장 큰 문제는 <b>클라우드 저장이 없는 것</b>입니다. 결제를 켜면 산 다이아가 폰을 바꾸거나 앱을 지울 때 사라집니다 → 결제 켜는 8번 빌드 전에 넣는 것을 추천</li>
+    <li>그다음은 <b>기기 날짜·시간을 바꾸면 출석 다이아 · 방치 골드 · 던전 티켓을 계속 받을 수 있는 것</b>입니다. 고치기 쉬움 (반나절)</li>
+    <li>오늘 고친 것: 방치 보상 창 시간이 8시간을 넘어 보이던 것 (커밋 c099c19)</li>
+  </ul>
+</div>
+
+<h2 id="hi">높음 <small>결제를 켜기 전에 고칠 것</small></h2>
+<ul class="todo">
+  <li data-id="b-cloud"><label><input type="checkbox"><span><span class="tag t-pick">결정</span><span class="sev s-hi">높음</span><span class="txt"><b>클라우드 저장이 없음 → 산 다이아가 사라질 수 있음</b>
+    <span class="how">세이브가 폰 안(PlayerPrefs)에만 있습니다. 앱 삭제 · 데이터 지우기 · 새 폰으로 바꾸면 진행과 <b>돈 주고 산 다이아(소모 상품)</b>가 모두 없어집니다. 영구 상품(광고 제거 · 자동강화)만 구글 구매 기록으로 되살아납니다. 설정 창의 [불러오기 · 구매 복원 · 문의] 버튼도 "준비 중" 글자만 나옵니다.</span>
+    <span class="fix"><span class="rec">추천</span> 불도깨비에 이미 만든 <b>구글 계정 연동 + 클라우드 저장(GPGS 2.2.1 · 충돌 비교 창)</b>을 가져와 8번 빌드에 넣기. 같은 kachigoogoo 계정이라 Play 게임즈 설정도 같은 순서. 넣으면 위 설정 버튼도 진짜 "불러오기"가 됩니다. (자동강화를 되살릴 때 다이아 500 이 또 들어오는 것도 이때 같이 막음)</span></span></span></label></li>
+</ul>
+
+<h2 id="mid">보통 <small>기기 날짜·시간 악용 · 저장 안전</small></h2>
+<p class="note">서버가 없는 게임이라 시간 악용을 완전히 막을 수는 없지만, 아래처럼 "시간을 뒤로 돌렸다 되돌리기"로 무한히 받는 길은 쉽게 막을 수 있습니다.</p>
+<ul class="todo">
+  <li data-id="b-attend"><label><input type="checkbox"><span><span class="tag t-pick">결정</span><span class="sev s-mid">보통</span><span class="txt"><b>출석 다이아를 하루에 여러 번 받을 수 있음</b>
+    <span class="how">재현: 폰 날짜를 내일로 → 출석 받기 → 오늘로 되돌림 → 다시 출석 창이 뜸 → 받기 → 또 내일로… (지금은 "오늘 날짜와 같은지"만 봐서, 날짜가 <b>달라지기만 하면</b> 다시 줌). 한 번에 100~300 다이아.</span>
+    <span class="fix"><span class="rec">추천</span> 마지막으로 받은 날보다 <b>뒤의 날짜일 때만</b> 주기 (날짜를 앞으로 당겨 받으면 그 날짜가 될 때까지 못 받음)</span></span></span></label></li>
+  <li data-id="b-offline"><label><input type="checkbox"><span><span class="tag t-pick">결정</span><span class="sev s-mid">보통</span><span class="txt"><b>방치 골드(8시간치)를 시간 바꾸기로 계속 받을 수 있음</b>
+    <span class="how">재현: 폰 시간을 하루 뒤로 돌렸다가 다시 지금으로 → 앱으로 돌아오면 8시간치 골드. 반복하면 계속 받음. (시간을 거꾸로 돌리면 보상은 없지만 "마지막으로 본 시각"이 과거로 바뀌어서, 원래대로 돌리는 순간 오래 비운 것처럼 계산됨)</span>
+    <span class="fix"><span class="rec">추천</span> "마지막으로 본 시각"은 <b>앞으로만</b> 움직이게 (시간이 거꾸로 가면 그대로 둠)</span></span></span></label></li>
+  <li data-id="b-daily"><label><input type="checkbox"><span><span class="tag t-pick">결정</span><span class="sev s-mid">보통</span><span class="txt"><b>던전 티켓 · 광고 무료 다이아 횟수도 날짜 바꾸기로 다시 채워짐</b>
+    <span class="how">출석과 같은 이유: 날짜가 <b>달라지기만 하면</b> 비밀던전 2장 · 보스 던전 3장 · 무료 다이아 3번이 다시 채워짐. 날짜를 하루 앞뒤로 바꿀 때마다 비밀던전·보스 던전 다이아를 더 받음.</span>
+    <span class="fix"><span class="rec">추천</span> 출석과 같은 방법(뒤의 날짜일 때만 채우기)으로 한 번에 고침</span></span></span></label></li>
+  <li data-id="b-savebak"><label><input type="checkbox"><span><span class="tag t-pick">결정</span><span class="sev s-mid">보통</span><span class="txt"><b>세이브를 못 읽으면 조용히 처음부터 시작</b>
+    <span class="how">세이브 글자가 깨져서 읽기에 실패하면 경고 없이 새 게임이 되고, 5초 뒤 저장 때 깨진 세이브도 덮어써져 되살릴 방법이 없습니다. 드문 일이지만(저장 중 폰이 꺼질 때 등) 생기면 별점 1점 리뷰로 이어지기 쉬움.</span>
+    <span class="fix"><span class="rec">추천</span> 저장할 때 바로 전 세이브를 예비 칸에 하나 더 두고, 못 읽으면 예비 칸에서 불러오기 (코드 10줄 정도)</span></span></span></label></li>
+</ul>
+
+<h2 id="lo">낮음 <small>알고 있으면 되는 것 · 고치면 좋은 것</small></h2>
+<ul class="todo">
+  <li data-id="b-settingsbtn"><label><input type="checkbox"><span><span class="tag t-pick">결정</span><span class="sev s-lo">낮음</span><span class="txt"><b>설정 창 [불러오기 · 구매 복원 · 문의] 버튼이 "준비 중"</b>
+    <span class="how">출시 빌드에서 누르면 "클라우드 저장·결제 복원·문의는 준비 중입니다" 토스트만 나옴. 구매 복원은 실제로는 켤 때 자동으로 됨.</span>
+    <span class="fix"><span class="rec">추천</span> 클라우드 저장(위 높음)을 넣으면 [불러오기]로, 그 전까지는 [문의하기](메일 앱 열기 — 스토어에 적은 메일)로 바꾸기</span></span></span></label></li>
+  <li data-id="b-cool"><label><input type="checkbox"><span><span class="tag t-pick">결정</span><span class="sev s-lo">낮음</span><span class="txt"><b>폰 시간이 뒤로 고쳐지면 광고 버프를 오래 못 봄</b>
+    <span class="how">광고 버프(공격 x2 · 골드 x2)의 "다시 볼 수 있는 시각"이 기기 시간 기준이라, 시간이 하루 앞서 있다가 바로잡히면 "86400초 뒤에 다시"가 뜸. 반대로 버프 시간은 그만큼 길어짐.</span>
+    <span class="fix"><span class="rec">추천</span> 남은 대기·버프 시간이 표의 최대(12초 · 1시간)보다 길면 최대로 줄이기</span></span></span></label></li>
+  <li data-id="b-dungeonkill"><label><input type="checkbox"><span><span class="tag t-pick">결정</span><span class="sev s-lo">낮음</span><span class="txt"><b>던전 중에 앱이 꺼지면 티켓만 쓰고 보상 없음</b>
+    <span class="how">티켓은 던전 시작 때 빠지고, 던전 상태는 저장되지 않음. 비밀던전에서 캔 다이아도 결과 창 전에 꺼지면 없어짐. [포기] 버튼 안내("사용한 티켓은 돌아오지 않습니다")와 같은 규칙이라 큰 문제는 아님.</span>
+    <span class="fix">그대로 두기 <span class="rec">추천</span> · 또는 티켓을 결과 창에서 빼기</span></span></span></label></li>
+  <li data-id="b-timerpopup"><label><input type="checkbox"><span><span class="tag t-pick">결정</span><span class="sev s-lo">낮음</span><span class="txt"><b>창이 열려 있어도 보스·던전 시간이 흐름</b>
+    <span class="how">보스전 중에 상점 · 미션 · 총알 창을 열거나, 돌아왔을 때 출석·방치 보상 창이 뜨면 그동안에도 보스 30초가 줄어듦 (분대는 계속 쏘고 있음). 방치형이라 보통은 문제 안 되지만 "창 보는 사이 보스가 도망갔다"는 의견이 나올 수 있음.</span>
+    <span class="fix">그대로 두기 <span class="rec">추천</span> · 의견이 나오면 창이 열린 동안 보스 시간만 멈추기</span></span></span></label></li>
+  <li data-id="b-perf"><label><input type="checkbox"><span><span class="tag t-pick">결정</span><span class="sev s-lo">낮음</span><span class="txt"><b>좀비 한 마리 죽을 때마다 화면 전체를 다시 그림</b>
+    <span class="how">처치마다 "스테이지 바뀜" 알림이 나가 위 막대 · 카드 3장 · 총알 칸 · 버튼 잠금까지 전부 새로 씀. 몰려오기(x3.5)로 처치가 잦아져 <b>낮은 사양 폰에서 끊김·배터리</b>에 영향이 있을 수 있음. 시험 PC 에선 문제 없음 — 폰에서 버벅이면 고칠 곳 1순위.</span>
+    <span class="fix"><span class="rec">추천</span> 처치 때는 진행 막대만 바꾸고 나머지는 0.1초 갱신에 맡기기 (작은 변경)</span></span></span></label></li>
+  <li data-id="b-refund"><label><input type="checkbox"><span><span class="tag t-pick">결정</span><span class="sev s-lo">낮음</span><span class="txt"><b>환불한 다이아를 되돌리지 않음</b>
+    <span class="how">구글에서 환불을 받아도 받은 다이아는 그대로 남음. 서버 없는 작은 게임은 대부분 이렇게 둠.</span>
+    <span class="fix">그대로 두기 <span class="rec">추천</span> (환불을 악용하는 일이 보이면 그때)</span></span></span></label></li>
+</ul>
+
+<h2 id="odd">이상한 점 <small>동작은 맞지만 어색하거나 쓸모없는 것</small></h2>
+<ul class="todo">
+  <li data-id="o-vibe"><label><input type="checkbox"><span><span class="tag t-pick">결정</span><span class="sev s-odd">이상</span><span class="txt"><b>설정의 [진동] 켜고 끄기가 아무 일도 안 함</b>
+    <span class="how">게임 어디에도 진동 코드가 없음 — 스위치만 있음.</span>
+    <span class="fix"><span class="rec">추천</span> 줄을 빼기 · 또는 보스 등장·보스 처치 때만 짧게 진동 넣기</span></span></span></label></li>
+  <li data-id="o-cardatk"><label><input type="checkbox"><span><span class="tag t-pick">결정</span><span class="sev s-odd">이상</span><span class="txt"><b>총알 관리 창 카드의 공격력이 "총알 기본값"</b>
+    <span class="how">카드의 칼 숫자는 강화·코스튬·보급품을 곱하기 전 값이라 실제 피해(머리 위 숫자)와 크게 다름. 총알끼리 비교용으로는 맞음.</span>
+    <span class="fix">그대로 두기 <span class="rec">추천</span> · 또는 실제 공격력으로 바꾸기</span></span></span></label></li>
+  <li data-id="o-equipfull"><label><input type="checkbox"><span><span class="tag t-pick">결정</span><span class="sev s-odd">이상</span><span class="txt"><b>장착 칸이 다 찼을 때 [장착]은 늘 "동료 2"를 바꿈</b>
+    <span class="how">인벤토리 총알 정보 창의 [장착]은 빈 칸이 없으면 말없이 동료 2 자리 총알과 바꿈. 리더 자리에 끼우려면 끌어다 놓아야 함.</span>
+    <span class="fix"><span class="rec">추천</span> 다 찼으면 "어느 자리에?" 리더/동료1/동료2 고르기 · 또는 가장 약한 칸과 바꾸기</span></span></span></label></li>
+  <li data-id="o-skinprice"><label><input type="checkbox"><span><span class="tag t-pick">결정</span><span class="sev s-odd">이상</span><span class="txt"><b>코스튬 가격만 숫자를 그대로 씀</b>
+    <span class="how">코스튬 창은 "다이아 46800", 다른 곳은 "1.67k"·"21.6m" 처럼 줄여 씀.</span>
+    <span class="fix"><span class="rec">추천</span> "46,800" (쉼표) — 다이아는 사는 값이라 줄이지 않는 편이 읽기 쉬움</span></span></span></label></li>
+  <li data-id="o-buffname"><label><input type="checkbox"><span><span class="tag t-pick">결정</span><span class="sev s-odd">이상</span><span class="txt"><b>표 정리: 이름과 값이 다른 줄 · 안 쓰는 줄</b>
+    <span class="how">Buff_Table 의 <code>dungeon_ad_x3</code> 은 이름은 x3 인데 값은 2 (화면엔 x2 로 바르게 보임) · <code>perma_buff_iap</code>(영구 3배)는 어떤 상품에도 연결 안 됨 · 미션 표 Impl_Status 칸에 옛 메모.</span>
+    <span class="fix">게임엔 영향 없음 — 밸런스 정리 때 같이</span></span></span></label></li>
+  <li data-id="o-version"><label><input type="checkbox"><span><span class="tag t-pick">결정</span><span class="sev s-odd">이상</span><span class="txt"><b>버전 이름이 계속 "1.0"</b>
+    <span class="how">버전 코드는 7 까지 올라갔지만 스토어·설정 앱에 보이는 버전 이름은 모든 빌드가 1.0. 테스터가 "몇 번을 깔았는지" 구분하기 어려움.</span>
+    <span class="fix"><span class="rec">추천</span> 8번부터 1.0.8 처럼 버전 코드를 끝에 붙이기 (BuildAab 에서 자동)</span></span></span></label></li>
+</ul>
+
+<h2 id="ok">확인했고 문제없는 것</h2>
+<details><summary>펼쳐 보기 (14가지)</summary>
+<ul>
+  <li>결제: 같은 주문 두 번 지급 안 함(주문 번호) · 구글 서명 확인 · 지급 뒤에 "지급 끝" 보냄 · 결제 직후 꺼져도 다음 실행 때 지급 · 키 없으면 폰에서 상품 숨김</li>
+  <li>광고: 끝까지 봐야 보상 · 못 불러오면 토스트만(게임 안 막힘) · 실패하면 10초~5분 뒤 다시 · 광고 중 게임 소리 끔</li>
+  <li>방치 보상: 5분 미만 · 시간 거꾸로(음수)면 없음 · 받은 뒤 바로 다시 안 줌 · 최대 8시간(오늘 표시까지 고침)</li>
+  <li>출석: 창을 X·뒤로 가기로 닫아도 받음 · 켜 둔 채 날이 바뀌면 창이 없을 때 뜸</li>
+  <li>보스 실패 때 물러나는 보스는 더 맞지 않음(보상 없이 사라짐)</li>
+  <li>장착 칸을 모두 빼는 것 막음(최소 1개) · 합성은 같은 탄알끼리만 · 일괄 합성은 한 단계씩 · 장착 중 총알은 분해 안 됨</li>
+  <li>던전 결과 창: X 로 닫아도 기본 보상 · 두 번 받기 안 됨</li>
+  <li>표 끝(150챕터·보스 던전 150단계·강화 1500레벨) 너머도 마지막 성장률로 계산 — 멈추지 않음</li>
+  <li>큰 숫자 표기: 1k · 1m · 1b · 1t · 1aa … double 끝(10^308)까지 안전</li>
+  <li>영어 글자 빈 칸 0 · 코스튬 그림 18장 모두 있음 · 보급품 25 · 등급 13</li>
+  <li>언어 바꾸기(씬 다시 불러오기) 뒤 남는 목록 없음(총알 묶음·대상 목록 정리됨)</li>
+  <li>뒤로 가기: 절전 → 맨 위 창 → 게임 종료 확인 순서</li>
+  <li>입력 방식(옛·새 둘 다) · 최소 안드로이드 7.0(API 24) · 목표 API 36</li>
+  <li>배치 자동 시험 118줄 통과 · 로그 오류·경고 0 (2026-11-07 18:11)</li>
+</ul>
+</details>
+
+<h2 id="order">추천 순서</h2>
+<ol>
+  <li><b>지금(프로덕션 신청과 상관없이)</b>: 보통 4개(출석 · 방치 · 티켓 · 세이브 예비 칸) + 진동 줄 정리 — 반나절, 시험 줄 추가</li>
+  <li><b>8번 빌드(결제 켬) 전</b>: 클라우드 저장 + 설정 [불러오기] — 불도깨비 코드 재사용, 1~2일</li>
+  <li><b>폰에서 버벅이면</b>: 처치마다 화면 갱신 줄이기</li>
+  <li>나머지 이상한 점은 의견대로</li>
+</ol>
+<p class="f">"추천대로"라고 적어 주시면 1번부터 진행합니다. 결정 항목은 글자를 누르면 의견 칸이 열립니다.</p>
+
+<div class="bar"><span id="stat"></span><button type="button" id="copyNotes">의견 모아 복사</button></div>
+<footer>체크·의견은 이 브라우저(localStorage, 키 <code>kachigun-bugs-1107</code>)에 저장됩니다. 제가 읽을 때는 <code>python tools/todo_checks.py 버그_점검.html</code>. 못 읽을 때는 [의견 모아 복사] → 대화창에 붙여 넣기.</footer>
+</main>
+<script>
+(function(){
+  // 저장 형식: {"c":{항목id:true}, "n":{항목id:"의견"}} — 항목id 는 li 의 data-id
+  var KEY='kachigun-bugs-1107', st={c:{},n:{}};
+  try{ var v=JSON.parse(localStorage.getItem(KEY)||'{}'); st.c=v.c||{}; st.n=v.n||{}; }catch(e){}
+  function save(){ try{ localStorage.setItem(KEY,JSON.stringify(st)); }catch(e){} stat(); }
+  var items=document.querySelectorAll('ul.todo li[data-id]');
+  function stat(){
+    var c=0,n=0;
+    items.forEach(function(li){ if(st.c[li.dataset.id]) c++; if((st.n[li.dataset.id]||'').trim()) n++; });
+    document.getElementById('stat').textContent='체크 '+c+' / '+items.length+' · 의견 '+n;
+  }
+  items.forEach(function(li){
+    var id=li.dataset.id, label=li.querySelector('label'), cb=li.querySelector('input');
+    var pick=!!li.querySelector('.t-pick');
+    if(pick) li.classList.add('pick');
+    var row=document.createElement('div'); row.className='row';
+    li.insertBefore(row,label); row.appendChild(label);
+    var pen=document.createElement('button'); pen.type='button'; pen.className='pen'; pen.textContent='✎ 의견';
+    row.appendChild(pen);
+    var box=document.createElement('div'); box.className='notebox';
+    var ta=document.createElement('textarea');
+    ta.placeholder=pick?'어떻게 할지 적어 주세요 (예: 1번 / 추천대로 / 그대로 둬)':'의견이 있으면 적어 주세요';
+    var hint=document.createElement('div'); hint.className='hint'; hint.textContent='적는 대로 이 브라우저에 저장됩니다.';
+    box.appendChild(ta); box.appendChild(hint); li.appendChild(box);
+    cb.checked=!!st.c[id];
+    ta.value=st.n[id]||'';
+    function mark(){ li.classList.toggle('has-note',!!ta.value.trim()); pen.textContent=ta.value.trim()?'✎ 의견 있음':'✎ 의견'; }
+    mark();
+    if(ta.value.trim()) li.classList.add('open');
+    cb.addEventListener('change',function(){ st.c[id]=cb.checked; save(); });
+    ta.addEventListener('input',function(){ if(ta.value.trim()) st.n[id]=ta.value; else delete st.n[id]; mark(); save(); });
+    function toggle(){ li.classList.toggle('open'); if(li.classList.contains('open')) ta.focus(); }
+    pen.addEventListener('click',toggle);
+    if(pick){
+      // 결정 항목: 글자를 누르면 의견 칸 (체크는 체크 칸을 눌러야 바뀜)
+      label.addEventListener('click',function(e){ if(e.target===cb) return; e.preventDefault(); toggle(); });
+    }
+  });
+  document.getElementById('copyNotes').addEventListener('click',function(){
+    var out=[];
+    items.forEach(function(li){
+      var id=li.dataset.id, note=(st.n[id]||'').trim(), on=!!st.c[id];
+      if(!note && !on) return;
+      var t=li.querySelector('label > span').textContent.replace(/\s+/g,' ').trim();
+      out.push((on?'[V] ':'[ ] ')+t.slice(0,80)+(note?'\n    → '+note.replace(/\n/g,'\n      '):''));
+    });
+    var text=out.length?out.join('\n'):'(체크·의견 없음)';
+    function fallback(){ var t=document.createElement('textarea'); t.value=text; document.body.appendChild(t); t.select(); try{document.execCommand('copy');}catch(e){} t.remove(); done(); }
+    function done(){ var b=document.getElementById('copyNotes'); b.textContent='복사했어요'; setTimeout(function(){ b.textContent='의견 모아 복사'; },1500); }
+    if(navigator.clipboard&&navigator.clipboard.writeText) navigator.clipboard.writeText(text).then(done,fallback); else fallback();
+  });
+  stat();
+})();
+</script>
+</body></html>
