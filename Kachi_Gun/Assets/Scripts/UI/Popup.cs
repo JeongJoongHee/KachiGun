@@ -245,7 +245,8 @@ namespace KachiGun
             p.sec = System.Math.Min(sec, GameManager.OfflineMaxSec);
             p.gold = GameManager.I.OfflineGoldPerSec * p.sec;
             double maxH = Tables.C("Offline_MaxHours", 8);
-            p.timeT.text = L.T("오프라인 시간") + " : " + HhMm(away);
+            // 11-07: 보여 주는 시간도 최대(8시간)에서 멈춤 — 전엔 실제로 비운 시간(10:00 등)이 그대로 보여 무제한으로 쌓이는 것처럼 보였음
+            p.timeT.text = L.T("오프라인 시간") + " : " + HhMm((long)p.sec);
             p.stageT.text = L.T("스테이지") + " : " + SaveData.StageName(SaveData.Cur.stage);
             p.rewardT.text = L.T("보상") + " : " + Num.F(p.gold);
             p.note.text = L.F("최대 {0}시간까지 쌓입니다", maxH.ToString("0.#"));

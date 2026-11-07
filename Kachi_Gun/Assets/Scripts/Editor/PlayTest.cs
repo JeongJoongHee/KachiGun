@@ -596,6 +596,14 @@ namespace KachiGun.EditorTools
                 S.lastSeen = SaveData.Now - 36000;
                 GM.CheckOffline(); yield return Wait(0.2f);
                 Check(System.Math.Abs(op.sec - GameManager.OfflineMaxSec) < 1, $"10시간 비움 → 최대 {GameManager.OfflineMaxSec / 3600:0.#}시간만");
+                string maxHm = OfflinePopup.HhMm((long)GameManager.OfflineMaxSec);
+                System.Func<string> offTime = () => { foreach (var t in op.GetComponentsInChildren<Text>(true)) if (t.text.StartsWith(L.T("오프라인 시간"))) return t.text; return ""; };
+                Check(offTime().EndsWith(maxHm), $"10시간 비움 → 창 시간도 {maxHm} 에서 멈춤 ({offTime()})");
+                double goldMax = op.gold;
+                S.lastSeen = SaveData.Now - 18000;   // 창을 안 받고 또 5시간 비움 → 더해져도 최대 그대로
+                GM.CheckOffline(); yield return Wait(0.2f);
+                Check(System.Math.Abs(op.sec - GameManager.OfflineMaxSec) < 1 && System.Math.Abs(op.gold - goldMax) < goldMax * 0.001 + 1 && offTime().EndsWith(maxHm),
+                    $"안 받고 또 비움 → 시간·골드 최대 그대로 ({offTime()} · {Num.F(op.gold)})");
                 Capture("18e_offline_max");
                 double og1 = S.gold, want1 = op.gold;
                 if (adb != null) adb.onClick.Invoke();   // 에디터 = 광고 없이 바로 보상
