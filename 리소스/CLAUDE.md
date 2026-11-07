@@ -1,5 +1,10 @@
 # 카치건 (좀비 키우기) — 세로 방치형 분대 슈팅, Unity 6000.0.84f1 · 2D URP
 
+## ▶ 재개 메모 (2026-11-07 밤 2 — Play Console 확인 · 남은 작업 다시 짬) — **재개하면 여기부터**
+- Chrome(zkfpf1 = /console/u/0 개발자 7399498916127082054 · 카치건 앱 4973745386467551429 / kachigoogoo = /console/u/1 개발자 8145464765433681010 "Cachisi"): 카치건 비공개 Alpha = **7 (1.0) 활성 · 11-06 게시** · 검토 중 변경 없음 · 관리형 게시 꺼짐 · 프로덕션 비활성 · **[프로덕션 신청] 열림(조건 3개 체크) — 아직 신청 안 함** · App Bundle = 1·2·3·6·7 · FIBE 계정 맨 위 "2027-02 까지 판매자 상태 선언(조치 필요)" · kachigoogoo = 불도깨비만(계정 준비 끝: 사업자·결제 프로필·라이선스 테스터 "결제테스트")
+- **`남은_작업_정리.html` 새 키 `kachigun-todo-1107`**(36항목, 옛 판 백업 = 스크래치 남은_작업_정리_before_1107.html): ① 신청(a-fill · a-apply) ② 7번 프로덕션 → 스토어에 보이는지 → AdMob 연결 · FIBE 판매자 선언(결정) ③ 이전(m-*, 불도깨비와 같은 순서 · 앱 수준 판매자 · 방침 FIBE→Cachisi + 클라우드 문장) ④ 8번(p-pgs Play 게임즈 App ID·저장된 게임 → p-build8 · 상품 5개 · 시험) ⑤ 답 대기 4개(단발 S · 노란 띠 · 리더 크게 · 총알 칸 순서) ⑥ 폰 보기(스토어 스크린샷 옛 도트 → 다시 찍을지 결정) ⑦ 출시 뒤
+- `스토어 등록/프로덕션_신청_답안.html` 실제 올린 버전 2·3·6·7 · 출시 = 버전 7 · 이전 뒤 8번 으로 고침(백업 스크래치)
+
 ## ▶ 재개 메모 (2026-11-07 밤 — 버그 점검 의견대로 고침)
 - 사용자 의견(버그_점검.html 17개)대로: **클라우드 저장**(`Core/Cloud.cs` CloudAuth·CloudSave·CloudSync·CloudRunner + `UI/CloudPopups.cs` 설정 [클라우드 저장] 창·진행 고르기 창 — 불도깨비 GPGS 2.2.1 플러그인 복사 `Assets/GooglePlayGames`(App ID 설정 파일은 뺌) · 안드로이드 정의 `KACHI_GPGS` · mainTemplate.gradle 에 games-v2·nearby 줄) — **폰에선 App ID 없으면 꺼짐[초안]**, 이전 뒤 kachigoogoo Play 게임즈 설정 → App ID(Window > Google Play Games > Setup) · "저장된 게임" 켜기 → 8번
 - 날짜 비교 `SaveData.IsLaterDay`(출석·티켓·광고 다이아) · lastSeen 앞으로만 · 예비 세이브(`.bak` 1분마다 · `.broken`) · `ClampTimers`(버프 대기 12초·남은 1시간 최대) · 처치마다 StageChanged 안 부름 · 진동 삭제 · 정보 창 [장착] 삭제(끌어다 놓기만 · 카드 전체 `CardDrop`) · 코스튬 가격 쉼표 · Buff `dungeon_ad_x3`→`dungeon_ad_x2`(영구 줄 3→2) · 버전 이름 1.0.버전코드(BuildAab.VersionName)
