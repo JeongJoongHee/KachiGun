@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="ko"><head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>광고 제작 요청서</title>
+<style>
+  :root{--bg:#f6f1e7;--card:#fffdf8;--ink:#2b2218;--soft:#6b5d4d;--line:#e0d5c2;--orange:#d9701a;--orange-bg:#fdebd6;--red:#c23a2b;--red-bg:#fbe4df;--green:#2f8a45;--green-bg:#e1f2e4;--blue:#2f63b8;--blue-bg:#e2ebf9;--gray-bg:#ece6da}
+  @media (prefers-color-scheme: dark){:root{--bg:#1b1713;--card:#262019;--ink:#f0e8da;--soft:#b3a48f;--line:#3d342a;--orange:#ff9d47;--orange-bg:#40290f;--red:#ff7c6b;--red-bg:#40201b;--green:#6fce85;--green-bg:#1a3421;--blue:#7fa8f0;--blue-bg:#1c2a44;--gray-bg:#322a21}}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.65 "Malgun Gothic","맑은 고딕",system-ui,sans-serif}
+  main{max-width:960px;margin:0 auto;padding:28px 16px 80px}
+  h1{font-size:28px;margin:0 0 4px} .sub{color:var(--soft);margin:0 0 18px}
+  h2{font-size:21px;margin:40px 0 8px;padding-bottom:6px;border-bottom:2px solid var(--line)}
+  h2 small{font-size:14px;font-weight:normal;color:var(--soft);margin-left:8px}
+  h3{font-size:16px;margin:18px 0 6px;color:var(--orange)}
+  .tip{background:var(--orange-bg);border-left:5px solid var(--orange);border-radius:8px;padding:12px 16px;margin:14px 0}
+  .tip.green{background:var(--green-bg);border-color:var(--green)} .tip.red{background:var(--red-bg);border-color:var(--red)} .tip.blue{background:var(--blue-bg);border-color:var(--blue)}
+  .tip ul,.tip ol{margin:6px 0 0;padding-left:22px}
+  .box{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:12px 14px;margin:10px 0}
+  .box .head{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:6px}
+  .box .head b{font-size:15px}
+  pre{white-space:pre-wrap;word-break:break-word;background:var(--gray-bg);border-radius:8px;padding:10px 12px;margin:0;font:14px/1.6 Consolas,"Malgun Gothic",monospace}
+  button.copy{border:0;border-radius:7px;padding:5px 12px;background:var(--orange);color:#fff;font:bold 13px/1.4 inherit;cursor:pointer;white-space:nowrap}
+  table{border-collapse:collapse;width:100%;font-size:14px;margin:6px 0;background:var(--card)}
+  th,td{border:1px solid var(--line);padding:6px 8px;text-align:left;vertical-align:top} th{background:var(--gray-bg)}
+  code{background:var(--gray-bg);border-radius:4px;padding:0 5px;font-size:14px;word-break:break-all}
+  .f{color:var(--soft);font-size:14px} .cnt{font-size:12px;color:var(--soft);white-space:nowrap} .over{color:var(--red);font-weight:bold}
+  .att{display:inline-block;font-size:12px;background:var(--blue-bg);color:var(--blue);border-radius:5px;padding:0 7px;margin:2px 4px 2px 0}
+  ul.copylist{list-style:none;padding:0;margin:0} ul.copylist li{display:flex;gap:8px;align-items:center;justify-content:space-between;border-bottom:1px solid var(--line);padding:5px 0}
+  ul.copylist li span.t{flex:1}
+</style></head>
+<body><main>
+<h1>모바일 광고 제작 요청서 — 카피바라 vs 좀비</h1>
+<p class="sub">2026-11-07 · 다른 AI(영상 · 이미지 생성)나 외주에 그대로 붙여 넣는 용도 · 상자마다 [복사] · 첨부 자료는 이 폴더의 <code>자료\</code></p>
+
+<div class="tip green"><b>이미 만들어 둔 것 (실제 게임 화면으로 제작)</b> — <code>광고 소재\동영상\</code> 세로 15초 · 세로 25초 · 정사각 15초 · 가로 15초 (첫 3초 = 실제 플레이, 좀비 떼를 쓸어버리는 장면) · <code>광고 소재\이미지\</code> 3컨셉 x 4크기 12장. 이 요청서는 <b>더 만들거나 다른 버전을 맡길 때</b> 씁니다.</div>
+
+<div class="tip red"><b>꼭 지킬 것 (광고 정책)</b>
+  <ul>
+    <li><b>게임 플레이 장면은 실제 게임 화면만</b> — <code>자료\실제_플레이_클립\</code> · <code>자료\게임_화면\</code> 을 쓰고, AI 로 "가짜 플레이 화면"을 만들지 않기. 실제와 다른 플레이를 보여 주면 구글 · 메타 광고에서 "오해의 소지가 있는 광고"로 거절·정지될 수 있음</li>
+    <li>AI 생성은 <b>인트로 · 아웃트로 · 캐릭터 연출 · 배경 · 썸네일</b>에만. 캐릭터 모습은 첨부한 게임 그림과 같게(다른 게임 캐릭터를 닮지 않게)</li>
+    <li>피 · 잔인한 표현 없음 (게임에도 없음, 12세 이하 노출 가능성) · 실제 브랜드 · 유명인 · 다른 게임 이름 쓰지 않기</li>
+    <li>게임에 없는 기능 · 보상 · 확률을 말하지 않기 (예: "무조건 SSU" × )</li>
+  </ul></div>
+
+<h2>1. 게임 소개 <small>모든 요청의 맨 앞에 붙임</small></h2>
+<div class="box"><div class="head"><b>게임 소개 (한국어)</b><button class="copy">복사</button></div><pre>게임 이름: 카피바라 vs 좀비 (Capy vs Zombies) — 구글 플레이, 대한민국 출시
+장르: 세로 화면 방치형 분대 슈팅 (무료, 광고·인앱 결제 있음)
+한 줄 소개: 귀여운 카피바라 분대가 몰려오는 좀비 떼를 자동으로 쏘아 쓸어버리는 방치형 슈팅 게임.
+핵심 재미:
+ 1) 켜 두기만 해도 분대가 알아서 싸움 — 화면 가득 몰려오는 좀비 떼를 레이저·미사일로 한 번에 쓸어버리는 쾌감
+ 2) 아래 강화 카드(공격력·공격속도·금전)를 톡톡 눌러 숫자가 쑥쑥 오르는 성장
+ 3) 같은 총알 두 개를 끌어다 겹치면 한 단계 위 등급으로 합성 (D부터 SSU까지 13등급)
+ 4) 챕터마다 거대 보스, 150챕터 750스테이지, 비밀던전(다이아 채굴), 도전 던전, 보스 던전
+ 5) 18가지 카피바라 코스튬(해적 선장, 상어 잠옷, 공룡 잠옷 등) — 모을수록 강해짐
+ 6) 게임을 꺼 둬도 최대 8시간 방치 보상이 쌓임
+대상: 13세 이상 한국 모바일 게이머, 가볍게 켜 두는 방치형·키우기 게임을 좋아하는 사람
+톤: 밝고 귀엽고 유쾌함 + 화끈한 타격감 (무섭거나 잔인하지 않음)</pre></div>
+<div class="box"><div class="head"><b>Game brief (English — for AI tools that work better in English)</b><button class="copy">복사</button></div><pre>Game: "Capy vs Zombies" (Korean title: 카피바라 vs 좀비) — Google Play, South Korea.
+Genre: portrait idle squad shooter (free to play, ads + in-app purchases).
+One line: A squad of cute capybaras automatically blasts through endless hordes of goofy cartoon zombies.
+Core fun:
+ 1) Idle auto-battle — the squad fights on its own; satisfying moments when lasers and missiles wipe out a screen-filling zombie horde.
+ 2) Tap the upgrade cards (Attack / Attack Speed / Gold) and watch the numbers climb.
+ 3) Drag two identical bullets together to merge them into the next grade (13 grades, D up to SSU).
+ 4) A giant boss every chapter, 150 chapters / 750 stages, secret gem dungeon, challenge dungeon, boss dungeon.
+ 5) 18 capybara costumes (pirate captain, shark pajamas, dinosaur pajamas, etc.).
+ 6) Offline rewards pile up for up to 8 hours.
+Audience: Korean mobile gamers 13+, fans of casual idle / incremental games.
+Tone: bright, cute, funny, with punchy hit effects. Never scary or gory.</pre></div>
+
+<h2>2. 그림 스타일 <small>이미지·영상 AI 에 같이 붙임</small></h2>
+<table>
+  <tr><th>항목</th><th>내용</th><th>첨부</th></tr>
+  <tr><td>화풍</td><td>밝은 낙서풍 2D 만화 — 굵고 진한 갈색 외곽선, 단색 + 파스텔, 그림자 거의 없음, 둥근 UI. 3D · 실사 아님</td><td><span class="att">브랜드/대표_캐릭터_투명.png</span></td></tr>
+  <tr><td>카피바라</td><td>통통한 갈색 카피바라가 <b>뒷발로 서서</b> 장난감 같은 총을 듦(오른손 뒤 손잡이, 왼손 앞 받침 아래). 점 눈, Y자 코, 작은 귀. 화면 왼쪽에서 오른쪽을 보고 쏨. 3마리 분대(리더가 가운데, 조금 큼)</td><td><span class="att">캐릭터/카피바라_00~17</span></td></tr>
+  <tr><td>좀비</td><td>연두색 피부, 크고 동그란 눈, 바보 같은 표정, 두 팔을 앞으로 뻗고 오른쪽에서 왼쪽으로 걸어옴. 모자·양동이·갑옷·뚱보·미라·사신·오우거(보스) 등 12종</td><td><span class="att">캐릭터/좀비_*</span></td></tr>
+  <tr><td>색</td><td>선 #1C110A · 제목 금색 #FFCD50 · 크림 #FFF4D6 · 좀비 녹색 #96E678 · 버튼 녹색 #6EBE46 · 배경 살구 #FFE8C0 ~ 주황 #E1A452 · 흙길 #E8D2A8 · 숲 #7FB45A</td><td><span class="att">브랜드/색_견본.png</span></td></tr>
+  <tr><td>글꼴</td><td><b>주아 (Jua)</b> — 구글 폰트 무료(OFL), 둥글고 굵은 한글. 제목은 금색 + 진한 갈색 두꺼운 테두리. <span class="f">주아엔 가운뎃점(·)이 없음 → 쉼표 사용</span></td><td><span class="att">브랜드/제목_로고_투명.png</span></td></tr>
+  <tr><td>로고 · 아이콘</td><td>"카피바라 vs 좀비" 제목 로고 · 앱 아이콘(총 든 카피바라 + 좀비)</td><td><span class="att">브랜드/앱아이콘_512.png</span></td></tr>
+</table>
+<div class="box"><div class="head"><b>스타일 프롬프트 (영어, 이미지·영상 공통 앞부분)</b><button class="copy">복사</button></div><pre>Style: flat 2D doodle cartoon for a cute Korean mobile game ad. Thick, dark brown hand-drawn outlines (#1C110A), flat pastel colors, almost no shading, rounded friendly shapes, slightly wobbly line. Warm cream-to-orange palette (#FFE8C0 to #E1A452), dirt-road beige (#E8D2A8), soft forest green (#7FB45A).
+Characters must match the attached reference images exactly: chubby brown capybaras standing upright on their hind legs, holding toy-like guns, dot eyes, Y-shaped nose; goofy lime-green cartoon zombies (#96E678) with big round eyes and arms stretched forward.
+Mood: bright, funny, energetic. No blood, no gore, not scary.</pre></div>
+<div class="box"><div class="head"><b>하지 말 것 (네거티브 프롬프트)</b><button class="copy">복사</button></div><pre>photorealistic, 3D render, realistic fur, anime style, gradients with heavy shading, blood, gore, horror, dark scary lighting, weapons that look real, extra limbs, deformed hands, text artifacts, random letters, watermark, logos of other games or brands, characters resembling other franchises</pre></div>
+
+<h2>3. 영상 스토리보드 <small>실제 플레이 클립 + AI 연출</small></h2>
+<p class="f">첨부: <span class="att">자료/실제_플레이_클립/*.mp4</span>(문구 없는 1080x1920 30fps) <span class="att">브랜드/*</span> · 이미 만든 영상 <code>광고 소재\동영상\</code> 을 참고 영상으로 같이 주면 좋음</p>
+<h3>A. 15초 세로 (9:16) — 지금 만든 것과 같은 구성</h3>
+<table>
+  <tr><th>시간</th><th>화면 (실제 플레이)</th><th>위 문구</th><th>소리</th></tr>
+  <tr><td>0~3초</td><td><b>훅</b>: 화면 가득 몰려온 좀비 떼를 레이저·미사일로 쓸어버림, 숫자·금화가 터짐 (클립 1)</td><td>좀비 떼가 몰려온다! / 카피바라 분대, 발사!</td><td>폭발 · 총소리</td></tr>
+  <tr><td>3~5.8초</td><td>강화 카드 연타 — 숫자가 오름 (클립 2) · 누르는 자리에 동그라미</td><td>톡톡 눌러서 강화 / 공격력, 공격속도, 금전</td><td>강화 띵띵</td></tr>
+  <tr><td>5.8~9.4초</td><td>같은 총알을 끌어다 겹쳐 합성 3번 → 일괄 합성 (클립 3)</td><td>같은 탄알을 겹치면 / 한 단계 위로 합성!</td><td>합성음</td></tr>
+  <tr><td>9.4~13.2초</td><td>보스 등장 → 집중 사격 → 쓰러지고 다음 스테이지 (클립 4)</td><td>챕터마다 보스 등장! / 쓰러뜨리고 다음 챕터로</td><td>보스 배경음 · 승리</td></tr>
+  <tr><td>13.2~15초</td><td>끝 화면: 앱 아이콘 · 제목 · 해적 카피바라 + 좀비 · [지금 무료 플레이]</td><td>—</td><td>승리음</td></tr>
+</table>
+<h3>B. 25~30초 세로 — 위 + 상위 총알 · 비밀던전 · 코스튬 · 방치 보상</h3>
+<p class="f">0~3 훅 → 3~5.8 강화 → 5.8~9.4 합성 → 9.4~11.6 레이저·미사일(클립 5, "D부터 SSU까지 13등급") → 11.6~15.4 보스 → 15.4~17.4 비밀던전(클립 6, "비밀던전에서 다이아를 캐자!") → 17.4~19.4 코스튬(클립 7, "18가지 카피바라 코스튬") → 19.4~22 방치 보상 창("꺼 둬도 쌓이는 방치 보상") → 22~25 끝 화면</p>
+<h3>C. AI 연출을 더한 버전 (선택)</h3>
+<p class="f">AI 장면은 <b>0~1.5초 인트로</b>와 <b>끝 화면</b>에만 · 1.5초 안에 실제 플레이로 넘어가야 첫 3초 안에 실제 게임이 보임</p>
+<div class="box"><div class="head"><b>영상 AI — 인트로 1.5초 (첨부: 대표_캐릭터_투명 · 좀비 3종 · 색_견본)</b><button class="copy">복사</button></div><pre>[Style prompt above]
+Vertical 9:16, 1.5 seconds, 30 fps. Close-up of the pirate-captain capybara from the reference image, standing upright, cocking its toy rifle with a determined squint, then a horde of goofy green cartoon zombies (from the references) bursts in from the right edge. Quick push-in camera, comic speed lines, small dust puffs. Flat 2D doodle animation, thick dark brown outlines, warm cream-orange background. Ends on a hard cut moment (the next shot will be real gameplay). No text, no logos.</pre></div>
+<div class="box"><div class="head"><b>영상 AI — 끝 화면 2~3초 (첨부: 제목_로고_투명 · 앱아이콘_512 · 대표_캐릭터_투명)</b><button class="copy">복사</button></div><pre>[Style prompt above]
+Vertical 9:16, 2.5 seconds. Warm cream-to-orange gradient background. The attached title logo "카피바라 vs 좀비" pops in with a bouncy scale animation at the top third; the attached app icon sits above it. Below, the pirate-captain capybara and three zombies from the references do a short idle bounce. A rounded green button reading "지금 무료 플레이" pulses gently near the bottom. Keep the logo and button text exactly as provided (do not redraw the letters).</pre></div>
+<div class="box"><div class="head"><b>영상 AI — 캐릭터 한 마리 움직이기 (이미지 → 영상)</b><button class="copy">복사</button></div><pre>Animate the attached character image only. Keep the exact design, colors and outline. Gentle idle loop: breathing bounce, small blink, slight sway of the gun. 2 seconds, seamless loop, transparent or plain cream background. No new objects, no text.</pre></div>
+<div class="box"><div class="head"><b>편집 AI · 외주에 주는 편집 지시 (한국어)</b><button class="copy">복사</button></div><pre>첨부한 실제 플레이 클립(1080x1920 30fps, 문구 없음)으로 세로 9:16 광고 영상을 편집해 주세요.
+- 길이: 15초 / 30초 각 1개
+- 첫 3초 안에 실제 플레이(좀비 떼를 쓸어버리는 클립 1)를 보여 주세요. 로고·인트로로 시작하지 마세요.
+- 장면 순서: 좀비 떼(훅) → 강화 연타 → 총알 합성 → 보스 처치 → (30초: 레이저·미사일, 비밀던전, 코스튬) → 끝 화면
+- 위쪽에 큰 문구(주아 글꼴, 금색 + 진한 갈색 테두리), 한 장면에 2줄 이내, 소리 없이 봐도 이해되게
+- 끝 화면: 첨부한 앱 아이콘 · 제목 로고 · 캐릭터 + "지금 무료 플레이" 버튼, 2~3초
+- 실제 플레이 화면을 다른 게임처럼 바꾸거나, 게임에 없는 장면을 넣지 마세요.
+- 소리: 경쾌한 배경음 + 총소리·폭발·금화 효과음 (저작권 없는 음원)
+- 납품: mp4 (H.264, AAC), 1080x1920 · 1080x1080 · 1920x1080 각각</pre></div>
+
+<h2>4. 이미지 프롬프트</h2>
+<div class="box"><div class="head"><b>키 아트 — 세로 포스터 (첨부: 대표_캐릭터 · 좀비들 · 색_견본)</b><button class="copy">복사</button></div><pre>[Style prompt above]
+Vertical 4:5 key art for a mobile game ad. Three capybaras from the reference (the pirate captain in front, slightly bigger) stand on a beige dirt road on the left, firing bright cyan laser beams and small cartoon missiles to the right. A huge wave of goofy green zombies fills the right half, some flying backwards from comic explosions, gold coins and big white damage numbers popping in the air. Leave clean empty space at the top 25% for the title text. Flat 2D doodle style, thick dark brown outlines, warm palette. No text.</pre></div>
+<div class="box"><div class="head"><b>가로 배너 배경 1.91:1 (글자 칸 비워 둠)</b><button class="copy">복사</button></div><pre>[Style prompt above]
+Wide 1.91:1 banner background. Left 45% is a soft cream-orange area left empty for headline text. Right side: the capybara squad (reference) on the left of that half shooting at a crowd of cartoon zombies coming from the right edge, cartoon muzzle flashes and coin bursts. Light forest trees along the top edge, dirt road ground. No text, no logo.</pre></div>
+<div class="box"><div class="head"><b>보스 컨셉 (첨부: 좀비_ogre · 카피바라_17)</b><button class="copy">복사</button></div><pre>[Style prompt above]
+Square 1:1 illustration. The giant green mutant ogre boss from the reference (horns, wooden club) towers on the right, roaring comically. The tiny pirate-captain capybara squad on the left aims their toy guns bravely. Comic tension, speed lines, small debris. Leave the top 20% empty for text. No text.</pre></div>
+<div class="box"><div class="head"><b>코스튬 컬렉션 (첨부: 카피바라_00~17)</b><button class="copy">복사</button></div><pre>[Style prompt above]
+Collection poster: the 18 capybara costumes from the attached references lined up in three rows like a cute lineup photo, each one keeping its exact costume (straw hat, angel wings, sprout, pig hoodie, crocodile pajamas, caveman, black bandana, shadow cloak, dinosaur pajamas, adventurer backpack, bat wings, overalls, chicken pajamas, red cape, shark pajamas, striped cat, pirate captain). Cream background, soft confetti. No text.</pre></div>
+<div class="box"><div class="head"><b>썸네일 (유튜브 광고용 16:9)</b><button class="copy">복사</button></div><pre>[Style prompt above]
+16:9 thumbnail. Extreme close-up of the pirate-captain capybara (reference) shouting, holding its toy rifle, a giant explosion of cartoon zombies and gold coins behind it. Very high contrast, bold readable composition at small size. Leave the right 40% for a short headline. No text.</pre></div>
+
+<h2>5. 광고 문구 <small>구글 앱 캠페인: 제목 30 · 설명 90 (한글은 1글자 = 2로 셈) — 오른쪽 숫자가 그 계산</small></h2>
+<h3>제목 (짧은 문구)</h3>
+<ul class="copylist" data-limit="30">
+  <li><span class="t">좀비 떼를 쓸어버려라</span></li>
+  <li><span class="t">카피바라 분대 출동</span></li>
+  <li><span class="t">켜 두면 알아서 싸운다</span></li>
+  <li><span class="t">같은 총알 겹치면 합성</span></li>
+  <li><span class="t">귀여운데 화끈하다</span></li>
+  <li><span class="t">150챕터 좀비 사냥</span></li>
+  <li><span class="t">챕터마다 거대 보스</span></li>
+  <li><span class="t">꺼 둬도 쌓이는 보상</span></li>
+  <li><span class="t">방치형 카피바라 슈팅</span></li>
+  <li><span class="t">지금 무료 플레이</span></li>
+</ul>
+<h3>설명 (긴 문구)</h3>
+<ul class="copylist" data-limit="90">
+  <li><span class="t">몰려오는 좀비 떼를 자동으로 쏘는 카피바라 분대. 강화하고 합성해 끝까지!</span></li>
+  <li><span class="t">같은 총알 두 개를 겹치면 한 단계 위로. D부터 SSU까지 13등급 합성.</span></li>
+  <li><span class="t">켜 두기만 해도 싸우고, 꺼 둬도 최대 8시간 방치 보상이 쌓여요.</span></li>
+  <li><span class="t">해적 선장부터 상어 잠옷까지, 18가지 카피바라 코스튬을 모아 보세요.</span></li>
+  <li><span class="t">150챕터 750스테이지, 챕터마다 거대 보스가 기다립니다.</span></li>
+</ul>
+<h3>영어 (해외 확장 때)</h3>
+<ul class="copylist" data-limit="30">
+  <li><span class="t">Blast the Zombie Horde!</span></li>
+  <li><span class="t">Capybara Squad, Fire!</span></li>
+  <li><span class="t">Merge Bullets, Power Up</span></li>
+  <li><span class="t">Cute but Explosive</span></li>
+</ul>
+
+<h2>6. 납품 규격 <small>참고 — 올리기 전에 각 플랫폼 최신 안내를 한 번 더 확인</small></h2>
+<table>
+  <tr><th>종류</th><th>크기</th><th>길이 · 형식</th><th>이미 있는 파일</th></tr>
+  <tr><td>세로 영상</td><td>1080x1920 (9:16)</td><td>15초 · 25~30초 · mp4(H.264, AAC)</td><td>광고_세로_15초 · 광고_세로_25초</td></tr>
+  <tr><td>정사각 영상</td><td>1080x1080 (1:1)</td><td>15초</td><td>광고_정사각_15초</td></tr>
+  <tr><td>가로 영상</td><td>1920x1080 (16:9)</td><td>15초 (구글 앱 캠페인은 유튜브에 올린 링크로 넣음)</td><td>광고_가로_15초</td></tr>
+  <tr><td>가로 이미지</td><td>1200x628 (1.91:1)</td><td>png/jpg</td><td>이미지/*_1200x628</td></tr>
+  <tr><td>정사각 이미지</td><td>1200x1200</td><td></td><td>이미지/*_1200x1200</td></tr>
+  <tr><td>세로 이미지</td><td>1200x1500 (4:5) · 1080x1920 (9:16)</td><td></td><td>이미지/*_1200x1500 · *_1080x1920</td></tr>
+</table>
+
+<h2>7. 첨부 자료 목록 <small><code>자료\</code></small></h2>
+<table>
+  <tr><th>폴더</th><th>내용</th></tr>
+  <tr><td>캐릭터</td><td>카피바라 코스튬 18종 · 좀비 12종 — 게임 그림 그대로, 투명 PNG</td></tr>
+  <tr><td>브랜드</td><td>앱아이콘_512 · 제목_로고_투명 · 색_견본 · 대표_캐릭터_투명(해적 선장 + 좀비 3)</td></tr>
+  <tr><td>게임_화면</td><td>스토어 화면 8장(1080x2340) · 광고 장면 대표 프레임 8장(1080x1920)</td></tr>
+  <tr><td>실제_플레이_클립</td><td>문구 없는 실제 플레이 mp4 7개: 좀비 떼 · 강화 연타 · 합성 · 보스 · 레이저·미사일 · 비밀던전 · 코스튬</td></tr>
+</table>
+<p class="f">자료 다시 만들기: 게임을 고친 뒤 <code>bash tools/unity_batch.sh KachiGun.EditorTools.PlayTest.RunAd --play</code> → <code>python tools/ad_video.py</code> · <code>tools/ad_images.py</code> · <code>tools/ad_ai_kit.py</code></p>
+</main>
+<script>
+(function(){
+  function copyText(text, btn){
+    function done(){ var o=btn.textContent; btn.textContent='복사했어요'; setTimeout(function(){ btn.textContent=o; },1200); }
+    function fb(){ var t=document.createElement('textarea'); t.value=text; document.body.appendChild(t); t.select(); try{document.execCommand('copy');}catch(e){} t.remove(); done(); }
+    if(navigator.clipboard&&navigator.clipboard.writeText) navigator.clipboard.writeText(text).then(done,fb); else fb();
+  }
+  var style=document.querySelector('.box pre').textContent;
+  document.querySelectorAll('.box').forEach(function(b){
+    var btn=b.querySelector('button.copy'), pre=b.querySelector('pre');
+    btn.addEventListener('click',function(){ copyText(pre.textContent.replace('[Style prompt above]', document.querySelectorAll('.box pre')[2].textContent), btn); });
+  });
+  // 구글 광고 글자 수: 한글 등 2바이트 글자 = 2
+  function units(s){ var n=0; for(var i=0;i<s.length;i++){ var c=s.charCodeAt(i); n+= (c>0x1100 && !(c>=0xFF61&&c<=0xFFDC)) ? 2 : 1; } return n; }
+  document.querySelectorAll('ul.copylist').forEach(function(ul){
+    var lim=+ul.dataset.limit;
+    ul.querySelectorAll('li').forEach(function(li){
+      var t=li.querySelector('.t').textContent, u=units(t);
+      var c=document.createElement('span'); c.className='cnt'+(u>lim?' over':''); c.textContent=u+' / '+lim; li.appendChild(c);
+      var b=document.createElement('button'); b.className='copy'; b.textContent='복사'; b.addEventListener('click',function(){ copyText(t,b); }); li.appendChild(b);
+    });
+  });
+})();
+</script>
+</body></html>

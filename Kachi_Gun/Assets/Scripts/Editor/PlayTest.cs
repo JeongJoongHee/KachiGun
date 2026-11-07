@@ -73,7 +73,15 @@ namespace KachiGun.EditorTools
             Run();
         }
         public static bool FontOnly => SessionState.GetBool(Key + ".font", false);
-        public static bool Main => !AnimOnly && !RigOnly && !EnOnly && !StoreOnly && !ZombieOnly && !FontOnly;
+
+        /// <summary>모바일 광고 영상용(11-07): 실제 게임을 1080x1920 으로 초당 30장 연속 촬영 → Logs/PlayTest/ad/장면/0000.jpg (tools/ad_video.py 가 영상으로)</summary>
+        public static void RunAd()
+        {
+            SessionState.SetBool(Key + ".ad", true);
+            Run();
+        }
+        public static bool AdOnly => SessionState.GetBool(Key + ".ad", false);
+        public static bool Main => !AnimOnly && !RigOnly && !EnOnly && !StoreOnly && !ZombieOnly && !FontOnly && !AdOnly;
 
         public static void Run()
         {
@@ -105,6 +113,7 @@ namespace KachiGun.EditorTools
             SessionState.SetBool(Key + ".store", false);
             SessionState.SetBool(Key + ".zshow", false);
             SessionState.SetBool(Key + ".font", false);
+            SessionState.SetBool(Key + ".ad", false);
             GameManager.HoldFire = false;   // 11-07 스토어 촬영 사격 멈춤 풀기
             EditorApplication.Exit(errors == 0 ? 0 : 3);
         }
@@ -139,6 +148,7 @@ namespace KachiGun.EditorTools
             if (PlayTest.StoreOnly) { yield return StoreTour(); yield break; }
             if (PlayTest.ZombieOnly) { yield return ZombieShow(); yield break; }
             if (PlayTest.FontOnly) { yield return FontTour(); yield break; }
+            if (PlayTest.AdOnly) { yield return AdTour(); yield break; }
 
             // 출석 창이 시험 중간(10초마다 날짜 확인)에 끼어들지 않게 — 출석은 11f 에서 따로
             // 11-04 밤: 처음 켜자마자 출석 창(1일차) → 받기 → 다이아 +100 (뒤 시험에 영향 없게 다이아는 되돌림)
@@ -1122,6 +1132,165 @@ namespace KachiGun.EditorTools
             PlayTest.Finish(errors);
         }
 
+        // =====================================================================
+        // 11-07 모바일 광고 영상 촬영: 장면마다 실제 게임을 초당 30장(게임 시간 1/30초 고정) → ad/장면/0000.jpg
+        // =====================================================================
+        const int AdFps = 30;
+
+        /// <summary>sec 초 동안 매 프레임 촬영. each(t) = 그 프레임 전에 할 일 (t = 장면 안 시간)</summary>
+        IEnumerator Rec(string clip, float sec, System.Action<float> each = null)
+        {
+            string dir = $"{OutDir}/ad/{clip}";
+            if (Directory.Exists(dir)) Directory.Delete(dir, true);
+            Directory.CreateDirectory(dir);
+            Time.captureDeltaTime = 1f / AdFps;
+            int n = Mathf.RoundToInt(sec * AdFps);
+            for (int i = 0; i < n; i++)
+            {
+                each?.Invoke(i / (float)AdFps);
+                yield return null;
+                CaptureJpg($"{dir}/{i:0000}.jpg");
+            }
+            Time.captureDeltaTime = 0;
+            Log($"광고 장면 {clip}: {n}장");
+        }
+
+        void CaptureJpg(string path)
+        {
+            var cam = Camera.main;
+            Canvas.ForceUpdateCanvases();
+            cam.Render();
+            RenderTexture.active = rt;
+            var tex = new Texture2D(rt.width, rt.height, TextureFormat.RGB24, false);
+            tex.ReadPixels(new Rect(0, 0, rt.width, rt.height), 0, 0);
+            tex.Apply();
+            RenderTexture.active = null;
+            File.WriteAllBytes(path, tex.EncodeToJPG(92));
+            Destroy(tex);
+        }
+
+        int NearZombies(float frac) { int n = 0; foreach (var t in Target.All) if (t is Zombie z && z.Alive && !z.isBoss && z.Pos.x < Field.I.ViewHalfW * frac) n++; return n; }
+
+        IEnumerator AdTour()
+        {
+            DontDestroyOnLoad(gameObject);
+            S.stage = 51; S.bestEver = 60; S.gems = 12500; S.gold = 3.2e7;
+            S.lvAtk = 40; S.lvSpd = 60; S.lvGold = 150;
+            S.weaponUnlocked = true; S.tutorialDone = true;
+            S.attendDay = SaveData.Today;   // 촬영에 출석 창이 안 끼게
+            S.slots[0] = Tables.Code(5, "laser"); S.slots[1] = Tables.Code(4, "missile"); S.slots[2] = Tables.Code(3, "shotgun");
+            foreach (int k in new[] { 1, 2, 3, 6, 17 }) if (!S.skins.Contains(k)) S.skins.Add(k);
+            S.skin = 17;
+            for (int k = 1; k <= 7; k++) if (!S.supplies.Contains(k)) S.supplies.Add(k);
+            S.Save();
+            UnityEngine.SceneManagement.SceneManager.LoadScene(0);
+            yield return Wait(1.0f);
+            SetupCapture(1080, 1920);
+            yield return Wait(0.5f);
+
+            // A. 몰려오는 좀비 떼를 쓸어버림 (첫 3초 훅) — 사격을 멈추고 좀비가 가운데까지 오면 쏘기 시작
+            GameManager.HoldFire = true;
+            yield return WaitUntil(() => NearZombies(0.25f) >= 14, 30f);
+            Log($"A 좀비 {NearZombies(0.25f)} · 전체 {Target.All.Count}");
+            GameManager.HoldFire = false;
+            yield return Rec("a_horde", 5f);
+
+            // B. 강화 카드 연타 — 숫자가 오르고 카드가 톡톡
+            S.gold = 1e30; GM.Notify();
+            HoldButton Card(int i) { var g = GameObject.Find("CardHolder" + i); return g ? g.GetComponentInChildren<HoldButton>() : null; }
+            var atk = Card(0); var spd = Card(1); var gold = Card(2);
+            float next = 0;
+            yield return Rec("b_upgrade", 3.5f, t =>
+            {
+                if (t < next) return;
+                next = t + 0.13f;
+                var hb = t < 1.6f ? atk : t < 2.6f ? spd : gold;
+                hb?.action?.Invoke();
+            });
+
+            // C. 총알 합성 — 같은 탄알을 끌어다 겹치기(유령 그림이 날아감) 3번 → [일괄 합성]
+            for (int i = 0; i < S.inv.Count; i++) S.inv[i] = -1;
+            int[] inv = { Tables.Code(4, "laser"), Tables.Code(4, "laser"), Tables.Code(3, "missile"), Tables.Code(3, "missile"), Tables.Code(5, "single"), Tables.Code(5, "single"),
+                          Tables.Code(2, "fast"), Tables.Code(2, "fast"), Tables.Code(1, "shotgun"), Tables.Code(1, "shotgun"), Tables.Code(3, "pierce"), Tables.Code(3, "pierce"), Tables.Code(6, "laser") };
+            for (int i = 0; i < inv.Length; i++) S.inv[i] = inv[i];
+            var wp = HUD.I.Open<WeaponPopup>();
+            yield return Wait(0.4f);
+            WeaponCell Cell(int idx) { foreach (var c in wp.GetComponentsInChildren<WeaponCell>(true)) if (!c.isSlot && c.index == idx) return c; return null; }
+            (int a, int b)[] drags = { (1, 0), (3, 2), (5, 4) };
+            yield return Rec("c_merge", 4.0f, t =>
+            {
+                // 0.0~0.45 끌기 · 0.5 놓기 — 1.0초마다 한 번, 3.2초에 [일괄 합성]
+                int k = Mathf.FloorToInt(t / 1.0f);
+                float u = t - k * 1.0f;
+                if (k < drags.Length)
+                {
+                    var from = Cell(drags[k].a); var to = Cell(drags[k].b);
+                    if (from && to && from.code >= 0)
+                    {
+                        if (u < 0.45f)
+                        {
+                            wp.ghost.gameObject.SetActive(true);
+                            var im = wp.ghost.GetComponent<Image>();
+                            im.sprite = WeaponPopup.TypeIcon(Tables.TypeOf(from.code)); im.preserveAspect = true;
+                            wp.ghost.SetAsLastSibling();
+                            float e = Mathf.SmoothStep(0, 1, u / 0.45f);
+                            wp.ghost.position = Vector3.Lerp(from.rt.position, to.rt.position, e) + Vector3.up * Mathf.Sin(e * Mathf.PI) * 0.6f;
+                        }
+                        else if (wp.ghost.gameObject.activeSelf)
+                        {
+                            wp.ghost.gameObject.SetActive(false);
+                            wp.Drop(from, to);
+                        }
+                    }
+                }
+                else if (Mathf.Abs(t - 3.2f) < 0.017f)
+                {
+                    var mb = GameObject.Find("MergeAll");
+                    mb?.GetComponent<Button>()?.onClick.Invoke();
+                }
+            });
+            CloseAll();
+
+            // D. 보스 — 걸어 들어오면 쏘기 시작 · 3.2초에 쓰러뜨림 → 다음 스테이지
+            S.stage = 54; S.kills = GM.Quota; GM.Notify();
+            GameManager.HoldFire = true;
+            yield return WaitUntil(() => GM.boss != null && GM.boss.Pos.x < Field.I.ViewHalfW * 0.45f, 40f);
+            GameManager.HoldFire = false;
+            bool killed = false;
+            yield return Rec("d_boss", 5.0f, t =>
+            {
+                if (!killed && t >= 3.2f && GM.boss != null && GM.boss.Alive) { killed = true; GM.boss.Hit(GM.boss.hp + 1, GM.boss.Pos); }
+            });
+
+            // E. 상위 총알(SSR 레이저 · 미사일)로 좀비 떼 — 강화를 빼야 좀비가 화면에 남아 보임
+            S.slots[0] = Tables.Code(9, "laser"); S.slots[1] = Tables.Code(9, "missile"); S.slots[2] = Tables.Code(8, "laser");
+            S.lvAtk = 0; S.lvSpd = 0; S.gold = 3.2e7;
+            Squad.I.Rebuild(); GM.Notify();
+            GameManager.HoldFire = true;
+            yield return WaitUntil(() => NearZombies(0.25f) >= 14, 30f);
+            GameManager.HoldFire = false;
+            yield return Rec("e_high", 4.5f);
+
+            // F. 비밀던전 — 광석을 깨면 다이아가 튐 (알림 글자가 사라진 뒤부터)
+            S.RefreshDaily(); S.mineTickets = Mathf.Max(S.mineTickets, 1);
+            if (GM.StartMine() == null)
+            {
+                yield return Wait(1.9f);
+                yield return Rec("f_mine", 3.5f);
+                GM.dungeonTime = 0.05f; yield return Wait(0.5f); HUD.I.Get<ResultPopup>()?.Close(); yield return Wait(0.4f);
+            }
+            else Log("광산 못 들어감");
+
+            // G. 코스튬 창
+            HUD.I.Open<SkinPopup>();
+            yield return Rec("g_skin", 2.0f);
+            CloseAll();
+
+            GameManager.HoldFire = false;
+            Log($"DONE errors={errors}");
+            PlayTest.Finish(errors);
+        }
+
         IEnumerator ZombieShow()
         {
             GameManager.Demo = true; Zombie.Treadmill = true;
@@ -1192,9 +1361,12 @@ namespace KachiGun.EditorTools
         }
 
         // ---------- 화면 찍기 (1080x2340, 폰 비율) ----------
-        void SetupCapture()
+        void SetupCapture() => SetupCapture(1080, 2340);
+
+        /// <summary>w x h 로 렌더 (광고 영상은 1080x1920 = 9:16)</summary>
+        void SetupCapture(int w, int h)
         {
-            rt = new RenderTexture(1080, 2340, 24);
+            rt = new RenderTexture(w, h, 24);
             var cam = Camera.main;
             cam.targetTexture = rt;
             cam.ResetAspect();

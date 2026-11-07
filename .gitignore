@@ -31,3 +31,7 @@ Thumbs.db
 # 소리 검토 wav (tools/sound_review.py 로 다시 만듦)
 사운드_검토_wav/
 tools/_build/pixel_orig/
+
+# 11-07 광고 소재: 영상·AI 자료는 크고 tools/ad_*.py 로 다시 만들 수 있어 올리지 않음
+광고 소재/**/*.mp4
+광고 소재/AI 제작 요청/자료/
