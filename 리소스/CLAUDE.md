@@ -6,7 +6,8 @@
 - 광고 소재 다시 만듦: "확률형 아이템 포함"(게임 안 [총알 뽑기] = 보석 무작위 · 게임산업법 2024-03 · 연매출 1억 이하 예외 보도) — `ad_video.py prob_badge`(모든 프레임) · `ad_images.py prob` · `playable_template.html probBadge` · AI 요청서 규칙 + 좀비 죽는 모습 고친 뒤 `PlayTest.RunAd` 다시 촬영(errors=0). 옛 소재·프레임 백업 = 스크래치 ad_before_1108
 - **사용자가 유튜브에 올린 영상 4개는 옛 판 → 새 판으로 바꿔 올려야 함(g-yt2)** · 문구 의견("카피바라 분대 출동" + 첫 설명)은 대표로 맨 앞에 올림(해석 — 다르면 의견)
 - 화풍: 전역 스킬 `~/.claude/skills/doodle-art-style/`(SKILL.md · doodle_kit.py · reference/) + `화풍_가이드.html` — 앞으로 새 게임은 이 화풍
-- 재개하면: `PYTHONUTF8=1 python tools/todo_checks.py` → 결정 5개 답부터 (r-prep8 "지금 미리"면 Unity 닫혀 있을 때 8번 준비)
+- **11-09 결정 5개 답**: 8번 준비 = 승인 뒤에 한 번에(승인 날 2~3시간) · AdMob 그대로 · 광고 예산 ₩600,000 단계 · Firebase 첫 2주 안 넣음(12-11 다시) · 옛 계정 판매자 선언 = 이전 끝난 뒤 → 문서에 반영, 정해진 결정·끝난 작업은 맨 아래 "끝난 것" 접는 목록(체크하면 JS 가 저절로 아래로 옮김, 키 그대로 kachigun-todo-1109) · 옛 판 = 스크래치 남은_작업_정리_before_1109b.html
+- 재개하면: `PYTHONUTF8=1 python tools/todo_checks.py` → 승인 메일 기다리는 중(~11-14) · 사용자 몫 = 유튜브 영상 새 판으로 바꾸기(g-yt2) · 7번 한 바퀴 · 영어 화면
 
 ## ▶ 재개 메모 (2026-11-08 16:45 — 성능 최적화)
 - 사용자 "오래 돌리면서 컨텐츠를 왔다갔다하면 화면이 밀림" → 측정 모드 `PlayTest.RunPerf`(Editor/PlayTestPerf.cs · 이름표 `KACHI_PERF_LABEL` · 3바퀴: 스테이지→창 4개→도전→스테이지→비밀던전→스테이지→보스) → `Logs/PlayTest/perf/before·after.json` → `tools/perf_report.py` → **`성능_점검.html`**

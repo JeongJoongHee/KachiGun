@@ -37,13 +37,14 @@
   button.copy,#copyNotes{border:1px solid var(--orange);background:var(--orange-bg);color:var(--orange);border-radius:8px;padding:2px 10px;cursor:pointer;font-size:13px}
   .bar{position:sticky;top:0;background:var(--bg);padding:8px 0;display:flex;gap:10px;align-items:center;z-index:2;border-bottom:1px solid var(--line);flex-wrap:wrap}
   .bar a{font-size:13px;color:var(--blue);text-decoration:none}
+  details.done{margin:10px 0} details.done > ul.todo{margin-top:8px}
   details{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:10px 14px;margin:10px 0} summary{cursor:pointer;font-weight:bold}
   .src{font-size:13px;color:var(--soft)} .src a{color:var(--blue)}
 </style></head><body><main>
 <h1>남은 작업 정리 — 출시 · 앱 이전 · 결제 · 구글 애즈 광고</h1>
-<p class="note">카치건 (카피바라 vs 좀비) · <b>2026-11-08 밤 다시 짬</b> — 지난 남은_작업_정리 · 출시_일정 · 구글애즈_준비 세 문서를 날짜 순서 하나로 합침. 지난 판 체크 3개(스토어 그림 올리기 · 폰 광고 확인 · 유튜브 올리기)와 의견 2개를 반영 · 새 키라 칸이 비어 있음. 날짜는 구글 검토가 보통 속도일 때의 예상이고, 검토가 늦으면 그만큼 뒤로 밀립니다.</p>
+<p class="note">카치건 (카피바라 vs 좀비) · <b>2026-11-08 밤 다시 짬 · 11-09 갱신</b>(결정 5개 답 반영) — 지난 남은_작업_정리 · 출시_일정 · 구글애즈_준비 세 문서를 날짜 순서 하나로 합침. <b>정해진 결정 · 끝난 작업은 맨 아래 "끝난 것"에 접어 둠 — 체크하면 저절로 그리로 내려가고, 체크를 풀면 제자리로 돌아옴.</b> 날짜는 구글 검토가 보통 속도일 때의 예상이고, 검토가 늦으면 그만큼 뒤로 밀립니다.</p>
 <div class="bar"><span id="stat"></span><button id="copyNotes" type="button">의견 모아 복사</button>
-  <a href="#plan">일정표</a><a href="#rules">지킬 순서</a><a href="#pick">결정</a><a href="#s1">①</a><a href="#s2">②</a><a href="#s3">③</a><a href="#s4">④</a><a href="#s5">⑤</a><a href="#s6">⑥</a><a href="#ref">참고 표</a><a href="#done">끝난 것</a></div>
+  <a href="#plan">일정표</a><a href="#rules">지킬 순서</a><a href="#s1">①</a><a href="#s2">②</a><a href="#s3">③</a><a href="#s4">④</a><a href="#s5">⑤</a><a href="#s6">⑥</a><a href="#ref">참고 표</a><a href="#done">끝난 것</a></div>
 
 <div class="legend"><span class="who w-pick">결정</span>정해 주셔야 함 <span class="who w-me">직접</span>구글 계정으로 직접 <span class="who w-dev">개발</span>제가 함 <span class="who w-see">보기</span>폰·화면으로 보고 괜찮은지만 <span class="who w-wait">대기</span>기다리기</div>
 
@@ -51,8 +52,8 @@
 <h2 id="plan">최적 일정 <small>한눈에 — 아래 ①~⑥ 단계와 같은 번호</small></h2>
 <table class="plan">
   <tr><th style="width:120px">날짜 (예상)</th><th>단계</th><th>할 일</th></tr>
-  <tr class="now"><td>11-09 (월) ~ 11-13</td><td>① 승인 기다리는 동안</td><td><span class="who w-pick">결정</span>4개 · <span class="who w-dev">개발</span>8번 미리 준비(개발용 APK) · <span class="who w-see">보기</span>개발용 APK · 7번 한 바퀴 · 영어 화면 · <span class="who w-me">직접</span>유튜브 영상 4개 새 판으로 바꾸기</td></tr>
-  <tr><td>~11-14 (토)</td><td>② 승인 → 8번</td><td><span class="who w-wait">대기</span>승인 메일 → <span class="who w-dev">개발</span>8번 AAB(미리 준비했으면 10분) → <span class="who w-me">직접</span>비공개 트랙에 먼저 → <span class="who w-see">보기</span>폰에서 8번</td></tr>
+  <tr class="now"><td>11-09 (월) ~ 11-13</td><td>① 승인 기다리는 동안</td><td><span class="who w-me">직접</span>유튜브 영상 4개 새 판으로 바꾸기 · <span class="who w-see">보기</span>7번 한 바퀴 · 영어 화면 · 광고 문구 (결정 5개는 11-09 끝 — 맨 아래)</td></tr>
+  <tr><td>~11-14 (토)</td><td>② 승인 → 8번</td><td><span class="who w-wait">대기</span>승인 메일 → Unity 닫기 → <span class="who w-dev">개발</span>8번 준비 + AAB (2~3시간 · 개발용 APK 로 폰 확인 포함) → <span class="who w-me">직접</span>비공개 트랙에 먼저 → <span class="who w-see">보기</span>폰에서 8번</td></tr>
   <tr><td>11-15 ~ 11-17 (화)</td><td>② 프로덕션 출시</td><td><span class="who w-me">직접</span>프로덕션 출시 → <span class="who w-wait">대기</span>검토 → 스토어에 보이는지 · <b>홍보 안 함</b> (결제 없는 판)</td></tr>
   <tr><td>스토어에 보인 날 ~11-17</td><td>③ 이전 신청 + 광고 앱 추가</td><td><span class="who w-me">직접</span>AdMob 스토어 연결 · 앱 이전 신청 → 수락 · 구글 애즈 가입 화면 이어서 앱 추가 (결제는 아직)</td></tr>
   <tr><td>~11-19 (목)</td><td>③ 이전 끝</td><td><span class="who w-wait">대기</span>영업일 2일 → <span class="who w-me">직접</span>이전 확인 · 라이선스 키 · 판매자 상태 · <span class="who w-dev">개발</span>개인정보처리방침</td></tr>
@@ -64,7 +65,7 @@
 </table>
 <div class="tip blue"><b>이 순서가 가장 빠르고 안전한 이유</b>
 <ul>
-  <li><b>승인 전에 8번을 미리 준비</b>하면 승인 날 AAB 만 구우면 됩니다. 8번은 구글 Play 게임즈 라이브러리가 처음 들어가는 빌드라, 폰에서 켜지는지 미리 봐 두면 출시 날 막힐 일이 줄어듭니다.</li>
+  <li><b>8번 준비는 승인 날 한 번에</b>(11-09 결정) — 승인 날 2~3시간 더 걸리지만 한 번에 끝. 8번은 구글 Play 게임즈 라이브러리가 처음 들어가는 빌드라, 굽기 전에 개발용 APK 로 폰에서 켜지는지 먼저 봅니다.</li>
   <li><b>8번을 비공개 트랙에 먼저</b>(반나절~하루) — 테스터 폰에서 업데이트·세이브가 이어지는지 본 뒤 프로덕션. 하루 쓰고 출시 사고를 막는 값.</li>
   <li><b>이전은 스토어에 보인 뒤</b> — 구글 답변(11-07): 출시 전에 옮기면 프로덕션 권한이 안 넘어가 12명·14일 테스트를 다시 해야 함.</li>
   <li><b>결제는 이전 뒤 새 계정에서만</b> — 상품이 있는 앱은 이전 뒤 게시가 취소됨. 그래서 9번(결제)은 이전 뒤.</li>
@@ -92,24 +93,9 @@
   <li>검토 중에는 테스터를 빼거나 비공개 테스트를 멈추지 않기.</li>
   <li><b>구글 애즈 결제는 ④에서</b> (가입 혜택 60일이 그날부터) · Play ↔ 구글 애즈 연결은 이전 끝난 뒤 kachigoogoo 에서 (옛 계정으로 미리 연결하지 않기).</li>
   <li><b>광고 캠페인은 9번이 공개된 날 켬</b> — 그 전엔 꺼 둔 채.</li>
+  <li>광고 수익은 지금 AdMob(pub-5299482082775448) 그대로 — 이전 · 9번 때 광고 ID · app-ads.txt 손대지 않음 (11-09 정함).</li>
   <li>모든 광고 소재에 <b>"확률형 아이템 포함"</b> 표시 (게임 안 [총알 뽑기] · 게임산업법 2024-03). 다른 AI·외주 소재도 같게.</li>
 </ul></div>
-
-<!-- ============================================================ 결정 -->
-<h2 id="pick">결정할 것 <small>의견 칸에 번호나 "추천대로" — ① 기간 안에</small></h2>
-<ul class="todo">
-  <li data-id="r-prep8"><label><input type="checkbox"><span><span class="tag t-pick">결정</span><b>8번 준비를 승인 전에 미리 해 둘지</b> — 빌드만 빼고: 설정 [클라우드 저장] 줄 숨김(App ID 없을 때) · 자동 시험 · 안드로이드 컴파일 · <b>개발용 APK</b>(테스트 광고 · 구글 Play 게임즈 라이브러리가 처음 들어가는 빌드라 폰에서 켜지는지) · Unity 가 만든 게임즈 설정 파일 정리 · 출시 노트 문구 초안
-    <ol class="opts"><li>지금 미리 <span class="rec">추천 — Unity 가 닫혀 있는 지금 하면, 승인 날엔 AAB 만 구움(10분) · 폰 확인을 승인 전에 끝냄</span></li><li>승인 뒤 한 번에 (승인 날 2~3시간 더 걸림)</li></ol></span></label></li>
-  <li data-id="m-admob"><label><input type="checkbox"><span><span class="tag t-pick">결정</span><b>광고 수익(AdMob) 계정</b> — 지금 AdMob(pub-5299482082775448)을 그대로 쓸지. 앱 이전과 상관없이 광고 수익은 앱 안 광고 ID 의 계정으로 감. 불도깨비도 그대로 둠
-    <ol class="opts"><li>그대로 <span class="rec">추천 — 빌드 · app-ads.txt 손댈 것 없음</span></li><li>kachigoogoo 로 새 AdMob → 새 광고 ID 를 9번에 넣기 · app-ads.txt 줄 추가</li></ol></span></label></li>
-  <li data-id="p-budget"><label><input type="checkbox"><span><span class="tag t-pick">결정</span><b>광고 예산 (구글 애즈 가입 혜택 단계)</b> — 구글 권장은 "하루 예산 ≥ 목표 설치당 비용 x 50". 한국 게임 설치당 비용은 확인한 값이 없어 아래는 계산 예시
-    <ol class="opts"><li>₩600,000 단계(지금 골라져 있음) — 결제 설정 뒤 60일 안에 ₩600,000 쓰기(하루 2~3만원 x 20~30일) → 크레딧 ₩600,000 으로 한 번 더. 내 돈 60만원 = 광고 약 120만원어치. 목표 비용 없이 "설치 수 최대"로 시작 → 2주 뒤 실제 설치당 비용 보고 정함 <span class="rec">추천 — 1인 개발 첫 시험 크기</span></li><li>₩1,800,000 단계 (₩2,000,000 크레딧) — 결과가 좋을 때만</li><li>직접 정함 (총액 상한을 적어 주세요)</li></ol>
-    <span class="why">하루 예산은 날마다 조금 넘을 수 있지만 한 달 청구는 "하루 예산 x 30.4일"을 넘지 않음. 예산이 권장보다 적으면 학습이 느려질 뿐 광고는 나감.</span></span></label></li>
-  <li data-id="p-fb"><label><input type="checkbox"><span><span class="tag t-pick">결정</span><b>Firebase(구글 분석) 붙이기</b> — 설치 수는 Play 가 자동으로 세 주지만, "결제할 사람 · 오래 할 사람"에게 광고를 몰아주려면 게임 안 분석 SDK 가 필요(빌드 작업, 제가 함)
-    <ol class="opts"><li>첫 2주는 설치 수로만 → 12-11 결과 보고 결정 <span class="rec">추천 — 9번(결제) 빌드에 다른 변경을 섞지 않음</span></li><li>9번에 같이 넣기</li></ol></span></label></li>
-  <li data-id="r-trader"><label><input type="checkbox"><span><span class="tag t-pick">결정</span><b>옛 계정(FIBE · zkfpf1) "판매자 상태 선언"</b> (2027-02 까지) — Play Console 맨 위 파란 띠. 안 하면 그 계정의 앱(심심할 때 하는 게임)이 삭제됨
-    <ol class="opts"><li>카치건 이전이 끝난 뒤(③) [시작하기] — 심심할 때 하는 게임은 광고만이라 "판매자 아님"이 맞을 가능성 큼 → 화면에서 "크롬으로 봐줘" <span class="rec">추천</span></li><li>지금 바로</li></ol></span></label></li>
-</ul>
 
 <!-- ============================================================ ① -->
 <h2 id="s1">① 지금 ~ 승인 메일 <small>11-09 ~ 11-13 · zkfpf1 · 출시 전에 끝내 두면 좋은 것</small></h2>
@@ -126,16 +112,15 @@
     <span class="why">제 해석: 이 두 줄이 가장 마음에 드신다는 뜻으로 봄. 구글은 제목·설명을 여러 개 받아 섞어 보여 주므로 5개씩 다 넣는 게 유리 — "이 두 줄만 쓰라"는 뜻이었으면 의견에 적어 주세요.</span></span></label></li>
   <li data-id="s-phone7"><label><input type="checkbox"><span><span class="tag t-see">보기</span><b>7번 한 바퀴</b> — 낙서풍 그림 · 앱 아이콘 · 좀비 무리 · 총알 관리 창 · 방치 보상(5분 넘게 나갔다 오기) · 3일 출석 · 게임 종료/뒤로 가기 · 비밀던전 자동 끝 · 1~10챕터 손맛. 이상한 점은 의견에 → 8번에 넣음</span></label></li>
   <li data-id="s-lang"><label><input type="checkbox"><span><span class="tag t-see">보기</span><b>영어 화면</b> — 설정 › 언어 · Language → English → 글자 넘침 · 남은 한국어 · 어색한 번역 (<code>Table\String.xlsx</code> EN 칸을 직접 고쳐도 됨)</span></label></li>
-  <li data-id="r-prep8do"><label><input type="checkbox"><span><span class="tag t-dev">개발</span><b>8번 미리 준비</b> (결정 r-prep8 이 "지금 미리"면) — [클라우드 저장] 줄 숨김 · 자동 시험 · 안드로이드 컴파일 · 개발용 APK → <span class="tag t-see">보기</span> 폰에 깔아서 켜지는지 · 테스트 광고 · 세이브 이어짐 · 출시 노트 초안
-    <span class="how">개발용 APK 설치: 제가 만든 <code>…_dev.apk</code> 를 폰으로 옮겨 설치(출처 모름 허용). 스토어 판(7번)과 서명이 달라 <b>7번을 지워야</b> 깔리니, 세이브가 지워져도 되는 상태에서만 — 아니면 이 단계를 건너뛰고 8번 비공개 트랙으로 확인.</span></span></label></li>
 </ul>
 
 <!-- ============================================================ ② -->
 <h2 id="s2">② 승인 뒤 — 8번 출시 <small>~11-14 ~ 11-17 · zkfpf1 · 결제 없이 · 홍보 안 함</small></h2>
 <ul class="todo">
-  <li data-id="r-build8"><label><input type="checkbox"><span><span class="tag t-dev">개발</span><b>8번 AAB 굽기 (1.0.8)</b> <span class="time">승인 메일 + Unity 닫아 주기 → 10분~3시간</span>
+  <li data-id="r-build8"><label><input type="checkbox"><span><span class="tag t-dev">개발</span><b>8번 준비 + AAB 굽기 (1.0.8)</b> <span class="time">승인 메일 + Unity 닫아 주기 → 2~3시간 (11-09 정함: 준비도 승인 뒤에)</span>
     <span class="how">들어가는 것: 7번 뒤 고친 것 전부 — 방치 시간 표시 · 날짜·시간 악용 막기 · 예비 세이브 · 끌어다 놓아 장착 · 진동 삭제 · 코스튬 가격 쉼표 · 리더 1.12배 · 총알 칸 동료1 | 리더 | 동료2 · <b>좀비 죽는 모습 · 성능 최적화(처음 던전·처음 창 멈칫 없앰)</b>. 결제·클라우드는 꺼진 채.
-    <ol><li>①에서 안 했으면: [클라우드 저장] 줄 숨김 → 자동 시험 → 개발용 APK</li>
+    <ol><li>준비: 설정 [클라우드 저장] 줄 숨김(App ID 없을 때) · Unity 가 만든 게임즈 설정 파일 정리 · 자동 시험 · 안드로이드 컴파일 · 출시 노트 초안</li>
+    <li>개발용 APK(테스트 광고) → <span class="tag t-see">보기</span> 폰에서 켜지는지 · 광고 · 세이브 — 7번과 서명이 달라 7번을 지워야 깔리니, 세이브를 지켜야 하면 이 단계는 건너뛰고 ③ 비공개 트랙으로 확인</li>
     <li>AAB 점검(aab_check) + 7번과 권한 목록 비교 — 달라진 권한이 있으면 데이터 보안 답 확인</li>
     <li>이전 AAB 는 스크래치에 백업 · 결과 파일 위치를 알려 드림</li></ol></span></span></label></li>
   <li data-id="r-up8"><label><input type="checkbox"><span><span class="tag t-me">직접</span><b>8번을 비공개 트랙에 먼저</b> <span class="time">반나절~하루</span>
@@ -174,7 +159,7 @@
     <span class="how">kachigoogoo 앱 목록에 카피바라vs좀비 · 스토어 개발자 이름 Cachisi · 프로덕션 [새 버전 만들기]가 되는지 → 앱 › 수익 창출 설정 › <b>라이선스 키</b>를 <code>키 보관\google_play_license_key.txt</code> 에 저장 → 대화창에 "키 넣었어" (<b>키를 대화창에 붙이지 마세요</b>)</span></span></label></li>
   <li data-id="m-trader"><label><input type="checkbox"><span><span class="tag t-me">직접</span><b>앱 수준 판매자 상태</b> — kachigoogoo › 카치건 › 앱 콘텐츠 › 판매자 상태 → 불도깨비와 같게 "예, 판매자" · 약관 URL 은 비워도 저장됨(불도깨비 11-06)</span></label></li>
   <li data-id="m-privacy"><label><input type="checkbox"><span><span class="tag t-dev">개발</span><b>개인정보처리방침 고치기</b> — /kachigun-privacy 개발자 FIBE → 카치(Cachisi) · 구매 기록 · 클라우드 저장(구글 Play 게임즈 저장된 게임) 문장 추가 → <b>"배포해도 돼"</b> 받은 뒤 배포 (불도깨비 11-06 판과 같은 모양) · 스토어 연락처 이메일도</span></label></li>
-  <li data-id="r-trader-do"><label><input type="checkbox"><span><span class="tag t-me">직접</span><b>옛 계정 판매자 상태 선언</b> (결정 r-trader 대로) — zkfpf1 Play Console 맨 위 파란 띠 [시작하기] → 화면에서 "크롬으로 봐줘"</span></label></li>
+  <li data-id="r-trader-do"><label><input type="checkbox"><span><span class="tag t-me">직접</span><b>옛 계정 판매자 상태 선언</b> (11-09 정함: 이전 끝난 뒤 시작) — zkfpf1 Play Console 맨 위 파란 띠 [시작하기] → 화면에서 "크롬으로 봐줘"</span></label></li>
   <li data-id="m-old"><label><input type="checkbox"><span><span class="tag t-wait">참고</span><b>옛 계정</b> — zkfpf1 엔 결제 프로필 · 상품을 만들지 않음 · 계정을 지우지 마세요(심심할 때 하는 게임)</span></label></li>
 </ul>
 
@@ -191,7 +176,7 @@
   <li data-id="p-forms"><label><input type="checkbox"><span><span class="tag t-me">직접</span><b>앱 콘텐츠 답 다시</b> <span class="time">상품 활성화 전에</span>
     <span class="how">콘텐츠 등급 설문: 디지털 상품 구매 = 예 · 무작위 아이템 = 예 · 데이터 보안: 금융 정보 › 구매 기록 · 앱 활동 › 게임 진행(클라우드 저장) 추가 (불도깨비 11-06 과 같은 답)</span></span></label></li>
   <li data-id="p-build9"><label><input type="checkbox"><span><span class="tag t-dev">개발</span><b>9번 AAB (1.0.9)</b> <span class="time">키 · App ID 받은 뒤 반나절</span>
-    <span class="how">라이선스 키 · Play 게임즈 App ID 넣기 · [클라우드 저장] 줄 다시 보이기 → 자동 시험 · 안드로이드 컴파일 · 개발용 APK 로 로그인 확인 → AAB → 점검(결제 권한 · 게임즈 APP_ID · 광고 ID) · 그동안 받은 의견도 같이 (Firebase 는 결정 p-fb 대로)</span></span></label></li>
+    <span class="how">라이선스 키 · Play 게임즈 App ID 넣기 · [클라우드 저장] 줄 다시 보이기 → 자동 시험 · 안드로이드 컴파일 · 개발용 APK 로 로그인 확인 → AAB → 점검(결제 권한 · 게임즈 APP_ID · 광고 ID) · 그동안 받은 의견도 같이 (Firebase 는 안 넣음 — 11-09 정함, 12-11 결과 보고 다시)</span></span></label></li>
   <li data-id="p-internal"><label><input type="checkbox"><span><span class="tag t-me">직접</span><b>내부 테스트에 9번</b> — 테스트 및 출시 › 내부 테스트 → 테스터 = 이메일 목록 "결제테스트"(이미 있음) 체크 → [새 버전 만들기] → 9번 → 참여 링크로 폰에 설치</span></label></li>
   <li data-id="p-products"><label><input type="checkbox"><span><span class="tag t-me">직접</span><b>인앱 상품 5개 만들고 활성화</b> <span class="time">20분</span>
     <span class="how">앱 › 수익 창출 › 일회성 제품 → 상품마다 구매 옵션 <code>buy</code> (불도깨비와 같은 방식) — 값은 <a href="#products">상품 표</a>. "2개 이상 구매 허용"은 체크 안 함.</span>
@@ -209,7 +194,7 @@
     <span class="how"><ol><li>③ g-onboard 에서 멈춘 결제 화면 이어서 (또는 구글 애즈 › 오른쪽 위 도구 › 결제 › 설정)</li>
     <li>국가 <b>대한민국</b> · 시간대 <b>(GMT+09:00) 서울</b> · 통화 <b>KRW</b> — 통화와 시간대는 나중에 못 바꿈</li>
     <li>결제 프로필 유형 <b>조직(사업자)</b> · 사업자 이름 · 주소는 사업자등록증과 똑같이 · 세금 정보에 사업자등록번호 · 결제 수단 카드(자동 결제)</li>
-    <li>가입 혜택은 결정 p-budget 단계 그대로</li></ol></span>
+    <li>가입 혜택 = <b>₩600,000 단계</b>(11-09 정함 · 지금 골라져 있는 것 그대로)</li></ol></span>
     <span class="why">KRW 계정 + 사업자등록번호 → 매달 10일 전에 지난달 전자 세금계산서가 기본 결제 연락처 메일로 옴. 기존 결제 프로필(Play 판매자용)을 고르라는 칸이 나오면 써도 되는지는 (확인 못 함) — 그 화면에서 "크롬으로 봐줘".</span></span></label></li>
   <li data-id="g-camp-draft"><label><input type="checkbox"><span><span class="tag t-me">직접</span><b>캠페인은 저장하되 바로 안 나가게</b> — 시작일을 서비스 시작 날로 두거나(칸이 있으면), 만든 직후 캠페인을 [일시중지]
     <span class="why">결제 없는 8번에 광고 손님이 들어오지 않게. 새 가입 화면에 시작일 칸이 있는지는 (확인 못 함).</span></span></label></li>
@@ -236,7 +221,7 @@
   <li data-id="g-learn"><label><input type="checkbox"><span><span class="tag t-wait">대기</span><b>광고 켠 뒤 7~14일은 건드리지 않기</b> — 학습 기간. 예산 · 목표를 바꾸면 학습이 다시 시작될 수 있고, 바꾸더라도 한 번에 20% 안쪽으로.</span></label></li>
   <li data-id="w-vitals"><label><input type="checkbox"><span><span class="tag t-see">보기</span><b>2주 지켜보기</b> — Play Console › Android vitals 비정상 종료 · ANR · 리뷰(붙여 주시면 답글 초안) · AdMob 수익 · 결제 오류 메일</span></label></li>
   <li data-id="w-orders"><label><input type="checkbox"><span><span class="tag t-see">보기</span><b>첫 실제 주문</b> — Play Console › 주문 관리에 첫 주문이 생기면 다이아가 들어갔는지(리뷰 · 문의로)</span></label></li>
-  <li data-id="w-report"><label><input type="checkbox"><span><span class="tag t-dev">개발</span><b>12-11 쯤 2주 결과 보고서</b> — 설치당 비용 · 설치 수 · 결제한 사람 · 광고 수익을 한 표로 → 예산 단계 · 목표 설치당 비용 · Firebase 다음 결정. 구글 애즈 · Play Console 화면을 "크롬으로 봐줘" 하시면 제가 읽어서 만듦</span></label></li>
+  <li data-id="w-report"><label><input type="checkbox"><span><span class="tag t-dev">개발</span><b>12-11 쯤 2주 결과 보고서</b> — 설치당 비용 · 설치 수 · 결제한 사람 · 광고 수익을 한 표로 → 예산 단계(₩1,800,000 단계로 올릴지) · 목표 설치당 비용 · <b>Firebase 붙일지</b>(11-09 "첫 2주는 설치 수로만" 정함) 다음 결정. 구글 애즈 · Play Console 화면을 "크롬으로 봐줘" 하시면 제가 읽어서 만듦</span></label></li>
   <li data-id="g-credit"><label><input type="checkbox"><span><span class="tag t-wait">대기</span><b>가입 혜택 크레딧</b> — 결제 설정 뒤 60일 안에 ₩600,000 지출 → 확인 기간(최대 35일) 뒤 크레딧 → 들어온 날부터 보통 60일 안에 사용(남으면 환불 없음). 구글 애즈 › 결제 › 프로모션에서 진행 상황.</span></label></li>
   <li data-id="g-h5"><label><input type="checkbox"><span><span class="tag t-wait">나중</span><b>플레이어블(HTML5) 광고</b> — 구글은 HTML5 를 쓰려면 계정 조건(정책 위반 없는 기록 · 결제 기록 · 누적 광고비)을 따로 봄 → 새 계정은 처음엔 못 쓸 가능성 큼. 쓸 수 있게 되면 <code>광고 소재\플레이어블\카피바라vs좀비_플레이어블_구글광고.zip</code>(0.48MB) → 구글 HTML5 검사 도구 먼저. 메타 · 유니티 애즈 등 다른 곳에 쓸 때도 그 네트워크 검사 도구부터.</span></label></li>
   <li data-id="d-site"><label><input type="checkbox"><span><span class="tag t-wait">나중</span><b>개발자 사이트 첫 화면</b> — jeongjoonghee.github.io 에 세 게임 목록 + 각 개인정보처리방침 링크 (만들어 드리고, 올리기는 직접 · app-ads.txt 는 안 건드림)</span></label></li>
@@ -255,10 +240,10 @@
   <tr><td>앱</td><td>Android · <code>com.zkfpf.kachizombie</code> (스토어 공개 뒤에만 검색됨, 안 되면 스토어 주소 직접)</td></tr>
   <tr><td>위치 · 언어</td><td>대한민국 · 한국어 (영어 판은 해외 확장 때 캠페인을 따로)</td></tr>
   <tr><td>입찰</td><td>설치 수 · 목표 설치당 비용은 <b>비워 두고 시작</b>(칸이 선택일 때) — 2주 뒤 실제 값으로</td></tr>
-  <tr><td>예산</td><td>하루 예산 = 결정 p-budget (추천 하루 2~3만원)</td></tr>
+  <tr><td>예산</td><td>하루 예산 <b>2~3만원</b> — 결제 설정 뒤 60일 안에 ₩600,000 (11-09 정함)</td></tr>
   <tr><td>소재</td><td>제목 5 · 설명 5(아래) · 이미지 9장(<code>광고 소재\이미지\</code> 의 1200x628 · 1200x1200 · 1200x1500 x 3컨셉) · 유튜브 영상 4개 링크. 1080x1920 이미지는 앱 캠페인 칸에 안 맞음(다른 광고 네트워크용)</td></tr>
   <tr><td>시작일</td><td>서비스 시작 날 (그 전엔 일시중지)</td></tr>
-  <tr><td>가입 혜택</td><td>₩600,000 단계 (결정 p-budget)</td></tr>
+  <tr><td>가입 혜택</td><td>₩600,000 단계 (11-09 정함)</td></tr>
 </table>
 
 <h3 id="copy">광고 문구 <small>한글 1자 = 2칸 · 숫자 = 구글 기준 칸 수 / 한도</small></h3>
@@ -298,18 +283,6 @@
   <tr><th>다시 만들기</th><td>게임 그림이 바뀌면 Unity 닫고 <code>PlayTest.RunAd</code> → <code>ad_video.py</code> · <code>ad_images.py</code> · <code>ad_ai_kit.py</code> · <code>playable_build.py</code></td></tr>
 </table>
 
-<!-- ============================================================ 끝난 것 -->
-<h2 id="done">끝난 것</h2>
-<details><summary>펼치기</summary><ul>
-  <li><b>11-08</b>: 새 스토어 그림(낙서풍 스크린샷 8 · 그래픽 이미지) 올리기 · 폰에서 실제 광고 확인(7번) · 구글 애즈 계정 만들기(kachigoogoo · 342-871-2272) · 유튜브 영상 4개 올리기(옛 판 → ① g-yt2 로 바꿈) · 광고 소재에 "확률형 아이템 포함" + 좀비 죽는 모습 고친 뒤 다시 만듦 · 좀비 죽는 모습 고침 · 성능 최적화(처음 던전 136 → 22ms · 처음 창 103 → 20ms) · 화풍 가이드 · 플레이어블 광고</li>
-  <li><b>11-07</b>: 프로덕션 신청 제출(23:29) · 신청 답안 · 테스터 의견 · 게임 질문 4개 · 버그 점검 17개(13개 고침 · 4개 그대로) · 스토어 그림 낙서풍으로 다시 · 광고 소재(영상 · 이미지 · AI 요청서) · 방치 보상 시간 8시간 · 구글 답변(출시 뒤 이전)</li>
-  <li><b>11-05</b>: 좀비 몰려오기 · 낙서풍 그림 전체 · 카피바라 얼굴 · 앱 아이콘 · 비밀던전 자동 끝 · 인벤토리 20칸 · 총알 관리 창 · 슬롯 강화 제거 · 밸런스 → 6번 · 7번 AAB(7번 11-06 비공개 트랙 게시)</li>
-  <li><b>11-04</b>: 방치 보상 · 3일 출석 · 게임 종료 · 요청_02 · 좀비 움직임 · 홈 화면 앱 이름 · 3번 AAB · 출시 일정 · 프로덕션 신청 답안</li>
-  <li><b>kachigoogoo 계정 준비</b> (불도깨비 작업으로 끝): 사업자 등록 · 통신판매업 신고 · 결제 프로필 · 라이선스 테스터 "결제테스트" · 불도깨비 이전 · 시험 결제 성공(11-06)</li>
-  <li><b>10-24 ~ 10-31</b>: 비공개 테스트 제출 · 테스터 12명 · AdMob 앱 · 광고 단위 · 서명 키 · 스토어 자료 · 실제 보상형 광고 · 결제 코드(꺼 둠) · 앱 콘텐츠 답(광고 = 예) · 개인정보처리방침 /kachigun-privacy</li>
-  <li>합치기 전 문서 백업 = 스크래치 <code>남은_작업_정리_before_1109.html</code> · <code>구글애즈_준비_before_1109.html</code> · <code>출시_일정_before_1109.html</code> · 그 전 판 <code>…_before_1108.html</code></li>
-</ul></details>
-
 <p class="src">확인한 문서:
 구글 애즈 — <a href="https://support.google.com/google-ads/answer/17091671?hl=ko">앱 캠페인 규격</a> ·
 <a href="https://support.google.com/google-ads/answer/7684791?hl=ko">2바이트 글자 = 2칸</a> ·
@@ -324,8 +297,30 @@
 <a href="https://support.google.com/google-ads/answer/16323427?hl=ko">프로모션 진행 확인</a><br>
 Play — <code>게시 과정\구글_답변_앱이전_1107.txt</code> · 앱 이전 문서(answer/6230247) · 불도깨비 11-03~11-07 실제 진행<br>
 확률형 아이템(뉴스) — <a href="https://www.segye.com/newsView/20231113512094">세계일보 — 연매출 1억원 이하 제외</a> · <a href="https://zdnet.co.kr/view/?no=20240222164405">지디넷 — 유·무료 구분</a></p>
-<p class="note">체크 · 의견은 이 브라우저(localStorage, 키 <code>kachigun-todo-1109</code>)에 저장됩니다. 제가 읽을 때는 <code>python tools/todo_checks.py</code>. 못 읽을 때는 [의견 모아 복사] → 대화창에 붙여 넣기. 이 문서 하나가 최신 — <code>출시_일정.html</code> 은 옛 판(맨 위에 안내), <code>구글애즈_준비.html</code> 은 이 문서로 합치고 지움.</p>
+<p class="note">체크 · 의견은 이 브라우저(localStorage, 키 <code>kachigun-todo-1109</code>)에 저장됩니다. 제가 읽을 때는 <code>python tools/todo_checks.py</code>. 못 읽을 때는 [의견 모아 복사] → 대화창에 붙여 넣기. 체크한 항목은 맨 아래 "끝난 것 › 이번 판에서 체크한 것"으로 옮겨져 보이고(저장은 그대로), 체크를 풀면 제자리로. 이 문서 하나가 최신 — <code>출시_일정.html</code> 은 옛 판(맨 위에 안내), <code>구글애즈_준비.html</code> 은 이 문서로 합치고 지움.</p>
 
+<!-- ============================================================ 끝난 것 (맨 아래) -->
+<h2 id="done">끝난 것 <small>정해진 결정 · 끝난 작업 — 눌러서 펼치기</small></h2>
+<details class="done" id="decided"><summary>정해진 결정 — 11-09 (5개)</summary>
+<ul class="todo">
+  <li data-id="r-prep8"><label><input type="checkbox"><span><span class="tag t-dev">정함</span><b>8번 준비는 승인 뒤에 한 번에</b> — 답 "승인 이후에 8번 빌드를 제작" → 승인 날 준비(클라우드 줄 숨김 · 게임즈 설정 파일 정리 · 시험 · 개발용 APK) + AAB 를 한 번에, 2~3시간 (② r-build8)</span></label></li>
+  <li data-id="m-admob"><label><input type="checkbox"><span><span class="tag t-dev">정함</span><b>광고 수익 AdMob 계정은 그대로</b> — 답 "1번 그대로 진행" → pub-5299482082775448 유지 · 빌드 · app-ads.txt 손댈 것 없음</span></label></li>
+  <li data-id="p-budget"><label><input type="checkbox"><span><span class="tag t-dev">정함</span><b>광고 예산 = 가입 혜택 ₩600,000 단계</b> — 답 "1번 60만원으로 진행" → 결제 설정 뒤 60일 안에 ₩600,000(하루 2~3만원) → 크레딧 ₩600,000 으로 한 번 더. 목표 비용 없이 "설치 수 최대"로 시작 (④ g-pay · 참고 표)</span></label></li>
+  <li data-id="p-fb"><label><input type="checkbox"><span><span class="tag t-dev">정함</span><b>Firebase 는 첫 2주 안 넣음</b> — 답 "추천대로 진행" → 9번(결제) 빌드에 섞지 않음 · 12-11 결과 보고에서 다시 (⑥ w-report)</span></label></li>
+  <li data-id="r-trader"><label><input type="checkbox"><span><span class="tag t-dev">정함</span><b>옛 계정(FIBE) 판매자 상태 선언은 카치건 이전이 끝난 뒤</b> — 답 "카치건 이전이 끝난 뒤 시작함" (③ r-trader-do · 기한 2027-02)</span></label></li>
+</ul></details>
+<details class="done" id="doneLive"><summary>이번 판에서 체크한 작업 (<span id="doneN">0</span>)</summary>
+<p class="note" style="margin:6px 0">위 단계에서 체크한 항목이 여기로 옵니다. 체크를 풀면 원래 자리로 돌아감.</p>
+<ul class="todo" id="doneList"></ul></details>
+<details class="done"><summary>지난 판까지 끝난 것 (11-08 까지)</summary><ul>
+  <li><b>11-08</b>: 새 스토어 그림(낙서풍 스크린샷 8 · 그래픽 이미지) 올리기 · 폰에서 실제 광고 확인(7번) · 구글 애즈 계정 만들기(kachigoogoo · 342-871-2272) · 유튜브 영상 4개 올리기(옛 판 → ① g-yt2 로 바꿈) · 광고 소재에 "확률형 아이템 포함" + 좀비 죽는 모습 고친 뒤 다시 만듦 · 좀비 죽는 모습 고침 · 성능 최적화(처음 던전 136 → 22ms · 처음 창 103 → 20ms) · 화풍 가이드 · 플레이어블 광고</li>
+  <li><b>11-07</b>: 프로덕션 신청 제출(23:29) · 신청 답안 · 테스터 의견 · 게임 질문 4개 · 버그 점검 17개(13개 고침 · 4개 그대로) · 스토어 그림 낙서풍으로 다시 · 광고 소재(영상 · 이미지 · AI 요청서) · 방치 보상 시간 8시간 · 구글 답변(출시 뒤 이전)</li>
+  <li><b>11-05</b>: 좀비 몰려오기 · 낙서풍 그림 전체 · 카피바라 얼굴 · 앱 아이콘 · 비밀던전 자동 끝 · 인벤토리 20칸 · 총알 관리 창 · 슬롯 강화 제거 · 밸런스 → 6번 · 7번 AAB(7번 11-06 비공개 트랙 게시)</li>
+  <li><b>11-04</b>: 방치 보상 · 3일 출석 · 게임 종료 · 요청_02 · 좀비 움직임 · 홈 화면 앱 이름 · 3번 AAB · 출시 일정 · 프로덕션 신청 답안</li>
+  <li><b>kachigoogoo 계정 준비</b> (불도깨비 작업으로 끝): 사업자 등록 · 통신판매업 신고 · 결제 프로필 · 라이선스 테스터 "결제테스트" · 불도깨비 이전 · 시험 결제 성공(11-06)</li>
+  <li><b>10-24 ~ 10-31</b>: 비공개 테스트 제출 · 테스터 12명 · AdMob 앱 · 광고 단위 · 서명 키 · 스토어 자료 · 실제 보상형 광고 · 결제 코드(꺼 둠) · 앱 콘텐츠 답(광고 = 예) · 개인정보처리방침 /kachigun-privacy</li>
+  <li>합치기 전 문서 백업 = 스크래치 <code>남은_작업_정리_before_1109.html</code> · <code>구글애즈_준비_before_1109.html</code> · <code>출시_일정_before_1109.html</code> · 그 전 판 <code>…_before_1108.html</code></li>
+</ul></details>
 <script>
 (function(){
   // 저장 형식: {"c":{항목id:true}, "n":{항목id:"의견"}} — 항목id 는 li 의 data-id
@@ -333,6 +328,7 @@ Play — <code>게시 과정\구글_답변_앱이전_1107.txt</code> · 앱 이�
   try{ var v=JSON.parse(localStorage.getItem(KEY)||'{}'); st.c=v.c||{}; st.n=v.n||{}; }catch(e){}
   function save(){ try{ localStorage.setItem(KEY,JSON.stringify(st)); }catch(e){} stat(); }
   var items=document.querySelectorAll('ul.todo > li[data-id]');
+  var doneList=document.getElementById('doneList'), decided=document.getElementById('decided');
   function stat(){
     var c=0,n=0;
     items.forEach(function(li){ if(st.c[li.dataset.id]) c++; if((st.n[li.dataset.id]||'').trim()) n++; });
@@ -353,7 +349,11 @@ Play — <code>게시 과정\구글_답변_앱이전_1107.txt</code> · 앱 이�
     cb.checked=!!st.c[id]; ta.value=st.n[id]||'';
     function mark(){ li.classList.toggle('has-note',!!ta.value.trim()); pen.textContent=ta.value.trim()?'✎ 의견 있음':'✎ 의견'; }
     mark(); if(ta.value.trim()) li.classList.add('open');
-    cb.addEventListener('change',function(){ st.c[id]=cb.checked; save(); });
+    // 체크하면 맨 아래 "이번 판에서 체크한 작업"으로, 풀면 제자리로 (정해진 결정 칸은 그대로 둠)
+    var home=document.createComment('home:'+id); li.parentNode.insertBefore(home,li);
+    function place(){ if(decided.contains(li)) return; if(cb.checked){ if(li.parentNode!==doneList) doneList.appendChild(li); } else if(li.parentNode===doneList){ home.parentNode.insertBefore(li,home.nextSibling); } document.getElementById('doneN').textContent=doneList.children.length; }
+    place();
+    cb.addEventListener('change',function(){ st.c[id]=cb.checked; save(); place(); });
     ta.addEventListener('input',function(){ if(ta.value.trim()) st.n[id]=ta.value; else delete st.n[id]; mark(); save(); });
     function toggle(){ li.classList.toggle('open'); if(li.classList.contains('open')) ta.focus(); }
     pen.addEventListener('click',toggle);
