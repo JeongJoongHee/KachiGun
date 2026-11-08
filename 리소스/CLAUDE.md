@@ -1,6 +1,10 @@
 # 카치건 (좀비 키우기) — 세로 방치형 분대 슈팅, Unity 6000.0.84f1 · 2D URP
 
-## ▶ 재개 메모 (2026-11-08 오후 — 남은 작업 다시 짬) — **재개하면 여기부터**
+## ▶ 재개 메모 (2026-11-08 16:20 — 좀비 죽는 모습 고침) — **재개하면 여기부터**
+- 사용자 "좀비가 물구나무 서서 죽거나 이상한 방향으로 죽음" → 원인 = `doodle_art.py` 가 죽기 칸을 걷기 그림 시계 방향 90도로 만듦(기는 좀비 2종은 물구나무 · 나머지는 엎드려 팔이 땅에 박힘) → 서 있는 10종 = 뒤로 벌러덩(얼굴·팔 하늘) · crawler·bucket = 돌리지 않고 납작, 죽을 때 돌아서지 않음(`Zombie.IsCrawler`) · `doodle_art.py zdie`(Edge 없이 죽기 칸만) · PlayTest 2줄 + `19d_zombie_die` · errors=0 · 커밋 239bd38 · 옛 그림 = 스크래치 zombie_before_1108 · 폰 반영은 8번
+- **8번 굽기 전 확인할 것**: Unity 가 11-08 15:58 에 GPGS 플러그인 파일을 저절로 만듦(`Assets/GooglePlayGames/Resources/PlayGamesSettings.asset` · `Plugins/Android/GooglePlayGamesManifest.androidlib`(APP_ID 빈 값 "\u003") · ProjectSettings/GooglePlayGameSettings.txt · settingsTemplate/AndroidResolverDependencies 의 games-v2·nearby 줄 · bundleVersion 1.0.7) — **커밋 안 함**. 11-07 엔 "App ID 설정 파일은 뺌" 이었으니, 8번 때 빈 APP_ID 매니페스트가 AAB 에 들어가도 폰이 켜지는지 개발용 APK 로 확인하고 뺄지 정할 것
+
+## ▶ 재개 메모 (2026-11-08 오후 — 남은 작업 다시 짬)
 - 사용자 "현재 모든 상황 체크해서 남은 작업 정리" → Chrome 확인: 프로덕션 신청 **아직 검토 중** · 게시 개요 변경 없음(최근 게시 11-06) = **새 스토어 그림 아직 안 올림** · Unity 닫혀 있음
 - **`남은_작업_정리.html` 새 키 `kachigun-todo-1108`**(34항목, 옛 판 백업 = 스크래치 남은_작업_정리_before_1108.html): ① 지금(결과 대기 · s-store-up · 광고 확인 · 7번 한 바퀴 · 영어 · **r-prep8 결정 = 8번 준비(클라우드 줄 숨김·시험·개발용 APK)를 승인 전에 미리 할지, 추천 미리**) ② 승인 뒤 8번 ③ 이전 ④ 9번 결제·클라우드 ⑤ 8번 보기 ⑥ 출시 뒤 — 지난 판 체크 7개(신청·질문 4개)는 "끝난 것"으로 접음
 - 재개하면: `PYTHONUTF8=1 python tools/todo_checks.py` → r-prep8 답부터
