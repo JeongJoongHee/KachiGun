@@ -37,12 +37,15 @@
   button.copy,#copyNotes{border:1px solid var(--orange);background:var(--orange-bg);color:var(--orange);border-radius:8px;padding:2px 10px;cursor:pointer;font-size:13px}
   .bar{position:sticky;top:0;background:var(--bg);padding:8px 0;display:flex;gap:10px;align-items:center;z-index:2;border-bottom:1px solid var(--line);flex-wrap:wrap}
   .bar a{font-size:13px;color:var(--blue);text-decoration:none}
+  ul.todo > li.checked label > span{text-decoration:line-through;opacity:.55}
+  #decided li.checked label > span{text-decoration:none;opacity:1}
+  ul.todo > li.checked:not(.confirmed) > .row::after{content:'확인 대기';align-self:center;font-size:12px;font-weight:bold;color:var(--orange);background:var(--orange-bg);border-radius:6px;padding:1px 7px;white-space:nowrap}
   details.done{margin:10px 0} details.done > ul.todo{margin-top:8px}
   details{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:10px 14px;margin:10px 0} summary{cursor:pointer;font-weight:bold}
   .src{font-size:13px;color:var(--soft)} .src a{color:var(--blue)}
 </style></head><body><main>
 <h1>남은 작업 정리 — 출시 · 앱 이전 · 결제 · 구글 애즈 광고</h1>
-<p class="note">카치건 (카피바라 vs 좀비) · <b>2026-11-08 밤 다시 짬 · 11-09 갱신</b>(결정 5개 답 반영) — 지난 남은_작업_정리 · 출시_일정 · 구글애즈_준비 세 문서를 날짜 순서 하나로 합침. <b>정해진 결정 · 끝난 작업은 맨 아래 "끝난 것"에 접어 둠 — 체크하면 저절로 그리로 내려가고, 체크를 풀면 제자리로 돌아옴.</b> 날짜는 구글 검토가 보통 속도일 때의 예상이고, 검토가 늦으면 그만큼 뒤로 밀립니다.</p>
+<p class="note">카치건 (카피바라 vs 좀비) · <b>2026-11-08 밤 다시 짬 · 11-09 갱신</b>(결정 5개 답 반영) — 지난 남은_작업_정리 · 출시_일정 · 구글애즈_준비 세 문서를 날짜 순서 하나로 합침. <b>체크하면 그 자리에서 취소선 + "확인 대기" 표시 → 제가 확인해서 문제없으면 맨 아래 "끝난 것"으로 옮겨 정리합니다.</b> 정해진 결정도 맨 아래에 접어 둠. 날짜는 구글 검토가 보통 속도일 때의 예상이고, 검토가 늦으면 그만큼 뒤로 밀립니다.</p>
 <div class="bar"><span id="stat"></span><button id="copyNotes" type="button">의견 모아 복사</button>
   <a href="#plan">일정표</a><a href="#rules">지킬 순서</a><a href="#s1">①</a><a href="#s2">②</a><a href="#s3">③</a><a href="#s4">④</a><a href="#s5">⑤</a><a href="#s6">⑥</a><a href="#ref">참고 표</a><a href="#done">끝난 것</a></div>
 
@@ -297,7 +300,7 @@
 <a href="https://support.google.com/google-ads/answer/16323427?hl=ko">프로모션 진행 확인</a><br>
 Play — <code>게시 과정\구글_답변_앱이전_1107.txt</code> · 앱 이전 문서(answer/6230247) · 불도깨비 11-03~11-07 실제 진행<br>
 확률형 아이템(뉴스) — <a href="https://www.segye.com/newsView/20231113512094">세계일보 — 연매출 1억원 이하 제외</a> · <a href="https://zdnet.co.kr/view/?no=20240222164405">지디넷 — 유·무료 구분</a></p>
-<p class="note">체크 · 의견은 이 브라우저(localStorage, 키 <code>kachigun-todo-1109</code>)에 저장됩니다. 제가 읽을 때는 <code>python tools/todo_checks.py</code>. 못 읽을 때는 [의견 모아 복사] → 대화창에 붙여 넣기. 체크한 항목은 맨 아래 "끝난 것 › 이번 판에서 체크한 것"으로 옮겨져 보이고(저장은 그대로), 체크를 풀면 제자리로. 이 문서 하나가 최신 — <code>출시_일정.html</code> 은 옛 판(맨 위에 안내), <code>구글애즈_준비.html</code> 은 이 문서로 합치고 지움.</p>
+<p class="note">체크 · 의견은 이 브라우저(localStorage, 키 <code>kachigun-todo-1109</code>)에 저장됩니다. 제가 읽을 때는 <code>python tools/todo_checks.py</code>. 못 읽을 때는 [의견 모아 복사] → 대화창에 붙여 넣기. 체크하면 그 자리에서 취소선 + "확인 대기" → 제가 확인한 항목만 맨 아래 "끝난 것 › 이번 판에서 확인한 작업"으로 옮김(스크립트의 <code>CONFIRMED</code> 목록). 확인된 항목도 체크를 풀면 제자리로. 이 문서 하나가 최신 — <code>출시_일정.html</code> 은 옛 판(맨 위에 안내), <code>구글애즈_준비.html</code> 은 이 문서로 합치고 지움.</p>
 
 <!-- ============================================================ 끝난 것 (맨 아래) -->
 <h2 id="done">끝난 것 <small>정해진 결정 · 끝난 작업 — 눌러서 펼치기</small></h2>
@@ -309,8 +312,8 @@ Play — <code>게시 과정\구글_답변_앱이전_1107.txt</code> · 앱 이�
   <li data-id="p-fb"><label><input type="checkbox"><span><span class="tag t-dev">정함</span><b>Firebase 는 첫 2주 안 넣음</b> — 답 "추천대로 진행" → 9번(결제) 빌드에 섞지 않음 · 12-11 결과 보고에서 다시 (⑥ w-report)</span></label></li>
   <li data-id="r-trader"><label><input type="checkbox"><span><span class="tag t-dev">정함</span><b>옛 계정(FIBE) 판매자 상태 선언은 카치건 이전이 끝난 뒤</b> — 답 "카치건 이전이 끝난 뒤 시작함" (③ r-trader-do · 기한 2027-02)</span></label></li>
 </ul></details>
-<details class="done" id="doneLive"><summary>이번 판에서 체크한 작업 (<span id="doneN">0</span>)</summary>
-<p class="note" style="margin:6px 0">위 단계에서 체크한 항목이 여기로 옵니다. 체크를 풀면 원래 자리로 돌아감.</p>
+<details class="done" id="doneLive"><summary>이번 판에서 확인한 작업 (<span id="doneN">0</span>)</summary>
+<p class="note" style="margin:6px 0">체크한 항목을 제가 확인해 문제없으면 여기로 옮깁니다. 체크를 풀면 원래 자리로 돌아감.</p>
 <ul class="todo" id="doneList"></ul></details>
 <details class="done"><summary>지난 판까지 끝난 것 (11-08 까지)</summary><ul>
   <li><b>11-08</b>: 새 스토어 그림(낙서풍 스크린샷 8 · 그래픽 이미지) 올리기 · 폰에서 실제 광고 확인(7번) · 구글 애즈 계정 만들기(kachigoogoo · 342-871-2272) · 유튜브 영상 4개 올리기(옛 판 → ① g-yt2 로 바꿈) · 광고 소재에 "확률형 아이템 포함" + 좀비 죽는 모습 고친 뒤 다시 만듦 · 좀비 죽는 모습 고침 · 성능 최적화(처음 던전 136 → 22ms · 처음 창 103 → 20ms) · 화풍 가이드 · 플레이어블 광고</li>
@@ -325,14 +328,16 @@ Play — <code>게시 과정\구글_답변_앱이전_1107.txt</code> · 앱 이�
 (function(){
   // 저장 형식: {"c":{항목id:true}, "n":{항목id:"의견"}} — 항목id 는 li 의 data-id
   var KEY='kachigun-todo-1109', st={c:{},n:{}};
+  // 체크 → 취소선 + "확인 대기". Claude 가 확인해 문제없으면 여기에 id 를 넣음 → 맨 아래 "이번 판에서 확인한 작업"으로
+  var CONFIRMED=[];
   try{ var v=JSON.parse(localStorage.getItem(KEY)||'{}'); st.c=v.c||{}; st.n=v.n||{}; }catch(e){}
   function save(){ try{ localStorage.setItem(KEY,JSON.stringify(st)); }catch(e){} stat(); }
   var items=document.querySelectorAll('ul.todo > li[data-id]');
   var doneList=document.getElementById('doneList'), decided=document.getElementById('decided');
   function stat(){
-    var c=0,n=0;
-    items.forEach(function(li){ if(st.c[li.dataset.id]) c++; if((st.n[li.dataset.id]||'').trim()) n++; });
-    document.getElementById('stat').textContent='체크 '+c+' / '+items.length+' · 의견 '+n;
+    var c=0,n=0,w=0;
+    items.forEach(function(li){ var id=li.dataset.id; if(st.c[id]){ c++; if(!decided.contains(li) && CONFIRMED.indexOf(id)<0) w++; } if((st.n[id]||'').trim()) n++; });
+    document.getElementById('stat').textContent='체크 '+c+' / '+items.length+' · 확인 대기 '+w+' · 의견 '+n;
   }
   items.forEach(function(li){
     var id=li.dataset.id, label=li.querySelector('label'), cb=li.querySelector('input');
@@ -349,9 +354,17 @@ Play — <code>게시 과정\구글_답변_앱이전_1107.txt</code> · 앱 이�
     cb.checked=!!st.c[id]; ta.value=st.n[id]||'';
     function mark(){ li.classList.toggle('has-note',!!ta.value.trim()); pen.textContent=ta.value.trim()?'✎ 의견 있음':'✎ 의견'; }
     mark(); if(ta.value.trim()) li.classList.add('open');
-    // 체크하면 맨 아래 "이번 판에서 체크한 작업"으로, 풀면 제자리로 (정해진 결정 칸은 그대로 둠)
+    // 체크 = 그 자리에서 취소선. 확인된(CONFIRMED) 항목만 맨 아래로, 체크를 풀면 제자리로 (정해진 결정 칸은 그대로 둠)
     var home=document.createComment('home:'+id); li.parentNode.insertBefore(home,li);
-    function place(){ if(decided.contains(li)) return; if(cb.checked){ if(li.parentNode!==doneList) doneList.appendChild(li); } else if(li.parentNode===doneList){ home.parentNode.insertBefore(li,home.nextSibling); } document.getElementById('doneN').textContent=doneList.children.length; }
+    var ok=decided.contains(li) || CONFIRMED.indexOf(id)>=0;
+    function place(){
+      li.classList.toggle('checked',cb.checked); li.classList.toggle('confirmed',ok);
+      if(!decided.contains(li)){
+        if(cb.checked && ok){ if(li.parentNode!==doneList) doneList.appendChild(li); }
+        else if(li.parentNode===doneList){ home.parentNode.insertBefore(li,home.nextSibling); }
+      }
+      document.getElementById('doneN').textContent=doneList.children.length;
+    }
     place();
     cb.addEventListener('change',function(){ st.c[id]=cb.checked; save(); place(); });
     ta.addEventListener('input',function(){ if(ta.value.trim()) st.n[id]=ta.value; else delete st.n[id]; mark(); save(); });

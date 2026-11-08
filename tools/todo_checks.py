@@ -102,6 +102,16 @@ if "c" in data or "n" in data or (not data and "data-id=\"" in doc):
     for id_ in sorted(set(checks) | set(notes)):
         if id_ not in known: print(f"(문서에 없는 항목 {id_}: 체크 {checks.get(id_)} 의견 {notes.get(id_)})")
     print(f"체크 {sum(1 for i, _ in items if checks.get(i))} / {len(items)} · 의견 {sum(1 for i, _ in items if (notes.get(i) or '').strip())}")
+    # 11-09: 체크 = 취소선 "확인 대기" → 확인 뒤 스크립트 CONFIRMED 에 id 를 넣으면 맨 아래로 옮겨짐
+    m = re.search(r"CONFIRMED=\[([^\]]*)\]", doc)
+    if m:
+        confirmed = set(re.findall(r"'([^']+)'", m.group(1)))
+        d = re.search(r'id="decided".*?</details>', doc, re.S)
+        decided = set(re.findall(r'data-id="([^"]+)"', d.group(0))) if d else set()
+        wait = [i for i, _ in items if checks.get(i) and i not in confirmed and i not in decided]
+        print("확인 대기 (체크했지만 아직 안 옮김): " + (", ".join(wait) if wait else "없음"))
+        gone = sorted(confirmed - {i for i, _ in items if checks.get(i)})
+        if gone: print("CONFIRMED 에 있지만 체크가 풀린 항목 (제자리로 돌아가 있음): " + ", ".join(gone))
 else:
     # 10-04 까지 형식: {"번호":true}, 번호 = ul.todo input 순서
     on = {int(k) for k, v in data.items() if v is True}
