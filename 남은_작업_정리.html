@@ -82,31 +82,33 @@
 </style>
 <body>
 <main>
-<h1>남은 작업 정리 — 신청 검토 대기 → 8번 출시 → 앱 이전 → 결제·클라우드 (9번)</h1>
-<p class="sub">카치건 (카피바라vs좀비) · <b>2026-11-07 밤 기준 · 23:40 고침</b>(프로덕션 신청 접수 확인 · 출시 빌드 = 8번 · 결제 빌드 = 9번) — Play Console 두 계정을 Chrome 으로 직접 보고, git 작업 기록과 맞춰 짬 · 체크와 의견은 이 브라우저에 저장되고 제가 읽어서 이어 갑니다 (<b>새 키라 칸이 비어 있음</b>)</p>
+<h1>남은 작업 정리 — 승인 대기 → 8번 출시 → 앱 이전 → 결제·클라우드 (9번)</h1>
+<p class="sub">카치건 (카피바라vs좀비) · <b>2026-11-08 기준</b> — Play Console 을 Chrome 으로 다시 보고, git · 재개 메모 · 지난 문서의 체크(7개)와 버그 점검 의견(17개)을 맞춰 짬 · 끝난 7개는 아래 "끝난 것"으로 접음 · <b>새 키라 칸이 비어 있음</b></p>
 
 <div class="tip green">
-  <b>지금 상태 (11-07 Play Console 직접 확인)</b>
+  <b>지금 상태 (11-08 확인)</b>
   <ul>
-    <li><b>zkfpf1 (FIBE)</b> · 카피바라vs좀비: 비공개 테스트 Alpha = <b>버전 7 활성</b>(11-06 게시) · 검토 중인 변경 없음 · 관리형 게시 꺼짐 · 프로덕션 = 비활성 · <b>프로덕션 액세스 신청 접수 — 11-07 오후 11:29</b>(Chrome 대시보드 "신청을 접수했습니다 · 검토 중 · 보통 7일 이내") → 결과는 메일로</li>
-    <li>올린 AAB = 1(10-24) · 2(10-30) · 3(11-04) · 6 · 7(11-05) — 4·5 는 개발용 APK</li>
-    <li><b>kachigoogoo (Cachisi)</b>: 불도깨비만 있음(카치건은 아직 이전 전). 불도깨비 결제를 붙이면서 <b>계정 쪽 준비는 끝</b> — 사업자·통신판매업 정보 · 결제 프로필 · 라이선스 테스터 목록 "결제테스트"(zkfpf1@gmail.com) · 시험 결제 성공(11-06). 카치건은 <b>앱 쪽 일만</b> 남음</li>
-    <li><b>출시 빌드 = 8번</b>(11-07 사용자 결정): 7번 뒤에 고친 것(방치 시간 표시 · 버그 점검 13개 — 날짜·시간 악용 막기 · 예비 세이브 등)을 첫 공개 판에 넣으려고 · <b>승인되면 8번을 구워</b> 프로덕션에 냄. 결제 키·클라우드 App ID 빌드는 <b>9번</b></li>
+    <li><b>프로덕션 액세스 신청 = 아직 검토 중</b> — 대시보드 "신청을 접수했습니다 · 11-07 오후 11:29 · 보통 7일 이내" 그대로 → 결과 메일 대기(~11-14)</li>
+    <li><b>게시 개요 = 검토 중인 변경 없음 · 최근 게시 11-06</b> — 비공개 Alpha 버전 7 그대로. 그래서 <b>11-07 에 만든 새 스토어 그림(낙서풍)은 아직 안 올라감</b> → 출시 전에 올리기(① <code>s-store-up</code>)</li>
+    <li><b>코드</b>: 7번 뒤 고친 것(버그 점검 13개 · 방치 시간 표시 · 리더 1.12배 · 총알 칸 순서) 전부 커밋·push 끝 → <b>8번 AAB 는 아직 안 구움</b>(승인 뒤 · 사용자 결정). 결제·클라우드는 키·App ID 가 없어 폰에서 꺼져 있음([초안])</li>
+    <li><b>kachigoogoo (Cachisi)</b>: 계정 준비 끝(사업자 · 통신판매업 · 결제 프로필 · 라이선스 테스터 "결제테스트" — 불도깨비 11-06). 카치건은 이전 뒤 <b>앱 쪽 일만</b> 남음</li>
+    <li><code>지금 상태.txt</code> 는 10-30 내용(비공개 테스트 중)이라 지금과 다름 — 이 문서가 최신</li>
   </ul>
 </div>
 
 <div class="tip">
-  <b>11-07 확인한 규칙</b>
+  <b>꼭 지킬 순서 (11-07 구글 답변으로 확인)</b>
   <ul>
-    <li><b>프로덕션 출시 뒤에 옮겨야 함</b> — 출시 전에 kachigoogoo 로 옮기면 프로덕션 권한이 안 넘어가 12명·14일을 다시 해야 함. 출시된 판이 <b>스토어에 실제로 보인 뒤</b> 옮기면 그대로 넘어감 <span class="f">(구글 답변 — <code>게시 과정\구글_답변_앱이전_1107.txt</code>)</span></li>
-    <li>테스트 그룹(테스터 목록)은 이전 때 안 넘어감 · 인앱 상품이 있는 앱은 이전 뒤 게시 취소 → <b>옛 계정엔 상품을 만들지 않음</b></li>
+    <li><b>프로덕션 출시 → 스토어에 실제로 보인 뒤 → 이전</b>. 출시 전에 옮기면 프로덕션 권한이 안 넘어가 12명·14일을 다시 해야 함 <span class="f">(<code>게시 과정\구글_답변_앱이전_1107.txt</code>)</span></li>
+    <li>옛 계정(zkfpf1)엔 <b>결제 프로필·인앱 상품을 만들지 않음</b> — 상품 있는 앱은 이전 뒤 게시 취소됨 · 테스터 목록은 이전 때 안 넘어감</li>
+    <li>검토 중에는 <b>테스터를 빼거나 비공개 테스트를 멈추지 않기</b></li>
   </ul>
 </div>
 
-<div class="tip green"><b>날짜별 일정</b> → <a href="출시_일정.html">출시_일정.html</a> · 프로덕션 신청 리뷰 답안 → <code>스토어 등록\프로덕션_신청_답안.html</code> (11-07 실제 올린 버전 2·3·6·7 기준으로 고침) · 버그 점검 → <a href="버그_점검.html">버그_점검.html</a></div>
+<div class="tip green"><b>같이 보는 문서</b> → 날짜별 <a href="출시_일정.html">출시_일정.html</a> · 신청 답안 <code>스토어 등록\프로덕션_신청_답안.html</code> · <a href="버그_점검.html">버그_점검.html</a>(17개 모두 의견 받아 처리 끝) · 광고 소재 <code>광고 소재\읽어보기.txt</code></div>
 <div class="flow">
   <div><b>프로덕션 신청</b>접수 끝<i>11-07 23:29</i></div>
-  <div class="today"><b>승인 대기</b>보통 7일 이내<i>~11-14</i></div>
+  <div class="today"><b>승인 대기</b>지금 · 스토어 그림 올리기<i>~11-14</i></div>
   <div><b>8번 굽기 → 출시</b>결제 없음<i>승인 날 · ~11-17 공개</i></div>
   <div><b>앱 이전</b>→ kachigoogoo<i>스토어에 보인 뒤 · 영업일 2일</i></div>
   <div><b>9번 빌드</b>결제 키 · 클라우드 App ID<i>~11-21</i></div>
@@ -121,34 +123,34 @@
   <span class="tag t-wait">대기</span>기다리기 / 나중
 </p>
 
-<div class="sum"><a href="#now"><b>5</b><span>① 신청 끝 · 검토 대기</span></a><a href="#rel"><b>6</b><span>② 승인 뒤 · 8번 출시</span></a><a href="#move"><b>6</b><span>③ 앱 이전</span></a><a href="#pay"><b>9</b><span>④ 결제 · 클라우드 (9번)</span></a><a href="#ask"><b>4</b><span>⑤ 게임 질문 (답 받음)</span></a><a href="#see"><b>4</b><span>⑥ 폰에서 보기</span></a><a href="#later"><b>5</b><span>⑦ 출시 뒤 · 나중</span></a></div>
+<div class="sum"><a href="#now"><b>6</b><span>① 지금 · 승인 기다리는 동안</span></a><a href="#rel"><b>6</b><span>② 승인 뒤 · 8번 출시</span></a><a href="#move"><b>6</b><span>③ 앱 이전</span></a><a href="#pay"><b>9</b><span>④ 결제 · 클라우드 (9번)</span></a><a href="#see"><b>1</b><span>⑤ 8번 폰에서 보기</span></a><a href="#later"><b>6</b><span>⑥ 출시 뒤 · 나중</span></a></div>
 
 <!-- ───────────────────────── ① ───────────────────────── -->
-<h2 id="now">① 프로덕션 신청 — 끝 · 검토 대기 <small>zkfpf1 · 11-07 23:29 접수</small></h2>
+<h2 id="now">① 지금 — 승인 기다리는 동안 <small>zkfpf1 · 출시 전에 끝내 두면 좋은 것</small></h2>
 <ul class="todo">
-  <li data-id="a-fill"><label><input type="checkbox"><span><span class="tag t-you">직접</span><b>답안 [ ] 칸 채우기</b> <span class="time">10분</span> — <code>스토어 등록\프로덕션_신청_답안.html</code> 을 열어 대괄호(모집 방법 · 참여 인원 · 받은 의견 · 오류 보고 여부)만 실제 사실로 바꾸고 [복사]. 오류 보고 여부는 Play Console › 모니터링 및 개선 › Android vitals › 비정상 종료 및 ANR 이 비어 있는지 보고 <span class="f">(11-07: 버전 이야기는 실제 올린 2·3·6·7 기준으로 이미 고침)</span></span></label></li>
-  <li data-id="a-apply"><label><input type="checkbox"><span><span class="tag t-you">직접</span><b>신청 제출</b> <span class="time">11-07 23:29 접수 — Chrome 확인</span> — zkfpf1 › 카피바라vs좀비 › 대시보드 › <b>[프로덕션 신청]</b> → 답안 붙여 넣기 → 제출. 검토 중에도 <b>테스터를 빼거나 테스트를 멈추지 마세요</b>. 거절되면 메일 이유를 붙여 주세요(대개 테스트를 더 하고 다시 신청 — 전체가 1~2주 밀림)</span></label></li>
-  <li data-id="a-wait"><label><input type="checkbox"><span><span class="tag t-wait">대기</span><b>검토 결과 메일</b> — zkfpf1@gmail.com 로 옴 · 보통 7일 이내(~11-14) · 승인되면 대화창에 "<b>승인됐어, 8번 구워줘</b>" · 거절이면 메일 내용을 붙여 주세요. 그동안 비공개 테스트·테스터는 그대로 두기</span></label></li>
-  <li data-id="a-feedback"><label><input type="checkbox"><span><span class="tag t-me">개발</span><b>테스터 의견 모으기</b> — 메일(jjhfibe@gmail.com)·대행사 보고서·Play Console 테스트 의견을 대화창에 붙여 주시면 답안 ④에 맞게 다듬고, 고칠 것은 8번에 넣음</span></label></li>
-  <li data-id="a-adtest"><label><input type="checkbox"><span><span class="tag t-see">보기</span><b>폰에서 광고 확인</b> (7번) — 공격 x2 · 골드 x2 · 던전 결과 [광고 보고] · 상점 [무료 다이아] · 방치 보상 [광고 보고 x2]가 뜨고, <b>끝까지 보면</b> 보상이 들어오는지. <span class="warn">실제 광고라 광고 안을 누르지 마세요</span>. 출시 전엔 광고가 적어 "불러오는 중"이 자주 나올 수 있음(정상)</span></label></li>
+  <li data-id="a-wait"><label><input type="checkbox"><span><span class="tag t-wait">대기</span><b>프로덕션 신청 결과 메일</b> <span class="time">~11-14</span> — zkfpf1@gmail.com 로 옴. 승인되면 대화창에 "<b>승인됐어, 8번 구워줘</b>" + Unity 닫기 · 거절이면 메일 내용을 붙여 주세요(대개 테스트를 더 하고 다시 신청 — 1~2주 밀림)</span></label></li>
+  <li data-id="s-store-up"><label><input type="checkbox"><span><span class="tag t-you">직접</span><b>새 스토어 그림 올리기</b> <span class="time">10분 · 출시 전에</span> — <span class="warn">11-08 확인: 아직 안 올라감</span> · <code>스토어 등록\</code> 의 <b>스크린샷_01~08.png</b>(1080x1920 낙서풍) · <b>그래픽이미지_1024x500.png</b> · 앱아이콘_512.png → zkfpf1 › 카피바라vs좀비 › 스토어 등록정보 › 기본 스토어 등록정보 › 그래픽: 옛 휴대전화 스크린샷 8장 지우고 새 8장 · 그래픽 이미지 교체 → [저장] → 게시 개요 › <b>[검토를 위해 변경사항 전송]</b> <span class="f">(관리형 게시가 꺼져 있어 통과하면 바로 바뀜 · 프로덕션 신청 검토와 따로 · 옛 그림 백업 = 스크래치 store_before_1107)</span></span></label></li>
+  <li data-id="a-adtest"><label><input type="checkbox"><span><span class="tag t-see">보기</span><b>폰에서 광고 확인</b> (7번) — 공격 x2 · 골드 x2 · 던전 결과 [광고 보고] · 상점 [무료 다이아] · 방치 보상 [광고 보고 x2]가 뜨고, <b>끝까지 보면</b> 보상이 들어오는지. <span class="warn">실제 광고라 광고 안을 누르지 마세요</span> · 출시 전엔 "불러오는 중"이 자주 나올 수 있음(정상)</span></label></li>
+  <li data-id="s-phone7"><label><input type="checkbox"><span><span class="tag t-see">보기</span><b>7번 한 바퀴</b> — 낙서풍 그림 · 앱 아이콘 · 좀비 무리 · 총알 관리 창 · 방치 보상(5분 넘게 나갔다 오기) · 3일 출석 · 게임 종료/뒤로 가기 · 비밀던전 자동 끝 · 1~10챕터 손맛. 이상한 점은 의견에 → 8번에 넣음</span></label></li>
+  <li data-id="s-lang"><label><input type="checkbox"><span><span class="tag t-see">보기</span><b>영어 화면</b> — 설정 › 언어 · Language → English → 글자 넘침·남은 한국어·어색한 번역 (<code>Table\String.xlsx</code> EN 칸을 직접 고쳐도 됨)</span></label></li>
+  <li data-id="r-prep8"><label><input type="checkbox"><span><span class="tag t-pick">결정</span><span class="txt"><b>8번 준비를 미리 해 둘지</b> — 승인 날 바로 구울 수 있게, 빌드만 빼고 지금 해 둘 수 있는 것: 설정 [클라우드 저장] 줄 숨김(App ID 없을 때) · 자동 시험 · 안드로이드 컴파일 · <b>개발용 APK</b>(테스트 광고 · 구글 플레이 게임즈 라이브러리가 처음 들어가는 빌드라 폰에서 켜지는지 먼저) · 출시 노트 문구 초안
+    <ol class="opts"><li>지금 미리 <span class="rec">추천 — 지금 Unity 가 닫혀 있음 · 폰 확인을 승인 전에 끝내면 승인 날엔 AAB 만 구움</span></li><li>승인 뒤 한 번에</li></ol></span></span></label></li>
 </ul>
 
 <!-- ───────────────────────── ② ───────────────────────── -->
 <h2 id="rel">② 승인 뒤 — 8번 굽기 → 프로덕션 출시 <small>zkfpf1 · 결제 없이 · 홍보 안 함</small></h2>
 <ul class="todo">
-  <li data-id="r-build8"><label><input type="checkbox"><span><span class="tag t-me">개발</span><b>8번 AAB 굽기 (1.0.8)</b> <span class="time">승인 뒤 · Unity 닫아 주기</span> — 7번 뒤 고친 것 전부(방치 시간 표시 · 날짜·시간 악용 막기 · 예비 세이브 · 처치마다 화면 갱신 줄임 · 끌어다 놓아 장착 · 진동 삭제 · 코스튬 가격 쉼표) · 결제·클라우드는 <b>꺼진 채</b>
+  <li data-id="r-build8"><label><input type="checkbox"><span><span class="tag t-me">개발</span><b>8번 AAB 굽기 (1.0.8)</b> <span class="time">승인 뒤 · Unity 닫아 주기</span> — 7번 뒤 고친 것 전부(방치 시간 표시 · 날짜·시간 악용 막기 · 예비 세이브 · 처치마다 화면 갱신 줄임 · 끌어다 놓아 장착 · 진동 삭제 · 코스튬 가격 쉼표 · 리더 1.12배 · 총알 칸 동료1 | 리더 | 동료2) · 결제·클라우드는 <b>꺼진 채</b>
     <ul>
-      <li>설정의 [클라우드 저장] 줄은 켜지기 전까지 <b>숨김</b>(첫 판에 "다음 업데이트에서 열립니다"가 어색해서 — 11-07 추천)</li>
-      <li>자동 시험 → 개발용 APK(테스트 광고)로 폰에서 켜지는지 먼저 — <b>구글 플레이 게임즈 라이브러리가 처음 들어가는 빌드</b>라서</li>
-      <li>AAB 점검 + <b>권한 목록 비교</b>(7번과 달라진 권한이 있으면 데이터 보안 답 확인) · 출시 노트 문구</li>
+      <li>①에서 미리 안 했으면: [클라우드 저장] 줄 숨김 → 자동 시험 → 개발용 APK 로 폰 확인</li>
+      <li>AAB 점검(aab_check) + <b>7번과 권한 목록 비교</b>(달라진 권한이 있으면 데이터 보안 답 확인) · 이전 AAB 는 스크래치에 백업</li>
     </ul></span></label></li>
-  <li data-id="r-up8"><label><input type="checkbox"><span><span class="tag t-you">직접</span><b>8번을 비공개 트랙에 먼저</b> <span class="time">추천 · 하루</span> — 비공개 테스트 › Alpha › [새 버전 만들기] → 8번 → 검토 전송 → 폰(테스터 계정)에서 업데이트 받아 켜지는지 · 광고 · 세이브가 그대로인지 → 그다음 프로덕션. 바로 프로덕션에 내도 되지만, 첫 공개 판이라 한 번 거치는 쪽이 안전</span></label></li>
+  <li data-id="r-up8"><label><input type="checkbox"><span><span class="tag t-you">직접</span><b>8번을 비공개 트랙에 먼저</b> <span class="time">추천 · 하루</span> — 비공개 테스트 › Alpha › [새 버전 만들기] → 8번 → 검토 전송 → 폰(테스터 계정)에서 업데이트 받아 켜지는지 · 광고 · 세이브가 그대로인지 → 그다음 프로덕션</span></label></li>
   <li data-id="r-release"><label><input type="checkbox"><span><span class="tag t-you">직접</span><b>프로덕션 출시 (버전 8)</b> — 테스트 및 출시 › 프로덕션 → 국가/지역 = 대한민국 → [새 버전 만들기] → [라이브러리에서 추가] → <b>8 (1.0.8)</b> → 출시 노트 → [저장]이 아니라 <b>[프로덕션 트랙으로 출시 시작]</b> → 게시 개요 "검토 중인 변경사항"에 <b>"8 (1.0.8) 전체 출시"</b> 줄이 있는지 꼭 확인 <span class="f">(불도깨비 때 [저장]만 해서 임시로 남은 일이 있었음 · "광고 ID 선언" 오류가 뜨면 캡처)</span></span></label></li>
-  <li data-id="r-live"><label><input type="checkbox"><span><span class="tag t-see">보기</span><b>스토어에 보이는지</b> — 관리형 게시가 꺼져 있어 통과하면 바로 열림. 테스터가 아닌 계정(또는 PC 브라우저)으로 Play 스토어에서 "카피바라vs좀비" 페이지가 보이면 → ③ 이전 신청 가능 <span class="f">(검토 통과 메일만으로는 부족 — 스토어에 실제로 보여야 함)</span></span></label></li>
+  <li data-id="r-live"><label><input type="checkbox"><span><span class="tag t-see">보기</span><b>스토어에 보이는지</b> — 테스터가 아닌 계정(또는 PC 브라우저)으로 Play 스토어에서 "카피바라vs좀비" 페이지가 보이면 → ③ 이전 신청 가능 <span class="f">(통과 메일만으로는 부족 — 스토어에 실제로 보여야 함)</span></span></label></li>
   <li data-id="r-admob"><label><input type="checkbox"><span><span class="tag t-you">직접</span><b>AdMob 스토어 연결</b> — AdMob › 앱 › 카피바라vs좀비(~5156919833, 지금 "검토 필요·제한") › 앱 설정 › 앱 스토어 세부정보 [추가] → Google Play 에서 찾기 → 연결. 며칠 뒤 "준비됨" — 기다리기만. 이전과 상관없음(광고 ID 그대로)</span></label></li>
-  <li data-id="r-trader"><label><input type="checkbox"><span><span class="tag t-pick">결정</span><span class="txt"><b>FIBE 계정 "판매자 상태 선언" (2027-02 까지)</b> — zkfpf1 Play Console 맨 위 파란 띠 "조치 필요". 안 하면 그 계정의 앱이 삭제됨 → <b>심심할 때 하는 게임</b>이 남는 계정이라 꼭 필요
-    <ol class="opts"><li>카치건 이전이 끝난 뒤 FIBE 에서 [시작하기] — 심심할 때 하는 게임은 광고만이라 "판매자 아님(비거래자)"이 맞을 가능성 큼 → 화면 캡처 주시면 칸별로 봐 드림 <span class="rec">추천</span></li><li>지금 바로</li></ol>
-    <span class="f">불도깨비(kachigoogoo)는 11-06 앱 수준 "예, 판매자"로 이미 냄 · 카치건도 이전 뒤 kachigoogoo 에서 같은 답(③ <code>m-trader</code>)</span></span></span></label></li>
+  <li data-id="r-trader"><label><input type="checkbox"><span><span class="tag t-pick">결정</span><span class="txt"><b>FIBE 계정 "판매자 상태 선언" (2027-02 까지)</b> — zkfpf1 Play Console 맨 위 파란 띠 "판매자 상태 선언"(11-08 에도 그대로). 안 하면 그 계정의 앱이 삭제됨 → <b>심심할 때 하는 게임</b>이 남는 계정이라 꼭 필요
+    <ol class="opts"><li>카치건 이전이 끝난 뒤 FIBE 에서 [시작하기] — 심심할 때 하는 게임은 광고만이라 "판매자 아님"이 맞을 가능성 큼 → 화면 캡처 주시면 칸별로 봐 드림 <span class="rec">추천</span></li><li>지금 바로</li></ol></span></span></label></li>
 </ul>
 
 <!-- ───────────────────────── ③ ───────────────────────── -->
@@ -162,29 +164,29 @@
   </ul>
 </div>
 <ul class="todo">
-  <li data-id="m-request"><label><input type="checkbox"><span><span class="tag t-you">직접</span><b>이전 신청 → 받는 쪽 수락</b> — zkfpf1 에서 신청(앱 <code>com.zkfpf.kachizombie</code> 하나) → kachigoogoo Play Console › 계정 관리 › 앱 이전 › 나에게 이전 중인 앱 → 수락 → 구글 처리 영업일 2일 · 메일 오면 알려 주세요. 막히면 캡처를 <code>게시 과정\</code> 에</span></label></li>
+  <li data-id="m-request"><label><input type="checkbox"><span><span class="tag t-you">직접</span><b>이전 신청 → 받는 쪽 수락</b> — zkfpf1 에서 신청(앱 <code>com.zkfpf.kachizombie</code> 하나) → kachigoogoo Play Console › 계정 관리 › 앱 이전 › 나에게 이전 중인 앱 → 수락 → 영업일 2일 · 메일 오면 알려 주세요. 막히면 캡처를 <code>게시 과정\</code> 에</span></label></li>
   <li data-id="m-check"><label><input type="checkbox"><span><span class="tag t-you">직접</span><b>이전 뒤 확인</b> — kachigoogoo 앱 목록에 카피바라vs좀비 · 스토어 개발자 이름 Cachisi · 프로덕션 [새 버전 만들기]가 되는지 · 앱 › 수익 창출 설정 › <b>라이선스 키</b>를 <code>키 보관\google_play_license_key.txt</code> 에 저장 → "키 넣었어" (대화창엔 붙이지 마세요)</span></label></li>
   <li data-id="m-trader"><label><input type="checkbox"><span><span class="tag t-you">직접</span><b>앱 수준 판매자 상태</b> — kachigoogoo › 카치건 › 앱 콘텐츠 › 판매자 상태 → 불도깨비와 같게 "예, 판매자" · 약관 URL 은 비워도 저장됨(불도깨비 11-06)</span></label></li>
   <li data-id="m-privacy"><label><input type="checkbox"><span><span class="tag t-me">개발</span><b>개인정보처리방침 고치기</b> — <code>/kachigun-privacy</code> 개발자 FIBE → 카치(Cachisi) · 구매 기록 · <b>클라우드 저장(구글 Play 게임즈 저장된 게임)</b> 문장 추가 → "배포해도 돼" 받은 뒤 배포 (불도깨비 11-06 판과 같은 모양) · 스토어 연락처 이메일도</span></label></li>
   <li data-id="m-admob"><label><input type="checkbox"><span><span class="tag t-pick">결정</span><span class="txt"><b>광고 수익 계정</b> — 지금 AdMob(pub-5299482082775448)을 그대로 쓸지. 불도깨비도 그대로 둠
-    <ol class="opts"><li>그대로 <span class="rec">추천 — 빌드·app-ads.txt 손댈 것 없음</span></li><li>kachigoogoo 로 새 AdMob → 새 광고 ID · 8번에 넣기 · app-ads.txt 줄 추가</li></ol></span></span></label></li>
+    <ol class="opts"><li>그대로 <span class="rec">추천 — 빌드·app-ads.txt 손댈 것 없음</span></li><li>kachigoogoo 로 새 AdMob → 새 광고 ID · 9번에 넣기 · app-ads.txt 줄 추가</li></ol></span></span></label></li>
   <li data-id="m-old"><label><input type="checkbox"><span><span class="tag t-wait">참고</span><b>옛 계정</b> — zkfpf1 엔 결제 프로필·상품을 만들지 않음 · 계정을 지우지 마세요(심심할 때 하는 게임)</span></label></li>
 </ul>
 
 <!-- ───────────────────────── ④ ───────────────────────── -->
-<h2 id="pay">④ 결제 · 클라우드 켜기 — 9번 빌드 <small>kachigoogoo · 이전 끝난 뒤 (11-07: 8번은 출시용이 되어 9번으로)</small></h2>
+<h2 id="pay">④ 결제 · 클라우드 켜기 — 9번 빌드 <small>kachigoogoo · 이전 끝난 뒤</small></h2>
 <div class="tip green">
-  <b>코드는 끝</b> — 결제(상품 5개 · 서명 확인 · 같은 주문 두 번 지급 안 함 · 영구 상품 되살리기) · <b>클라우드 저장</b>(11-07: 설정 › [클라우드 저장] › 구글 계정 연결 · 1분마다 자동 · 두 폰 진행이 다르면 고르기 창). 둘 다 <b>키가 없으면 폰에서 꺼져 있음</b> → 라이선스 키 + Play 게임즈 App ID 를 넣은 <b>9번</b>부터 켜짐.
+  <b>코드는 끝</b> — 결제(상품 5개 · 서명 확인 · 같은 주문 두 번 지급 안 함 · 영구 상품 되살리기) · <b>클라우드 저장</b>(설정 › [클라우드 저장] › 구글 계정 연결 · 1분마다 자동 · 두 폰 진행이 다르면 고르기 창). 둘 다 <b>키가 없으면 폰에서 꺼져 있음</b> → 라이선스 키 + Play 게임즈 App ID 를 넣은 <b>9번</b>부터 켜짐.
   <br><b>계정 준비는 끝</b>(불도깨비 11-06): 사업자·통신판매업 · 결제 프로필 · 라이선스 테스터 목록 "결제테스트" — 다시 할 것 없음
 </div>
 <ul class="todo">
-  <li data-id="p-pgs"><label><input type="checkbox"><span><span class="tag t-you">직접</span><b>Play 게임즈 서비스 설정 (카치건)</b> <span class="time">30분 · 불도깨비 10-12·11-01 과 같은 흐름</span>
+  <li data-id="p-pgs"><label><input type="checkbox"><span><span class="tag t-you">직접</span><b>Play 게임즈 서비스 설정 (카치건)</b> <span class="time">30분 · 불도깨비와 같은 흐름</span>
     <ul>
       <li>kachigoogoo › 카치건 › Play 게임즈 서비스 › 설정 및 관리 › 설정 → [만들기] (새 Google Cloud 프로젝트) → <b>게임 ID(App ID, 숫자)</b>를 알려 주세요</li>
       <li>사용자 인증 정보 → Android · 패키지 <code>com.zkfpf.kachizombie</code> · <b>앱 서명 키 SHA-1</b>(앱 무결성 화면) — 칸을 못 찾으면 캡처</li>
       <li>OAuth 동의 화면: 브랜딩에 홈페이지·개인정보처리방침 링크 + 승인된 도메인 → [앱 게시] (로고는 올리지 않음)</li>
       <li><b>"저장된 게임" 켜기</b> · 게시 속성 3개(설명 · 카테고리 · 그래픽 이미지 1024x500) → [검토 및 게시]</li>
-    </ul><span class="f">막히는 화면은 캡처를 <code>게시 과정\</code> 에 — 불도깨비 때도 칸마다 같이 봤음</span></span></label></li>
+    </ul></span></label></li>
   <li data-id="p-forms"><label><input type="checkbox"><span><span class="tag t-you">직접</span><b>앱 콘텐츠 답 다시 — 상품 활성화 전에</b> — 콘텐츠 등급 설문: 디지털 상품 구매 = 예 · 무작위 아이템 = 예 · 데이터 보안: 금융 정보 › 구매 기록 · <b>앱 활동 › 게임 진행(클라우드 저장)</b> 추가 <span class="f">(불도깨비 11-06 과 같은 답)</span></span></label></li>
   <li data-id="p-build9"><label><input type="checkbox"><span><span class="tag t-me">개발</span><b>9번 AAB (1.0.9)</b> — 라이선스 키 · Play 게임즈 App ID(Window › Google Play Games › Setup) 넣기 · 설정 [클라우드 저장] 줄 다시 보이기 → 자동 시험 · 안드로이드 컴파일 · 개발용 APK 로 로그인 확인 → AAB → 점검(결제 권한 · 게임즈 APP_ID · 광고 ID) · 그동안 받은 의견도 같이</span></label></li>
   <li data-id="p-internal"><label><input type="checkbox"><span><span class="tag t-you">직접</span><b>내부 테스트 새로 만들기</b> — 테스트 및 출시 › 내부 테스트 → 테스터 = 이메일 목록 "결제테스트"(이미 있음) 체크 → [새 버전 만들기] → 9번 → 참여 링크로 폰에 설치</span></label></li>
@@ -197,42 +199,30 @@
       <tr><td><code>gem_pack_mid</code></td><td>다이아 주머니 (1,800)</td><td>다이아 1,800개</td><td>5,900원</td></tr>
       <tr><td><code>gem_pack_large</code></td><td>다이아 상자 (4,200)</td><td>다이아 4,200개</td><td>11,900원</td></tr>
     </table>
-    <span class="f">"2개 이상 구매 허용"은 체크 안 함(불도깨비와 같게) — 다이아 3개도 한 번 결제가 끝나야 다시 살 수 있을 뿐 여러 번 살 수 있음</span></span></label></li>
+    <span class="f">"2개 이상 구매 허용"은 체크 안 함(불도깨비와 같게)</span></span></label></li>
   <li data-id="p-test"><label><input type="checkbox"><span><span class="tag t-see">보기</span><b>폰으로 시험 결제 · 클라우드</b> — zkfpf1 계정 폰(라이선스 테스터)
     <ul>
       <li>상점에 원화 5줄 · 자동강화 버튼 · 다이아 한 줌 → "테스트 카드" → +500 · 취소하면 안 들어옴 · 결제 직후 앱을 끄고 켜도 들어옴</li>
       <li>모든 광고 제거 → 광고 없이 바로 보상 · 자동강화 → ON/OFF · 다이아 +500</li>
-      <li><b>클라우드</b>: 설정 › 클라우드 저장 › [구글 계정 연결] → "연결된 계정" · [지금 저장] → 앱 지웠다 다시 설치 → [구글 계정 연결] → 진행이 돌아오는지</li>
+      <li><b>클라우드</b>: 설정 › 클라우드 저장 › [구글 계정 연결] → [지금 저장] → 앱 지웠다 다시 설치 → [구글 계정 연결] → 진행이 돌아오는지</li>
     </ul></span></label></li>
-  <li data-id="p-release"><label><input type="checkbox"><span><span class="tag t-you">직접</span><b>9번 프로덕션 출시</b> — 시험이 끝나면 프로덕션 [새 버전 만들기] → 9 (1.0.9) → 출시 시작 → 게시 개요에서 "9 전체 출시" 확인. "인앱 구매 포함"은 상품을 켜면 저절로 붙음</span></label></li>
+  <li data-id="p-release"><label><input type="checkbox"><span><span class="tag t-you">직접</span><b>9번 프로덕션 출시</b> — 프로덕션 [새 버전 만들기] → 9 (1.0.9) → 출시 시작 → 게시 개요에서 "9 전체 출시" 확인. "인앱 구매 포함"은 상품을 켜면 저절로 붙음</span></label></li>
   <li data-id="p-public"><label><input type="checkbox"><span><span class="tag t-wait">참고</span><b>스토어에 공개되는 판매자 정보</b> — 인앱 판매를 켜면 "개발자 소개"에 결제 프로필의 실명·전체 주소가 보임(불도깨비 11-07 확인 · 같은 계정이라 카치건도 같음). 숨길 수는 없고 바꾸기만 가능 → 사업장 주소(비상주 사무실 등)로 사업자·통신판매업·결제 프로필 주소를 바꾸는 길</span></label></li>
   <li data-id="p-tax"><label><input type="checkbox"><span><span class="tag t-wait">참고</span><b>세금</b> — 부가세 · 종합소득세 · 개인 AdMob 수입은 세무서(126)나 세무사에게</span></label></li>
 </ul>
 
 <!-- ───────────────────────── ⑤ ───────────────────────── -->
-<h2 id="ask">⑤ 게임 질문 4개 — 11-07 답 받음 <small>반영한 것은 8번에 들어감</small></h2>
+<h2 id="see">⑤ 8번 폰에서 보기 <small>8번이 비공개 트랙에 올라간 뒤</small></h2>
 <ul class="todo">
-  <li data-id="q-singleS"><label><input type="checkbox"><span><span class="tag t-pick">결정</span><span class="txt"><b>단발탄 S 등급 공격력</b> — 옛 표 그대로라 단발탄만 S 가 A 의 <b>1.125배</b>뿐(다른 종류는 2.25배) → 다른 종류처럼 맞출지 — <b>11-07 답: 맞추지 않음(그대로)</b></span></span></label></li>
-  <li data-id="q-pill"><label><input type="checkbox"><span><span class="tag t-pick">결정</span><span class="txt"><b>다른 창도 노란 제목 띠로</b> — 지금은 총알 관리·총알 정보 창만 노란 띠 + 빨간 X. 상점·설정·미션 등도 맞출지 — <b>11-07 답: 하지 않음</b></span></span></label></li>
-  <li data-id="q-leader"><label><input type="checkbox"><span><span class="tag t-pick">결정</span><span class="txt"><b>전투 화면 리더 카피바라도 크게</b> — <b>11-07 반영: 리더만 1.12배</b>(총알 관리 창 리더 카드와 같은 비율 · 표 <code>Player.xlsx</code> › Player_Base <code>Leader_Scale_Mul</code> 로 바꿀 수 있음 · 동료와 겹치지 않음 확인)</span></span></label></li>
-  <li data-id="q-order"><label><input type="checkbox"><span><span class="tag t-pick">결정</span><span class="txt"><b>아래 총알 3칸 순서</b> — 지금 리더 | 동료1 | 동료2 → <b>11-07 반영: 동료1 | 리더 | 동료2</b>(화면 위·가운데·아래 순서 = 총알 관리 창 카드와 같음) · 빈 칸 이름도 "총알 2" 대신 "동료 1/2"</span></span></label></li>
+  <li data-id="s-bug"><label><input type="checkbox"><span><span class="tag t-see">보기</span><b>8번에서 새로 볼 것</b> — 총알을 카드로 끌어다 놓아 장착(정보 창 [장착] 없음) · 코스튬 가격 쉼표 · 설정에 진동 줄 없음 · 방치 보상 시간 최대 08:00 · <b>리더 카피바라 조금 크게 · 아래 총알 칸 동료1 | 리더 | 동료2</b> · 7번 세이브가 그대로 이어지는지 (클라우드 줄은 9번부터)</span></label></li>
 </ul>
 
 <!-- ───────────────────────── ⑥ ───────────────────────── -->
-<h2 id="see">⑥ 폰에서 보기 <small>시간 날 때 · 이상하면 의견에</small></h2>
-<ul class="todo">
-  <li data-id="s-phone7"><label><input type="checkbox"><span><span class="tag t-see">보기</span><b>7번 한 바퀴</b> — 낙서풍 그림 · 앱 아이콘 · 좀비 무리 · 총알 관리 창 · 방치 보상(5분 넘게 나갔다 오기) · 3일 출석 · 게임 종료/뒤로 가기 · 비밀던전 자동 끝 · 1~10챕터 손맛(하루 4시간 기준 10챕터 = 3일째 목표)</span></label></li>
-  <li data-id="s-lang"><label><input type="checkbox"><span><span class="tag t-see">보기</span><b>영어 화면</b> — 설정 › 언어 · Language → English → 글자 넘침·남은 한국어·어색한 번역 (<code>Table\String.xlsx</code> EN 칸을 직접 고쳐도 됨)</span></label></li>
-  <li data-id="s-store-up"><label><input type="checkbox"><span><span class="tag t-you">직접</span><b>새 스토어 그림 올리기</b> <span class="time">11-07 만듦 · 10분 · 출시 전에</span> — <code>스토어 등록\</code> 의 <b>스크린샷_01~08.png</b>(1080x1920, 낙서풍 · 문구 "같은 탄알 · 코스튬 · 비밀던전"으로 고침) · <b>그래픽이미지_1024x500.png</b> · 앱아이콘_512.png → zkfpf1 › 카피바라vs좀비 › 스토어 등록정보 › 기본 스토어 등록정보 › 그래픽: 옛 휴대전화 스크린샷 8장을 지우고 새 8장 · 그래픽 이미지 교체 → [저장] → 게시 개요에서 [검토를 위해 변경사항 전송]. 옛 그림 백업 = 스크래치 <code>store_before_1107</code> <span class="f">(프로덕션 액세스 검토 중이어도 스토어 등록정보 변경은 따로 검토됨)</span></span></label></li>
-  <li data-id="s-bug"><label><input type="checkbox"><span><span class="tag t-see">보기</span><b>8번에서 새로 볼 것</b> — 총알을 카드로 끌어다 놓아 장착(정보 창 [장착] 없음) · 코스튬 가격 쉼표 · 진동 줄 없음 · 방치 보상 시간 최대 08:00 · <b>리더 카피바라 조금 크게 · 아래 총알 칸 동료1 | 리더 | 동료2</b> (클라우드 줄은 9번부터)</span></label></li>
-</ul>
-
-<!-- ───────────────────────── ⑦ ───────────────────────── -->
-<h2 id="later">⑦ 출시 뒤 · 나중</h2>
+<h2 id="later">⑥ 출시 뒤 · 나중</h2>
 <ul class="todo">
   <li data-id="w-vitals"><label><input type="checkbox"><span><span class="tag t-wait">출시 뒤</span><b>2주 지켜보기</b> — Android vitals 비정상 종료·ANR · 리뷰(붙여 주시면 답글 초안) · AdMob 수익 · 결제 오류 메일</span></label></li>
   <li data-id="w-orders"><label><input type="checkbox"><span><span class="tag t-wait">출시 뒤</span><b>첫 실제 주문 확인</b> — 결제가 켜진 뒤 Play Console › 주문 관리에 첫 주문이 생기면 다이아가 들어갔는지(리뷰·문의로 확인)</span></label></li>
-  <li data-id="w-ads"><label><input type="checkbox"><span><span class="tag t-wait">출시 뒤</span><b>모바일 광고 집행</b> <span class="time">11-07 소재 만듦</span> — <code>광고 소재\</code> 영상 4개(세로 15·25초 · 정사각 · 가로, 첫 3초 실제 플레이) · 이미지 12장 · 다른 AI 요청서·자료. 결제가 켜진 9번 서비스 시작 뒤 홍보할 때 (구글 앱 캠페인은 영상을 유튜브에 올려 링크로) · 게임 그림이 바뀌면 <code>읽어보기.txt</code> 명령으로 다시 만듦</span></label></li>
+  <li data-id="w-ads"><label><input type="checkbox"><span><span class="tag t-wait">출시 뒤</span><b>모바일 광고 집행</b> <span class="time">소재 만듦</span> — <code>광고 소재\</code> 영상 4개 · 이미지 12장 · 플레이어블(HTML5) · 다른 AI 요청서·자료. 결제가 켜진 9번 서비스 시작 뒤 홍보할 때 (구글 앱 캠페인은 영상을 유튜브에 올려 링크로) · 그림이 바뀌면 <code>읽어보기.txt</code> 명령으로 다시 만듦 <span class="f">(플레이어블은 광고 네트워크별 검사 도구를 아직 못 돌림 — 집행할 네트워크를 정하면 그때)</span></span></label></li>
   <li data-id="d-site"><label><input type="checkbox"><span><span class="tag t-wait">나중</span><b>개발자 사이트 첫 화면</b> — <code>jeongjoonghee.github.io</code> 에 세 게임 목록 + 각 개인정보처리방침 링크 (만들어 드리고, 올리기는 직접 · app-ads.txt 는 안 건드림)</span></label></li>
   <li data-id="d-balance"><label><input type="checkbox"><span><span class="tag t-wait">나중</span><b>밸런스</b> — 맨 마지막에 (지금 시뮬: 150챕터 광고 안 봄 1409일 · 광고 최대 492일). 다이아 상품 가격 대비 양도 그때</span></label></li>
   <li data-id="d-refund"><label><input type="checkbox"><span><span class="tag t-wait">나중</span><b>환불 악용이 보이면</b> — 환불한 다이아 되돌리기 (버그 점검에서 "그대로 두기"로 정함)</span></label></li>
@@ -241,29 +231,28 @@
 <details style="margin-top:30px">
 <summary><b>끝난 것</b> — 펼치기</summary>
 <ul>
-  <li><b>11-07 23:45 게임 질문 4개 답</b>: 단발 S 그대로 · 노란 띠 안 함 · 리더 1.12배 · 아래 총알 칸 동료1 | 리더 | 동료2 (시험 139줄 errors=0)</li>
-  <li><b>11-07 23:29 프로덕션 액세스 신청 접수</b>(사용자 · Chrome 확인) · 출시 빌드 8번으로 정함(사용자 "승인되면 8번 굽기")</li>
-  <li><b>11-07</b>: 구글 답변 확인(출시 뒤 이전) · 방치 보상 시간 표시 8시간 · <a href="버그_점검.html">버그 점검</a> 17항목 → 의견대로 13개 고침(클라우드 저장 · 날짜·시간 악용 · 예비 세이브 · 진동·[장착] 버튼 삭제 · x2 정리 · 버전 이름 1.0.N) · 프로덕션 신청 답안을 실제 올린 버전 기준으로 고침 · Play Console 두 계정 확인(이 문서)</li>
-  <li><b>11-05</b>: 좀비 몰려오기 · 낙서풍 그림 전체 · 카피바라 얼굴·두상 · 앱 아이콘 · 비밀던전 자동 끝 · 인벤토리 20칸 · 총알 관리 창 · 슬롯 강화 제거 · 밸런스 → <b>6번 · 7번 AAB</b> — 사용자가 비공개 트랙에 올림(7번 11-06 게시)</li>
-  <li><b>11-04</b>: 방치 보상 · 3일 출석 · 게임 종료 · 요청_02 · 좀비 움직임 다듬기 · 홈 화면 앱 이름 · <b>3번 AAB</b> 올림 · 출시 일정 · 프로덕션 신청 답안</li>
-  <li><b>kachigoogoo 계정 준비 (불도깨비 작업으로 끝)</b>: 사업자 등록 · 통신판매업 신고 · 사업자 번호 · 결제 프로필 · 라이선스 테스터 "결제테스트" · 판매자 상태(불도깨비 앱) · 불도깨비 이전·시험 결제 성공(11-06)</li>
-  <li><b>10-30~31</b>: 실제 보상형 광고 · 결제 코드(꺼 둠) · 2번 AAB 올림 · 앱 콘텐츠 답(광고 = 예) · 스토어 웹사이트 칸 · 개인정보처리방침 <code>/kachigun-privacy</code></li>
-  <li><b>10-24 까지</b>: 비공개 테스트 제출 · 테스터 12명 · AdMob 앱·광고 단위 · 서명 키 · 스토어 자료 · 패키지 <code>com.zkfpf.kachizombie</code></li>
-  <li>지난 판(키 <code>kachigun-todo-1031</code>, 44항목 · 체크·의견 0)에서: 2번·3번 올리기 → 끝 · 사업자 정보·라이선스 테스터 → 불도깨비로 끝 · 거래 ID → 불도깨비 때 찾음 · 클라우드 저장 → 코드 끝(④) · 재생 확인 16개 → ⑥ 4개로 합침(옛 항목: 자동강화 · 합성 확률 · 보급품 그림 · 미션 · 무료 다이아 · 광산 · 세이브 등은 7번 한 바퀴에 포함) · 백업 = 스크래치 <code>남은_작업_정리_before_1107.html</code></li>
+  <li><b>11-07~08 (지난 판 키 <code>kachigun-todo-1107</code> 에서 체크된 7개)</b>: 신청 답안 [ ] 칸 채우기 · <b>프로덕션 신청 제출(11-07 23:29)</b> · 테스터 의견 모으기 · 게임 질문 4개 답(단발 S 그대로 · 노란 띠 안 함 · 리더 1.12배 · 총알 칸 동료1 | 리더 | 동료2)</li>
+  <li><b>11-07 버그 점검 17개</b> — 모두 의견 받음 → 13개 고침(클라우드 저장 [초안] · 날짜·시간 악용 · 예비 세이브 · 진동·[장착] 버튼 삭제 · x2 정리 · 버전 이름 1.0.N 등) · 4개 그대로(던전 중 꺼짐 · 창 열린 동안 보스 시간 · 환불 · 카드 공격력) — 8번에 들어감</li>
+  <li><b>11-07~08 만든 것</b>: 스토어 스크린샷 8장·그래픽 이미지 낙서풍으로 다시(올리기는 ① <code>s-store-up</code>) · 모바일 광고 소재(영상 4 · 이미지 12 · AI 요청서·자료 · 플레이어블 HTML5) · 방치 보상 시간 표시 8시간 · 구글 답변 확인(출시 뒤 이전)</li>
+  <li><b>11-05</b>: 좀비 몰려오기 · 낙서풍 그림 전체 · 카피바라 얼굴·두상 · 앱 아이콘 · 비밀던전 자동 끝 · 인벤토리 20칸 · 총알 관리 창 · 슬롯 강화 제거 · 밸런스 → <b>6번 · 7번 AAB</b>(7번 11-06 비공개 트랙 게시)</li>
+  <li><b>11-04</b>: 방치 보상 · 3일 출석 · 게임 종료 · 요청_02 · 좀비 움직임 · 홈 화면 앱 이름 · 3번 AAB · 출시 일정 · 프로덕션 신청 답안</li>
+  <li><b>kachigoogoo 계정 준비 (불도깨비 작업으로 끝)</b>: 사업자 등록 · 통신판매업 신고 · 결제 프로필 · 라이선스 테스터 "결제테스트" · 불도깨비 이전·시험 결제 성공(11-06)</li>
+  <li><b>10-24 ~ 10-31</b>: 비공개 테스트 제출 · 테스터 12명 · AdMob 앱·광고 단위 · 서명 키 · 스토어 자료 · 실제 보상형 광고 · 결제 코드(꺼 둠) · 앱 콘텐츠 답(광고 = 예) · 개인정보처리방침 <code>/kachigun-privacy</code></li>
+  <li>지난 판 백업 = 스크래치 <code>남은_작업_정리_before_1108.html</code> · 그 전 판 = <code>남은_작업_정리_before_1107.html</code></li>
 </ul>
 </details>
 
 <div class="bar"><span id="stat"></span><button type="button" id="copyNotes">의견 모아 복사</button></div>
 
 <footer>
-  체크·의견은 이 브라우저(localStorage, 키 <code>kachigun-todo-1107</code>)에 저장됩니다. 제가 읽을 때는 <code>python tools/todo_checks.py</code>. 못 읽을 때는 [의견 모아 복사] → 대화창에 붙여 넣기. 11-07 다시 짬: Play Console(zkfpf1 · kachigoogoo)을 Chrome 으로 직접 보고 작업 기록과 맞춤.
+  체크·의견은 이 브라우저(localStorage, 키 <code>kachigun-todo-1108</code>)에 저장됩니다. 제가 읽을 때는 <code>python tools/todo_checks.py</code>. 못 읽을 때는 [의견 모아 복사] → 대화창에 붙여 넣기. 11-08 다시 짬: Play Console(zkfpf1)을 Chrome 으로 다시 보고 지난 판 체크 · 버그 점검 의견 · 재개 메모와 맞춤.
 </footer>
 </main>
 
 <script>
 (function(){
   // 저장 형식: {"c":{항목id:true}, "n":{항목id:"의견"}} — 항목id 는 li 의 data-id
-  var KEY='kachigun-todo-1107', st={c:{},n:{}};
+  var KEY='kachigun-todo-1108', st={c:{},n:{}};
   try{ var v=JSON.parse(localStorage.getItem(KEY)||'{}'); st.c=v.c||{}; st.n=v.n||{}; }catch(e){}
   function save(){ try{ localStorage.setItem(KEY,JSON.stringify(st)); }catch(e){} stat(); }
   var items=document.querySelectorAll('ul.todo li[data-id]');
