@@ -58,7 +58,7 @@ namespace KachiGun
         {
             float dt = Time.deltaTime;
             saveT += Time.unscaledDeltaTime;
-            if (saveT > 5f) { saveT = 0; S.Save(); }
+            if (saveT > 5f) { saveT = 0; S.Save(false); }   // 11-08: 자동 저장은 메모리에만 (저장소 쓰기는 30초마다 · 나갈 때 바로)
             dailyT += Time.unscaledDeltaTime;
             if (dailyT > 10f) { dailyT = 0; S.RefreshDaily(); S.ClampTimers(); CheckAttend(false); }   // 켜 둔 채 날이 바뀜 → 창이 없을 때 출석 창
 
@@ -79,9 +79,14 @@ namespace KachiGun
         public int Quota { get { int q = Tables.Stage(S.stage).quota; if (q <= 0) q = Tables.Ci("KillsPerStage"); return Mathf.Max(1, Mathf.RoundToInt(q * HordeMul)); } }
         public float StageProgress => bossPhase ? Mathf.Clamp01(bossTime / BossTimeMax) : S.bossFarm ? 1f : Mathf.Clamp01(S.kills / (float)Quota);
 
+        // 11-08: 무리(6~10마리)를 한 프레임에 다 만들면 그 프레임이 무거움 → 줄을 세워 한 프레임에 2마리씩 (오른쪽 화면 밖이라 보이는 건 같음)
+        readonly Queue<(Vector2 p, float hm)> spawnQueue = new();
+        const int SpawnPerFrame = 2;
+
         void StageTick(float dt)
         {
-            int alive = 0;
+            for (int i = 0; i < SpawnPerFrame && spawnQueue.Count > 0; i++) { var q = spawnQueue.Dequeue(); SpawnZombie(q.p, q.hm); }
+            int alive = spawnQueue.Count;   // 줄 선 좀비도 있는 셈
             foreach (var t in Target.All) if (t is Zombie z && z.Alive && !z.isBoss) alive++;
 
             var st = Tables.Stage(S.stage);
@@ -130,7 +135,7 @@ namespace KachiGun
             {
                 float y = y0 + h * (lanes[i] + 0.5f + Random.Range(-0.4f, 0.4f));
                 var p = Field.I.SpawnPoint(y) + new Vector2(Random.Range(0f, depth), 0);
-                SpawnZombie(p, hm);
+                spawnQueue.Enqueue((p, hm));
             }
         }
 
@@ -819,6 +824,7 @@ namespace KachiGun
 
         public void ClearTargets()
         {
+            spawnQueue.Clear();
             foreach (var t in Target.All.ToArray()) if (t) Destroy(t.gameObject);
             Target.All.Clear();
             Bullet.ClearAll();

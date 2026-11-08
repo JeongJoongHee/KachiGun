@@ -1,0 +1,66 @@
+<!doctype html><html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>성능 점검</title><style>
+:root{--bg:#fbf7ef;--fg:#3b281c;--mut:#7a6a5c;--line:#e3d8c6;--good:#3f7a3a;--bad:#a8432f;--card:#fff}
+body{background:var(--bg);color:var(--fg);font-family:"Malgun Gothic",sans-serif;margin:0;padding:24px 16px;line-height:1.55}
+main{max-width:1100px;margin:auto} h1{font-size:24px;margin:0 0 4px} h2{font-size:18px;margin:28px 0 8px}
+.mut{color:var(--mut);font-size:14px} .box{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:14px 18px;margin:12px 0}
+.wrap{overflow-x:auto} table{border-collapse:collapse;width:100%;font-size:14px;background:var(--card)}
+th,td{border-bottom:1px solid var(--line);padding:6px 8px;text-align:right;white-space:nowrap} th{background:#f1e8d8;font-weight:600}
+td.l{text-align:left} tr.grp td{text-align:left;font-weight:700;background:#f7f0e3}
+.good{color:var(--good);font-weight:700} .bad{color:var(--bad);font-weight:700}
+li{margin:4px 0} code{background:#f1e8d8;padding:1px 5px;border-radius:4px}
+</style></head><body><main>
+<h1>성능 점검 — 화면이 밀리는 느낌 (11-08)</h1>
+<p class="mut">자동 측정(PlayTest.RunPerf): 51스테이지 · 레이저/미사일/산탄총 · 한 바퀴 = 스테이지 사냥 → 창 4개 → 도전 → 스테이지 → 비밀던전 → 스테이지 → 보스 던전, 3바퀴.
+PC 에서 잰 값이라 폰은 몇 배 느립니다 — <b>전·뒤 차이</b>와 <b>멈칫하는 순간(최악)</b>을 보세요.</p>
+<div class="box"><b>표 읽는 법</b><ul>
+<li><b>최악 프레임 ms</b> = 그 구간에서 가장 오래 걸린 한 프레임(화면 그리기 포함). 60프레임이면 한 프레임 16.7ms — 이걸 넘으면 그만큼 멈칫. PC 에디터는 화면 그리기 때문에 평소에도 20ms 안팎.</li>
+<li><b>게임 코드 최악/평균 ms</b> = 우리 스크립트만 쓴 시간.</li>
+<li><b>쓰레기 메모리 KB/프레임</b> = 게임 코드가 한 프레임에 만들고 버리는 메모리. 쌓이면 몇 초마다 메모리 청소로 멈칫.</li>
+<li><b>물체 수</b> = 바퀴가 갈수록 늘면 누수. 전·뒤 모두 바퀴마다 늘지 않았습니다. <b>고친 뒤 더 많은 것은 의도한 것</b> — 미리 만들어 닫아 둔 창 8개 + 다시 쓰려고 모아 둔 효과·쓰러진 좀비의 꺼 둔 뼈대.</li>
+<li>쓰레기 메모리: "스테이지 사냥(처음)" 의 1000KB 는 장면을 불러오는 첫 프레임 몫이라 빼고 보세요. 평소(프레임당 1KB 안팎)는 크게 줄지 않았습니다 — 남은 몫은 피해 숫자 글자 등이고, 메모리 청소는 "나눠 하기"(incremental)가 켜져 있어 한 번에 크게 멈추지 않습니다.</li></ul></div>
+<div class="wrap"><table>
+<tr><th class="l" rowspan="2" style="text-align:left">구간</th><th colspan="3">최악 프레임 ms</th><th colspan="3">게임 코드 최악 ms</th><th colspan="3">게임 코드 평균 ms</th><th colspan="3">쓰레기 메모리 KB/프레임</th><th colspan="3">물체 수(최대)</th></tr>
+<tr><th>전</th><th>뒤</th><th></th><th>전</th><th>뒤</th><th></th><th>전</th><th>뒤</th><th></th><th>전</th><th>뒤</th><th></th><th>전</th><th>뒤</th><th></th></tr>
+<tr class="grp"><td colspan="16">처음 들어갈 때 (1바퀴)</td></tr>
+<tr><td class="l">스테이지 사냥</td><td>20</td><td><b>19</b></td><td><span class="good">-5%</span></td><td>12.8</td><td><b>7.5</b></td><td><span class="good">-41%</span></td><td>0.68</td><td><b>0.67</b></td><td><span class="">-2%</span></td><td>1004.86</td><td><b>1015.75</b></td><td><span class="">+1%</span></td><td>588</td><td><b>1199</b></td><td><span class="bad">+104%</span></td></tr>
+<tr><td class="l">창 4개 열고 닫기</td><td>103</td><td><b>20</b></td><td><span class="good">-81%</span></td><td>14.4</td><td><b>6.5</b></td><td><span class="good">-55%</span></td><td>0.96</td><td><b>0.71</b></td><td><span class="good">-26%</span></td><td>68.88</td><td><b>10.96</b></td><td><span class="good">-84%</span></td><td>1177</td><td><b>1183</b></td><td><span class="">+1%</span></td></tr>
+<tr><td class="l">도전 던전</td><td>136</td><td><b>22</b></td><td><span class="good">-84%</span></td><td>4.4</td><td><b>2.3</b></td><td><span class="good">-48%</span></td><td>0.25</td><td><b>0.22</b></td><td><span class="good">-13%</span></td><td>23.26</td><td><b>3.00</b></td><td><span class="good">-87%</span></td><td>740</td><td><b>818</b></td><td><span class="">+11%</span></td></tr>
+<tr><td class="l">스테이지 (도전 뒤)</td><td>20</td><td><b>19</b></td><td><span class="">-3%</span></td><td>7.6</td><td><b>2.3</b></td><td><span class="good">-70%</span></td><td>0.49</td><td><b>0.51</b></td><td><span class="">+5%</span></td><td>1.13</td><td><b>0.85</b></td><td><span class="good">-25%</span></td><td>1079</td><td><b>1145</b></td><td><span class="">+6%</span></td></tr>
+<tr><td class="l">비밀던전</td><td>20</td><td><b>19</b></td><td><span class="">-5%</span></td><td>1.5</td><td><b>1.2</b></td><td><span class="good">-19%</span></td><td>0.35</td><td><b>0.33</b></td><td><span class="good">-5%</span></td><td>1.48</td><td><b>1.08</b></td><td><span class="good">-27%</span></td><td>846</td><td><b>958</b></td><td><span class="">+13%</span></td></tr>
+<tr><td class="l">스테이지 (비밀던전 뒤)</td><td>19</td><td><b>19</b></td><td><span class="">+0%</span></td><td>7.9</td><td><b>2.4</b></td><td><span class="good">-70%</span></td><td>0.48</td><td><b>0.48</b></td><td><span class="">-0%</span></td><td>1.01</td><td><b>0.71</b></td><td><span class="good">-30%</span></td><td>1146</td><td><b>1270</b></td><td><span class="">+11%</span></td></tr>
+<tr><td class="l">보스 던전</td><td>19</td><td><b>16</b></td><td><span class="good">-16%</span></td><td>0.9</td><td><b>0.7</b></td><td><span class="good">-16%</span></td><td>0.21</td><td><b>0.18</b></td><td><span class="good">-13%</span></td><td>2.69</td><td><b>3.88</b></td><td><span class="bad">+44%</span></td><td>823</td><td><b>953</b></td><td><span class="bad">+16%</span></td></tr>
+<tr class="grp"><td colspan="16">두 번째부터 (2·3바퀴 평균)</td></tr>
+<tr><td class="l">스테이지 사냥</td><td>20</td><td><b>20</b></td><td><span class="">-3%</span></td><td>6.8</td><td><b>2.7</b></td><td><span class="good">-60%</span></td><td>0.36</td><td><b>0.41</b></td><td><span class="">+14%</span></td><td>1.02</td><td><b>1.11</b></td><td><span class="">+9%</span></td><td>957</td><td><b>1175</b></td><td><span class="bad">+23%</span></td></tr>
+<tr><td class="l">창 4개 열고 닫기</td><td>18</td><td><b>19</b></td><td><span class="">+7%</span></td><td>5.2</td><td><b>3.8</b></td><td><span class="good">-26%</span></td><td>0.39</td><td><b>0.46</b></td><td><span class="bad">+19%</span></td><td>1.34</td><td><b>1.22</b></td><td><span class="good">-9%</span></td><td>935</td><td><b>1203</b></td><td><span class="bad">+29%</span></td></tr>
+<tr><td class="l">도전 던전</td><td>21</td><td><b>19</b></td><td><span class="good">-7%</span></td><td>0.8</td><td><b>2.0</b></td><td><span class="bad">+162%</span></td><td>0.23</td><td><b>0.21</b></td><td><span class="good">-11%</span></td><td>1.30</td><td><b>2.23</b></td><td><span class="bad">+70%</span></td><td>828</td><td><b>956</b></td><td><span class="bad">+15%</span></td></tr>
+<tr><td class="l">스테이지 (도전 뒤)</td><td>20</td><td><b>19</b></td><td><span class="">-4%</span></td><td>7.6</td><td><b>2.1</b></td><td><span class="good">-73%</span></td><td>0.35</td><td><b>0.32</b></td><td><span class="good">-8%</span></td><td>0.68</td><td><b>0.62</b></td><td><span class="good">-9%</span></td><td>1131</td><td><b>1222</b></td><td><span class="">+8%</span></td></tr>
+<tr><td class="l">비밀던전</td><td>19</td><td><b>19</b></td><td><span class="">-1%</span></td><td>1.2</td><td><b>5.9</b></td><td><span class="bad">+393%</span></td><td>0.33</td><td><b>0.32</b></td><td><span class="">-5%</span></td><td>1.52</td><td><b>1.01</b></td><td><span class="good">-33%</span></td><td>865</td><td><b>991</b></td><td><span class="">+15%</span></td></tr>
+<tr><td class="l">스테이지 (비밀던전 뒤)</td><td>20</td><td><b>17</b></td><td><span class="good">-17%</span></td><td>7.1</td><td><b>2.4</b></td><td><span class="good">-67%</span></td><td>0.36</td><td><b>0.37</b></td><td><span class="">+4%</span></td><td>0.92</td><td><b>0.97</b></td><td><span class="">+5%</span></td><td>1178</td><td><b>1355</b></td><td><span class="bad">+15%</span></td></tr>
+<tr><td class="l">보스 던전</td><td>20</td><td><b>18</b></td><td><span class="good">-10%</span></td><td>0.7</td><td><b>0.8</b></td><td><span class="">+11%</span></td><td>0.25</td><td><b>0.21</b></td><td><span class="good">-16%</span></td><td>1.29</td><td><b>1.07</b></td><td><span class="good">-17%</span></td><td>897</td><td><b>1003</b></td><td><span class="">+12%</span></td></tr>
+</table></div>
+<p class="mut">원본: <code>Kachi_Gun/Logs/PlayTest/perf/before.json</code> · <code>after.json</code> · 다시 만들기: <code>PYTHONUTF8=1 python tools/perf_report.py before after</code></p>
+<h2>찾은 원인 → 고친 것</h2>
+<div class="box"><ol>
+<li><b>처음 던전에 들어갈 때 멈칫 (PC 136ms)</b> — 보스·던전 배경음(38초)을 들어가는 순간 계산했음 → 켤 때 따로 일꾼(스레드)이 미리 계산 <span class="good">→ 22ms</span></li>
+<li><b>창(총알·보급품·코스튬·상점…)을 처음 열 때 멈칫 (PC 103ms)</b> — 창을 그때 만들고 한글 글자도 그때 그렸음 → 켜는 로딩 안에서 8개 창을 미리 만들고 글자까지 그려 둠 <span class="good">→ 20ms</span></li>
+<li><b>사냥 중 좀비 무리가 나올 때 툭툭 끊김 (게임 코드 최악 7~12ms)</b> — 6~10마리를 한 프레임에 한꺼번에 만들었음 → 한 프레임에 2마리씩 (오른쪽 화면 밖이라 보이는 건 같음) <span class="good">→ 2~2.5ms</span></li>
+<li><b>5초마다 세이브를 폰 저장소에 바로 씀</b> — 자동 저장은 메모리에만, 저장소 쓰기는 30초마다 · 앱을 나가거나 끌 때 · 보상·구매 같은 저장은 예전처럼 바로 (PC 에선 차이가 안 보임 — 폰 저장소가 느릴 때를 막는 것)</li>
+<li><b>매 프레임 버리는 메모리 줄임</b> — 총알 한 발마다 그림 찾기 글자 4개 · 레이저·미사일마다 대상 목록 복사 · 맞을 때마다 불꽃·폭발 물체를 새로 만들고 지움(→ 다시 씀) · 0.1초마다 금화·강화 카드 글자 새로 만듦(→ 바뀔 때만) · 쏠 때마다 스킨·보급품 합 다시 셈(→ 가진 목록이 바뀔 때만)</li>
+<li><b>화면(UI) 다시 모으기 줄임</b> — 피해 숫자가 흐려질 때 글자·테두리를 매 프레임 다시 만들던 것(→ 투명도만) · 피해 숫자·날아가는 돈을 따로 판(Canvas)에 · 버튼·아이콘이 같은 크기를 매 프레임 다시 넣던 것</li>
+<li><b>쓰러진 좀비</b> — 안 보이는 뼈대를 1.15초 동안 계속 휘던 것 멈춤</li>
+</ol>
+<p>오래 해도 물체 수·메모리가 늘어나는 <b>누수는 없었습니다</b> (3~5바퀴 내내 같은 범위). "오래 하면 밀린다"는 느낌은 ① 콘텐츠를 처음 들어갈 때마다의 멈칫 ② 사냥 중 무리 나올 때 끊김이 겹친 것으로 보이고, 폰이 오래 돌아 뜨거워지면 성능을 낮춰 이런 순간이 더 크게 느껴집니다.</p></div>
+<h2>폰에서 확인할 것 (8번 빌드 뒤)</h2>
+<div class="box"><ul>
+<li>켜고 바로 비밀던전·보스 던전·도전에 처음 들어갈 때 멈칫하는지</li>
+<li>총알·보급품·코스튬·상점 창을 처음 열 때 멈칫하는지</li>
+<li>스테이지 사냥 10분 이상 — 좀비 무리가 나올 때 툭툭 끊기는지</li>
+<li>켜는 시간이 눈에 띄게 길어졌는지 (창 8개를 로딩 안에서 미리 만들어서 조금 늘었을 수 있음)</li>
+</ul></div>
+<h2>더 할 수 있는 것 (이번엔 안 함)</h2>
+<div class="box"><ul>
+<li><b>좀비 다시 쓰기(풀)</b>: 좀비 한 마리 = 물체 20개쯤(뼈 15개). 지금은 나눠 만들어 끊김은 없앴지만, 폰에서도 무리 나올 때 끊기면 다음 단계로. 상태 값이 많아 바꾸는 범위가 큼</li>
+<li>폰에서 직접 재기: 개발용 APK 에 Unity 프로파일러를 붙이면 폰의 실제 ms 를 볼 수 있음</li>
+</ul></div>
+</main></body></html>

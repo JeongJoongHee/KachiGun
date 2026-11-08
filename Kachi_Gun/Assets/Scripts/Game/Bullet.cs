@@ -21,6 +21,7 @@ namespace KachiGun
         Vector2 dir;
         SpriteRenderer sr;
         readonly HashSet<Target> hitSet = new();
+        static readonly List<Target> hitBuf = new();   // 11-08: 레이저·폭발 판정용 (쏠 때마다 배열을 새로 만들었음)
 
         public static Kind KindOf(string bulletKind) => bulletKind switch
         {
@@ -134,7 +135,8 @@ namespace KachiGun
         {
             Vector2 c = transform.position;
             Fx.I?.Boom(c, splash, grade);
-            foreach (var t in Target.All.ToArray())
+            hitBuf.Clear(); hitBuf.AddRange(Target.All);
+            foreach (var t in hitBuf)
                 if (t.Alive && (t.Center - c).magnitude <= splash + t.radius)
                     GameManager.I.Damage(t, dmg, c, bossMul, false);   // 11-04 요청_02: 미사일은 넉백 없음
         }
@@ -149,7 +151,8 @@ namespace KachiGun
         public static void LaserHit(Vector2 from, Vector2 dir, float len, double dmg, float hitBonus = 0.25f, double bossMul = 1)
         {
             Vector2 to = from + dir.normalized * len;
-            foreach (var t in Target.All.ToArray())
+            hitBuf.Clear(); hitBuf.AddRange(Target.All);
+            foreach (var t in hitBuf)
                 if (t.Alive && DistToSeg(t.Center, from, to) <= t.radius + hitBonus)
                     GameManager.I.Damage(t, dmg, from, bossMul);
         }

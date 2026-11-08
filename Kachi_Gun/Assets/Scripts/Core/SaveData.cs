@@ -134,7 +134,11 @@ namespace KachiGun
             if (string.IsNullOrEmpty(saveId)) saveId = Guid.NewGuid().ToString("N");
         }
 
-        public void Save()
+        static float lastFlush = -999f;
+
+        /// <summary>flush = 폰 저장소에 바로 씀. 11-08: 5초마다 하는 자동 저장은 flush=false — 저장소 쓰기는 30초마다만
+        /// (앱을 나가거나 끌 때 · 보상·구매 같은 저장은 그대로 바로 씀)</summary>
+        public void Save(bool flush = true)
         {
             // 11-07: 마지막으로 본 시각은 앞으로만 — 폰 시간을 뒤로 돌렸다 되돌리면 오래 비운 것처럼 계산돼 방치 8시간을 계속 받았음
             lastSeen = Math.Max(lastSeen, Now);
@@ -143,7 +147,7 @@ namespace KachiGun
             PlayerPrefs.SetString(Key, json);
             float t = Time.realtimeSinceStartup;
             if (t - lastBak >= 60f || t < lastBak) { PlayerPrefs.SetString(BakKey, json); lastBak = t; }
-            PlayerPrefs.Save();
+            if (flush || t - lastFlush >= 30f || t < lastFlush) { PlayerPrefs.Save(); lastFlush = t; }
             Dirty = true;
         }
 
@@ -165,7 +169,19 @@ namespace KachiGun
         public static double NowD => DateTimeOffset.UtcNow.ToUnixTimeMilliseconds() / 1000.0;
 
         /// <summary>오늘 날짜 yyyyMMdd (기기 시간, 어느 나라 설정이든 같은 모양)</summary>
-        public static string Today => DateTime.Now.ToString("yyyyMMdd", System.Globalization.CultureInfo.InvariantCulture);
+        public static string Today
+        {
+            get
+            {
+                // 11-08: 날짜가 바뀔 때만 글자를 만듦 (화면이 0.1초마다 물어봄)
+                var n = DateTime.Now;
+                int k = n.Year * 10000 + n.Month * 100 + n.Day;
+                if (k != todayKey) { todayKey = k; todayStr = n.ToString("yyyyMMdd", System.Globalization.CultureInfo.InvariantCulture); }
+                return todayStr;
+            }
+        }
+        static int todayKey = -1;
+        static string todayStr;
         /// <summary>a 가 b 보다 뒤의 날짜인지 (yyyyMMdd 글자 비교, b 가 비었으면 true)</summary>
         public static bool IsLaterDay(string a, string b) => string.CompareOrdinal(a, b ?? "") > 0;
 

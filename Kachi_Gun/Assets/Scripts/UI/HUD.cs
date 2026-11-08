@@ -50,6 +50,7 @@ namespace KachiGun
             root = (RectTransform)transform;   // 안전 영역(Safe) 안
 
             var fxLayer = UIKit.Rect(root, "FxLayer").Fill();
+            fxLayer.gameObject.AddComponent<Canvas>();   // 11-08: 피해 숫자·날아가는 돈이 움직여도 위 화면 전체를 다시 모으지 않게 따로 판
             Fx.I.uiLayer = fxLayer;
 
             BuildTop();
@@ -73,6 +74,7 @@ namespace KachiGun
             GM.StageChanged += RefreshStage;
             RefreshStage();
             Refresh();
+            Prewarm();
         }
 
         // ---------- 위 ----------
@@ -445,12 +447,11 @@ namespace KachiGun
             }
             if (bossBtn.gameObject.activeSelf) bossBtn.transform.localScale = Vector3.one * (1f + Mathf.Abs(Mathf.Sin(Time.unscaledTime * 3f)) * 0.06f);   // 콩닥콩닥
             if (toastPop > 0) { toastPop -= dt; toastRt.localScale = Vector3.one * (1f + Mathf.Max(0, toastPop) * 0.6f); }
-            foreach (var c in cards) c.rt.localScale = Vector3.MoveTowards(c.rt.localScale, Vector3.one, dt * 0.6f);
+            foreach (var c in cards) if (c.rt.localScale != Vector3.one) c.rt.localScale = Vector3.MoveTowards(c.rt.localScale, Vector3.one, dt * 0.6f);
 
-            goldBump = Mathf.MoveTowards(goldBump, 0, dt * 2f);
-            gemBump = Mathf.MoveTowards(gemBump, 0, dt * 2f);
-            goldIcon.localScale = Vector3.one * (1 + goldBump * 0.3f);
-            gemIcon.localScale = Vector3.one * (1 + gemBump * 0.3f);
+            // 11-08: 움직일 때만 크기를 넣음 (같은 값을 매 프레임 넣으면 화면을 다시 모음)
+            if (goldBump > 0 || goldIcon.localScale.x != 1f) { goldBump = Mathf.MoveTowards(goldBump, 0, dt * 2f); goldIcon.localScale = Vector3.one * (1 + goldBump * 0.3f); }
+            if (gemBump > 0 || gemIcon.localScale.x != 1f) { gemBump = Mathf.MoveTowards(gemBump, 0, dt * 2f); gemIcon.localScale = Vector3.one * (1 + gemBump * 0.3f); }
 
             if (paw.gameObject.activeSelf)
                 paw.anchoredPosition = new Vector2(-CardStep, CardY + 254 * CardScale + 56 + Mathf.Abs(Mathf.Sin(Time.unscaledTime * 5f)) * 22f);   // 공격력 카드 위에서 아래를 가리키며 콩콩
@@ -476,21 +477,28 @@ namespace KachiGun
 
         public void Bump(bool gem) { if (gem) gemBump = 1; else goldBump = 1; }
 
+        double shownGold = double.NaN, shownGems = double.NaN;
+        readonly int[] shownLv = { -1, -1, -1 };
+
         public void Refresh()
         {
             if (S == null || GM == null) return;
-            goldText.text = Num.F(S.gold);
-            gemText.text = Num.Gem(S.gems);
-            int[] lvs = { S.lvAtk, S.lvSpd, S.lvGold };
+            // 11-08: 값이 바뀔 때만 글자를 만듦 (0.1초마다 글자 10여 개를 새로 만들었음)
+            if (S.gold != shownGold) { shownGold = S.gold; goldText.text = Num.F(S.gold); }
+            if (S.gems != shownGems) { shownGems = S.gems; gemText.text = Num.Gem(S.gems); }
             for (int i = 0; i < 3; i++)
             {
                 var c = cards[i];
-                int lv = lvs[i];
-                double v = i == 0 ? Stats.Power(lv) : i == 1 ? Stats.Speed(lv) : Stats.Money(lv);
-                c.lv.text = "Lv." + lv;
-                c.val.text = Num.F(v);
+                int lv = i == 0 ? S.lvAtk : i == 1 ? S.lvSpd : S.lvGold;
                 double cost = Stats.Cost(lv);
-                c.cost.text = Num.F(cost);
+                if (shownLv[i] != lv)
+                {
+                    shownLv[i] = lv;
+                    double v = i == 0 ? Stats.Power(lv) : i == 1 ? Stats.Speed(lv) : Stats.Money(lv);
+                    c.lv.text = "Lv." + lv;
+                    c.val.text = Num.F(v);
+                    c.cost.text = Num.F(cost);
+                }
                 bool can = S.gold >= cost;
                 c.cost.color = can ? Color.white : UIKit.Red;
                 c.img.color = can ? Color.white : new Color(0.82f, 0.82f, 0.82f);
@@ -621,5 +629,23 @@ namespace KachiGun
         }
 
         public T Get<T>() where T : Popup => popups.TryGetValue(typeof(T), out var p) ? (T)p : null;
+
+        // 11-08: 자주 여는 창을 켜는 로딩 안(첫 화면이 나오기 전)에 미리 만들고, 한 번 켜서 글자까지 그려 둔 뒤 닫아 둠
+        //        — 처음 열 때(창 만들기 + 한글 글자 그리기) 멈칫하던 것 (PC 측정 첫 열기 103ms). 열 때는 예전과 같음
+        void Make<T>() where T : Popup
+        {
+            if (popups.TryGetValue(typeof(T), out var p) && p != null) return;
+            popups[typeof(T)] = Popup.Create<T>(root);
+        }
+
+        void Prewarm()
+        {
+            Make<WeaponPopup>(); Make<WeaponInfoPopup>(); Make<SkinPopup>(); Make<SupplyPopup>();
+            Make<ShopPopup>(); Make<MissionPopup>(); Make<ConfirmPopup>(); Make<ResultPopup>();
+            var made = new List<Popup>(popups.Values);
+            foreach (var p in made) p.gameObject.SetActive(true);
+            Canvas.ForceUpdateCanvases();                   // 글자 그물·글꼴 그림을 지금 만듦 (화면에 그려지기 전에 다시 닫음)
+            foreach (var p in made) p.gameObject.SetActive(false);
+        }
     }
 }

@@ -81,7 +81,15 @@ namespace KachiGun.EditorTools
             Run();
         }
         public static bool AdOnly => SessionState.GetBool(Key + ".ad", false);
-        public static bool Main => !AnimOnly && !RigOnly && !EnOnly && !StoreOnly && !ZombieOnly && !FontOnly && !AdOnly;
+
+        /// <summary>11-08 성능 측정: 진행한 세이브로 스테이지·창·던전을 5바퀴 → Logs/PlayTest/perf/&lt;KACHI_PERF_LABEL&gt;.json (PlayTestPerf.cs)</summary>
+        public static void RunPerf()
+        {
+            SessionState.SetBool(Key + ".perf", true);
+            Run();
+        }
+        public static bool PerfOnly => SessionState.GetBool(Key + ".perf", false);
+        public static bool Main => !AnimOnly && !RigOnly && !EnOnly && !StoreOnly && !ZombieOnly && !FontOnly && !AdOnly && !PerfOnly;
 
         public static void Run()
         {
@@ -114,12 +122,13 @@ namespace KachiGun.EditorTools
             SessionState.SetBool(Key + ".zshow", false);
             SessionState.SetBool(Key + ".font", false);
             SessionState.SetBool(Key + ".ad", false);
+            SessionState.SetBool(Key + ".perf", false);
             GameManager.HoldFire = false;   // 11-07 스토어 촬영 사격 멈춤 풀기
             EditorApplication.Exit(errors == 0 ? 0 : 3);
         }
     }
 
-    public class PlayTestRunner : MonoBehaviour
+    public partial class PlayTestRunner : MonoBehaviour
     {
         int errors;
         RenderTexture rt;
@@ -149,6 +158,7 @@ namespace KachiGun.EditorTools
             if (PlayTest.ZombieOnly) { yield return ZombieShow(); yield break; }
             if (PlayTest.FontOnly) { yield return FontTour(); yield break; }
             if (PlayTest.AdOnly) { yield return AdTour(); yield break; }
+            if (PlayTest.PerfOnly) { yield return PerfTour(); yield break; }
 
             // 출석 창이 시험 중간(10초마다 날짜 확인)에 끼어들지 않게 — 출석은 11f 에서 따로
             // 11-04 밤: 처음 켜자마자 출석 창(1일차) → 받기 → 다이아 +100 (뒤 시험에 영향 없게 다이아는 되돌림)
@@ -160,6 +170,14 @@ namespace KachiGun.EditorTools
                 if (ap0) ap0.Close();
                 Check(S.gems - fg == 100 && S.AttendToday && !HUD.I.PopupOpen, $"처음 출석 → 다이아 +{S.gems - fg}");
                 S.gems = fg; S.attendCount = 0; GM.Notify();
+            }
+
+            // 11-08 성능: 자주 여는 창은 켤 때 미리 만들어 닫아 둠 · 보스·던전 배경음은 따로 일꾼이 미리 계산
+            {
+                var pwp = HUD.I.Get<WeaponPopup>(); var rp0 = HUD.I.Get<ResultPopup>();
+                Check(pwp != null && !pwp.gameObject.activeSelf && rp0 != null && !rp0.gameObject.activeSelf, "창 미리 만들어 둠 (총알·결과 창, 닫힌 채)");
+                var bt = typeof(AudioManager).GetField("bossTask", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic)?.GetValue(AudioManager.I) as System.Threading.Tasks.Task;
+                Check(bt != null, "보스·던전 배경음 미리 계산 시작");
             }
 
             // 1) 시작 전투

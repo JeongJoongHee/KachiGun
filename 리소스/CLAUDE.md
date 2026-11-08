@@ -1,6 +1,12 @@
 # 카치건 (좀비 키우기) — 세로 방치형 분대 슈팅, Unity 6000.0.84f1 · 2D URP
 
-## ▶ 재개 메모 (2026-11-08 16:20 — 좀비 죽는 모습 고침) — **재개하면 여기부터**
+## ▶ 재개 메모 (2026-11-08 16:45 — 성능 최적화) — **재개하면 여기부터**
+- 사용자 "오래 돌리면서 컨텐츠를 왔다갔다하면 화면이 밀림" → 측정 모드 `PlayTest.RunPerf`(Editor/PlayTestPerf.cs · 이름표 `KACHI_PERF_LABEL` · 3바퀴: 스테이지→창 4개→도전→스테이지→비밀던전→스테이지→보스) → `Logs/PlayTest/perf/before·after.json` → `tools/perf_report.py` → **`성능_점검.html`**
+- 누수 없음(물체 수·메모리 바퀴마다 그대로). 원인 = 처음 던전 136ms(보스 배경음 그 자리 계산) · 처음 창 103ms(창 만들기+한글 글자) · 사냥 중 무리 한 프레임에 6~10마리(코드 7~12ms)
+- 고침: 보스 배경음 켤 때 스레드로 미리(`AudioManager.PrepareBossBgm`) · 창 8개 로딩 안에서 미리 만들고 글자까지(`HUD.Prewarm`) · 무리 한 프레임 2마리(`GameManager.spawnQueue`) · 자동 저장 저장소 쓰기 30초마다(`Save(false)`, 나갈 때·보상은 바로) · 그림 캐시 열쇠 글자 없앰 · 효과 물체 다시 쓰기 · 레이저/폭발 목록 복사 없앰 · 스킨·보급품 합 캐시(목록 지문) · 화면 글자 바뀔 때만 · 피해 숫자 흐려지기 = 투명도만 · 효과 층 따로 Canvas · 같은 크기 다시 넣지 않기 · 쓰러진 좀비 뼈대 끔 → 첫 창 20ms · 첫 던전 22ms · 사냥 코드 최악 2~2.5ms · 시험 143줄 errors=0 · 폰 반영은 8번
+- 더 할 것(안 함): 좀비 풀(폰에서도 무리 때 끊기면) · 폰 프로파일러
+
+## ▶ 재개 메모 (2026-11-08 16:20 — 좀비 죽는 모습 고침)
 - 사용자 "좀비가 물구나무 서서 죽거나 이상한 방향으로 죽음" → 원인 = `doodle_art.py` 가 죽기 칸을 걷기 그림 시계 방향 90도로 만듦(기는 좀비 2종은 물구나무 · 나머지는 엎드려 팔이 땅에 박힘) → 서 있는 10종 = 뒤로 벌러덩(얼굴·팔 하늘) · crawler·bucket = 돌리지 않고 납작, 죽을 때 돌아서지 않음(`Zombie.IsCrawler`) · `doodle_art.py zdie`(Edge 없이 죽기 칸만) · PlayTest 2줄 + `19d_zombie_die` · errors=0 · 커밋 239bd38 · 옛 그림 = 스크래치 zombie_before_1108 · 폰 반영은 8번
 - **8번 굽기 전 확인할 것**: Unity 가 11-08 15:58 에 GPGS 플러그인 파일을 저절로 만듦(`Assets/GooglePlayGames/Resources/PlayGamesSettings.asset` · `Plugins/Android/GooglePlayGamesManifest.androidlib`(APP_ID 빈 값 "\u003") · ProjectSettings/GooglePlayGameSettings.txt · settingsTemplate/AndroidResolverDependencies 의 games-v2·nearby 줄 · bundleVersion 1.0.7) — **커밋 안 함**. 11-07 엔 "App ID 설정 파일은 뺌" 이었으니, 8번 때 빈 APP_ID 매니페스트가 AAB 에 들어가도 폰이 켜지는지 개발용 APK 로 확인하고 뺄지 정할 것
 

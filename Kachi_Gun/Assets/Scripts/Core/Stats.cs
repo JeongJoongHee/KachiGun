@@ -18,19 +18,34 @@ namespace KachiGun
         public static double Money(int lv) => Tables.Upgrade(lv).gold;
 
         // ---------- 스킨 보유 효과 (가진 것 전부 합산, %) ----------
-        public static double SkinAtk { get { double s = 0; foreach (var i in S.skins) s += Skin(i)?.atk ?? 0; return s; } }
-        public static double SkinSpd { get { double s = 0; foreach (var i in S.skins) s += Skin(i)?.spd ?? 0; return s; } }
-        public static double SkinGold { get { double s = 0; foreach (var i in S.skins) s += Skin(i)?.gold ?? 0; return s; } }
+        public static double SkinAtk { get { Sums(); return sAtk; } }
+        public static double SkinSpd { get { Sums(); return sSpd; } }
+        public static double SkinGold { get { Sums(); return sGold; } }
         static SkinRow Skin(int id) { foreach (var r in Tables.Skins) if (r.id == id) return r; return null; }
 
         // ---------- 보급품 보유 효과 (가진 것 전부 합산, %) ----------
-        public static double SupplyAtk { get { double s = 0; foreach (var r in OwnedSupplies()) s += r.atk; return s; } }
-        public static double SupplySpd { get { double s = 0; foreach (var r in OwnedSupplies()) s += r.spd; return s; } }
-        public static double SupplyGold { get { double s = 0; foreach (var r in OwnedSupplies()) s += r.gold; return s; } }
-        public static double SupplyBoss { get { double s = 0; foreach (var r in OwnedSupplies()) s += r.boss; return s; } }
-        static System.Collections.Generic.IEnumerable<SupplyRow> OwnedSupplies()
+        public static double SupplyAtk { get { Sums(); return pAtk; } }
+        public static double SupplySpd { get { Sums(); return pSpd; } }
+        public static double SupplyGold { get { Sums(); return pGold; } }
+        public static double SupplyBoss { get { Sums(); return pBoss; } }
+
+        // 11-08: 스킨·보급품 합은 가진 목록이 바뀔 때만 다시 셈 (전엔 총알 한 발·좀비 한 마리마다 표 전체를 돌았음)
+        //        목록 내용으로 지문을 만들어 비교 — 개수가 같아도 내용이 바뀌면(세이브 바꾸기·시험) 다시 셈
+        static SaveData sumOf; static long sumKey = long.MinValue;
+        static double sAtk, sSpd, sGold, pAtk, pSpd, pGold, pBoss;
+        static void Sums()
         {
-            foreach (var r in Tables.Supplies) if (S.supplies.Contains(r.id)) yield return r;
+            var s = S;
+            long k = 17;
+            foreach (var i in s.skins) k = k * 31 + i + 1;
+            k = k * 131 + 7;
+            foreach (var i in s.supplies) k = k * 31 + i + 1;
+            if (ReferenceEquals(s, sumOf) && k == sumKey) return;
+            sumOf = s; sumKey = k;
+            sAtk = sSpd = sGold = 0;
+            foreach (var i in s.skins) { var r = Skin(i); if (r == null) continue; sAtk += r.atk; sSpd += r.spd; sGold += r.gold; }
+            pAtk = pSpd = pGold = pBoss = 0;
+            foreach (var r in Tables.Supplies) if (s.supplies.Contains(r.id)) { pAtk += r.atk; pSpd += r.spd; pGold += r.gold; pBoss += r.boss; }
         }
 
         // ---------- 총알 슬롯 강화 (장착 칸마다, 효과 = 표 값 x 장착한 총알 등급 배율) ----------

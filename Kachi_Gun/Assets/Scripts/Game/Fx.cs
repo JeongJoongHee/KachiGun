@@ -13,7 +13,8 @@ namespace KachiGun
 
         class Anim { public Transform t; public SpriteRenderer sr; public Sprite[] frames; public float time, dur, scale; public Vector2 vel; public bool fade; }
         readonly List<Anim> anims = new();
-        class Pop { public RectTransform rt; public Text tx; public Vector2 vel; public float t, dur; public object key; public double val; }
+        readonly Stack<Anim> animPool = new();   // 11-08: 끝난 효과를 지우지 않고 다시 씀 (맞을 때마다 새로 만들고 지웠음)
+        class Pop { public RectTransform rt; public Text tx; public Vector2 vel; public float t, dur; public object key; public double val; public bool dirty; }
         readonly List<Pop> pops = new();
         readonly Stack<Pop> popPool = new();
         class Bill { public RectTransform rt; public Vector2 start, mid, end; public float t, dur; public double gold; public bool gem; }
@@ -27,13 +28,20 @@ namespace KachiGun
         // ---------- 월드 ----------
         Anim Spawn(Sprite[] fr, Vector2 p, float dur, float scale, int order)
         {
-            var go = new GameObject("Fx");
-            go.transform.position = p;
-            go.transform.localScale = Vector3.one * scale;
-            var sr = go.AddComponent<SpriteRenderer>();
-            sr.sprite = fr[0];
-            sr.sortingOrder = order;
-            var a = new Anim { t = go.transform, sr = sr, frames = fr, dur = dur, scale = scale };
+            Anim a = null;
+            while (a == null && animPool.Count > 0) { a = animPool.Pop(); if (!a.t) a = null; }
+            if (a == null)
+            {
+                var go = new GameObject("Fx");
+                a = new Anim { t = go.transform, sr = go.AddComponent<SpriteRenderer>() };
+            }
+            else a.t.gameObject.SetActive(true);
+            a.t.SetPositionAndRotation(p, Quaternion.identity);
+            a.t.localScale = Vector3.one * scale;
+            a.sr.sprite = fr[0];
+            a.sr.sortingOrder = order;
+            a.sr.color = Color.white;
+            a.frames = fr; a.dur = dur; a.scale = scale; a.time = 0; a.vel = Vector2.zero; a.fade = false;
             anims.Add(a);
             return a;
         }
@@ -109,7 +117,7 @@ namespace KachiGun
                 var a = anims[i];
                 a.time += dt;
                 float k = a.time / a.dur;
-                if (k >= 1 || a.t == null) { if (a.t) Destroy(a.t.gameObject); anims.RemoveAt(i); continue; }
+                if (k >= 1 || a.t == null) { if (a.t) { a.t.gameObject.SetActive(false); animPool.Push(a); } anims.RemoveAt(i); continue; }
                 a.sr.sprite = a.frames[Mathf.Min(a.frames.Length - 1, (int)(k * a.frames.Length))];
                 if (a.vel != Vector2.zero) { a.t.position += (Vector3)(a.vel * dt); a.vel += Vector2.down * 9f * dt; }
                 if (a.fade) { var c = a.sr.color; c.a = 1 - k; a.sr.color = c; }
@@ -138,7 +146,7 @@ namespace KachiGun
                     if (q.key == key && q.t < 0.3f)
                     {
                         q.val += dmg;
-                        q.tx.text = Num.F(q.val);
+                        q.dirty = true;                  // 글자는 이 프레임 끝에 한 번만 (산탄 5알이 한꺼번에 맞으면 5번 다시 만들었음)
                         q.t = Mathf.Min(q.t, 0.04f);     // 다시 톡 커짐
                         return;
                     }
@@ -162,6 +170,8 @@ namespace KachiGun
             }
             p.rt.gameObject.SetActive(true);
             p.tx.text = s; p.tx.color = c; p.tx.fontSize = Art.FontSize(size);
+            p.tx.canvasRenderer.SetAlpha(1f);
+            p.dirty = false;
             p.rt.anchoredPosition = WorldToUi(world);
             p.vel = new Vector2(Random.Range(-30f, 30f), 260f);
             p.t = 0; p.dur = dur; p.key = null; p.val = 0;
@@ -175,20 +185,25 @@ namespace KachiGun
             {
                 var p = pops[i];
                 p.t += dt;
+                if (p.dirty) { p.dirty = false; p.tx.text = Num.F(p.val); }
                 p.rt.anchoredPosition += p.vel * dt;
                 p.vel *= 1 - dt * 5f;
                 float k = p.t / p.dur;
-                var c = p.tx.color; c.a = k < 0.6f ? 1 : 1 - (k - 0.6f) / 0.4f; p.tx.color = c;
+                // 11-08: 흐려지기 = 그리는 쪽 투명도만 (글자 색을 바꾸면 글자·테두리 그물을 매 프레임 다시 만듦)
+                p.tx.canvasRenderer.SetAlpha(k < 0.6f ? 1 : Mathf.Max(0, 1 - (k - 0.6f) / 0.4f));
                 float s = k < 0.12f ? 1.3f - k * 2.5f : 1f;
                 p.rt.localScale = Vector3.one * s;
                 if (k >= 1) { p.rt.gameObject.SetActive(false); pops.RemoveAt(i); popPool.Push(p); }
             }
         }
 
+        Canvas uiRoot;
+
         public Vector2 WorldToUi(Vector2 world)
         {
             Vector2 sp = Cam.WorldToScreenPoint(world);
-            var c = uiLayer.GetComponentInParent<Canvas>().rootCanvas;
+            if (!uiRoot) uiRoot = uiLayer.GetComponentInParent<Canvas>().rootCanvas;   // 11-08: 숫자·돈마다 찾지 않음
+            var c = uiRoot;
             var uiCam = c.renderMode == RenderMode.ScreenSpaceOverlay ? null : c.worldCamera;   // 시험 캡처는 카메라 모드
             RectTransformUtility.ScreenPointToLocalPointInRectangle(uiLayer, sp, uiCam, out var lp);
             return lp;

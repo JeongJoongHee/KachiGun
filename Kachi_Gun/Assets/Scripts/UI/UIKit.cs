@@ -218,7 +218,9 @@ namespace KachiGun
         void Update()
         {
             float want = down ? 0.92f : 1f;
-            float s = Mathf.MoveTowards(transform.localScale.x, want, Time.unscaledDeltaTime * 3f);
+            float cur = transform.localScale.x;
+            if (cur == want) return;          // 11-08: 다 돌아왔으면 손대지 않음
+            float s = Mathf.MoveTowards(cur, want, Time.unscaledDeltaTime * 3f);
             transform.localScale = new Vector3(s, s, 1);
         }
         public void OnPointerDown(PointerEventData e) => down = true;
@@ -245,8 +247,8 @@ namespace KachiGun
         void Update()
         {
             float target = down ? 0.93f : 1f;
-            float s = Mathf.MoveTowards(transform.localScale.x, target, Time.unscaledDeltaTime * 3f);
-            transform.localScale = new Vector3(s, s, 1);
+            float cur = transform.localScale.x;
+            if (cur != target) { float s = Mathf.MoveTowards(cur, target, Time.unscaledDeltaTime * 3f); transform.localScale = new Vector3(s, s, 1); }
             if (!down) return;
             t -= Time.unscaledDeltaTime;
             if (t > 0) return;

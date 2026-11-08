@@ -17,7 +17,7 @@ namespace KachiGun
         public const int ZWalk = 0, ZHit = 4, ZDie = 5, ZFlash = 6;
         public const float ZombiePPU = 165f;
 
-        static readonly Dictionary<string, Sprite> cache = new();
+        static readonly Dictionary<(string, float, Vector2, Vector4), Sprite> cache = new();   // 11-08: 열쇠를 글자로 만들지 않음(총알 한 발마다 글자 4개가 생겼음)
         static readonly Dictionary<string, Sprite[]> frames = new();
         static Font font;
 
@@ -95,7 +95,7 @@ namespace KachiGun
         /// <summary>그림 한 장 전체를 스프라이트로. border = 9-slice 테두리(px, 왼·아래·오른·위)</summary>
         public static Sprite Get(string path, float ppu = 100f, Vector2? pivot = null, Vector4 border = default)
         {
-            string key = path + "|" + ppu + "|" + pivot + "|" + border;
+            var key = (path, ppu, pivot ?? new Vector2(0.5f, 0.5f), border);
             if (cache.TryGetValue(key, out var s) && s) return s;
             var t = Tex(path);
             if (!t) return null;

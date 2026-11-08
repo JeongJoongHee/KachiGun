@@ -85,7 +85,7 @@ namespace KachiGun
 
         void Update()
         {
-            panel.localScale = Vector3.MoveTowards(panel.localScale, Vector3.one, Time.unscaledDeltaTime * 1.2f);
+            if (panel.localScale != Vector3.one) panel.localScale = Vector3.MoveTowards(panel.localScale, Vector3.one, Time.unscaledDeltaTime * 1.2f);
         }
 
         protected void Msg(string err) => H.Msg(err);

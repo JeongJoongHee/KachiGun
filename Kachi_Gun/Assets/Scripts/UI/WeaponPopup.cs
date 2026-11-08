@@ -428,7 +428,7 @@ namespace KachiGun
         void Update()
         {
             if (popT > 0) { popT -= Time.unscaledDeltaTime; rt.localScale = Vector3.one * (1 + Mathf.Max(0, popT) * 0.8f); }
-            else rt.localScale = Vector3.one;
+            else if (rt.localScale != Vector3.one) rt.localScale = Vector3.one;
         }
 
         public void OnPointerClick(PointerEventData e) { if (!e.dragging) { AudioManager.Play(AudioManager.Sfx.UiClick); pop.Select(this); } }

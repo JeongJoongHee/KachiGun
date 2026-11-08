@@ -163,6 +163,7 @@ namespace KachiGun
 
             GenerateAllProceduralSounds();
             ApplySettings();
+            PrepareBossBgm();
         }
 
         public void ApplySettings()
@@ -196,7 +197,7 @@ namespace KachiGun
 
             var gm = GameManager.I;
             bool intense = gm != null && (gm.bossPhase || gm.mode != GameManager.Mode.Stage);
-            AudioClip target = intense ? (bossBgm ??= GenerateBossBgm()) : (stageBgm ??= GenerateStageBgm());
+            AudioClip target = intense ? (bossBgm ??= TakeBossBgm()) : (stageBgm ??= GenerateStageBgm());
 
             var cur = bgmPlayers[bgmCur];
             if (cur.isPlaying && cur.clip == target) return;
@@ -543,8 +544,24 @@ namespace KachiGun
             return BuildSongClip("Stage_BGM", 60f / 120f / 2f, sections, WaveType.Triangle);
         }
 
-        /// <summary>보스전·던전 38.4초 루프 (150 BPM, 긴박한 단조 · 6구간)</summary>
-        AudioClip GenerateBossBgm()
+        // 11-08: 보스·던전 곡(38초)을 처음 보스·던전에 들어가는 순간 계산하면 그 프레임이 멈칫함
+        //        → 켤 때 따로 일꾼(스레드)이 소리 값만 미리 계산 · 소리 조각(AudioClip)은 쓸 때 만듦
+        System.Threading.Tasks.Task<float[]> bossTask;
+        void PrepareBossBgm()
+        {
+            if (bossBgm != null || bossTask != null) return;
+            try { bossTask = System.Threading.Tasks.Task.Run(BossBgmData); } catch { bossTask = null; }
+        }
+        AudioClip TakeBossBgm()
+        {
+            float[] d = null;
+            try { if (bossTask != null) d = bossTask.Result; } catch { d = null; }
+            bossTask = null;
+            return MakeSongClip("Boss_BGM", d ?? BossBgmData());
+        }
+
+        /// <summary>보스전·던전 38.4초 루프 (150 BPM, 긴박한 단조 · 6구간) — 소리 값만 (어느 스레드에서도 됨)</summary>
+        static float[] BossBgmData()
         {
             float[] bassA = {
                 110f, 110f, 110f, 110f, 110f, 110f, 130.81f, 110f,
@@ -581,10 +598,19 @@ namespace KachiGun
                 new Section(bassC, leadC, DrumHalf),
                 new Section(bassA, leadA, DrumFull),
             };
-            return BuildSongClip("Boss_BGM", 60f / 150f / 2f, sections, WaveType.Square);
+            return BuildSongData(60f / 150f / 2f, sections, WaveType.Square);
         }
 
-        static AudioClip BuildSongClip(string name, float stepDur, Section[] sections, WaveType leadWave)
+        static AudioClip BuildSongClip(string name, float stepDur, Section[] sections, WaveType leadWave) => MakeSongClip(name, BuildSongData(stepDur, sections, leadWave));
+
+        static AudioClip MakeSongClip(string name, float[] data)
+        {
+            var clip = AudioClip.Create(name, data.Length, 1, SAMPLE_RATE, false);
+            clip.SetData(data, 0);
+            return clip;
+        }
+
+        static float[] BuildSongData(float stepDur, Section[] sections, WaveType leadWave)
         {
             int stepSamples = Mathf.CeilToInt(SAMPLE_RATE * stepDur);
             int steps = 0;
@@ -621,9 +647,7 @@ namespace KachiGun
                 }
             }
             for (int i = 0; i < total; i++) data[i] = Mathf.Clamp(data[i], -1f, 1f);
-            var clip = AudioClip.Create(name, total, 1, SAMPLE_RATE, false);
-            clip.SetData(data, 0);
-            return clip;
+            return data;
         }
 
         /// <summary>드럼 꼬리가 곡 끝을 넘으면 처음으로 돌려 붙임 (반복 이음새가 끊기지 않게)</summary>

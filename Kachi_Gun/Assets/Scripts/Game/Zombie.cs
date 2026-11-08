@@ -250,6 +250,7 @@ namespace KachiGun
         {
             if (!rig) return;
             if (rig.sr.enabled != on) rig.sr.enabled = on;
+            if (rig.gameObject.activeSelf != on) rig.gameObject.SetActive(on);   // 11-08: 쓰러진 뒤엔 뼈대 휘기 계산도 멈춤 (안 보이는데 매 프레임 계산했음)
             sr.enabled = !on;
         }
 
