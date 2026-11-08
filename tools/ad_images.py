@@ -106,12 +106,26 @@ def make(concept, W, H):
         gw = W - int(90 * s)
         g = card(crop_to(src, box, gw / gh), gw, gh, int(26 * s))
         canvas.alpha_composite(g, ((W - g.width) // 2, top))
-        text_outline(d, (W // 2, int(top * 0.40)), l1, font(fit_font(l1, int(88 * s), W - 80)), GOLD, w=8)
-        text_outline(d, (W // 2, int(top * 0.78)), l2, font(fit_font(l2, int(50 * s), W - 80)), INK, outline=CREAM, w=4)
+        # 11-08: 오른쪽 위 "확률형 아이템 포함" 띠와 안 겹치게 문구를 조금 아래로 (0.40 → 0.47 · 0.78 → 0.83)
+        text_outline(d, (W // 2, int(top * 0.47)), l1, font(fit_font(l1, int(88 * s), W - 80)), GOLD, w=8)
+        text_outline(d, (W // 2, int(top * 0.83)), l2, font(fit_font(l2, int(50 * s), W - 80)), INK, outline=CREAM, w=4)
         brand(canvas, int(46 * s), H - bottom + int(30 * s), s * 1.05)
         b = V.cta_button(int(400 * s), int(108 * s), '무료 플레이', int(50 * s))
         canvas.alpha_composite(b, (W - b.width - int(36 * s), H - bottom + int(22 * s)))
-    return canvas.convert('RGB')
+    return prob(canvas.convert('RGB'))
+
+
+def prob(im):
+    """11-08 "확률형 아이템 포함" 표시 — 영상과 같은 모양. 가로 1.91:1 은 왼쪽 아래(브랜드 위), 나머지는 오른쪽 위"""
+    W, H = im.size
+    s = min(W, H) / 1080
+    b = V.prob_badge(round(s * (1.0 if W > H * 1.5 else 0.8 if H > W * 1.6 else 0.7), 3))
+    im = im.convert('RGBA')
+    m = int(22 * s)
+    if W > H * 1.5: pos = (m + 10, H - 120 - b.height - m)
+    else: pos = (W - b.width - m, int(12 * s) if H <= W * 1.6 else m)
+    im.alpha_composite(b, pos)
+    return im.convert('RGB')
 
 
 def main():

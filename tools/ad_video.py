@@ -341,6 +341,40 @@ def mix_audio(segs, total, path):
         w.setnchannels(1); w.setsampwidth(2); w.setframerate(SR); w.writeframes(pcm.tobytes())
 
 
+# ---------------------------------------------------------------- 확률형 아이템 표시 (11-08)
+# 게임산업법(2024-03 개정): 광고·선전물에 "확률형 아이템 포함" 표시. 게임 안 [총알 뽑기] = 보석(원화로 살 수 있음)으로 무작위 총알.
+PROB_TEXT = '확률형 아이템 포함'
+_badge = {}
+
+
+def prob_badge(scale=1.0):
+    """어두운 반투명 둥근 띠 + 크림 글자 (영상·이미지·끝 화면 모두 같은 모양)"""
+    if scale not in _badge:
+        f = font(int(40 * scale))
+        tw = int(f.getlength(PROB_TEXT))
+        pw, ph = tw + int(44 * scale), int(64 * scale)
+        b = Image.new('RGBA', (pw + 8, ph + 8), (0, 0, 0, 0))
+        d = ImageDraw.Draw(b)
+        d.rounded_rectangle([4, 4, pw + 3, ph + 3], int(22 * scale), fill=(28, 17, 10, 200), outline=CREAM, width=max(2, int(3 * scale)))
+        text_outline(d, (4 + pw // 2, 4 + ph // 2 - int(2 * scale)), PROB_TEXT, f, CREAM, w=max(2, int(3 * scale)))
+        _badge[scale] = b
+    return _badge[scale]
+
+
+def badge_pos(W, H, b):
+    """세로 = 오른쪽 위 (문구 띠 위) · 정사각/가로 = 왼쪽 위 (문구 쪽, 게임 화면 안 가림)"""
+    m = int(26 * min(W, H) / 1080)
+    return (W - b.width - m, m) if H > W else (m, m)
+
+
+def with_badge(im):
+    W, H = im.size
+    b = prob_badge(round(min(W, H) / 1080, 3))
+    im = im.convert('RGBA')
+    im.alpha_composite(b, badge_pos(W, H, b))
+    return im.convert('RGB')
+
+
 # ---------------------------------------------------------------- 영상
 def render(name, segs, W, H, maker):
     total = sum(s['dur'] for s in segs)
@@ -358,6 +392,7 @@ def render(name, segs, W, H, maker):
         for i in range(nf):
             im = maker(s, i / FPS)
             if im.size != (W, H): im = im.resize((W, H))
+            im = with_badge(im)
             p.stdin.write(im.tobytes())
             if thumb is None and i == int(0.6 * FPS): thumb = im
     p.stdin.close(); p.wait()

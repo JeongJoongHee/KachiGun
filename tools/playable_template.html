@@ -454,6 +454,12 @@ function drawMergePanel() {
   }
   cx.globalAlpha = 1;
 }
+// 11-08 게임산업법: 광고에 "확률형 아이템 포함" 표시 (게임 안 총알 뽑기 = 보석으로 무작위 총알) — 늘 보이게
+function probBadge(end) {
+  var w = 172, h = 30, x = end ? W / 2 - w / 2 : 14, y = end ? 46 : 100;
+  roundRect(x, y, w, h, 12, "rgba(28,17,10,0.78)", "#FFF4D6", 2);
+  txt("확률형 아이템 포함", x + w / 2, y + h / 2 + 1, 17, "#FFF4D6", "#1C110A", 2);
+}
 function drawEnd() {
   var a = Math.min(1, S.phaseT / 0.3);
   cx.globalAlpha = a * 0.82; cx.fillStyle = "#1a110b"; cx.fillRect(0, 0, W, H); cx.globalAlpha = a;
@@ -558,6 +564,7 @@ function render() {
   }
   if (S.flash > 0) { cx.globalAlpha = S.flash * 1.2; cx.fillStyle = "#fff"; cx.fillRect(0, 0, W, H); cx.globalAlpha = 1; }
   if (ph === "end") drawEnd();
+  probBadge(ph === "end");
   cx.restore();
 }
 
