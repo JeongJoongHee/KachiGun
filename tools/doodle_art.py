@@ -5,6 +5,7 @@
 → 게임 코드는 그대로, 그림만 바뀜. 뼈대는 그 다음 tools/rig_gen.py 로 다시 심음(ZOMBIE_RIG · CRAWL_RIG · CAPY_BY_SKIN).
 
 사용: PYTHONUTF8=1 python tools/doodle_art.py [capy] [skins] [zombie] [map] [icon]     (없으면 capy·zombie·map) — PowerShell 에서(Bash 에선 Edge 가 안 뜸)
+      zdie = 좀비 죽기 칸만 다시(Edge 없이, Bash 에서도 됨)
       → Kachi_Gun/Assets/Resources/Art/{Char,Zombie,Map}/...  · 미리보기 tools/_preview/doodle_*.png
 원래 도트 그림 백업: tools/_build/pixel_orig/ (git 에는 원래 그림이 기록에 있음)
 
@@ -447,6 +448,45 @@ def ogre():
     ])
 
 
+CRAWLERS = {'crawler', 'bucket'}     # 기어 다니는 좀비 (이미 누워 있음)
+
+
+def zombie_die_cell(a, crawl=False):
+    """죽기 칸(400x380): 바닥(y=376)에 붙인 쓰러진 그림.
+    서 있는 좀비 = 뒤로 벌러덩(머리 오른쪽 · 얼굴·팔은 하늘). 11-08 전엔 시계 방향으로 돌려 얼굴·팔이 땅에 박혔음.
+    기어 다니는 좀비 = 돌리지 않고 그 자리에 납작 엎어짐(머리 오른쪽 그대로). 11-08 전엔 90도 돌려 물구나무가 됐음.
+    게임(Zombie.Die): 서 있는 좀비는 맞은 쪽 반대로 뒤집어 그림, 기어 다니는 좀비는 늘 분대 쪽을 봄."""
+    if crawl:
+        ly = a.rotate(-3, resample=Image.BICUBIC, center=(200, 376))      # 머리 쪽이 살짝 땅으로
+    else:
+        ly = a.rotate(90, resample=Image.BICUBIC, expand=True).transpose(Image.FLIP_LEFT_RIGHT)
+    arr = np.array(ly); ys, xs = np.nonzero(arr[..., 3] > 0)
+    ly = ly.crop((xs.min(), ys.min(), xs.max() + 1, ys.max() + 1))
+    if crawl:
+        ly = ly.resize((ly.width, max(1, int(ly.height * 0.86))), Image.BICUBIC)   # 털썩 납작
+    if ly.width > 396:
+        k = 396 / ly.width; ly = ly.resize((396, int(ly.height * k)), Image.BICUBIC)
+    cell = Image.new('RGBA', (400, 380), (0, 0, 0, 0))
+    cell.alpha_composite(ly, ((400 - ly.width) // 2, 376 - ly.height))
+    return cell
+
+
+def remake_zombie_die():
+    """이미 있는 시트의 걷기 칸(0)에서 죽기 칸(5)만 다시 만듦 — Edge 없이 (Bash 에서도 됨)"""
+    d = os.path.join(ART, 'Zombie')
+    for fn in sorted(os.listdir(d)):
+        if not (fn.startswith('z_') and fn.endswith('.png')):
+            continue
+        name = fn[2:-4]
+        p = os.path.join(d, fn)
+        sheet = Image.open(p).convert('RGBA')
+        a = sheet.crop((0, 0, 400, 380))
+        sheet.paste((0, 0, 0, 0), (2000, 0, 2400, 380))
+        sheet.alpha_composite(zombie_die_cell(a, name in CRAWLERS), (2000, 0))
+        sheet.save(p)
+        print('zombie die', name)
+
+
 def make_zombie(name, svg):
     im = render(svg, 400, 380, wob=4.0, freq=0.018)
     a = Image.fromarray(im)
@@ -456,13 +496,8 @@ def make_zombie(name, svg):
     # 4 맞기 = 살짝 뒤로 젖힘
     hit = a.rotate(6, resample=Image.BICUBIC, center=(200, 376))
     sheet.alpha_composite(hit, (1600, 0))
-    # 5 죽기 = 눕힘(머리 오른쪽), 바닥에 붙임
-    ly = a.rotate(-90, resample=Image.BICUBIC, expand=True)
-    arr = np.array(ly); ys, xs = np.nonzero(arr[..., 3] > 0)
-    ly = ly.crop((xs.min(), ys.min(), xs.max() + 1, ys.max() + 1))
-    if ly.width > 396:
-        k = 396 / ly.width; ly = ly.resize((396, int(ly.height * k)), Image.BICUBIC)
-    sheet.alpha_composite(ly, (2000 + (400 - ly.width) // 2, 376 - ly.height))
+    # 5 죽기
+    sheet.alpha_composite(zombie_die_cell(a, name in CRAWLERS), (2000, 0))
     # 6 = 흰 실루엣
     al = im[..., 3]
     wh = np.zeros_like(im); wh[..., :3] = 255; wh[..., 3] = al
@@ -626,6 +661,8 @@ if __name__ == '__main__':
         pv.save(os.path.join(PREV, 'doodle_skins.png'))
     if 'zombie' in what:
         make_zombies()
+    if 'zdie' in what:
+        remake_zombie_die()
     if 'map' in what:
         make_map()
     if 'icon' in what:

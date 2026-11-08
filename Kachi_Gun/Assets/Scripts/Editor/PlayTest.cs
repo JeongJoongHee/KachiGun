@@ -747,6 +747,32 @@ namespace KachiGun.EditorTools
                 Log($"밀림 값: 미사일 {mv:0.00} · 일반 {mv2:0.00}");
                 Check(mv < 0.001f && mv2 > 0.5f, "미사일 피해 = 넉백 없음 (일반 피해만 밀림)");
                 GM.ClearTargets();
+                // 11-08 죽는 방향: 서 있는 좀비 = 분대(왼쪽)에서 맞으면 뒤로 벌러덩(머리 오른쪽 = 뒤집지 않음)
+                //                기어 다니는 좀비 = 돌아서지 않고 분대 쪽을 본 채 엎어짐(뒤집음). 전엔 물구나무로 죽었음
+                {
+                    var zrows = Tables.Zombies;
+                    var dz = new System.Collections.Generic.List<Zombie>();
+                    int dn = zrows.Count, dcol = 4;
+                    for (int i = 0; i < dn; i++)
+                    {
+                        float x = Mathf.Lerp(-Field.I.ViewHalfW + 1.3f, Field.I.ViewHalfW - 1.3f, (i % dcol) / (dcol - 1f));
+                        float y = Field.I.PlayTop - 1.6f - (i / dcol) * 2.2f;
+                        dz.Add(Zombie.Spawn(zrows[i], new Vector2(x, y), 1e12, 0));
+                    }
+                    yield return Wait(0.1f);
+                    foreach (var q in dz) q.Hit(2e12, q.Pos + Vector2.left, false);
+                    bool stand = true, crawl = true; int nCrawl = 0;
+                    foreach (var q in dz)
+                    {
+                        if (q.IsCrawler) { nCrawl++; crawl &= q.sr.flipX; }
+                        else stand &= !q.sr.flipX;
+                    }
+                    Check(stand, "죽는 방향: 서 있는 좀비는 뒤로 벌러덩(머리가 분대 반대쪽)");
+                    Check(nCrawl >= 2 && crawl, $"죽는 방향: 기어 다니는 좀비 {nCrawl}종은 분대 쪽을 본 채 엎어짐");
+                    yield return Wait(0.45f);
+                    Capture("19d_zombie_die");
+                    GM.ClearTargets();
+                }
                 // 미사일 장착 장면 캡처 (등급 색 폭발 · 네온 오오라)
                 var keep = new System.Collections.Generic.List<int>(S.slots);
                 S.slots[0] = Tables.Code(7, "missile"); S.slots[1] = Tables.Code(5, "single"); S.slots[2] = Tables.Code(3, "pierce");   // 청록 미사일 · 빨강 단발 · 보라 관통

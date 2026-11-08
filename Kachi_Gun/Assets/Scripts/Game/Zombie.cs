@@ -308,6 +308,9 @@ namespace KachiGun
             else { AudioManager.Play(AudioManager.Sfx.Hit); ShowBar(isBoss); }
         }
 
+        /// <summary>기어 다니는 좀비(crawler·bucket) — 뼈대 종류 crawl</summary>
+        public bool IsCrawler => rig ? rig.data.kind == "crawl" : row != null && (row.id == "crawler" || row.id == "bucket");
+
         void Die(Vector2 from, bool push = true)
         {
             dead = true;
@@ -319,7 +322,9 @@ namespace KachiGun
             if (shaderFlash) { flashT = FlashTime; if (rig) Art.SetFlash(rig.sr, 0); }
             fallFrom = 0.35f * scale;
             knock = push ? (Pos - from).normalized * (isBoss ? 0.5f : 1.8f) : Vector2.zero;   // 미사일로 죽으면 밀리지 않고 그 자리에 쓰러짐
-            dir = (Pos - from).x > 0 ? 1 : -1;      // 맞은 쪽 반대로 쓰러짐 (죽기 그림은 머리가 오른쪽)
+            // 죽기 그림은 머리가 오른쪽. 서 있는 좀비 = 맞은 쪽 반대로 벌러덩 · 기어 다니는 좀비 = 돌아서지 않고 그 자리에 엎어짐(분대 쪽)
+            if (IsCrawler) dir = -1;
+            else dir = (Pos - from).x > 0 ? 1 : -1;
             sr.flipX = flash.flipX = dir < 0;
             AudioManager.Play(isBoss ? AudioManager.Sfx.BossDead : AudioManager.Sfx.Dead);
             GameManager.I?.OnTargetDead(this);
