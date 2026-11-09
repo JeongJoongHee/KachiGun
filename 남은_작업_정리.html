@@ -125,11 +125,29 @@
     <ol><li>준비: 설정 [클라우드 저장] 줄 숨김(App ID 없을 때) · Unity 가 만든 게임즈 설정 파일 정리 · 자동 시험 · 안드로이드 컴파일 · 출시 노트 초안</li>
     <li>개발용 APK(테스트 광고) → <span class="tag t-see">보기</span> 폰에서 켜지는지 · 광고 · 세이브 — 7번과 서명이 달라 7번을 지워야 깔리니, 세이브를 지켜야 하면 이 단계는 건너뛰고 ③ 비공개 트랙으로 확인</li>
     <li>AAB 점검(aab_check) + 7번과 권한 목록 비교 — 달라진 권한이 있으면 데이터 보안 답 확인</li>
-    <li>이전 AAB 는 스크래치에 백업 · 결과 파일 위치를 알려 드림</li></ol></span></span></label></li>
+    <li>이전 AAB 는 스크래치에 백업 · 결과 파일 위치를 알려 드림</li></ol></span>
+    <span class="ok"><b>11-09 끝</b> — <code>Kachi_Gun\Builds\kachizombie-1.0.8-8.aab</code> (59.8MB · 버전 코드 8 · 1.0.8) · 점검 8항목 통과 · 권한 7번과 같음(데이터 보안 답 그대로) · 자동 시험 143줄 errors=0 · 설정 [클라우드 저장] 줄은 App ID 넣는 9번부터 보임 · 개발용 APK <code>kachizombie-1.0.8-8-debug.apk</code> 도 있음(7번을 지워야 깔려 세이브가 사라지니 비공개 트랙으로 확인 추천)</span></span></label></li>
   <li data-id="r-up8"><label><input type="checkbox"><span><span class="tag t-me">직접</span><b>8번을 비공개 트랙에 먼저</b> <span class="time">반나절~하루</span>
     <span class="how"><ol><li>zkfpf1 Play Console › 카피바라vs좀비 › 테스트 및 출시 › 비공개 테스트 › Alpha › [새 버전 만들기]</li>
-    <li>8번 aab 올리기 → 출시 노트(제가 드린 문구) → [다음] → [저장 및 게시] → 검토</li>
+    <li>8번 aab 올리기 → 출시 노트(아래 [복사] — 프로덕션에도 같은 문구) → [다음] → [저장 및 게시] → 검토</li>
     <li>폰(테스터 계정) Play 스토어에서 업데이트 → 켜지는지 · 광고 · 세이브가 그대로인지 → ⑤ s-bug 같이 보기</li></ol></span>
+    <span class="how">출시 노트 (8번 · 한국어/영어 — 칸에 그대로 붙이면 언어별로 나뉨)</span>
+    <ul class="copy-list" data-plain="한국어 197자 · 영어 320자 / 각 500"><li><span class="t" style="white-space:pre-line">&lt;ko-KR&gt;
+카피바라vs좀비 정식 출시 버전입니다!
+- 좀비가 쓰러지는 모습과 몰려오는 무리를 다듬었습니다.
+- 처음 던전·창을 열 때 잠깐 멈추던 문제를 고쳤습니다.
+- 총알을 카드로 끌어다 놓아 장착할 수 있습니다.
+- 리더 카피바라가 조금 커지고, 아래 총알 칸이 동료1 | 리더 | 동료2 순서가 됩니다.
+- 방치 보상 시간 표시 등 여러 버그를 고쳤습니다.
+&lt;/ko-KR&gt;
+&lt;en-US&gt;
+Capybara vs Zombies is officially launched!
+- Smoother zombie deaths and hordes.
+- Fixed a short freeze when opening the first dungeon or menus.
+- Drag a bullet onto a card to equip it.
+- The leader capybara is a bit bigger; bottom slots are Ally 1 | Leader | Ally 2.
+- Fixed the idle reward time display and other bugs.
+&lt;/en-US&gt;</span></li></ul>
     <span class="ok">끝난 표시: 폰 설정 › 앱 › 카피바라vs좀비 › 버전 1.0.8</span></span></label></li>
   <li data-id="s-bug"><label><input type="checkbox"><span><span class="tag t-see">보기</span><b>8번에서 새로 볼 것</b> — 총알을 카드로 끌어다 놓아 장착(정보 창 [장착] 없음) · 코스튬 가격 쉼표 · 설정에 진동 줄 없음 · 방치 보상 최대 08:00 · 리더 조금 크게 · 아래 총알 칸 동료1 | 리더 | 동료2 · <b>좀비가 뒤로 벌러덩 쓰러짐</b> · <b>처음 던전·처음 창 열 때 멈칫 없음</b> · 10분 넘게 사냥해도 끊김 없음 · 켜는 시간 · 7번 세이브가 그대로 이어지는지</span></label></li>
   <li data-id="r-release"><label><input type="checkbox"><span><span class="tag t-me">직접</span><b>프로덕션 출시 (버전 8)</b> <span class="time">10분 + 검토 1~3일</span>
@@ -390,10 +408,11 @@ Play — <code>게시 과정\구글_답변_앱이전_1107.txt</code> · 앱 이�
   // 구글 광고 칸 수: 한글·한자·전각 = 2, 나머지 = 1
   function units(s){ var n=0; for(var i=0;i<s.length;i++){ var c=s.charCodeAt(i); n+=(c>=0x1100&&!(c>=0xFF61&&c<=0xFFDC))?2:1; } return n; }
   document.querySelectorAll('.copy-list').forEach(function(ul){
-    var lim=+ul.dataset.lim;
+    var lim=+ul.dataset.lim, plain=ul.dataset.plain;
     ul.querySelectorAll('li').forEach(function(li){
       var t=li.querySelector('.t').textContent, u=units(t);
-      var c=document.createElement('span'); c.className='u'+(u>lim?' over':''); c.textContent=u+' / '+lim; li.appendChild(c);
+      // data-plain = 구글 애즈 칸 수가 아닌 글 (출시 노트 등) — 글자 수는 미리 적어 둔 값
+      var c=document.createElement('span'); c.className='u'+(!plain&&u>lim?' over':''); c.textContent=plain||(u+' / '+lim); li.appendChild(c);
       var b=document.createElement('button'); b.type='button'; b.className='copy'; b.textContent='복사';
       b.addEventListener('click',function(){ copyText(t,b,'복사'); }); li.appendChild(b);
     });

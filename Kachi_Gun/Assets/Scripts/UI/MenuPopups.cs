@@ -345,7 +345,8 @@ namespace KachiGun
 #if UNITY_EDITOR
         protected override Vector2 Size => new(1000, 1500);
 #else
-        protected override Vector2 Size => new(1000, 1070);   // 11-07 진동 줄 삭제로 -150
+        // 11-09 8번: Play 게임즈 App ID 가 없으면(9번 전) [클라우드 저장] 줄을 빼서 한 줄(-150) 짧게
+        protected override Vector2 Size => new(1000, CloudAuth.Configured ? 1070 : 920);   // 11-07 진동 줄 삭제로 -150
 #endif
         protected override string Title => "설정";
         Button bgm, sfx, lang;
@@ -363,8 +364,10 @@ namespace KachiGun
             });
 
             Row(L.T("저장"), 3, new Color(0.45f, 0.7f, 0.3f), () => { S.Save(); H.Toast(L.T("저장했습니다 (기기 안)")); });
-            Row(L.T("클라우드 저장"), 4, new Color(0.3f, 0.55f, 0.95f), () => H.Open<CloudPopup>());
-            Row(L.T("게임 종료"), 5, new Color(0.8f, 0.32f, 0.26f), () => H.Open<QuitPopup>());
+            // 11-09: 클라우드는 App ID 를 넣은 빌드(9번)부터 — 그 전엔 줄을 빼고 [게임 종료]를 한 칸 올림
+            bool cloud = CloudAuth.Configured;
+            if (cloud) Row(L.T("클라우드 저장"), 4, new Color(0.3f, 0.55f, 0.95f), () => H.Open<CloudPopup>());
+            Row(L.T("게임 종료"), cloud ? 5 : 4, new Color(0.8f, 0.32f, 0.26f), () => H.Open<QuitPopup>());
 
 #if UNITY_EDITOR
             var t = UIKit.Label(content, "[테스트용 — 에디터에서만 보임]", 30, UIKit.Red, TextAnchor.MiddleCenter, 2);

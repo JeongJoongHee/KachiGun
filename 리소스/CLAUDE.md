@@ -1,6 +1,13 @@
 # 카치건 (좀비 키우기) — 세로 방치형 분대 슈팅, Unity 6000.0.84f1 · 2D URP
 
-## ▶ 재개 메모 (2026-11-08 밤 — 문서 하나로 합침 · 구글 애즈 · 광고 소재 다시) — **재개하면 여기부터**
+## ▶ 재개 메모 (2026-11-09 오전 — 프로덕션 승인 · 8번 AAB) — **재개하면 여기부터**
+- **11-09 프로덕션 신청 승인**(사용자 "승인완료 되었어 8번 구워줘") → **`Kachi_Gun/Builds/kachizombie-1.0.8-8.aab`** (버전 코드 8 · 1.0.8 · 59.8MB · 4.9분) · aab_check 8항목 통과 · uses-permission 7번과 같음 · 시험 143줄 errors=0 · 개발용 APK `kachizombie-1.0.8-8-debug.apk`
+- 8번 준비: 설정 [클라우드 저장] 줄은 `CloudAuth.Configured`(Play 게임즈 App ID) 있을 때만 · 없으면 [게임 종료] 한 칸 위 · 창 920 (`MenuPopups.SettingsPopup`) · Unity 가 11-08 만든 GPGS 파일(PlayGamesSettings.asset 빈 AppId · GooglePlayGamesManifest.androidlib · games-v2·nearby) 커밋해 넣음
+- **빈 APP_ID 로 켜질 때 멈춤?** games-v2 22.0.0 은 `PlayGamesInitProvider` 로 켤 때 저절로 초기화 → javap 로 보니 APP_ID 를 `Long.parseLong` 하는 곳(appshortcuts.zzt)이 NumberFormatException 을 잡음 → 멈추지 않을 것으로 봄. APK 안 값 = "" . **폰 확인은 비공개 트랙 업데이트로**(개발용 APK 는 서명이 달라 7번을 지워야 함)
+- 출시 노트 8번 = 남은_작업_정리 r-up8 [복사] 상자(한국어 197자 · 영어 320자) · 체크 흐름 바뀜: 체크 = 취소선 "확인 대기" → 내가 확인 → `CONFIRMED=[...]` 에 넣어 아래로
+- **사용자 차례**: r-up8 비공개 트랙에 8번 → 폰에서 켜짐·광고·세이브 → r-release 프로덕션 8 ([프로덕션 트랙으로 출시 시작] · "8 (1.0.8) 전체 출시" 줄 확인)
+
+## ▶ 재개 메모 (2026-11-08 밤 — 문서 하나로 합침 · 구글 애즈 · 광고 소재 다시)
 - **`남은_작업_정리.html` 새 키 `kachigun-todo-1109`(49항목)** = 남은 작업 + 출시_일정 + 구글애즈_준비 를 날짜 순서 하나로: 최적 일정표(① 11-09~13 승인 대기 · ② ~11-14 8번 → 비공개 → 프로덕션 · ③ 스토어에 보인 날 AdMob 연결·이전 신청·애즈 앱 추가 · ④ ~11-19 이전 끝 → 9번·상품·시험 결제 + 애즈 결제·광고주 인증·Play 연결(캠페인은 꺼 둠) · ⑤ ~11-27(금) 서비스 시작 = 캠페인 켜기 · ⑥ 2주 지켜보기 → 12-11 결과 보고) · 결정 5개(r-prep8 · m-admob · p-budget · p-fb · r-trader) · 참고 표(애즈 설정 · 문구 · 상품 5 · 소재). `구글애즈_준비.html` 은 지움, `출시_일정.html` 은 맨 위에 "옛 판" 안내. 옛 판 백업 = 스크래치 *_before_1109.html
 - 구글 애즈(Chrome 확인): kachigoogoo@gmail.com · 고객 ID 342-871-2272 · 가입 첫 화면에서 멈춤(앱 공개 전이라 검색 안 됨) · "전문가 모드로 전환" 링크는 새 가입 화면에 없음 · 가입 혜택 3단계(60만 쓰면 60만 / 180만→200만 / 360만→450만, 60일은 **결제 설정 날부터**) → 결제는 ④(~11-19)
 - 광고 소재 다시 만듦: "확률형 아이템 포함"(게임 안 [총알 뽑기] = 보석 무작위 · 게임산업법 2024-03 · 연매출 1억 이하 예외 보도) — `ad_video.py prob_badge`(모든 프레임) · `ad_images.py prob` · `playable_template.html probBadge` · AI 요청서 규칙 + 좀비 죽는 모습 고친 뒤 `PlayTest.RunAd` 다시 촬영(errors=0). 옛 소재·프레임 백업 = 스크래치 ad_before_1108
