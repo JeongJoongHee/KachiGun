@@ -155,6 +155,7 @@ Capybara vs Zombies is officially launched!
     <li>[새 버전 만들기] → [라이브러리에서 추가] → 8 (1.0.8) → 출시 노트</li>
     <li><b>[저장]이 아니라 [프로덕션 트랙으로 출시 시작]</b></li>
     <li>게시 개요 › "검토 중인 변경사항"에 <b>"8 (1.0.8) 전체 출시"</b> 줄이 있는지 꼭 확인</li></ol></span>
+    <span class="why" style="color:var(--red)"><b>11-09 Chrome 확인 — 아직 안 됨:</b> 프로덕션 화면이 "비활성 · 임시 버전: 8 (1.0.8)" · 게시 개요의 프로덕션 줄엔 "국가/지역 추가: 대한민국"만 있고 "8 (1.0.8) 전체 출시" 줄이 없음 → [저장]만 된 상태. 프로덕션 › 출시 탭 › 8 (1.0.8) <b>[버전 수정]</b> → 맨 아래 [다음] → 검토 화면 맨 아래 <b>[프로덕션 트랙으로 출시 시작]</b> → 게시 개요에 "8 (1.0.8) 전체 출시" 줄 확인. 그 줄이 "검토를 위해 전송할 준비가 됨" 쪽에 있으면 [검토를 위해 변경사항 전송]. <b>[변경사항 삭제]는 누르지 말 것</b>(지금 검토 중인 Alpha 8번 · 대한민국까지 빠짐).</span>
     <span class="why">불도깨비 때 [저장]만 해서 "임시"로 남은 일이 있었음. "광고 ID 선언" 오류가 뜨면 [선언 업데이트]는 누르지 말고 캡처 → 대개 [권한 없이 출시]로 해결.</span></span></label></li>
   <li data-id="r-live"><label><input type="checkbox"><span><span class="tag t-see">보기</span><b>스토어에 보이는지</b> — 테스터가 아닌 계정(또는 PC 브라우저 시크릿 창)으로 Play 스토어에서 "카피바라vs좀비" 페이지가 보이면 → ③ 시작
     <span class="how">주소: <code>https://play.google.com/store/apps/details?id=com.zkfpf.kachizombie</code></span></span></label></li>
@@ -347,7 +348,7 @@ Play — <code>게시 과정\구글_답변_앱이전_1107.txt</code> · 앱 이�
   // 저장 형식: {"c":{항목id:true}, "n":{항목id:"의견"}} — 항목id 는 li 의 data-id
   var KEY='kachigun-todo-1109', st={c:{},n:{}};
   // 체크 → 취소선 + "확인 대기". Claude 가 확인해 문제없으면 여기에 id 를 넣음 → 맨 아래 "이번 판에서 확인한 작업"으로
-  var CONFIRMED=[];
+  var CONFIRMED=['a-wait','s-lang','r-build8','r-up8'];   // 11-09 확인: 승인 · 영어 문제없음 · 8번 AAB · Alpha 8 (1.0.8) 검토 중
   try{ var v=JSON.parse(localStorage.getItem(KEY)||'{}'); st.c=v.c||{}; st.n=v.n||{}; }catch(e){}
   function save(){ try{ localStorage.setItem(KEY,JSON.stringify(st)); }catch(e){} stat(); }
   var items=document.querySelectorAll('ul.todo > li[data-id]');
