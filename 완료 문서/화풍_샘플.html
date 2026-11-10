@@ -1,0 +1,363 @@
+<!doctype html><html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>화풍 샘플</title><style>
+@font-face{font-family:JuaS;src:url('화풍_샘플/Jua-Regular.ttf')}
+:root{--bg:#f6efe2;--ink:#3b281c;--sub:#7a6452;--card:#fffaf0;--line:#e3d5bd;--acc:#e98a2b}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:'Malgun Gothic',sans-serif;line-height:1.6}
+.wrap{max-width:1180px;margin:0 auto;padding:20px 16px 60px}
+h1{font-size:26px;margin:4px 0} h2{font-size:20px;margin:30px 0 10px;border-left:6px solid var(--acc);padding-left:10px}
+.lead{color:var(--sub)}
+.row{display:flex;gap:16px;flex-wrap:wrap;align-items:flex-start}
+.col{flex:1 1 300px;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:10px}
+.col h3{margin:2px 4px 8px;font-size:16px} .col img,.col .shot{width:100%;height:auto;display:block;border-radius:8px}
+.ref img{width:18%;display:inline-block;vertical-align:top;margin-right:2%}
+.lineup{width:100%;height:auto;display:block}
+table{border-collapse:collapse;width:100%;background:var(--card);border-radius:12px;overflow:hidden}
+td,th{border-bottom:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:top;font-size:15px}
+th{background:#efe2c9}
+.q{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px 16px;margin:10px 0}
+.q b{color:#b25e12} .rec{display:inline-block;background:#e6f4d9;border-radius:6px;padding:0 6px;font-size:13px;color:#2f6b25}
+</style></head><body><div class="wrap">
+<h1>화풍 샘플 — 밝은 낙서풍</h1>
+<p class="lead"><b>11-05: 카피바라를 뒷발로 선 자세로(이미지_02) · 손 모양은 주신 그림(이미지_04) 그대로 · 안경을 벗기고 눈은 "- -".</b><br>추가 요청의 <b>메인 캐릭터 이미지</b>(안경 쓴 카피바라 낙서)와 <b>이미지 컨셉</b>(밝은 파스텔 · 둥근 UI) 느낌으로 전투 화면 한 장을 새로 그려 봤습니다.
+게임에는 아직 넣지 않았습니다. 그림은 모두 새로 그린 것(벡터)이고, 화면 배치는 지금 게임과 같습니다.</p>
+
+<h2>1. 지금 화면 ↔ 새 화풍 샘플</h2>
+<div class="row">
+  <div class="col"><h3>지금 (도트 그림)</h3><img src="화풍_샘플/now.png"></div>
+  <div class="col"><h3>새 화풍 샘플</h3><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 540 1170" class="shot">
+<defs>
+  <style>
+    .t{font-family:'JuaS','Jua',sans-serif;paint-order:stroke;stroke:#3b281c;stroke-linejoin:round}
+    .ln{stroke:#3b281c;stroke-width:3.2;stroke-linejoin:round;stroke-linecap:round}
+  </style>
+  <!-- 손으로 그린 듯 살짝 흔들리는 선 -->
+  <filter id="wob" x="-10%" y="-10%" width="120%" height="120%">
+    <feTurbulence type="fractalNoise" baseFrequency="0.04" numOctaves="2" seed="7"/>
+    <feDisplacementMap in="SourceGraphic" scale="2.2"/>
+  </filter>
+  <radialGradient id="glow" cx="50%" cy="50%" r="50%">
+    <stop offset="0" stop-color="#fff6c0" stop-opacity=".95"/>
+    <stop offset="1" stop-color="#ffd25a" stop-opacity="0"/>
+  </radialGradient>
+
+  <!-- ========== 카피바라 (오른쪽을 봄, 안경, 산탄총) ========== -->
+  <g id="capy">
+    <!-- 11-05 3차: 선 카피바라 — 안경은 머리 위쪽, 주둥이는 눈 아래 앞쪽 · 두 팔이 어깨에서 총까지 곧게 -->
+    <ellipse cx="72" cy="167" rx="44" ry="6.5" fill="#3b281c" opacity=".15"/>
+    <!-- 발 -->
+    <ellipse class="ln" cx="54" cy="160" rx="14" ry="7.5" fill="#a97f58"/>
+    <ellipse class="ln" cx="90" cy="161" rx="14" ry="7.5" fill="#a97f58"/>
+    <!-- 몸 (머리까지 한 덩어리) — 머리 앞쪽이 주둥이로 둥글게 나옴 -->
+    <path class="ln" d="M38 156 C20 144 18 112 26 92 C30 74 32 52 42 36 C52 22 70 14 90 15 C108 16 121 24 127 38 C133 50 133 66 127 75 C121 82 116 83 116 89 C124 108 122 138 106 154 C92 166 54 166 38 156 Z" fill="#c49a6e"/>
+    <!-- 배 -->
+    <ellipse cx="72" cy="126" rx="27" ry="29" fill="#d9b88f"/>
+    <!-- 주둥이 (눈 아래 앞쪽) -->
+    <path d="M110 51 C123 49 132 57 131 67 C130 76 121 81 110 80 C104 72 104 58 110 51 Z" fill="#a97f58"/>
+    <!-- 귀 -->
+    <path class="ln" d="M50 32 Q44 20 54 18 Q60 20 59 28" fill="#a97f58"/>
+    <path class="ln" d="M78 18 Q78 6 88 7 Q93 10 90 17" fill="#a97f58"/>
+    <!-- 콧구멍 · 입 -->
+    <path class="ln" d="M125 56 q3 2 3 5" fill="none" stroke-width="2.6"/>
+    <path class="ln" d="M124 75 q-5 3 -10 0" fill="none" stroke-width="2.6"/>
+    <!-- 눈: 안경 없이 "- -" (11-05 7차) -->
+    <path class="ln" d="M75 40 H86" fill="none" stroke-width="3.4"/>
+    <path class="ln" d="M97 38 H107" fill="none" stroke-width="3.4"/>
+    <!-- 볼 -->
+    <ellipse cx="80" cy="60" rx="6.5" ry="3.8" fill="#e08f7c" opacity=".55"/>
+    <!-- 11-05 6차: 사용자 그림(메인 캐릭터 이미지_04) 손 모양 그대로
+         오른손 = 몸 왼쪽에서 넓게 이어져 내려와 엄지는 총 뒤쪽 위, 손가락은 총 아래를 감쌈
+         왼손 = 총 앞 받침 아래에서 주먹으로 받침(손가락 마디가 위로), 팔은 손목 선만 -->
+    <!-- 개머리판 (오른팔 뒤) -->
+    <path class="ln" d="M34 98 L60 94 L64 108 L40 112 Q32 110 34 98 Z" fill="#8a5a36"/>
+    <!-- 오른팔·손 (몸 색, 몸과 닿는 쪽은 테두리 없음) -->
+    <path d="M36 88 Q40 104 48 111 Q55 117 63 116 Q75 115 79 109 L79 97 Q76 91 69 90 Q62 88 57 82 Z" fill="#c49a6e"/>
+    <path class="ln" d="M36 88 Q40 104 48 111 Q55 117 63 116 Q75 115 79 109" fill="none"/>
+    <path class="ln" d="M57 82 Q59 88 65 90 Q69 91 70 94" fill="none"/>
+    <!-- 산탄총 (가슴 높이) -->
+    <g>
+      <rect class="ln" x="66" y="92" width="34" height="13" rx="3" fill="#5d6470"/>
+      <rect class="ln" x="96" y="94" width="66" height="8" rx="3" fill="#7b8592"/>
+      <rect class="ln" x="98" y="102" width="42" height="6" rx="2.5" fill="#8a5a36"/>
+    </g>
+    <!-- 오른손 엄지 (총 뒤쪽 위에 걸침) · 손가락 (총 아래) -->
+    <path class="ln" d="M64 90 Q70 88 74 92 Q75 96 71 98 Q67 98 66 95" fill="#c49a6e"/>
+    <path class="ln" d="M60 106 Q68 104 78 106 Q80 112 74 114 Q66 116 60 112 Z" fill="#c49a6e"/>
+    <path d="M65 108 q3 1 5 0 M66 111.5 q3 1 5 0" stroke="#3b281c" stroke-width="2" stroke-linecap="round" fill="none"/>
+    <!-- 왼손: 앞 받침 아래 주먹 + 손목 선 -->
+    <path class="ln" d="M117 116 Q118 122 119 128" fill="none"/>
+    <path class="ln" d="M111 104 Q111 99 116 99 L130 99 Q135 100 135 106 Q135 116 124 117 Q112 117 111 108 Z" fill="#b9906a"/>
+    <path d="M117 101 v6 M122 100.5 v6.5 M127 101 v6" stroke="#3b281c" stroke-width="2" stroke-linecap="round"/>
+  </g>
+    <!-- 왼손: 앞 받침을 위에서 감싸 쥠 -->
+    <path class="ln" d="M106 96 Q106 89 114 89 Q123 89 123 97 L123 104 Q123 110 115 110 Q107 110 106 104 Z" fill="#b9906a"/>
+    <path d="M112 100 v5 M117 100 v5" stroke="#3b281c" stroke-width="2" stroke-linecap="round"/>
+    <!-- 오른팔 (보는 쪽): 몸 왼쪽 어깨에서 이어져 내려와 뒤 손잡이로 -->
+    <path d="M50 76 Q44 92 58 101" stroke="#3b281c" stroke-width="17" stroke-linecap="round" fill="none"/>
+    <path d="M50 76 Q44 92 58 101" stroke="#c49a6e" stroke-width="10.5" stroke-linecap="round" fill="none"/>
+    <circle cx="51" cy="73" r="8.5" fill="#c49a6e"/>
+    <!-- 오른손: 손잡이를 감싸 쥠 -->
+    <path class="ln" d="M52 95 Q52 88 60 88 Q69 88 69 96 L69 104 Q69 111 60 111 Q52 111 52 104 Z" fill="#c49a6e"/>
+    <path d="M58 100 v6 M63 100 v6" stroke="#3b281c" stroke-width="2" stroke-linecap="round"/>
+  </g>
+    <!-- 왼손: 앞 받침 -->
+    <ellipse class="ln" cx="116" cy="106" rx="8" ry="6.5" fill="#b08660"/>
+    <!-- 오른팔 (보는 쪽, 위에 그림): 어깨 → 뒤 손잡이 -->
+    <path d="M56 80 Q48 92 60 102" stroke="#3b281c" stroke-width="17" stroke-linecap="round" fill="none"/>
+    <path d="M56 80 Q48 92 60 102" stroke="#c49a6e" stroke-width="10.5" stroke-linecap="round" fill="none"/>
+    <!-- 오른손: 뒤 손잡이 -->
+    <ellipse class="ln" cx="62" cy="104" rx="8.5" ry="7.5" fill="#c49a6e"/>
+  </g>
+    <!-- 뒷손: 손잡이 -->
+    <ellipse class="ln" cx="60" cy="104" rx="8" ry="7" fill="#b88e63"/>
+    <!-- 앞팔: 어깨 → 총 앞 받침 -->
+    <path d="M80 86 Q96 92 110 103" stroke="#3b281c" stroke-width="17" stroke-linecap="round" fill="none"/>
+    <path d="M80 86 Q96 92 110 103" stroke="#c49a6e" stroke-width="10.5" stroke-linecap="round" fill="none"/>
+    <ellipse class="ln" cx="112" cy="104" rx="8" ry="7" fill="#c49a6e"/>
+  </g>
+
+  <!-- ========== 좀비 (왼쪽을 봄) ========== -->
+  <g id="zhead">
+    <path class="ln" d="M12 34 C10 14 26 4 44 5 C62 6 72 18 70 36 C68 52 56 60 40 60 C22 60 13 50 12 34 Z" fill="var(--sk,#8cc56a)"/>
+    <!-- 이마 꿰맨 자국 -->
+    <path class="ln" d="M40 12 L50 20 M42 18 l4 -3 M46 21 l4 -3" fill="none" stroke-width="2.2"/>
+    <!-- 눈 -->
+    <circle class="ln" cx="26" cy="32" r="8" fill="#fffbe8" stroke-width="2.6"/>
+    <circle class="ln" cx="46" cy="30" r="7" fill="#fffbe8" stroke-width="2.6"/>
+    <circle cx="23" cy="33" r="3" fill="#2a1d15"/>
+    <circle cx="43" cy="31" r="2.7" fill="#2a1d15"/>
+    <!-- 입 -->
+    <path class="ln" d="M22 47 Q32 54 44 47 Q34 50 22 47 Z" fill="#5a2b2b" stroke-width="2.6"/>
+    <path d="M28 48.5 l2 3 l2 -3 M36 48.6 l2 3 l2 -3" fill="#fff" stroke="none"/>
+    <!-- 볼 -->
+    <ellipse cx="56" cy="44" rx="5" ry="3" fill="#6fa94f" opacity=".7"/>
+  </g>
+  <g id="zomb">
+    <ellipse cx="44" cy="124" rx="28" ry="5.5" fill="#3b281c" opacity=".15"/>
+    <!-- 다리 -->
+    <path class="ln" d="M34 92 L30 118 L40 120 L44 94 Z" fill="var(--pa,#5a6ea6)"/>
+    <path class="ln" d="M50 92 L54 118 L64 118 L60 92 Z" fill="var(--pa,#5a6ea6)"/>
+    <path class="ln" d="M26 118 h16 v5 h-18 z" fill="#4a3628"/>
+    <path class="ln" d="M52 117 h14 v5 h-15 z" fill="#4a3628"/>
+    <!-- 뒷팔 -->
+    <path class="ln" d="M36 68 L8 70 Q2 72 4 78 L36 78 Z" fill="var(--sk2,#7db45c)"/>
+    <!-- 몸통 (찢어진 셔츠) -->
+    <path class="ln" d="M30 60 Q46 54 62 60 L64 92 L58 88 L52 95 L46 89 L40 95 L34 89 L28 94 Z" fill="var(--sh,#c98a5a)"/>
+    <!-- 앞팔 -->
+    <path class="ln" d="M40 74 L10 80 Q3 82 6 88 L42 84 Z" fill="var(--sk,#8cc56a)"/>
+    <use href="#zhead" transform="translate(6,2) scale(.95)"/>
+  </g>
+  <!-- 기어 오는 좀비 -->
+  <g id="crawl">
+    <ellipse cx="60" cy="68" rx="46" ry="5" fill="#3b281c" opacity=".15"/>
+    <path class="ln" d="M62 46 Q90 38 116 50 L118 62 L60 64 Z" fill="var(--pa,#5a6ea6)"/>
+    <path class="ln" d="M40 40 Q60 34 80 42 L80 62 L42 62 Z" fill="var(--sh,#c98a5a)"/>
+    <path class="ln" d="M30 54 L6 58 Q0 62 6 66 L36 64 Z" fill="var(--sk,#8cc56a)"/>
+    <use href="#zhead" transform="translate(6,8) scale(.72)"/>
+  </g>
+  <!-- 칼 든 좀비 -->
+  <g id="zknife">
+    <use href="#zomb"/>
+    <path class="ln" d="M6 84 L-16 60 L-10 56 L10 80 Z" fill="#d9dee6"/>
+    <rect class="ln" x="4" y="80" width="10" height="7" rx="2" fill="#6b4a32"/>
+  </g>
+
+  <!-- 금화 · 총알 · 데미지 -->
+  <g id="coin">
+    <circle class="ln" r="11" fill="#ffd34d"/>
+    <circle r="6.5" fill="none" stroke="#e0a722" stroke-width="2.4"/>
+  </g>
+  <g id="bul">
+    <path d="M-34 0 L0 -3 L0 3 Z" fill="#fff3a6" opacity=".7"/>
+    <rect class="ln" x="-2" y="-4.5" width="16" height="9" rx="4.5" fill="#ffcf3a" stroke-width="2.4"/>
+  </g>
+</defs>
+
+<!-- ================= 배경 ================= -->
+<g filter="url(#wob)">
+  <rect class="shot" fill="#e9dcbc"/>
+  <!-- 위 숲 띠 -->
+  <rect width="540" height="300" fill="#a9cf86"/>
+  <g class="ln" stroke-width="3">
+    <circle cx="20" cy="260" r="44" fill="#8fc06c"/><circle cx="90" cy="276" r="36" fill="#9ccb78"/>
+    <circle cx="160" cy="262" r="46" fill="#8fc06c"/><circle cx="238" cy="280" r="34" fill="#9ccb78"/>
+    <circle cx="300" cy="258" r="48" fill="#8fc06c"/><circle cx="378" cy="278" r="36" fill="#9ccb78"/>
+    <circle cx="446" cy="262" r="44" fill="#8fc06c"/><circle cx="520" cy="276" r="40" fill="#9ccb78"/>
+  </g>
+  <!-- 나무 -->
+  <g class="ln" stroke-width="3">
+    <rect x="20" y="170" width="14" height="60" fill="#9a6a44"/><circle cx="27" cy="160" r="42" fill="#79b05a"/>
+    <rect x="150" y="196" width="12" height="40" fill="#9a6a44"/><circle cx="156" cy="190" r="30" fill="#86ba62"/>
+    <rect x="470" y="190" width="14" height="50" fill="#9a6a44"/><circle cx="477" cy="176" r="40" fill="#79b05a"/><rect x="380" y="206" width="12" height="40" fill="#9a6a44"/><circle cx="386" cy="198" r="28" fill="#86ba62"/>
+  </g>
+  <!-- 흙길 -->
+  <path class="ln" d="M0 300 Q140 286 270 298 Q400 310 540 296 L540 960 L0 960 Z" fill="#ecdcb8" stroke-width="3"/>
+  <ellipse cx="160" cy="470" rx="90" ry="26" fill="#e1cda3"/>
+  <ellipse cx="400" cy="640" rx="110" ry="30" fill="#e1cda3"/>
+  <ellipse cx="190" cy="820" rx="120" ry="28" fill="#e1cda3"/>
+  <g class="ln" stroke-width="2.4" fill="#c9c1b3">
+    <ellipse cx="60" cy="400" rx="12" ry="7"/><ellipse cx="300" cy="380" rx="9" ry="6"/><ellipse cx="480" cy="460" rx="13" ry="8"/>
+    <ellipse cx="120" cy="720" rx="10" ry="6"/><ellipse cx="460" cy="860" rx="12" ry="7"/><ellipse cx="300" cy="900" rx="8" ry="5"/>
+  </g>
+  <g stroke="#7fae5c" stroke-width="3" stroke-linecap="round" fill="none">
+    <path d="M200 560 l4 -10 M206 560 l0 -12 M212 560 l-4 -10"/><path d="M500 560 l4 -10 M506 560 l0 -12 M512 560 l-4 -10"/>
+    <path d="M40 880 l4 -10 M46 880 l0 -12 M52 880 l-4 -10"/><path d="M360 470 l4 -10 M366 470 l0 -12 M372 470 l-4 -10"/>
+  </g>
+</g>
+
+<!-- ================= 좀비 무리 ================= -->
+<g filter="url(#wob)">
+  <use href="#zomb" transform="translate(370,320) scale(.9)"/>
+  <use href="#zknife" transform="translate(470,350) scale(.88)" style="--sk:#a6cf72;--sh:#7f9fbf"/>
+  <use href="#crawl" transform="translate(280,410) scale(.9)" style="--sk:#9ccc74;--pa:#6a5aa0"/>
+  <use href="#zomb" transform="translate(420,430) scale(.92)" style="--sk:#86bf74;--sh:#b5795a;--pa:#4f6290"/>
+  <use href="#zomb" transform="translate(300,500) scale(.95)" style="--sk:#93c66c;--sh:#d39b62"/>
+  <use href="#zomb" transform="translate(370,560) scale(1.3)" style="--sk:#b1a0d6;--sk2:#9c8ac4;--sh:#5d8f6a;--pa:#4a4a6a"/>
+  <use href="#zknife" transform="translate(470,560) scale(.9)"/>
+  <use href="#crawl" transform="translate(250,650) scale(.92)" style="--sh:#8f7fb8"/>
+  <use href="#zomb" transform="translate(330,700) scale(.95)" style="--sk:#86bf74"/>
+  <use href="#zomb" transform="translate(450,700) scale(.88)" style="--sk:#9ccc74;--sh:#7f9fbf;--pa:#6a5aa0"/>
+  <use href="#crawl" transform="translate(300,820) scale(.9)" style="--sk:#a6cf72;--sh:#d39b62"/>
+  <use href="#zknife" transform="translate(420,800) scale(.92)" style="--sk:#93c66c;--sh:#8f7fb8;--pa:#4f6290"/>
+</g>
+
+<!-- 총알 · 맞는 빛 · 금화 · 숫자 -->
+<use href="#bul" transform="translate(250,612)"/>
+<use href="#bul" transform="translate(212,612)"/>
+<circle cx="280" cy="680" r="30" fill="url(#glow)"/>
+<g filter="url(#wob)"><use href="#coin" transform="translate(300,470)"/><use href="#coin" transform="translate(316,440)"/><use href="#coin" transform="translate(300,640)"/></g>
+<text class="t" x="285" y="672" font-size="26" fill="#fff" stroke-width="5" text-anchor="middle">128</text>
+<text class="t" x="330" y="455" font-size="22" fill="#fff" stroke-width="5" text-anchor="middle">96</text>
+<text class="t" x="420" y="560" font-size="24" fill="#ffe36b" stroke-width="5" text-anchor="middle">256</text>
+
+<!-- ================= 카피바라 ================= -->
+<g filter="url(#wob)"><use href="#capy" transform="translate(20,500) scale(1.12)"/></g>
+
+<!-- ================= 위 UI ================= -->
+<g>
+  <rect class="ln" x="10" y="14" width="520" height="28" rx="14" fill="#fff4dc" stroke-width="3"/>
+  <rect x="17" y="20" width="506" height="16" rx="8" fill="#5b4433"/>
+  <rect x="19" y="22" width="150" height="12" rx="6" fill="#8fd16a"/>
+  <text class="t" x="270" y="35" font-size="17" fill="#fff" stroke-width="4" text-anchor="middle">27%</text>
+  <!-- 설정 -->
+  <rect class="ln" x="12" y="54" width="48" height="48" rx="12" fill="#ffb44a" stroke-width="3"/>
+  <g transform="translate(36,78)" fill="#fff"><circle r="12"/><g stroke="#fff" stroke-width="6"><path d="M0 -17 V17 M-17 0 H17 M-12 -12 L12 12 M12 -12 L-12 12"/></g><circle r="5" fill="#ffb44a"/></g>
+  <!-- 상점 -->
+  <rect class="ln" x="12" y="114" width="48" height="48" rx="12" fill="#ffb44a" stroke-width="3"/>
+  <path class="ln" d="M22 132 h28 l-3 -8 h-22 z" fill="#ff7b6b" stroke-width="2.4"/><rect class="ln" x="24" y="132" width="24" height="18" fill="#fff4dc" stroke-width="2.4"/>
+  <text class="t" x="36" y="178" font-size="14" fill="#fff" stroke-width="4" text-anchor="middle">상점</text>
+  <!-- 챕터 마디 -->
+  <rect x="150" y="62" width="240" height="10" rx="5" fill="#5b4433"/>
+  <g class="ln" stroke-width="2.6"><circle cx="160" cy="67" r="9" fill="#ffd34d"/><circle cx="215" cy="67" r="9" fill="#fff4dc"/><circle cx="270" cy="67" r="9" fill="#fff4dc"/><circle cx="325" cy="67" r="9" fill="#fff4dc"/><circle cx="382" cy="67" r="12" fill="#c5765a"/></g>
+  <text class="t" x="270" y="104" font-size="26" fill="#fff" stroke-width="6" text-anchor="middle">Stage 1-1</text>
+  <rect class="ln" x="210" y="114" width="120" height="32" rx="16" fill="#ffb44a" stroke-width="3"/>
+  <text class="t" x="270" y="137" font-size="17" fill="#fff" stroke-width="4" text-anchor="middle">⚔ 도전 1</text>
+  <!-- 금화 · 다이아 -->
+  <rect class="ln" x="404" y="56" width="126" height="32" rx="16" fill="#fff4dc" stroke-width="3"/>
+  <use href="#coin" transform="translate(418,72) scale(1.1)"/>
+  <text class="t" x="520" y="80" font-size="20" fill="#5b4433" stroke-width="0" text-anchor="end">2.5m</text>
+  <rect class="ln" x="404" y="96" width="126" height="32" rx="16" fill="#fff4dc" stroke-width="3"/>
+  <path class="ln" d="M408 112 l10 -10 h10 l10 10 l-15 14 z" fill="#7fd4ff" stroke-width="2.6"/>
+  <text class="t" x="520" y="120" font-size="20" fill="#5b4433" stroke-width="0" text-anchor="end">5k</text>
+</g>
+
+<!-- ================= 아래 UI ================= -->
+<g>
+  <rect class="ln" x="8" y="952" width="524" height="148" rx="20" fill="#fff4dc" stroke-width="3.4"/>
+  <!-- 카드 3장 -->
+  <g id="cards">
+    <g transform="translate(20,964)">
+      <text class="t" x="76" y="18" font-size="17" fill="#5b4433" stroke-width="0" text-anchor="middle">공격력</text>
+      <rect class="ln" x="0" y="26" width="152" height="100" rx="14" fill="#bfe7a2" stroke-width="3"/>
+      <rect class="ln" x="8" y="34" width="30" height="30" rx="8" fill="#ff8a5b" stroke-width="2.4"/>
+      <path d="M23 40 l4 8 l7 -2 l-5 7 l4 6 l-10 -3 l-10 3 l4 -6 l-5 -7 l7 2 z" fill="#ffe36b"/>
+      <text class="t" x="144" y="50" font-size="14" fill="#5b4433" stroke-width="0" text-anchor="end">Lv.30</text>
+      <text class="t" x="76" y="84" font-size="28" fill="#fff" stroke-width="6" text-anchor="middle">216</text>
+      <rect class="ln" x="10" y="94" width="132" height="26" rx="13" fill="#3f7d3a" stroke-width="2.6"/>
+      <use href="#coin" transform="translate(28,107) scale(.85)"/>
+      <text class="t" x="84" y="114" font-size="17" fill="#fff" stroke-width="0" text-anchor="middle">3.07k</text>
+    </g>
+    <g transform="translate(194,964)">
+      <text class="t" x="76" y="18" font-size="17" fill="#5b4433" stroke-width="0" text-anchor="middle">공격속도</text>
+      <rect class="ln" x="0" y="26" width="152" height="100" rx="14" fill="#bfe7a2" stroke-width="3"/>
+      <rect class="ln" x="8" y="34" width="30" height="30" rx="8" fill="#7fb8ff" stroke-width="2.4"/>
+      <path d="M17 58 L30 40 M24 40 h6 v6" stroke="#fff" stroke-width="3.4" fill="none" stroke-linecap="round"/>
+      <text class="t" x="144" y="50" font-size="14" fill="#5b4433" stroke-width="0" text-anchor="end">Lv.40</text>
+      <text class="t" x="76" y="84" font-size="28" fill="#fff" stroke-width="6" text-anchor="middle">279</text>
+      <rect class="ln" x="10" y="94" width="132" height="26" rx="13" fill="#3f7d3a" stroke-width="2.6"/>
+      <use href="#coin" transform="translate(28,107) scale(.85)"/>
+      <text class="t" x="84" y="114" font-size="17" fill="#fff" stroke-width="0" text-anchor="middle">12.1k</text>
+    </g>
+    <g transform="translate(368,964)">
+      <text class="t" x="76" y="18" font-size="17" fill="#5b4433" stroke-width="0" text-anchor="middle">금전 획득량</text>
+      <rect class="ln" x="0" y="26" width="152" height="100" rx="14" fill="#bfe7a2" stroke-width="3"/>
+      <rect class="ln" x="8" y="34" width="30" height="30" rx="8" fill="#ffd34d" stroke-width="2.4"/>
+      <use href="#coin" transform="translate(23,49) scale(.8)"/>
+      <text class="t" x="144" y="50" font-size="14" fill="#5b4433" stroke-width="0" text-anchor="end">Lv.25</text>
+      <text class="t" x="76" y="84" font-size="28" fill="#fff" stroke-width="6" text-anchor="middle">190</text>
+      <rect class="ln" x="10" y="94" width="132" height="26" rx="13" fill="#3f7d3a" stroke-width="2.6"/>
+      <use href="#coin" transform="translate(28,107) scale(.85)"/>
+      <text class="t" x="84" y="114" font-size="17" fill="#fff" stroke-width="0" text-anchor="middle">1.54k</text>
+    </g>
+  </g>
+  <!-- 아래 메뉴 5개 -->
+  <g>
+    <g transform="translate(8,1106)"><rect class="ln" width="100" height="58" rx="14" fill="#ffb44a" stroke-width="3"/>
+      <path class="ln" d="M30 18 h34 v8 h-20 l-4 12 h-8 l3 -12 h-5 z" fill="#6c7480" stroke-width="2.4"/>
+      <text class="t" x="50" y="50" font-size="14" fill="#fff" stroke-width="4" text-anchor="middle" dy="2">무기</text></g>
+    <g transform="translate(114,1106)"><rect class="ln" width="100" height="58" rx="14" fill="#ffb44a" stroke-width="3"/>
+      <path class="ln" d="M34 36 C30 22 42 12 56 14 C68 16 72 28 66 36 Z" fill="#a8835f" stroke-width="2.4"/>
+      <path d="M46 26 h6 M58 25 h6" stroke="#2a1d15" stroke-width="2.4" stroke-linecap="round"/>
+      <text class="t" x="50" y="50" font-size="14" fill="#fff" stroke-width="4" text-anchor="middle" dy="2">스킨</text></g>
+    <g transform="translate(220,1106)"><rect class="ln" width="100" height="58" rx="14" fill="#ffb44a" stroke-width="3"/>
+      <rect class="ln" x="34" y="14" width="32" height="22" rx="4" fill="#c98a5a" stroke-width="2.4"/><path d="M34 22 h32 M50 14 v22" stroke="#3b281c" stroke-width="2.4"/>
+      <text class="t" x="50" y="50" font-size="14" fill="#fff" stroke-width="4" text-anchor="middle" dy="2">보급품</text></g>
+    <g transform="translate(326,1106)"><rect class="ln" width="100" height="58" rx="14" fill="#ffb44a" stroke-width="3"/>
+      <circle class="ln" cx="50" cy="25" r="13" fill="#b1a0d6" stroke-width="2.4"/><circle cx="45" cy="23" r="2.6" fill="#2a1d15"/><circle cx="55" cy="23" r="2.6" fill="#2a1d15"/>
+      <path d="M40 14 l3 -7 l3 6 M54 13 l3 -6 l3 7" stroke="#3b281c" stroke-width="2.4" fill="#fff4dc"/>
+      <text class="t" x="50" y="50" font-size="14" fill="#fff" stroke-width="4" text-anchor="middle" dy="2">보스</text></g>
+    <g transform="translate(432,1106)"><rect class="ln" width="100" height="58" rx="14" fill="#ffb44a" stroke-width="3"/>
+      <path class="ln" d="M38 22 l8 -8 h8 l8 8 l-12 14 z" fill="#7fd4ff" stroke-width="2.4"/>
+      <text class="t" x="50" y="50" font-size="14" fill="#fff" stroke-width="4" text-anchor="middle" dy="2">비밀던전</text></g>
+  </g>
+</g>
+</svg>
+</div>
+  <div class="col ref"><h3>참고로 주신 그림</h3><img src="화풍_샘플/main_char.png"><img src="화풍_샘플/main_char_02.png"><img src="화풍_샘플/main_char_03.png"><img src="화풍_샘플/main_char_04.png"><img src="화풍_샘플/concept.png"></div>
+</div>
+
+<h2>2. 캐릭터 크게</h2>
+<svg viewBox="0 0 900 300" class="lineup" xmlns="http://www.w3.org/2000/svg">
+<rect width="900" height="300" rx="18" fill="#ecdcb8"/>
+<g filter="url(#wob)">
+  <use href="#capy" transform="translate(50,14) scale(1.5)"/>
+  <use href="#zomb" transform="translate(360,40) scale(1.75)"/>
+  <use href="#zknife" transform="translate(530,40) scale(1.75)" style="--sk:#a6cf72;--sh:#7f9fbf"/>
+  <use href="#crawl" transform="translate(690,140) scale(1.6)" style="--sh:#8f7fb8"/>
+</g>
+<g font-family="JuaS" font-size="20" fill="#5b4433" text-anchor="middle">
+  <text x="160" y="290">카피바라 (선 자세 · 산탄총)</text><text x="430" y="290">좀비</text>
+  <text x="610" y="290">칼 든 좀비</text><text x="800" y="290">기어 오는 좀비</text>
+</g></svg>
+<p class="lead">굵은 갈색 선 + 단색 칠 + 살짝 흔들리는 선(손그림 느낌). 좀비는 피부·옷 색만 바꿔 종류를 나눌 수 있습니다.</p>
+
+<h2>3. 정해 주실 것</h2>
+<div class="q"><b>① 이 방향이 맞나요?</b> 밝기 · 선 굵기 · 캐릭터 비율 · 배경 색 중 바꾸고 싶은 것을 말씀해 주세요 (예: "배경은 더 어둡게", "카피바라 더 크게", "눈 졸린 눈으로").</div>
+<div class="q"><b>② 글꼴</b> <span class="rec">추천: 주아</span> — 오늘 고른 갈무리11(도트 글꼴)은 지금 도트 그림에는 맞지만 새 화풍과는 어울리지 않습니다. 샘플 글자는 <b>주아</b>(둥글고 두꺼운 무료 글꼴)입니다. 그림을 바꾸면 글꼴도 같이 바꾸는 것을 추천합니다.</div>
+<div class="q"><b>③ 메인 캐릭터 그림의 출처</b> — 주신 그림이 채팅 이모티콘 캡처로 보입니다. <b>다른 작가의 이모티콘이면 그 캐릭터를 그대로 따라 그리면 안 됩니다</b>(저작권). 샘플은 "서 있는 카피바라"라는 아이디어만 쓰고 모양은 새로 그렸습니다. 직접 그리신 그림이면 더 가깝게 맞출 수 있으니 알려 주세요.</div>
+<div class="q"><b>④ 만드는 방법</b> <span class="rec">추천: 가</span><br>
+가. <b>제가 벡터로 직접 그림</b> (이 샘플 방식) — 선·색이 모두 같은 규칙이라 통일감이 좋고, 좀비·카피바라 걷기 뼈대에 필요한 부위별 그림(머리·몸·팔·다리)을 바로 나눠 만들 수 있습니다. 대신 그림이 단순한 편입니다.<br>
+나. <b>AI 그림 도구로 직접 뽑아 주심</b> — 더 풍부한 그림이 나오지만 장마다 모양이 달라지기 쉽고, 부위 나누기·배경 지우기를 제가 다시 해야 합니다. 배경 그림에만 쓰는 것도 방법입니다.</div>
+<div class="q"><b>⑤ 언제 넣을지</b> <span class="rec">추천: 출시 일정은 그대로, 새 그림은 업데이트로</span> — 바꿀 그림이 많아(아래 표) 며칠 걸립니다. 11-07 프로덕션 신청 · 출시는 지금 그림으로 진행하고, 새 그림이 다 되면 업데이트 빌드로 넣는 것을 추천합니다. 출시 전에 꼭 바꾸고 싶으시면 일정을 다시 짜겠습니다.</div>
+
+<h2>4. 바꿔야 할 그림 (지금 게임 기준)</h2>
+<table><tr><th>종류</th><th>개수</th><th>메모</th></tr>
+<tr><td>카피바라 + 스킨</td><td>기본 1 + 스킨 18</td><td>뼈대 걷기용 부위 그림 · 총 잡는 자세</td></tr>
+<tr><td>좀비</td><td>12종 + 보스</td><td>부위 그림(머리·몸·팔·다리) · 맞을 때 번쩍임은 지금 셰이더 그대로 씀</td></tr>
+<tr><td>배경</td><td>1장 (챕터마다 색만 바뀜)</td><td>원하면 챕터 테마별(숲·눈·사막…) 여러 장</td></tr>
+<tr><td>총알 · 폭발 · 금화</td><td>총알 13 · 이펙트</td><td>등급 색·네온 오오라는 코드라 그대로</td></tr>
+<tr><td>UI (버튼 · 판 · 창 · 아이콘)</td><td>UI 그림 약 70</td><td>창 테두리 · 버튼 · 아이콘 전부</td></tr>
+<tr><td>보급품 아이콘</td><td>25</td><td></td></tr>
+<tr><td>앱 아이콘 · 스토어 그래픽 · 스크린샷</td><td>아이콘 1 · 그래픽 1 · 스크린샷</td><td>tools/app_icon_gen.py · store_graphics.py 로 다시 만듦</td></tr>
+</table>
+<p class="lead">진행 순서 추천: ① 방향 확정 → ② 카피바라·좀비(전투 화면에서 가장 많이 보임) → ③ 배경·총알 → ④ UI → ⑤ 아이콘·스토어 그림. 단계마다 전·뒤 캡처로 확인받고 넘어갑니다.</p>
+</div></body></html>

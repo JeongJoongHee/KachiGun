@@ -41,7 +41,8 @@
 <div class="path"><b>들어가는 곳</b> : Play Console → 카피바라vs좀비 → <b>대시보드</b>의 "앱 설정" 목록에서 항목을 누르면 됩니다. 왼쪽 메뉴로는 <b>모니터링 및 개선 › 정책 및 프로그램 › 앱 콘텐츠</b>(안 보이면 맨 위 검색창에 "앱 콘텐츠")에 1~9번이 모여 있습니다. 항목마다 마지막에 <b>저장</b>.</div>
 
 <div class="card" id="b2" style="border:2px solid var(--accent)">
-<h2 style="margin-top:0">★ 2번 빌드(실제 광고) 올리기 전에 바꿀 답 — 2026-10-30</h2>
+<h2 style="margin-top:0">★ 지금 들어가 있는 답 — 2번 빌드(실제 광고)부터 · 10-30 바꿈 끝</h2>
+<p class="hint">3. 광고 · 6. 데이터 보안은 이 칸이 최신입니다. 1번 빌드 때의 옛 답은 맨 아래 "끝난 것"에. 결제(9번) 때 바꿀 답은 남은_작업_정리.html ④ "앱 콘텐츠 답 다시".</p>
 <p>2번 빌드부터 <b>AdMob 보상형 광고</b>가 들어갑니다(결제 코드도 들어가지만 상품이 없어 꺼져 있음). <b>AAB 를 올리기 전에</b> 아래를 먼저 바꾸세요 — 순서가 바뀌면 "불완전한 광고 ID 선언"으로 검토에서 막힙니다(불도깨비·심심할 때 하는 게임 때 같은 칸에서 막혔음). 아래 답을 바꾼 뒤엔 위쪽 1~10번의 "광고 없음" 답은 무시하세요.</p>
 <table>
   <tr><th>곳</th><th>질문</th><th>답</th></tr>
@@ -94,14 +95,6 @@
 </table>
 <p class="hint">로그인 화면이 아예 없고, 켜면 바로 게임이 시작됩니다.</p>
 
-<h2 id="s3">3. 광고</h2>
-<table>
-  <tr><th>질문</th><th>답</th><th>이유</th></tr>
-  <tr><td>앱에 광고가 포함되어 있나요?</td><td class="ans">아니요</td><td>광고 SDK(AdMob 등)가 없음. 게임 안 "광고" 버튼은 테스트 기간 동안 <b>광고 없이 바로 보상</b>을 줌 (실제 광고 화면이 안 나옴)</td></tr>
-  <tr><td>앱에서 광고 ID 를 사용하나요? (광고 ID 선언)</td><td class="ans">아니요</td><td>AAB 매니페스트에 <code>com.google.android.gms.permission.AD_ID</code> 권한이 없음 (빌드 뒤 확인 — 서바이벌 때 이 칸 때문에 한 번 막혔음)</td></tr>
-</table>
-<div class="later"><b>나중에 꼭 바꿀 것</b> — 14일 동안 AdMob 을 붙이면 ① 광고 = 예 ② 광고 ID = 예 (용도: 광고) ③ 데이터 보안에 "기기 또는 기타 ID" 추가 ④ 개인정보처리방침에 광고 ID 내용 추가 → 다시 배포.</div>
-
 <h2 id="s4">4. 콘텐츠 등급 (설문)</h2>
 <ol>
   <li>[설문 시작] → 이메일 = <b>jjhfibe@gmail.com</b> · 카테고리 = <b>게임</b></li>
@@ -142,15 +135,6 @@
   <tr><td>앱이 의도치 않게 어린이의 관심을 끌 수 있나요?</td><td class="ans">아니요</td><td>좀비를 총으로 쏘는 슈팅 게임 · 교육용 아님. (카피바라가 귀엽지만 무기·좀비 전투가 중심)</td></tr>
 </table>
 
-<h2 id="s6">6. 데이터 보안</h2>
-<p>밖으로 나가는 데이터가 <b>없습니다</b> — 세이브·설정은 기기 안에만 있고, 게임에 인터넷으로 보내는 코드가 없습니다.</p>
-<table>
-  <tr><th>질문</th><th>답</th></tr>
-  <tr><td>앱이 필수 사용자 데이터 유형을 수집하거나 공유하나요?</td><td class="ans">아니요</td></tr>
-</table>
-<p class="hint">"아니요"를 고르면 나머지 질문(암호화·계정·삭제 요청)이 생략되고 바로 [다음] → 미리보기 → [저장]. 스토어에 "데이터 수집 안 함 · 공유 안 함"으로 보입니다.</p>
-<div class="later"><b>나중에</b> — 광고(AdMob)를 넣으면 "예" 로 바꾸고: 기기 또는 기타 ID(광고) · 앱 활동 › 앱 상호작용 · 앱 정보 및 성능(비정상 종료·진단) — 수집 + <b>공유</b>(광고 회사로 감) · 목적 = 광고·분석. 결제를 넣으면 "금융 정보 › 구매 기록" 추가.</div>
-
 <h2 id="s7">7. 정부 앱</h2>
 <table><tr><th>질문</th><th>답</th></tr><tr><td>정부 기관이 개발했거나 대신 게시하는 앱인가요?</td><td class="ans">아니요</td></tr></table>
 
@@ -171,6 +155,27 @@
   <tr><td>전화번호 · 웹사이트</td><td>비워 둠</td><td>선택 칸</td></tr>
 </table>
 
+
+<details style="margin-top:36px;border-top:2px dashed #bbb;padding-top:12px">
+<summary style="cursor:pointer;font-weight:bold">끝난 것 (1번 빌드 때 옛 답 · 비공개 테스트 트랙) — 눌러서 펼치기</summary>
+<p class="hint">11-10 정리: 3·6번은 광고 없던 1번 빌드 답 → 2번 빌드부터 맨 위 ★ 답으로 바뀜. 11번 비공개 테스트 트랙은 10-24 제출 끝.</p>
+<h2 id="s3">3. 광고</h2>
+<table>
+  <tr><th>질문</th><th>답</th><th>이유</th></tr>
+  <tr><td>앱에 광고가 포함되어 있나요?</td><td class="ans">아니요</td><td>광고 SDK(AdMob 등)가 없음. 게임 안 "광고" 버튼은 테스트 기간 동안 <b>광고 없이 바로 보상</b>을 줌 (실제 광고 화면이 안 나옴)</td></tr>
+  <tr><td>앱에서 광고 ID 를 사용하나요? (광고 ID 선언)</td><td class="ans">아니요</td><td>AAB 매니페스트에 <code>com.google.android.gms.permission.AD_ID</code> 권한이 없음 (빌드 뒤 확인 — 서바이벌 때 이 칸 때문에 한 번 막혔음)</td></tr>
+</table>
+<div class="later"><b>나중에 꼭 바꿀 것</b> — 14일 동안 AdMob 을 붙이면 ① 광고 = 예 ② 광고 ID = 예 (용도: 광고) ③ 데이터 보안에 "기기 또는 기타 ID" 추가 ④ 개인정보처리방침에 광고 ID 내용 추가 → 다시 배포.</div>
+
+<h2 id="s6">6. 데이터 보안</h2>
+<p>밖으로 나가는 데이터가 <b>없습니다</b> — 세이브·설정은 기기 안에만 있고, 게임에 인터넷으로 보내는 코드가 없습니다.</p>
+<table>
+  <tr><th>질문</th><th>답</th></tr>
+  <tr><td>앱이 필수 사용자 데이터 유형을 수집하거나 공유하나요?</td><td class="ans">아니요</td></tr>
+</table>
+<p class="hint">"아니요"를 고르면 나머지 질문(암호화·계정·삭제 요청)이 생략되고 바로 [다음] → 미리보기 → [저장]. 스토어에 "데이터 수집 안 함 · 공유 안 함"으로 보입니다.</p>
+<div class="later"><b>나중에</b> — 광고(AdMob)를 넣으면 "예" 로 바꾸고: 기기 또는 기타 ID(광고) · 앱 활동 › 앱 상호작용 · 앱 정보 및 성능(비정상 종료·진단) — 수집 + <b>공유</b>(광고 회사로 감) · 목적 = 광고·분석. 결제를 넣으면 "금융 정보 › 구매 기록" 추가.</div>
+
 <h2>11. 비공개 테스트 트랙 (참고)</h2>
 <table>
   <tr><th>칸</th><th>답</th></tr>
@@ -180,6 +185,7 @@
   <tr><td>AAB</td><td><code>Kachi_Gun\Builds\kachizombie-1.0-1.aab</code></td></tr>
   <tr><td>출시 이름 · 출시 노트</td><td>"1.0 (1)" · 노트는 <code>스토어_등록정보.html</code> 3번 칸 복사</td></tr>
 </table>
+</details>
 </main>
 <script>
 document.querySelectorAll('button[data-copy]').forEach(function (b) {

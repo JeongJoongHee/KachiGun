@@ -1,6 +1,11 @@
 # 카치건 (좀비 키우기) — 세로 방치형 분대 슈팅, Unity 6000.0.84f1 · 2D URP
 
-## ▶ 재개 메모 (2026-11-09 오전 — 프로덕션 승인 · 8번 AAB) — **재개하면 여기부터**
+## ▶ 재개 메모 (2026-11-10 — 스토어 공개 · 앱 이전 신청 · 문서 정리) — **재개하면 여기부터**
+- **11-10 스토어 공개 확인**(비로그인으로 페이지 열림 · 개발자 FIBE) → 사용자가 **앱 이전 신청 · Cachisi 수락 끝**(Chrome 확인: 대기 중 · 새 개발자 계정 8145464765433681010 · 앱 com.zkfpf.kachizombie 하나 · 이유 "결제 프로필에 문제가 있음" · 관계 "동일한 모회사에서 소유함") → 구글 처리 영업일 2일(~11-12)
+- 다음: 이전 완료 메일 → 라이선스 키를 키 보관\google_play_license_key.txt → "키 넣었어" → ④ 9번. 그 사이 AdMob 스토어 연결 · 구글 애즈 앱 추가(결제 전까지)
+- **문서 정리 규칙(사용자 요청)**: 다 끝난 문서 → `완료 문서/` · 일부만 끝나면 끝난 절을 맨 아래 "끝난 것" 접기 — 루트 CLAUDE.md "문서 정리 규칙". 이번에 14개 옮김 + 게임설정_답안(옛 광고·데이터 보안 답·테스트 트랙)·스토어_등록정보(첫 출시 노트) 아래로. 옛 판 = 스크래치 docs_before_1110
+
+## ▶ 재개 메모 (2026-11-09 오전 — 프로덕션 승인 · 8번 AAB)
 - **11-09 프로덕션 신청 승인**(사용자 "승인완료 되었어 8번 구워줘") → **`Kachi_Gun/Builds/kachizombie-1.0.8-8.aab`** (버전 코드 8 · 1.0.8 · 59.8MB · 4.9분) · aab_check 8항목 통과 · uses-permission 7번과 같음 · 시험 143줄 errors=0 · 개발용 APK `kachizombie-1.0.8-8-debug.apk`
 - 8번 준비: 설정 [클라우드 저장] 줄은 `CloudAuth.Configured`(Play 게임즈 App ID) 있을 때만 · 없으면 [게임 종료] 한 칸 위 · 창 920 (`MenuPopups.SettingsPopup`) · Unity 가 11-08 만든 GPGS 파일(PlayGamesSettings.asset 빈 AppId · GooglePlayGamesManifest.androidlib · games-v2·nearby) 커밋해 넣음
 - **빈 APP_ID 로 켜질 때 멈춤?** games-v2 22.0.0 은 `PlayGamesInitProvider` 로 켤 때 저절로 초기화 → javap 로 보니 APP_ID 를 `Long.parseLong` 하는 곳(appshortcuts.zzt)이 NumberFormatException 을 잡음 → 멈추지 않을 것으로 봄. APK 안 값 = "" . **폰 확인은 비공개 트랙 업데이트로**(개발용 APK 는 서명이 달라 7번을 지워야 함)
