@@ -348,7 +348,7 @@ Play — <code>게시 과정\구글_답변_앱이전_1107.txt</code> · 앱 이�
   // 저장 형식: {"c":{항목id:true}, "n":{항목id:"의견"}} — 항목id 는 li 의 data-id
   var KEY='kachigun-todo-1109', st={c:{},n:{}};
   // 체크 → 취소선 + "확인 대기". Claude 가 확인해 문제없으면 여기에 id 를 넣음 → 맨 아래 "이번 판에서 확인한 작업"으로
-  var CONFIRMED=['a-wait','s-lang','r-build8','r-up8','r-release','s-bug','r-live'];   // 11-09 확인: 승인 · 영어 문제없음 · 8번 AAB · Alpha·프로덕션 8 (1.0.8) 검토 / 11-10: 8번 폰 확인 · 스토어 공개(개발자 FIBE, 비로그인으로 페이지 열림)
+  var CONFIRMED=['a-wait','s-lang','r-build8','r-up8','r-release','s-bug','r-live','m-request'];   // 11-09 확인: 승인 · 영어 문제없음 · 8번 AAB · Alpha·프로덕션 8 (1.0.8) 검토 / 11-10: 8번 폰 확인 · 스토어 공개(개발자 FIBE, 비로그인으로 페이지 열림) · 앱 이전 신청·Cachisi 수락(Chrome 확인, 상태 대기 중 · 구글 처리 영업일 2일)
   try{ var v=JSON.parse(localStorage.getItem(KEY)||'{}'); st.c=v.c||{}; st.n=v.n||{}; }catch(e){}
   function save(){ try{ localStorage.setItem(KEY,JSON.stringify(st)); }catch(e){} stat(); }
   var items=document.querySelectorAll('ul.todo > li[data-id]');
