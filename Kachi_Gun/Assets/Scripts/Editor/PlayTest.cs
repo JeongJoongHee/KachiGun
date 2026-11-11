@@ -971,6 +971,41 @@ namespace KachiGun.EditorTools
                     Check(seen.Count == nRand && sp.ActiveCount == 1, $"가끔 대사 {seen.Count}/{nRand}종 고루 · 지금 말풍선 {sp.ActiveCount}개 ({sp.ActiveText})");
                     Capture("20b_speech_random");
                     sp.Clear();
+                    // 11-12 받아치기: 답 줄이 가리키는 대사가 다 있나 · 껄껄껄! → (다른 동료) 뭐가 그렇게 웃겨? → (처음 동료) 그냥~ · 동료가 없으면 답 없음
+                    {
+                        var rpIds = new System.Collections.Generic.HashSet<string>();
+                        foreach (var rpL in Speech.Lines) rpIds.Add(rpL.id);
+                        int rpNRep = 0, rpOrphan = 0, rpWith = 0;
+                        foreach (var rpL in Speech.Lines) if (rpL.trigger == "Reply") { rpNRep++; if (!rpIds.Contains(rpL.replyTo)) rpOrphan++; }
+                        foreach (var rpL in Speech.Lines) if (rpL.trigger != "Reply" && Speech.PickReply(rpL.id) != null) rpWith++;
+                        Check(rpNRep >= 5 && rpOrphan == 0 && rpWith > 0 && rpWith < nRand + nClear + nBoss, $"받아치기 표: 답 {rpNRep}줄 · 답 달린 대사 {rpWith}개(일부만) · 가리키는 대사 없음 {rpOrphan}");
+                        Speech.Line rpLaugh = null; foreach (var rpL in Speech.Lines) if (rpL.id == "rand_10") rpLaugh = rpL;
+                        int rpNCat = Squad.I.cats.Count;
+                        Speech.SayLine(rpLaugh, true);
+                        yield return Wait(0.4f);
+                        var rpA = sp.WhoSays("껄껄껄!"); int rpN1 = sp.ActiveCount;
+                        yield return Wait(1.0f);
+                        var rpB = sp.WhoSays("뭐가 그렇게 웃겨?"); int rpN2 = sp.ActiveCount;
+                        Capture("20d_speech_reply");
+                        yield return Wait(1.0f);
+                        string rpBack = rpA ? sp.TextOf(rpA) : null;
+                        Capture("20e_speech_reply2");
+                        Check(rpNCat >= 2 && rpA && rpN1 == 1 && rpB && rpB != rpA && rpN2 == 2 && rpBack == "그냥~", $"받아치기 대화: 동료 {rpNCat} · 처음 {rpN1}개 → 답 뒤 {rpN2}개(다른 동료 {(rpB && rpB != rpA)}) → 처음 동료 \"{rpBack}\"");
+                        sp.Clear();
+                        // 동료가 리더 1마리뿐이면 답 없음
+                        var rpKeep = new System.Collections.Generic.List<Capy>(Squad.I.cats);
+                        Squad.I.cats.RemoveRange(1, Squad.I.cats.Count - 1);
+                        Speech.SayLine(rpLaugh, true);
+                        yield return Wait(1.4f);
+                        int rpSolo = sp.ActiveCount; bool rpPend = sp.ReplyPending;
+                        Squad.I.cats.Clear(); Squad.I.cats.AddRange(rpKeep);
+                        Check(rpSolo == 1 && !rpPend, $"동료가 없으면 답 없음: 말풍선 {rpSolo}개 · 예약 {rpPend}");
+                        sp.Clear();
+                        // 배고프당! 은 답이 2개 — 비중대로 둘 다 나옴
+                        var rpSeen = new System.Collections.Generic.HashSet<string>();
+                        for (int rpI = 0; rpI < 300; rpI++) { var rpR = Speech.PickReply("rand_14"); if (rpR != null) rpSeen.Add(rpR.text); }
+                        Check(rpSeen.Count == 2, $"배고프당! 답 {rpSeen.Count}종 ({string.Join(" / ", rpSeen)})");
+                    }
                     // 스테이지 마디 네온: 지금 서브 스테이지 마디 자리 · 깜빡임
                     float a0 = HUD.I.NodeGlowColor.a; yield return Wait(0.37f); float a1 = HUD.I.NodeGlowColor.a;
                     var gp = HUD.I.NodeGlowPos;

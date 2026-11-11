@@ -7,13 +7,15 @@ namespace KachiGun
     /// <summary>
     /// 11-11 요청_04 카피바라 말풍선 — 흰 바탕 + 검정 선(Kit/bubble · bubble_tail), 대사는 Speech_Lines 표.
     ///   Clear = 스테이지 클리어(리더) · Boss = 보스 등장(리더) · Random = 싸우는 중 Speech_Random_Min~Max 초마다 아무나.
+    ///   11-12 받아치기: Reply 줄(Reply_To = 받아칠 대사 Id)이 있으면 Speech_Reply_Delay 초 뒤 다른 동료가 답함
+    ///     (Who Other = 방금 말한 동료 말고 · Back = 처음 말한 동료) · 답에도 답 가능 · 동료가 1마리면 답 없음.
     /// 피해 숫자와 같은 층(Fx.uiLayer, 따로 판)에 그려서 매 프레임 따라가도 위 화면 전체를 다시 모으지 않음.
     /// </summary>
     public class Speech : MonoBehaviour
     {
         public static Speech I;
 
-        public class Line { public string id, trigger, who, text; public float weight; }
+        public class Line { public string id, trigger, who, text, replyTo; public float weight; }
         static List<Line> lines;
 
         class Bubble
@@ -23,6 +25,9 @@ namespace KachiGun
         }
         readonly List<Bubble> pool = new();
         float nextRandom = -1;
+
+        // 11-12 받아치기 예약 (한 번에 대화 하나)
+        Line replyLine; Capy replyFirst, replyPrev; float replyWait; bool replyAlways;
 
         static GameManager GM => GameManager.I;
 
@@ -34,7 +39,7 @@ namespace KachiGun
                 lines = new List<Line>();
                 foreach (var r in Tables.ReadTable("Speech_Lines"))
                 {
-                    var l = new Line { id = r.S("Id"), trigger = r.S("Trigger"), who = r.S("Who"), text = r.S("Text"), weight = r.F("Weight", 1) };
+                    var l = new Line { id = r.S("Id"), trigger = r.S("Trigger"), who = r.S("Who"), text = r.S("Text"), replyTo = r.S("Reply_To"), weight = r.F("Weight", 1) };
                     if (l.text.Length > 0 && l.weight > 0) lines.Add(l);
                 }
                 return lines;
@@ -44,16 +49,21 @@ namespace KachiGun
         void Awake() { I = this; }
 
         /// <summary>그 상황(Trigger)의 대사 하나 (비중대로)</summary>
-        public static Line Pick(string trigger)
+        public static Line Pick(string trigger) => PickWhere(l => l.trigger == trigger);
+
+        /// <summary>그 대사(Id)에 받아치는 답 하나 (비중대로, 없으면 null)</summary>
+        public static Line PickReply(string id) => string.IsNullOrEmpty(id) ? null : PickWhere(l => l.trigger == "Reply" && l.replyTo == id);
+
+        static Line PickWhere(System.Func<Line, bool> ok)
         {
             float sum = 0;
-            foreach (var l in Lines) if (l.trigger == trigger) sum += l.weight;
+            foreach (var l in Lines) if (ok(l)) sum += l.weight;
             if (sum <= 0) return null;
             float k = Random.value * sum;
             Line last = null;
             foreach (var l in Lines)
             {
-                if (l.trigger != trigger) continue;
+                if (!ok(l)) continue;
                 last = l;
                 k -= l.weight;
                 if (k <= 0) return l;
@@ -65,13 +75,60 @@ namespace KachiGun
         public static void Say(string trigger)
         {
             if (I == null || Squad.I == null || GM == null || GM.eco) return;
-            if (trigger == "Random" && I.ActiveCount > 0) return;   // 가끔 대사는 다른 말풍선이 떠 있으면 쉼 (클리어·보스는 덮어씀)
-            var l = Pick(trigger);
-            if (l == null) return;
+            if (trigger == "Random" && (I.ActiveCount > 0 || I.replyLine != null)) return;   // 가끔 대사는 다른 말풍선·대화 중이면 쉼 (클리어·보스는 덮어씀)
+            SayLine(Pick(trigger));
+        }
+
+        /// <summary>대사 한 줄 띄우고, 답이 달린 대사면 받아치기를 예약 (always = 확률 무시, 시험용)</summary>
+        public static void SayLine(Line l, bool always = false)
+        {
+            if (I == null || l == null || Squad.I == null) return;
             Capy c = Squad.I.Leader;
             if (l.who == "Any" && Squad.I.cats.Count > 0) c = Squad.I.cats[Random.Range(0, Squad.I.cats.Count)];
-            if (c) I.Show(c, L.T(l.text));
+            if (!c) return;
+            I.Show(c, L.T(l.text));
+            I.replyLine = null;
+            I.QueueReply(l, c, c, always);
         }
+
+        void QueueReply(Line said, Capy first, Capy prev, bool always)
+        {
+            var r = PickReply(said.id);
+            if (r == null) return;
+            if (!always && Random.value >= (float)Tables.C("Speech_Reply_Chance", 0.8)) return;
+            replyLine = r; replyFirst = first; replyPrev = prev; replyAlways = always;
+            replyWait = Mathf.Max(0.2f, (float)Tables.C("Speech_Reply_Delay", 1.0));
+        }
+
+        /// <summary>받아칠 동료: Back = 처음 말한 동료 · Other = 방금 말한 동료 말고 아무나 (없으면 null = 답 안 함)</summary>
+        static Capy ReplyWho(Line r, Capy first, Capy prev)
+        {
+            var cats = Squad.I != null ? Squad.I.cats : null;
+            if (cats == null || cats.Count < 2) return null;            // 동료가 없으면 답 없음
+            if (r.who == "Back" && first && first != prev && cats.Contains(first)) return first;
+            int n = 0;
+            foreach (var k in cats) if (k && k != prev) n++;
+            if (n == 0) return null;
+            int pick = Random.Range(0, n);
+            foreach (var k in cats) if (k && k != prev && pick-- == 0) return k;
+            return null;
+        }
+
+        void UpdateReply(float dt)
+        {
+            if (replyLine == null) return;
+            if (GM == null || GM.eco) { replyLine = null; return; }
+            replyWait -= dt;
+            if (replyWait > 0) return;
+            var r = replyLine; replyLine = null;
+            var c = ReplyWho(r, replyFirst, replyPrev);
+            if (!c) return;
+            Show(c, L.T(r.text));
+            QueueReply(r, replyFirst, c, replyAlways);     // 답에 또 답 (3마디)
+        }
+
+        /// <summary>받아치기가 예약돼 있나 (시험용)</summary>
+        public bool ReplyPending => replyLine != null;
 
         Bubble Current(Capy c) { foreach (var b in pool) if (b.who == c && b.rt.gameObject.activeSelf) return b; return null; }
         public bool Showing(string text) { foreach (var b in pool) if (b.rt.gameObject.activeSelf && b.t.text == text) return true; return false; }
@@ -144,6 +201,7 @@ namespace KachiGun
         void Update()
         {
             float dt = Time.deltaTime;
+            UpdateReply(dt);
             foreach (var b in pool)
             {
                 if (!b.rt.gameObject.activeSelf) continue;
@@ -164,13 +222,18 @@ namespace KachiGun
             nextRandom -= dt;
             if (nextRandom > 0) return;
             nextRandom = Random.Range(lo, Mathf.Max(lo, hi));
+            if (replyLine != null) return;                                     // 대화 중이면 쉼
             foreach (var b in pool) if (b.rt.gameObject.activeSelf) return;   // 다른 말풍선이 떠 있으면 이번엔 쉼
             Say("Random");
         }
 
         /// <summary>떠 있는 말풍선 모두 끔 (시험·장면 바뀜)</summary>
-        public void Clear() { foreach (var b in pool) b.rt.gameObject.SetActive(false); }
+        public void Clear() { replyLine = null; foreach (var b in pool) b.rt.gameObject.SetActive(false); }
         public int ActiveCount { get { int n = 0; foreach (var b in pool) if (b.rt.gameObject.activeSelf) n++; return n; } }
+        /// <summary>그 카피바라가 지금 말하는 글 (없으면 null)</summary>
+        public string TextOf(Capy c) { var b = Current(c); return b != null ? b.t.text : null; }
+        /// <summary>그 글을 말하는 카피바라 (없으면 null)</summary>
+        public Capy WhoSays(string text) { foreach (var b in pool) if (b.rt.gameObject.activeSelf && b.t.text == text) return b.who; return null; }
         public string ActiveText { get { foreach (var b in pool) if (b.rt.gameObject.activeSelf) return b.t.text; return null; } }
     }
 }

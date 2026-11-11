@@ -79,3 +79,5 @@ Speech_Random_Max,30,초,말풍선,Speech.xlsx,11-11 위 간격 최대 (0 이면
 Speech_Show,2.2,초,말풍선,Speech.xlsx,11-11 말풍선이 떠 있는 시간 (끝 0.25초 동안 흐려짐)
 Unlock_Toast_Time,3.5,초,UI,Unlock.xlsx,11-11 콘텐츠가 열렸을 때 알림 글이 떠 있는 시간 (보통 알림은 1.8초)
 Unlock_Glow_Time,6,초,UI,Unlock.xlsx,11-11 열린 버튼 뒤에서 빛이 깜빡이며 통통 튀는 시간
+Speech_Reply_Delay,1,초,말풍선,Speech.xlsx,11-12 대사가 나온 뒤 다른 동료가 받아치기까지 (Speech_Show 보다 짧아야 두 풍선이 같이 보임)
+Speech_Reply_Chance,0.8,비율,말풍선,Speech.xlsx,11-12 답(Reply 줄)이 달린 대사가 나왔을 때 실제로 받아칠 확률 (1 = 항상 · 0 = 받아치기 끔)
