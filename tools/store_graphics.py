@@ -22,7 +22,7 @@ OUT = os.path.join(ROOT, '스토어 등록')
 # (캡처 이름, 문구 1줄, 문구 2줄)
 SHOTS = [
     ('01_battle', '켜 두면 알아서 싸운다!', '카피바라 분대 방치형 슈팅'),
-    ('02_boss', '챕터마다 기다리는 보스', '150챕터, 750스테이지'),
+    ('02_boss', '챕터마다 바뀌는 보스 6종', '좀비 44종, 150챕터'),
     ('03_weapon', '같은 탄알 두 개를 겹치면', '한 단계 위로 합성!'),
     ('04_high', 'D부터 SSU까지 13등급', '레이저와 미사일의 화끈한 화력'),
     ('05_supply', '25가지 보급품 수집', '모을수록 강해지는 보유 효과'),
@@ -70,13 +70,16 @@ def screenshot(name, l1, l2):
     return canvas
 
 
-def capy_and_zombie(h):
-    s = Image.open(os.path.join(ART, 'Char', 'skin_17.png')).convert('RGBA')   # 해적 선장
-    c = 8
+def capy(skin, c=8):
+    s = Image.open(os.path.join(ART, 'Char', 'skin_%02d.png' % skin)).convert('RGBA')
     cap = s.crop(((c % 4) * 360, (c // 4) * 360, (c % 4 + 1) * 360, (c // 4 + 1) * 360))
-    cap = cap.crop(cap.getbbox())
+    return cap.crop(cap.getbbox())
+
+
+def capy_and_zombie(h):
+    cap = capy(17)   # 해적 선장
     zs = []
-    for zn in ('z_basic', 'z_fat', 'z_hat'):
+    for zn in ('z_basic', 'z_cowboy', 'z_chef'):   # 11-11: 새 좀비도 섞음
         z = Image.open(os.path.join(ART, 'Zombie', zn + '.png')).convert('RGBA').crop((0, 0, 400, 380))
         zs.append(z.crop(z.getbbox()).transpose(Image.FLIP_LEFT_RIGHT))
     sc = lambda im, hh: im.resize((int(im.width * hh / im.height), hh), Image.NEAREST)
@@ -96,10 +99,17 @@ def feature_graphic():
         a = int(max(0, min(1, 1 - (x - 80) / 520)) * 150)
         ImageDraw.Draw(shade).line([(x, 0), (x, H)], fill=a)
     canvas.alpha_composite(Image.merge('RGBA', (*Image.new('RGB', (W, H), (0, 0, 0)).split(), shade)))
-    cap, zs = capy_and_zombie(330)
-    for i, z in enumerate(zs):
-        canvas.alpha_composite(z, (720 + i * 95 - (40 if i == 1 else 0), H - z.height - 30 - (25 if i == 1 else 0)))
-    canvas.alpha_composite(cap, (540, H - cap.height - 20))
+    # 11-11 요청_04: 코스튬 섞기 — 뒤에 원시인 · 새싹(작게), 앞에 해적 선장 / 좀비 셋(기본 · 카우보이 · 요리사)은 오른쪽에 계단처럼
+    cap, zs = capy_and_zombie(290)
+    sc = lambda im, hh: im.resize((int(im.width * hh / im.height), hh), Image.NEAREST)
+    zs = [sc(z, 215) for z in zs]
+    for k, (zx, zb) in enumerate(((835, 150), (745, 75), (815, 14))):
+        z = zs[[2, 0, 1][k]]
+        canvas.alpha_composite(z, (zx, H - z.height - zb))
+    b1, b2 = sc(capy(6), 210), sc(capy(3), 210)
+    canvas.alpha_composite(b1, (440, H - b1.height - 175))
+    canvas.alpha_composite(b2, (610, H - b2.height - 190))
+    canvas.alpha_composite(cap, (495, H - cap.height - 12))
     d = ImageDraw.Draw(canvas)
     text_outline(d, (270, 185), '카피바라', font(96), GOLD, w=8)
     text_outline(d, (270, 290), 'vs 좀비', font(96), (150, 230, 120), w=8)

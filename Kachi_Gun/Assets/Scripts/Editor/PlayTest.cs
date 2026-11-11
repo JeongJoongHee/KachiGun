@@ -1257,17 +1257,27 @@ namespace KachiGun.EditorTools
             SetupCapture();
             // 11-07: 좀비가 오른쪽 끝에서 바로 죽어 화면이 비어 보였음 → 사격을 잠깐 멈추고(HoldFire) 좀비가 화면 가운데까지 걸어오면 쏘기 시작 → 잠깐 뒤 찍음
             int Near(float frac) { int n = 0; foreach (var t in Target.All) if (t is Zombie z && z.Alive && !z.isBoss && z.Pos.x < Field.I.ViewHalfW * frac) n++; return n; }
+            // 11-11: 코스튬을 장마다 새싹(3) · 해적 선장(17) · 원시인(6) 으로 섞고, 리더 말풍선을 넣어 찍음
+            void Dress(int k) { S.skin = k; Squad.I.SetSkin(k); GM.Notify(); }
+            void Say(string s) { Speech.I.Clear(); Speech.I.Show(Squad.I.Leader, L.T(s)); }
+            Dress(3);   // 11챕터 = 푸르딩딩 좀비 · 세모 나무 배경
             GameManager.HoldFire = true;
             yield return WaitUntil(() => Near(0.3f) >= 10, 25f);
             GameManager.HoldFire = false;
+            Say("좀비가 몰려온다!");
             yield return Wait(0.45f);
             Log($"01 전투: 가운데까지 온 좀비 {Near(0.3f)} · 전체 {Target.All.Count}");
             Capture("store/01_battle");
 
             // 보스 (챕터 마지막 스테이지 11-5 = 54)
+            Dress(17);   // 11챕터 보스 = 닻 선장 ↔ 해적 선장 카피바라
+            // 11-11: 예전엔 보스가 오른쪽 끝에서 맞고 있어 화면에 안 보였음 → 사격을 멈추고 보스가 화면 안쪽까지 걸어오면 쏘기 시작
             S.stage = 54; S.kills = GM.Quota; GM.Notify();
-            yield return WaitUntil(() => GM.boss != null && GM.boss.transform.position.y < Field.I.PlayTop - 4.5f, 45f);
-            yield return Wait(1.5f);
+            GameManager.HoldFire = true;
+            yield return WaitUntil(() => GM.boss != null && GM.boss.Pos.x < Field.I.ViewHalfW * 0.4f, 45f);
+            GameManager.HoldFire = false;
+            Say("보스다!! 조심해!!");
+            yield return Wait(0.4f);
             Log($"보스: {(GM.boss != null ? "있음 y=" + GM.boss.transform.position.y.ToString("0.0") : "없음")}");
             Capture("store/02_boss");
             if (GM.boss != null) GM.boss.Hit(GM.boss.hp + 1, GM.boss.Pos);
@@ -1279,18 +1289,21 @@ namespace KachiGun.EditorTools
             // 상위 총알 전투
             S.slots[0] = Tables.Code(9, "laser"); S.slots[1] = Tables.Code(9, "missile"); S.slots[2] = Tables.Code(8, "laser");
             S.lvAtk = 0; S.lvSpd = 0;   // 상위 총알이라 강화를 빼야 좀비가 화면에 남아 보임
+            S.skin = 6; S.stage = 64; GM.AdvanceStage(); GM.ClearTargets(); Speech.I.Clear();   // 11-11: 14-1 = 붉은 좀비 · 황폐 배경 · 원시인 (스테이지 글자까지 바뀌게 넘어가기로)
             Squad.I.Rebuild(); GM.Notify();
             GameManager.HoldFire = true;
             yield return WaitUntil(() => Near(0.3f) >= 10, 25f);
             GameManager.HoldFire = false;
             yield return Wait(0.35f);
             Log($"04 상위 총알: 가운데까지 온 좀비 {Near(0.3f)} · 전체 {Target.All.Count}");
+            Speech.I.Clear();
             Capture("store/04_high");
 
             HUD.I.Open<SupplyPopup>(); yield return Wait(0.4f); Capture("store/05_supply"); CloseAll();
             HUD.I.Open<SkinPopup>(); yield return Wait(0.4f); Capture("store/06_skin"); CloseAll();
 
             // 광산
+            Dress(3); Speech.I.Clear();
             S.RefreshDaily();
             // 11-07: "비밀던전" 알림 글자가 사라진 뒤 찍음 (전엔 0.9초라 글자가 가운데를 가렸음)
             if (GM.StartMine() == null) { yield return Wait(2.2f); Capture("store/07_mine"); GM.dungeonTime = 0.05f; yield return Wait(0.5f); HUD.I.Get<ResultPopup>()?.Close(); yield return Wait(0.4f); }
@@ -1298,6 +1311,7 @@ namespace KachiGun.EditorTools
 
             // 도전
             // 11-07: 3초면 이미 다 잡아 결과 창이 찍혔음 → 싸우는 중에 (알림 글자가 흐려질 때쯤)
+            Dress(17); Speech.I.Clear();
             GameManager.HoldFire = true;   // 도전 좀비는 제자리에 서 있음 → 알림 글자가 사라질 때까지 쏘지 않고 기다렸다가 잠깐 쏨
             if (GM.StartChallenge() == null) { yield return Wait(1.9f); GameManager.HoldFire = false; yield return Wait(0.12f); Log($"08 도전: 남은 좀비 {GM.DungeonLeft}"); Capture("store/08_challenge"); HUD.I.Get<ResultPopup>()?.Close(); GM.ExitDungeon(); }
             else Log("도전 못 들어감");

@@ -5,6 +5,7 @@
     Who: Leader = 가운데 리더 · Any = 아무나
     Weight: 같은 Trigger 안에서 나올 비중
 사용: PYTHONUTF8=1 python tools/speech_add_1111.py → python tools/xlsx2csv.py
+  ※ speech() 는 Speech.xlsx 를 새로 씀 — 사용자가 표에 직접 넣은 줄은 먼저 LINES 에 옮길 것
 """
 import os
 import openpyxl
@@ -24,6 +25,10 @@ LINES = [
     ('rand_6', 'Random', 'Any', 1, '조준 똑바로!', 'Aim steady!'),
     ('rand_7', 'Random', 'Any', 1, '숲은 우리가 지킨다!', "We'll protect the forest!"),
     ('rand_8', 'Random', 'Any', 1, '아직 멀었어!', "We're just getting started!"),
+    # 11-11 사용자가 Speech.xlsx 에 직접 넣은 3줄
+    ('rand_9', 'Random', 'Any', 1, '조금 더 힘을 내!', 'Just a little more!'),
+    ('rand_10', 'Random', 'Any', 1, '껄껄껄!', 'Hahaha!'),
+    ('rand_11', 'Random', 'Any', 1, '카피바라는 귀엽다!!', 'Capybaras are cute!!'),
 ]
 
 CONFIG = [
