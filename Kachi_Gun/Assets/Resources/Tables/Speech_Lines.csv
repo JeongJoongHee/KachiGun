@@ -1,0 +1,12 @@
+﻿Id,Trigger,Who,Weight,Text,Note
+clear_1,Clear,Leader,1,스테이지 클리어!,Trigger: Clear 스테이지 클리어 · Boss 보스 등장 · Random 싸우는 중 가끔 / Who: Leader 리더 · Any 아무나 / 영어는 String 표
+boss_1,Boss,Leader,3,보스다!! 조심해!!,
+boss_2,Boss,Leader,1,큰 놈이 온다!,
+rand_1,Random,Any,2,좀비가 몰려온다!,
+rand_2,Random,Any,2,다 쓸어버리자!,
+rand_3,Random,Any,2,모두 힘내!,
+rand_4,Random,Any,1,한 마리도 놓치지 마!,
+rand_5,Random,Any,1,끝까지 버티자!,
+rand_6,Random,Any,1,조준 똑바로!,
+rand_7,Random,Any,1,숲은 우리가 지킨다!,
+rand_8,Random,Any,1,아직 멀었어!,

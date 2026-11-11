@@ -74,3 +74,8 @@ Zombie_New_From,6,챕터,좀비,Zombie.xlsx,11-11 새 얼굴 비중은 MinChapte
 Stage_Kinds_Min,3,종,좀비,Zombie.xlsx,11-11 한 스테이지에 나오는 일반 좀비 종류 최소 (그 챕터에 나올 수 있는 종류가 더 적으면 전부). 스테이지마다 정해져 다시 와도 같음
 Stage_Kinds_Max,5,종,좀비,Zombie.xlsx,"11-11 한 스테이지에 나오는 일반 좀비 종류 최대 — 고를 때 나올 비중(배경·새 얼굴 포함)대로, 그 챕터에 처음 나오는 좀비는 꼭 넣음"
 Treasure_Outside_Kinds,1,켬,좀비,Zombie.xlsx,11-11 1 = 돈가방(Role 보물)은 종류 수에 안 셈 — 원래 확률 그대로 가끔 끼어듦 / 0 = 3~5종 안에 뽑혀야 나옴
+Speech_Random_Min,15,초,말풍선,Speech.xlsx,"11-11 싸우는 중 아무 카피바라가 Random 대사를 말하는 간격 최소 (스테이지 화면에서만, 보스전 중엔 안 함)"
+Speech_Random_Max,30,초,말풍선,Speech.xlsx,11-11 위 간격 최대 (0 이면 Random 대사 끔)
+Speech_Show,2.2,초,말풍선,Speech.xlsx,11-11 말풍선이 떠 있는 시간 (끝 0.25초 동안 흐려짐)
+Unlock_Toast_Time,3.5,초,UI,Unlock.xlsx,11-11 콘텐츠가 열렸을 때 알림 글이 떠 있는 시간 (보통 알림은 1.8초)
+Unlock_Glow_Time,6,초,UI,Unlock.xlsx,11-11 열린 버튼 뒤에서 빛이 깜빡이며 통통 튀는 시간

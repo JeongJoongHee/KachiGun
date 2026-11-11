@@ -30,6 +30,7 @@ namespace KachiGun
         Button buffAtk, buffGold;
         Text buffAtkT, buffGoldT;
         RectTransform paw;
+        Image nodeGlow, nodeGlowIn, nodeRing;      // 11-11 요청_04 지금 스테이지 마디 네온 빛 + 고리
         RectTransform toastRt; Text toastT; float toastTime;
         GameObject eco;
         float refreshT;
@@ -70,6 +71,7 @@ namespace KachiGun
 
             BuildTutorial();
             BuildEco();
+            gameObject.AddComponent<Speech>();   // 11-11 요청_04 카피바라 말풍선
 
             GM.Changed += () => refreshT = 0;
             GM.StageChanged += RefreshStage;
@@ -99,6 +101,18 @@ namespace KachiGun
             stageGroup = UIKit.Rect(root, "StageGroup").Place(0.5f, 1f, new Vector2(0, -110), new Vector2(560, 280), new Vector2(0.5f, 1f));
             var line = UIKit.KitImg(stageGroup, "bar_track", new Vector2(480, 22), "Line");
             line.rectTransform.Place(0.5f, 1f, new Vector2(0, -26), new Vector2(480, 22), new Vector2(0.5f, 0.5f));
+            // 11-11 요청_04: 지금 있는 마디를 네온 빛으로 (바깥 흐린 빛 + 안쪽 진한 빛, 숨 쉬듯 커졌다 작아짐)
+            //   마디보다 먼저 만들어 뒤에 그림 · 따로 판(Canvas)이라 깜빡여도 위 화면 전체를 다시 모으지 않음
+            nodeGlow = UIKit.Img(stageGroup, Art.Glow, new Vector2(150, 150), "NodeGlow");
+            nodeGlow.gameObject.AddComponent<Canvas>();
+            nodeGlow.raycastTarget = false;
+            nodeGlow.rectTransform.Place(0.5f, 1f, new Vector2(-200, -26), new Vector2(150, 150), new Vector2(0.5f, 0.5f));
+            nodeGlowIn = UIKit.Img(nodeGlow.rectTransform, Art.Glow, new Vector2(84, 84), "In");
+            nodeGlowIn.raycastTarget = false;
+            nodeGlowIn.rectTransform.Place(0.5f, 0.5f, Vector2.zero, new Vector2(84, 84), new Vector2(0.5f, 0.5f));
+            nodeRing = UIKit.Img(nodeGlow.rectTransform, Art.Ring, new Vector2(78, 78), "Ring");   // 네온 관 같은 고리 (마디 바깥)
+            nodeRing.raycastTarget = false;
+            nodeRing.rectTransform.Place(0.5f, 0.5f, Vector2.zero, new Vector2(78, 78), new Vector2(0.5f, 0.5f));
             for (int i = 0; i < 5; i++)
             {
                 var n = UIKit.KitImg(stageGroup, "node", new Vector2(40, 40), "Node" + i);
@@ -404,9 +418,15 @@ namespace KachiGun
             paw = p.rectTransform;
             paw.Place(0.5f, 0, new Vector2(-300, 150), new Vector2(120, 120), new Vector2(0.5f, 0.5f));
             p.raycastTarget = false;
-            var t = UIKit.Label(paw, L.T("눌러서 강화!"), 38, UIKit.Gold, TextAnchor.MiddleCenter, 3);
-            t.rectTransform.Place(0.5f, 1, new Vector2(0, 0), new Vector2(300, 50), new Vector2(0.5f, 0));
+            // 11-11 요청_04: 더 크고 붉게 (38 금색 → 54 빨강, 외곽선 굵게)
+            var t = UIKit.Label(paw, L.T("눌러서 강화!"), 54, PawRed, TextAnchor.MiddleCenter, 5);
+            t.rectTransform.Place(0.5f, 1, new Vector2(0, 0), new Vector2(440, 70), new Vector2(0.5f, 0));
+            pawText = t;
         }
+
+        Text pawText;
+        public static readonly Color PawRed = new(1f, 0.3f, 0.26f);
+        public Text PawText => pawText;
 
         // ---------- 절전모드 ----------
         void BuildEco()
@@ -454,6 +474,17 @@ namespace KachiGun
             // 11-08: 움직일 때만 크기를 넣음 (같은 값을 매 프레임 넣으면 화면을 다시 모음)
             if (goldBump > 0 || goldIcon.localScale.x != 1f) { goldBump = Mathf.MoveTowards(goldBump, 0, dt * 2f); goldIcon.localScale = Vector3.one * (1 + goldBump * 0.3f); }
             if (gemBump > 0 || gemIcon.localScale.x != 1f) { gemBump = Mathf.MoveTowards(gemBump, 0, dt * 2f); gemIcon.localScale = Vector3.one * (1 + gemBump * 0.3f); }
+
+            if (nodeGlow.gameObject.activeInHierarchy)
+            {
+                float k = 0.5f + 0.5f * Mathf.Sin(Time.unscaledTime * 4f);
+                nodeGlow.rectTransform.localScale = Vector3.one * (0.85f + 0.3f * k);
+                var gc = nodeGlowColor; gc.a = 0.5f + 0.4f * k; nodeGlow.color = gc;
+                nodeGlowIn.color = new Color(1f, 1f, 0.92f, 0.55f + 0.35f * k);
+                nodeRing.color = Color.Lerp(nodeGlowColor, Color.white, 0.35f) * new Color(1, 1, 1, 0.75f + 0.25f * k);
+                nodeRing.rectTransform.localScale = Vector3.one / (0.85f + 0.3f * k) * (0.95f + 0.1f * k);   // 바깥 빛보다 덜 움직임
+            }
+            TickUnlockFx(dt);
 
             if (paw.gameObject.activeSelf)
                 paw.anchoredPosition = new Vector2(-CardStep, CardY + 254 * CardScale + 56 + Mathf.Abs(Mathf.Sin(Time.unscaledTime * 5f)) * 22f);   // 공격력 카드 위에서 아래를 가리키며 콩콩
@@ -522,6 +553,7 @@ namespace KachiGun
             buffAtkT.color = Stats.BuffAtk ? UIKit.Gold : Color.white;
             buffGoldT.color = Stats.BuffGold ? UIKit.Gold : Color.white;
 
+            CheckUnlockFx();
             foreach (var kv in side)
             {
                 bool open = kv.Value.open();
@@ -591,6 +623,8 @@ namespace KachiGun
                 nodes[i].color = i < sub ? new Color(0.98f, 0.78f, 0.45f) : i == sub ? Color.white : new Color(0.45f, 0.35f, 0.28f);
             if (GM.bossPhase) nodes[4].color = UIKit.Red;
             nodeMarker.anchoredPosition = new Vector2(-200 + sub * 100, -12);
+            nodeGlow.rectTransform.anchoredPosition = new Vector2(-200 + sub * 100, -26);
+            nodeGlowColor = GM.bossPhase ? new Color(1f, 0.35f, 0.3f) : new Color(1f, 0.86f, 0.32f);   // 보스 = 빨강 · 평소 = 노란 네온
             Refresh();
         }
 
@@ -599,13 +633,13 @@ namespace KachiGun
 
         public void Toast(string s) => ShowToast(s, Color.white);
 
-        void ShowToast(string s, Color c)
+        void ShowToast(string s, Color c, float time = 1.8f)
         {
             if (string.IsNullOrEmpty(s)) return;
             toastT.text = s;
             toastT.color = c;
             toastPop = 0.15f;
-            toastTime = 1.8f;
+            toastTime = time;
             toastRt.gameObject.SetActive(true);
             toastRt.SetAsLastSibling();
         }
@@ -619,6 +653,104 @@ namespace KachiGun
         void Confirm(ConfirmPopup.Kind k) => ConfirmPopup.Dungeon(k);
 
         public void ShowResult(string title, bool win, double reward) => ResultPopup.Show(title, win, reward);
+
+        // ---------- 11-11 요청_04 해금: 알림 글을 더 오래(Unlock_Toast_Time) + 열린 버튼 뒤 빛 깜빡임 · 통통 (Unlock_Glow_Time) ----------
+        Color nodeGlowColor = new(1f, 0.86f, 0.32f);
+        public Color NodeGlowColor => nodeGlow ? nodeGlow.color : Color.clear;
+        public Vector2 NodeGlowPos => nodeGlow ? nodeGlow.rectTransform.anchoredPosition : Vector2.zero;
+        readonly Dictionary<string, bool> wasOpen = new();
+        class UnlockFx { public RectTransform target; public Image glow, ring; public float t; }
+        readonly List<UnlockFx> unlockFx = new();
+        public int UnlockFxCount => unlockFx.Count;
+        public float ToastLeft => toastRt.gameObject.activeSelf ? toastTime : 0;
+        public string ToastText => toastRt.gameObject.activeSelf ? toastT.text : null;
+
+        /// <summary>해금 id → 강조할 버튼들 (표 Unlock_Roadmap 의 Content_Id)</summary>
+        List<RectTransform> UnlockTargets(string id)
+        {
+            var l = new List<RectTransform>();
+            string sk = id == "supply" ? "fish" : id == "boss_raid" ? "boss" : id;
+            if (side.TryGetValue(sk, out var sb)) l.Add((RectTransform)sb.b.transform);
+            if (id == "mission") l.Add((RectTransform)missionBtn.transform);
+            if (id == "eco") l.Add((RectTransform)ecoBtn.transform);
+            if (id == "buff") { l.Add((RectTransform)buffAtk.transform); l.Add((RectTransform)buffGold.transform); }
+            return l;
+        }
+
+        /// <summary>잠겼던 기능이 열리는 순간(처음 본 값은 기억만) → 알림 글(더 오래) + 버튼 빛. 다이아로 여는 총알 메뉴도 같이 잡힘</summary>
+        void CheckUnlockFx()
+        {
+            string msg = null;
+            foreach (var u in Tables.Unlocks)
+            {
+                bool open = GM.Unlocked(u.id);
+                bool had = wasOpen.TryGetValue(u.id, out var was);
+                wasOpen[u.id] = open;
+                if (!had || was || !open) continue;
+                UnlockNow(u.id);
+                if (!string.IsNullOrEmpty(u.bannerMsg) && u.bannerMsg != "-") msg = L.T(u.bannerMsg);
+            }
+            if (msg != null) ShowToast(msg, UIKit.Gold, Mathf.Max(1.8f, (float)Tables.C("Unlock_Toast_Time", 3.5)));
+        }
+
+        /// <summary>그 기능 버튼을 강조 (버튼 뒤 노란 빛 깜빡임 + 버튼 통통)</summary>
+        public void UnlockNow(string id)
+        {
+            foreach (var rt in UnlockTargets(id))
+            {
+                if (!rt) continue;
+                unlockFx.RemoveAll(f => { if (f.target != rt) return false; if (f.glow) Destroy(f.glow.gameObject); if (f.ring) Destroy(f.ring.gameObject); return true; });
+                var g = UIKit.Img(rt.parent, Art.Glow, rt.sizeDelta * 2.6f, "UnlockGlow");
+                g.raycastTarget = false;
+                g.preserveAspect = false;          // 버튼 모양대로 타원
+                var pf = rt.GetComponent<PressFx>(); if (pf) pf.enabled = false;   // 누름 효과가 크기를 1 로 당기지 않게
+                g.gameObject.AddComponent<Canvas>();
+                var gr = g.rectTransform;
+                gr.anchorMin = rt.anchorMin; gr.anchorMax = rt.anchorMax; gr.pivot = new Vector2(0.5f, 0.5f);
+                gr.sizeDelta = rt.sizeDelta * 2.6f;
+                gr.anchoredPosition = rt.anchoredPosition + Vector2.Scale(new Vector2(0.5f, 0.5f) - rt.pivot, rt.sizeDelta);   // 버튼 가운데
+                gr.SetSiblingIndex(rt.GetSiblingIndex());   // 버튼 뒤
+                // 버튼 앞: 네온 고리(버튼 모양 타원) — 뒤 빛은 버튼 판에 가려 가장자리만 보여서
+                var r = UIKit.Img(rt.parent, Art.Ring, rt.sizeDelta * 1.45f, "UnlockRing");
+                r.raycastTarget = false; r.preserveAspect = false;
+                r.gameObject.AddComponent<Canvas>();
+                var rr = r.rectTransform;
+                rr.anchorMin = gr.anchorMin; rr.anchorMax = gr.anchorMax; rr.pivot = gr.pivot;
+                rr.sizeDelta = rt.sizeDelta * 1.45f; rr.anchoredPosition = gr.anchoredPosition;
+                rr.SetSiblingIndex(rt.GetSiblingIndex() + 1);
+                unlockFx.Add(new UnlockFx { target = rt, glow = g, ring = r });
+            }
+        }
+
+        public void StopUnlockFx() { foreach (var f in unlockFx) f.t = 1e6f; }
+
+        void TickUnlockFx(float dt)
+        {
+            if (unlockFx.Count == 0) return;
+            float life = Mathf.Max(1f, (float)Tables.C("Unlock_Glow_Time", 6));
+            for (int i = unlockFx.Count - 1; i >= 0; i--)
+            {
+                var f = unlockFx[i];
+                f.t += dt;
+                if (f.t >= life || !f.target)
+                {
+                    if (f.target) { f.target.localScale = Vector3.one; var pf = f.target.GetComponent<PressFx>(); if (pf) pf.enabled = true; }
+                    if (f.glow) Destroy(f.glow.gameObject);
+                    if (f.ring) Destroy(f.ring.gameObject);
+                    unlockFx.RemoveAt(i);
+                    continue;
+                }
+                float k = Mathf.Abs(Mathf.Sin(f.t * 5f));
+                float fade = Mathf.Clamp01((life - f.t) / 0.6f);
+                f.target.localScale = Vector3.one * (1f + 0.12f * k * fade);
+                bool vis = f.target.gameObject.activeInHierarchy;
+                if (f.glow.gameObject.activeSelf != vis) { f.glow.gameObject.SetActive(vis); f.ring.gameObject.SetActive(vis); }
+                f.ring.color = new Color(1f, 0.95f, 0.6f, (0.75f + 0.25f * k) * fade);
+                f.ring.rectTransform.localScale = Vector3.one * (1f + 0.12f * k * fade);   // 버튼과 같이 통통
+                f.glow.color = new Color(1f, 0.9f, 0.4f, (0.7f + 0.3f * k) * fade);
+                f.glow.rectTransform.localScale = Vector3.one * (0.9f + 0.2f * k);
+            }
+        }
 
         // ---------- 팝업 ----------
         readonly Dictionary<Type, Popup> popups = new();

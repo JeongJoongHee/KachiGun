@@ -263,6 +263,7 @@ namespace KachiGun
             boss = Zombie.Spawn(r, p, hp, gold, st.bossScale > 0 ? st.bossScale : Tables.Cf("BossScale"), true, PickTint(S.Chapter, true));
             AudioManager.Play(AudioManager.Sfx.BossAppear);
             HUD.I?.Banner(L.T("보스 등장!"), new Color(1f, 0.4f, 0.3f));
+            Speech.Say("Boss");
             StageChanged?.Invoke();
         }
 
@@ -281,21 +282,13 @@ namespace KachiGun
             if (newChapter) ApplyTint();
             string biome = L.T(Tables.Chapter(S.Chapter).biome);
             HUD.I?.Banner("Stage " + SaveData.StageName(S.stage) + (newChapter && biome.Length > 0 ? "\n<size=34>" + biome + "</size>" : ""), Color.white);
-            CheckUnlocks(before, S.stage);
+            Speech.Say("Clear");      // 11-11 요청_04 "스테이지 클리어!" 말풍선
             S.Save();
             StageChanged?.Invoke();
             Notify();
         }
 
-        /// <summary>Unlock_Roadmap: 스테이지로 열리는 기능을 지나면 알림 (알림 글이 '-' 이면 조용히)</summary>
-        void CheckUnlocks(int before, int now)
-        {
-            foreach (var u in Tables.Unlocks)
-            {
-                if (u.type != "Stage" || string.IsNullOrEmpty(u.bannerMsg) || u.bannerMsg == "-") continue;
-                if (before < u.stageIdx && now >= u.stageIdx) HUD.I?.Toast(L.T(u.bannerMsg));
-            }
-        }
+        // 11-11 해금 알림(글 + 버튼 빛)은 HUD.CheckUnlockFx 가 버튼이 열리는 순간을 보고 띄움 (다이아로 여는 총알 메뉴도 같이)
 
         public void ApplyTint()
         {

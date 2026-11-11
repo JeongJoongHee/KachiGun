@@ -893,10 +893,18 @@ def make_app_icon():
 
 # ------------------------------------------------------------------ 앱 아이콘 2 (11-05 저녁): 아이콘 크기로 바로 그림 (선명) — A 상반신 크게 · B 전신
 def _icon_bg(s):
-    rays = ''.join(f'<path d="M{s/2} {s*.46} L{s/2 + s*.9*math.cos(math.radians(a - 7)):.1f} {s*.46 + s*.9*math.sin(math.radians(a - 7)):.1f} '
-                   f'L{s/2 + s*.9*math.cos(math.radians(a + 7)):.1f} {s*.46 + s*.9*math.sin(math.radians(a + 7)):.1f} Z" fill="#ffe9b0"/>' for a in range(0, 360, 30))
-    return (f'<rect width="{s}" height="{s}" fill="#ffd98a"/>{rays}'
-            f'<circle cx="{s*.5}" cy="{s*.46}" r="{s*.3}" fill="#fff3d0"/>'
+    """11-11 요청_04: 해살(방사형 줄무늬)이 욱일기처럼 보여서 뺌 → 맑은 하늘 + 해 동그라미 + 구름 두 개 + 반짝 점"""
+    def cloud(cx, cy, k):
+        parts = ((-.9, .15, .55), (-.35, -.2, .7), (.35, -.1, .62), (.9, .18, .5), (0, .25, .6))
+        sw = s * .012
+        out = ''.join(f'<circle cx="{cx + dx * k:.1f}" cy="{cy + dy * k:.1f}" r="{r * k:.1f}" fill="#ffffff" stroke="{INK}" stroke-width="{sw * 2:.1f}"/>' for dx, dy, r in parts)
+        return out + ''.join(f'<circle cx="{cx + dx * k:.1f}" cy="{cy + dy * k:.1f}" r="{r * k:.1f}" fill="#ffffff"/>' for dx, dy, r in parts)
+    dots = ''.join(f'<circle cx="{s * x:.1f}" cy="{s * y:.1f}" r="{s * r:.1f}" fill="#fff6dc"/>'
+                   for x, y, r in ((.08, .36, .012), (.93, .42, .014), (.66, .07, .01), (.04, .58, .009), (.95, .62, .01)))
+    return (f'<rect width="{s}" height="{s}" fill="#ffdc96"/>{dots}'
+            f'<circle cx="{s*.5}" cy="{s*.46}" r="{s*.34}" fill="#ffe9b8"/>'
+            f'<circle cx="{s*.5}" cy="{s*.46}" r="{s*.26}" fill="#fff3d0"/>'
+            + cloud(s * .84, s * .13, s * .075) + cloud(s * .1, s * .1, s * .055) +
             f'<path d="M0 {s*.8} Q{s*.25} {s*.75} {s*.5} {s*.79} Q{s*.75} {s*.83} {s} {s*.78} L{s} {s} L0 {s} Z" fill="#a9cf86" stroke="{INK}" stroke-width="{s*.012}"/>')
 
 

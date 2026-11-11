@@ -231,6 +231,7 @@ namespace KachiGun
             ["outline"] = new(4, 4, 4, 4), ["bar_track"] = new(2, 1, 2, 1), ["bar_red"] = new(2, 1, 2, 1),
             ["bar_teal"] = new(2, 1, 2, 1), ["bar_green"] = new(2, 1, 2, 1), ["check_on"] = new(4, 4, 4, 4), ["check_off"] = new(4, 4, 4, 4),
             ["window_plain"] = new(6, 6, 6, 6), ["title_pill"] = new(11, 11, 11, 11), ["btn_red"] = new(5, 5, 5, 4),   // 11-05 총알 관리 창
+            ["bubble"] = new(7, 7, 7, 7),   // 11-11 말풍선
         };
 
         /// <summary>UI 팩 부품 (테두리가 있는 것은 9-slice 로 늘려도 모서리 그대로)</summary>
@@ -242,6 +243,32 @@ namespace KachiGun
 
         static Sprite white;
         public static Sprite White => white ? white : (white = Get("Gen/white", 8f));
+
+        static Sprite ring;
+        /// <summary>네온 고리 (11-11 요청_04 스테이지 마디): 반지름 0.7 자리가 진하고 안팎으로 흐려짐, 흰색 — 색은 Image.color</summary>
+        public static Sprite Ring
+        {
+            get
+            {
+                if (ring) return ring;
+                const int n = 96;
+                var t = new Texture2D(n, n, TextureFormat.RGBA32, false) { wrapMode = TextureWrapMode.Clamp, filterMode = FilterMode.Bilinear };
+                var px = new Color32[n * n];
+                for (int y = 0; y < n; y++)
+                    for (int x = 0; x < n; x++)
+                    {
+                        float dx = (x + 0.5f) / n * 2 - 1, dy = (y + 0.5f) / n * 2 - 1;
+                        float d = Mathf.Sqrt(dx * dx + dy * dy);
+                        float core = Mathf.Exp(-Mathf.Pow((d - 0.7f) / 0.07f, 2));
+                        float halo = Mathf.Exp(-Mathf.Pow((d - 0.7f) / 0.2f, 2)) * 0.45f;
+                        float a = Mathf.Clamp01(core + halo) * Mathf.Clamp01((1 - d) / 0.08f);
+                        px[y * n + x] = new Color32(255, 255, 255, (byte)(a * 255));
+                    }
+                t.SetPixels32(px);
+                t.Apply();
+                return ring = Sprite.Create(t, new Rect(0, 0, n, n), new Vector2(0.5f, 0.5f), n);
+            }
+        }
 
         static Sprite glow;
         /// <summary>둥근 빛 (가운데 진하고 바깥으로 흐려짐, 흰색 — 색은 SpriteRenderer.color). 크기 1 x 1 (11-04 네온 오오라·폭발 빛)</summary>

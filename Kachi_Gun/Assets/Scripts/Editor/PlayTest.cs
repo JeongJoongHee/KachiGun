@@ -944,6 +944,53 @@ namespace KachiGun.EditorTools
                     Check(mapOk, "배경 판: 챕터 1~4 = 기본 · 황폐 · 세모 나무 · 죽은 나무");
                     GM.ApplyTint();
                 }
+                // 11-11 요청_04: 말풍선(클리어 · 보스 · 가끔) · 스테이지 마디 네온 · 눌러서 강화 크게/빨강 · 해금 알림 오래 + 버튼 빛
+                {
+                    var sp = Speech.I;
+                    int nClear = 0, nBoss = 0, nRand = 0;
+                    foreach (var l in Speech.Lines) { if (l.trigger == "Clear") nClear++; else if (l.trigger == "Boss") nBoss++; else if (l.trigger == "Random") nRand++; }
+                    Check(sp != null && nClear >= 1 && nBoss >= 1 && nRand >= 5, $"말풍선 대사 표: 클리어 {nClear} · 보스 {nBoss} · 가끔 {nRand}");
+                    sp.Clear();
+                    int st0 = S.stage; S.kills = 0;
+                    GM.AdvanceStage();     // 스테이지 클리어 → 리더 "스테이지 클리어!"
+                    yield return Wait(0.3f);
+                    string said = sp.ActiveText;
+                    Capture("20a_speech_clear");
+                    Check(said == "스테이지 클리어!", $"스테이지 클리어 말풍선: {said}");
+                    S.stage = st0 - 1; GM.AdvanceStage();   // 원래 스테이지로 (리더가 한 번 더 말함 → 아래에서 끔)
+                    sp.Clear();
+                    Speech.Say("Boss");
+                    string bs = sp.ActiveText;
+                    Check(bs == "보스다!! 조심해!!" || bs == "큰 놈이 온다!", $"보스 말풍선: {bs}");
+                    sp.Clear();
+                    // 가끔: 싸우는 중에 아무나 한마디 (간격을 잠깐 짧게 하려고 대사만 직접 뽑아 봄)
+                    var seen = new System.Collections.Generic.HashSet<string>();
+                    for (int i = 0; i < 300; i++) seen.Add(Speech.Pick("Random").text);
+                    Speech.Say("Random");
+                    yield return Wait(0.4f);
+                    Check(seen.Count == nRand && sp.ActiveCount == 1, $"가끔 대사 {seen.Count}/{nRand}종 고루 · 지금 말풍선 {sp.ActiveCount}개 ({sp.ActiveText})");
+                    Capture("20b_speech_random");
+                    sp.Clear();
+                    // 스테이지 마디 네온: 지금 서브 스테이지 마디 자리 · 깜빡임
+                    float a0 = HUD.I.NodeGlowColor.a; yield return Wait(0.37f); float a1 = HUD.I.NodeGlowColor.a;
+                    var gp = HUD.I.NodeGlowPos;
+                    Check(Mathf.Abs(gp.x - (-200 + (S.Sub - 1) * 100)) < 0.5f && Mathf.Abs(a0 - a1) > 0.02f, $"스테이지 마디 네온: 마디 {S.Sub} 자리 x {gp.x} · 밝기 {a0:0.00}→{a1:0.00}");
+                    // 눌러서 강화: 54 · 빨강
+                    var pt = HUD.I.PawText;
+                    Check(pt != null && pt.fontSize >= 50 && pt.color.r > 0.9f && pt.color.g < 0.4f, $"눌러서 강화 글자 {pt?.fontSize} · 색 {pt?.color}");
+                    // 해금: 44 → 45 (보스 던전) — 알림 글 오래 + 보스 버튼 빛
+                    int best0 = S.bestEver;
+                    S.bestEver = 44; HUD.I.Refresh();
+                    S.bestEver = 45; HUD.I.Refresh();
+                    float left = HUD.I.ToastLeft; string tt = HUD.I.ToastText; int fx = HUD.I.UnlockFxCount;
+                    yield return Wait(0.5f);
+                    Capture("20c_unlock");
+                    yield return Wait(2.2f);
+                    float left2 = HUD.I.ToastLeft;
+                    Check(tt == "보스 던전이 열렸습니다!" && left > 3f && left2 > 0 && fx == 1, $"해금 알림: '{tt}' {left:0.0}초 (2.7초 뒤에도 {left2:0.0}초 남음) · 빛 {fx}개");
+                    S.bestEver = best0; HUD.I.Refresh();
+                    HUD.I.StopUnlockFx();
+                }
                 // 미사일 장착 장면 캡처 (등급 색 폭발 · 네온 오오라)
                 var keep = new System.Collections.Generic.List<int>(S.slots);
                 S.slots[0] = Tables.Code(7, "missile"); S.slots[1] = Tables.Code(5, "single"); S.slots[2] = Tables.Code(3, "pierce");   // 청록 미사일 · 빨강 단발 · 보라 관통
@@ -1385,14 +1432,19 @@ namespace KachiGun.EditorTools
             SetupCapture(1080, 1920);
             yield return Wait(0.5f);
 
+            // 11-11 요청_04: 장면마다 코스튬을 새싹 · 원시인 · 해적 선장으로 돌아가며 (게임처럼 분대는 같은 옷)
+            void Dress(int k) { S.skin = k; Squad.I.SetSkin(k); GM.Notify(); }
             // A. 몰려오는 좀비 떼를 쓸어버림 (첫 3초 훅) — 사격을 멈추고 좀비가 가운데까지 오면 쏘기 시작
+            Dress(3);
             GameManager.HoldFire = true;
             yield return WaitUntil(() => NearZombies(0.25f) >= 14, 30f);
             Log($"A 좀비 {NearZombies(0.25f)} · 전체 {Target.All.Count}");
             GameManager.HoldFire = false;
-            yield return Rec("a_horde", 5f);
+            bool said = false;
+            yield return Rec("a_horde", 5f, t => { if (!said && t >= 1.2f) { said = true; Speech.Say("Random"); } });   // 한마디
 
             // B. 강화 카드 연타 — 숫자가 오르고 카드가 톡톡
+            Dress(6);
             S.gold = 1e30; GM.Notify();
             HoldButton Card(int i) { var g = GameObject.Find("CardHolder" + i); return g ? g.GetComponentInChildren<HoldButton>() : null; }
             var atk = Card(0); var spd = Card(1); var gold = Card(2);
@@ -1449,6 +1501,7 @@ namespace KachiGun.EditorTools
             CloseAll();
 
             // D. 보스 — 걸어 들어오면 쏘기 시작 · 3.2초에 쓰러뜨림 → 다음 스테이지
+            Dress(17);
             S.stage = 54; S.kills = GM.Quota; GM.Notify();
             GameManager.HoldFire = true;
             yield return WaitUntil(() => GM.boss != null && GM.boss.Pos.x < Field.I.ViewHalfW * 0.45f, 40f);
@@ -1462,6 +1515,7 @@ namespace KachiGun.EditorTools
             // E. 상위 총알(SSR 레이저 · 미사일)로 좀비 떼 — 강화를 빼야 좀비가 화면에 남아 보임
             S.slots[0] = Tables.Code(9, "laser"); S.slots[1] = Tables.Code(9, "missile"); S.slots[2] = Tables.Code(8, "laser");
             S.lvAtk = 0; S.lvSpd = 0; S.gold = 3.2e7;
+            S.skin = 3;
             Squad.I.Rebuild(); GM.Notify();
             GameManager.HoldFire = true;
             yield return WaitUntil(() => NearZombies(0.25f) >= 14, 30f);
@@ -1469,6 +1523,7 @@ namespace KachiGun.EditorTools
             yield return Rec("e_high", 4.5f);
 
             // F. 비밀던전 — 광석을 깨면 다이아가 튐 (알림 글자가 사라진 뒤부터)
+            Dress(17);
             S.RefreshDaily(); S.mineTickets = Mathf.Max(S.mineTickets, 1);
             if (GM.StartMine() == null)
             {
@@ -1478,7 +1533,8 @@ namespace KachiGun.EditorTools
             }
             else Log("광산 못 들어감");
 
-            // G. 코스튬 창
+            // G. 코스튬 창 (원시인 입은 채로)
+            Dress(6);
             HUD.I.Open<SkinPopup>();
             yield return Rec("g_skin", 2.0f);
             CloseAll();

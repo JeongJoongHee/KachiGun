@@ -115,6 +115,10 @@ def assets():
     kit('window', 490, 745, rr(4, 4, 482, 737, 26, CREAM) + f'<path d="M7 30 Q7 7 30 7 L460 7 Q483 7 483 30 L483 74 L7 74 Z" fill="{ORANGE}"/>' + L('M7 74 L483 74', 6)
         + C(450, 40, 22, CREAM, 5) + L('M441 31 L459 49 M459 31 L441 49', 6), 2.0)
     kit('panel_tan', 240, 200, rr(4, 4, 232, 192, 20, CREAM) + rrf(14, 14, 212, 172, 14, '#fffaf0', .7))
+    # 11-11 요청_04 말풍선: 흰 바탕 + 검정에 가까운 선(카피바라 선 색) — 몸통 9분할(bubble 테두리 7 x5) + 아래 꼬리(몸통 아래 선을 덮음)
+    BK = '#1c110a'
+    kit('bubble', 130, 110, rr(4, 4, 122, 102, 30, '#ffffff', 7).replace(INK, BK))
+    kit('bubble_tail', 50, 46, f'<path d="M5.5 0 L41.5 0 L16 42 Z" fill="#ffffff"/>' + L('M7.7 7 L16 42 L37.2 7', 7, BK).replace(INK, BK), 1.4)
     kit('panel_brown', 130, 130, rr(4, 4, 122, 122, 20, '#e7c793') + rrf(12, 12, 106, 106, 14, '#f0d6a8'))
     kit('slot', 70, 70, rr(3, 3, 64, 64, 8, '#e3c894', 4))
     kit('slot_light', 70, 70, rr(3, 3, 64, 64, 8, '#f5e6c4', 4))

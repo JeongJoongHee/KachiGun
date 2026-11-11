@@ -1,6 +1,16 @@
 # 카치건 (좀비 키우기) — 세로 방치형 분대 슈팅, Unity 6000.0.84f1 · 2D URP
 
-## ▶ 재개 메모 (2026-11-11 — 새 좀비 32종 · 색 변형 · 배경 판 · 보스 6마리) — **재개하면 여기부터**
+## ▶ 재개 메모 (2026-11-11 저녁 — 요청_04 8개) — **재개하면 여기부터**
+- `추가 요청/요청_04.docx` 8개 반영 (시험 161줄 errors=0):
+  1. **앱 아이콘** 햇살 줄무늬(욱일기처럼 보임) 뺌 → 하늘 + 해 + 구름 2 + 반짝 점 (`doodle_art.py _icon_bg` → `python tools/doodle_art.py icon`, PowerShell) · `스토어 등록/앱아이콘_512.png` 도 복사 · 플레이어블 다시 · 옛 아이콘 백업 = 스크래치 `icon_before/`
+  2. **스테이지 마디 네온**: 지금 마디 뒤 노란 빛(보스 = 빨강) + 네온 고리(`Art.Ring`) 숨 쉬듯 · 따로 Canvas
+  3. **광고 영상** 장면마다 코스튬 새싹(3) → 원시인(6) → 해적 선장(17) (`PlayTest.AdTour` Dress) + 첫 장면 말풍선 → `RunAd` → `ad_video.py` 4개 다시. 11-10 에 올린 유튜브 4개는 옛 판 → 남은_작업 **g-yt3** · 스토어 아이콘 올리기 **s-icon** 추가
+  4. **눌러서 강화!** 38 금색 → 54 빨강 · 외곽선 5
+  5. **해금 알림** 1.8 → 3.5초(Config Unlock_Toast_Time) + 열린 버튼 뒤 빛 + 앞 네온 고리 + 통통(Unlock_Glow_Time 6초) — `HUD.CheckUnlockFx` 가 잠김→열림 순간을 봄(다이아로 여는 총알도), GameManager.CheckUnlocks 는 지움 · 버튼 PressFx 는 그동안 끔
+  6~8. **말풍선** `UI/Speech.cs` + 표 `Table/Speech.xlsx`(Speech_Lines: Trigger Clear/Boss/Random · Who Leader/Any · Weight, 영어는 String 표, `tools/speech_add_1111.py`) · 그림 Kit/bubble(9분할 7) · bubble_tail (흰 바탕 + #1c110a 선, `doodle_ui.py bubble`) · 스테이지 클리어 = 리더 "스테이지 클리어!" · 보스 등장 = 리더 · 싸우는 중 15~30초마다 아무나(다른 풍선 있으면 쉼) · 머리 오른쪽에 띄움(위 동료를 안 가리게) · Config Speech_Random_Min/Max · Speech_Show 2.2
+- 캡처: `Logs/PlayTest/20a_speech_clear · 20b_speech_random · 20c_unlock.png`
+
+## ▶ 재개 메모 (2026-11-11 — 새 좀비 32종 · 색 변형 · 배경 판 · 보스 6마리)
 - 사용자 의견(완료 문서/좀비_추가_시안.html 키 kachigun-zombie-1111 · 좀비_추가_제안.html 키 kachigun-zombie-idea-1111) 대로 게임에 넣음:
   - **그림**: 요청_03 12종(doodle_art.py zombies_new) + 제안 체크 20종(`tools/doodle_zombies2.py`, `doodle_art.py znew2`) · 뼈대 rig_gen.py ZOMBIE_RIG · 스키·강시 = robe(다리 붙음, 흔들림 `robeK`→ anim R)
   - **표**: `tools/zombie_add_1111.py`(다시 돌려도 같음) → Zombie(Biome·Move·Effect 칸, 일반 38 · 보스 6) · Stage Boss_Id 6챕터 순환(ogre→jason 하키 좀비→pharaoh→yeti→captain→gasgiant) · Boss_Dungeon 레벨마다 같은 순환 · Chapter_Summary Zombie_Tint(초록→붉은→푸르딩딩→보라)·Map_Sprite · Config 7개(Zombie_Biome_Mul 1.5 · Zombie_New_Mul 3 · Zombie_New_Chapters 5 · Zombie_New_From 6 · Tint_Chance 0.8 · Drum_Blast_Mul 3 · Drum_Blast_Radius 1.8) · String 영어 이름. 새 좀비 처음 나오는 챕터 6~60(2챕터마다, 배경 좀비는 그 배경 챕터)
