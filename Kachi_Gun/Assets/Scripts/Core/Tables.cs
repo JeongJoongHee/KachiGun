@@ -20,6 +20,7 @@ namespace KachiGun
     {
         public string id, name; public double hpMul, goldMul; public int minChapter;
         public float speed, speedMin, speedMax, scale, weight, stopMin, stopMax, height, radius, shadowW, shadowH;
+        public string role;                     // 표 Role (보물 = 돈가방: 스테이지 종류 수에 안 셈)
         public string biome, move, effect;      // 11-11: 배경(그 배경에서 더 많이) · 움직임(Hop 깡총 · Slide 미끄럼) · 효과(Blast 죽으면 펑)
         public bool Hop => move == "Hop";
         public bool Slide => move == "Slide";
@@ -135,7 +136,7 @@ namespace KachiGun
                     speedMin = r.F("Actual_Speed_Min", sp * 0.935f), speedMax = r.F("Actual_Speed_Max", sp * 1.265f), scale = r.F("Scale", 1),
                     stopMin = r.F("StopDist_Min", 2f), stopMax = r.F("StopDist_Max", 4.6f), height = r.F("Height", 1.35f), radius = r.F("Radius", 0.5f),
                     shadowW = r.F("Shadow_W", 0.8f), shadowH = r.F("Shadow_H", 0.22f),
-                    biome = r.S("Biome"), move = r.S("Move"), effect = r.S("Effect")
+                    biome = r.S("Biome"), move = r.S("Move"), effect = r.S("Effect"), role = r.S("Role")
                 });
             }
 

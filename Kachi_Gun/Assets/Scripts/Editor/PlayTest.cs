@@ -752,7 +752,7 @@ namespace KachiGun.EditorTools
                 Check(Mathf.Abs(nb.transform.localScale.x - 1f) < 0.01f, "단발 크기 그대로");
                 // 넉백: 좀비 하나를 세워 두고 일반 피해 / 미사일 피해(knock=false)
                 GM.ClearTargets();
-                var zr = GameManager.PickZombie(S.Chapter);
+                var zr = GameManager.PickZombie(S.Chapter, S.stage);
                 var z = Zombie.Spawn(zr, new Vector2(0, 2), 1e12, 0);
                 yield return Wait(0.1f);
                 // 맞은 바로 뒤 좀비의 밀림 값(knock, private)을 읽어 비교 — 움직인 거리는 걷기·프레임에 따라 흔들려서
@@ -822,10 +822,25 @@ namespace KachiGun.EditorTools
                     float wArmor = GameManager.ZombieWeight(Tables.Zombie("armor"), 3, Tables.Chapter(3).biome);
                     Check(Mathf.Abs(w28 - 27f) < 0.01f && Mathf.Abs(w40 - 6f) < 0.01f && Mathf.Abs(wArmor - 3f) < 0.01f && GameManager.ZombieWeight(pad, 27, "") == 0,
                         $"나올 비중: 롱패딩 28챕터 {w28} · 37챕터 {w40} · 갑옷 3챕터 {wArmor} · 27챕터 0");
-                    int seen = 0; var seenSet = new System.Collections.Generic.HashSet<string>();
-                    for (int i = 0; i < 4000; i++) seenSet.Add(GameManager.PickZombie(80).id);
-                    seen = seenSet.Count;
-                    Check(seen == 38 && !seenSet.Contains("ogre"), $"80챕터에서 뽑힌 좀비 {seen}종 (일반 38 · 보스 없음)");
+                    // 한 스테이지 = 3~5종 (마지막 스테이지에 모든 좀비가 다 나오면 정신없어서) · 다시 와도 같음 · 첫 등장 챕터엔 꼭 · 돈가방은 따로
+                    int badN = 0, debutMiss = 0, minN = 99, maxN = 0;
+                    var allSeen = new System.Collections.Generic.HashSet<string>();
+                    for (int st = 0; st < 750; st++)
+                    {
+                        int ch = st / 5 + 1;
+                        var ks = GameManager.StageKinds(ch, st);
+                        minN = Mathf.Min(minN, ks.Count); maxN = Mathf.Max(maxN, ks.Count);
+                        if (ks.Count < 3 || ks.Count > 5) badN++;
+                        foreach (var k in ks) { allSeen.Add(k.id); if (k.id == "money" || k.weight <= 0) badN++; }
+                        foreach (var zr3 in Tables.Zombies) if (zr3.minChapter == ch && ch >= 6 && zr3.weight > 0 && zr3.id != "money" && !ks.Contains(zr3)) debutMiss++;
+                    }
+                    var k80 = GameManager.StageKinds(80, 397);
+                    bool same = string.Join(",", k80.ConvertAll(k => k.id)) == string.Join(",", GameManager.StageKinds(80, 397).ConvertAll(k => k.id));
+                    var seenSet = new System.Collections.Generic.HashSet<string>(); int money = 0;
+                    for (int i = 0; i < 6000; i++) { var pz = GameManager.PickZombie(80, 397); if (pz.id == "money") money++; else seenSet.Add(pz.id); }
+                    bool inKinds = true; foreach (var id in seenSet) inKinds &= k80.Exists(k => k.id == id);
+                    Check(badN == 0 && debutMiss == 0 && allSeen.Count == 37 && same && inKinds && seenSet.Count == k80.Count && money > 0 && money < 120,
+                        $"한 스테이지 좀비 {minN}~{maxN}종 (1~750 스테이지) · 첫 등장 빠짐 {debutMiss} · 전체 {allSeen.Count}/37종 · 80챕터 한 스테이지 {seenSet.Count}종({string.Join(",", seenSet)}) · 돈가방 {money}/6000");
                     // 색: 챕터 1 초록 · 2 붉은 · 3 푸르딩딩 · 4 보라 / 꼭짓점 색에 숨김 · 쓰러져도 그대로
                     Check(GameManager.PickTint(1, true) == 0 && GameManager.PickTint(2, true) == 1 && GameManager.PickTint(3, true) == 2 && GameManager.PickTint(4, true) == 3,
                         "챕터 색: 1 초록 · 2 붉은 · 3 푸르딩딩 · 4 보라");
@@ -918,7 +933,7 @@ namespace KachiGun.EditorTools
                         Field.I.Tint(Field.ChapterTint(c));
                         for (int i = 0; i < 6; i++)
                         {
-                            var mz = Zombie.Spawn(GameManager.PickZombie(60), new Vector2(Mathf.Lerp(-2.5f, 3f, i / 5f), Mathf.Lerp(Field.I.PlayTop - 2f, Field.I.PlayBottom + 2f, (i * 7 % 6) / 5f)), 1e12, 0, tint: GameManager.PickTint(c, true));
+                            var mz = Zombie.Spawn(GameManager.PickZombie(60, 300 + c), new Vector2(Mathf.Lerp(-2.5f, 3f, i / 5f), Mathf.Lerp(Field.I.PlayTop - 2f, Field.I.PlayBottom + 2f, (i * 7 % 6) / 5f)), 1e12, 0, tint: GameManager.PickTint(c, true));
                             mz.standStill = true;
                         }
                         yield return Wait(0.3f);

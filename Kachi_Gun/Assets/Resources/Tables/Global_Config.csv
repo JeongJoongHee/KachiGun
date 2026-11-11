@@ -71,3 +71,6 @@ Tint_Chance,0.8,비율,좀비,Chapter_Summary,11-11 챕터 좀비 색(Zombie_Tin
 Drum_Blast_Mul,3,배,좀비,Zombie.xlsx,11-11 드럼통 좀비(Effect=Blast)가 죽으면 터지는 피해 = 그 드럼통 최대 체력 x 이 값 (주변 좀비만)
 Drum_Blast_Radius,1.8,칸,좀비,Zombie.xlsx,11-11 드럼통 폭발 반경
 Zombie_New_From,6,챕터,좀비,Zombie.xlsx,11-11 새 얼굴 비중은 MinChapter 가 이 값 이상인 좀비만 (처음 5챕터 원래 좀비 섞임은 그대로)
+Stage_Kinds_Min,3,종,좀비,Zombie.xlsx,11-11 한 스테이지에 나오는 일반 좀비 종류 최소 (그 챕터에 나올 수 있는 종류가 더 적으면 전부). 스테이지마다 정해져 다시 와도 같음
+Stage_Kinds_Max,5,종,좀비,Zombie.xlsx,"11-11 한 스테이지에 나오는 일반 좀비 종류 최대 — 고를 때 나올 비중(배경·새 얼굴 포함)대로, 그 챕터에 처음 나오는 좀비는 꼭 넣음"
+Treasure_Outside_Kinds,1,켬,좀비,Zombie.xlsx,11-11 1 = 돈가방(Role 보물)은 종류 수에 안 셈 — 원래 확률 그대로 가끔 끼어듦 / 0 = 3~5종 안에 뽑혀야 나옴

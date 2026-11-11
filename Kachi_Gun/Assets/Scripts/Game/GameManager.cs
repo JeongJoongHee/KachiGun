@@ -141,7 +141,7 @@ namespace KachiGun
 
         void SpawnZombie(Vector2 p, float hm)
         {
-            var r = PickZombie(S.Chapter);
+            var r = PickZombie(S.Chapter, S.stage);
             Zombie.Spawn(r, p, Stats.ZombieHp(S.stage) * r.hpMul / hm, Stats.ZombieGold(S.stage) * r.goldMul / hm, tint: PickTint(S.Chapter, false));
         }
 
@@ -156,20 +156,65 @@ namespace KachiGun
             return w;
         }
 
-        public static ZombieRow PickZombie(int chapter)
+        /// <summary>11-11 한 스테이지에 나오는 일반 좀비 = Stage_Kinds_Min ~ Max 종 (너무 정신없지 않게).
+        /// 스테이지 번호(key)로 정해서 다시 와도 같음 · 그 챕터에 처음 나오는 좀비는 꼭 넣고 나머지는 나올 비중대로 뽑음 ·
+        /// 돈가방(Role 보물)은 Treasure_Outside_Kinds = 1 이면 종류 수에 안 세고 원래 확률대로 가끔 끼어듦</summary>
+        public static List<ZombieRow> StageKinds(int chapter, int key)
+        {
+            long ck = (long)key * 1000 + chapter;
+            if (kindsCache.TryGetValue(ck, out var got)) return got;
+            string biome = Tables.Chapter(chapter).biome;
+            bool treasureOut = Tables.C("Treasure_Outside_Kinds", 1) > 0;
+            var pool = new List<ZombieRow>();
+            foreach (var z in Tables.Zombies)
+                if (ZombieWeight(z, chapter, biome) > 0 && !(treasureOut && z.role == "보물")) pool.Add(z);
+            var rng = new System.Random(key * 7919 + chapter * 31 + 17);
+            int lo = Mathf.Max(1, (int)Tables.C("Stage_Kinds_Min", 3)), hi = Mathf.Max(lo, (int)Tables.C("Stage_Kinds_Max", 5));
+            int n = Mathf.Min(pool.Count, lo + rng.Next(hi - lo + 1));
+            var pick = new List<ZombieRow>();
+            // 이 챕터가 첫 등장인 새 좀비 = 꼭
+            for (int i = pool.Count - 1; i >= 0 && pick.Count < n; i--)
+                if (pool[i].minChapter == chapter && chapter >= Tables.C("Zombie_New_From", 6)) { pick.Add(pool[i]); pool.RemoveAt(i); }
+            while (pick.Count < n && pool.Count > 0)
+            {
+                float sum = 0;
+                foreach (var z in pool) sum += ZombieWeight(z, chapter, biome);
+                float k = (float)rng.NextDouble() * sum;
+                int at = pool.Count - 1;
+                for (int i = 0; i < pool.Count; i++) { k -= ZombieWeight(pool[i], chapter, biome); if (k <= 0) { at = i; break; } }
+                pick.Add(pool[at]); pool.RemoveAt(at);
+            }
+            if (kindsCache.Count > 64) kindsCache.Clear();
+            kindsCache[ck] = pick;
+            return pick;
+        }
+        static readonly Dictionary<long, List<ZombieRow>> kindsCache = new Dictionary<long, List<ZombieRow>>();
+
+        /// <summary>스테이지(key)의 3~5종 안에서 나올 비중대로 한 마리. 돈가방은 그 챕터 전체 비중 중 제 몫(원래 확률) 그대로</summary>
+        public static ZombieRow PickZombie(int chapter, int key)
         {
             string biome = Tables.Chapter(chapter).biome;
-            float sum = 0;
-            foreach (var z in Tables.Zombies) sum += ZombieWeight(z, chapter, biome);
-            float k = Random.value * sum;
-            foreach (var z in Tables.Zombies)
+            if (Tables.C("Treasure_Outside_Kinds", 1) > 0)
             {
-                float w = ZombieWeight(z, chapter, biome);
-                if (w <= 0) continue;
-                k -= w;
-                if (k <= 0) return z;
+                float all = 0, tre = 0; ZombieRow tz = null;
+                foreach (var z in Tables.Zombies)
+                {
+                    float w = ZombieWeight(z, chapter, biome);
+                    all += w;
+                    if (w > 0 && z.role == "보물") { tre += w; if (tz == null || Random.value < w / tre) tz = z; }
+                }
+                if (tz != null && Random.value * all < tre) return tz;
             }
-            return Tables.Zombies[0];
+            var kinds = StageKinds(chapter, key);
+            float sum = 0;
+            foreach (var z in kinds) sum += ZombieWeight(z, chapter, biome);
+            float r = Random.value * sum;
+            foreach (var z in kinds)
+            {
+                r -= ZombieWeight(z, chapter, biome);
+                if (r <= 0) return z;
+            }
+            return kinds.Count > 0 ? kinds[kinds.Count - 1] : Tables.Zombies[0];
         }
 
         /// <summary>11-11 색 변형: 챕터 색(Chapter_Summary Zombie_Tint) — 일반 좀비는 Tint_Chance 확률, 보스는 늘 (0 = 원래 초록)</summary>
@@ -724,7 +769,7 @@ namespace KachiGun
             double hp = row.hp;
             for (int i = 0; i < n; i++)
             {
-                var r = PickZombie(ch);
+                var r = PickZombie(ch, 100000 + ch);   // 도전도 3~5종 (스테이지와 다른 번호)
                 // 멀리(오른쪽)에 많이: AI 가 가까운 것만 쫓으면 동선이 낭비되도록
                 var p = Field.I.RandomRoad(i < n / 3 ? 0.55f : 0.15f, 1f, 0.6f);
                 var z = Zombie.Spawn(r, p, hp * r.hpMul, 0, tint: PickTint(ch, false));

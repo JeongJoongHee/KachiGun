@@ -261,7 +261,7 @@ td.no{color:#c9bca8}
     w('<h2>3. 챕터별로 누가 얼마나 나오나</h2>')
     w('<div class="scroll"><table><tr><th>좀비</th><th>나올 비중</th>')
     for ch, _, n in P:
-        w('<th>챕터 %d<br><small>%s</small><br>%d종</th>' % (ch, E(chs[(ch - 1) % n_ch + 1]['Biome_Name']), n))
+        w('<th>챕터 %d<br><small>%s</small><br>후보 %d종</th>' % (ch, E(chs[(ch - 1) % n_ch + 1]['Biome_Name']), n))
     w('<th>1~%d 전체</th></tr>' % n_ch)
     for z in normal:
         w('<tr><td><img class="mini" src="%s" alt="">%s%s</td><td>%s</td>' % (z['small'], E(z['name']), ' <small>(%s)</small>' % E(z['biome']) if z['biome'] else '', num(z['weight'])))
@@ -273,9 +273,13 @@ td.no{color:#c9bca8}
                 w('<td class="no">–</td>')
         w('<td><b>%.1f%%</b></td></tr>' % tot[z['id']])
     w('</table></div>')
-    w('<p class="mut">좀비가 나올 때마다 "지금 챕터에 나올 수 있는 좀비" 중에서 비중대로 하나를 뽑습니다(<code>GameManager.PickZombie</code>). '
+    w('<p class="mut"><b>한 스테이지엔 %s~%s종만 나옵니다</b>(11-11, 너무 정신없지 않게): 스테이지마다 "지금 챕터에 나올 수 있는 좀비(후보)" 중에서 비중대로 %s~%s종을 먼저 고르고 '
+      '— 그 챕터에 처음 나오는 좀비는 꼭 넣음, 스테이지 번호로 정해져 다시 와도 같음 — 좀비가 나올 때마다 그 안에서 비중대로 하나를 뽑습니다(<code>GameManager.StageKinds · PickZombie</code>). '
+      '돈가방은 종류 수에 안 세고 원래 확률대로 가끔 끼어듭니다(Config Treasure_Outside_Kinds). 아래 %% = 챕터 안 스테이지를 모두 합친 대략의 몫.</p>'
+      % (num(cf('Stage_Kinds_Min', 3)), num(cf('Stage_Kinds_Max', 5)), num(cf('Stage_Kinds_Min', 3)), num(cf('Stage_Kinds_Max', 5))))
+    w('<p class="mut">'
       '비중 = 표 Base_Weight x <b>배경이 맞으면 %s배</b>(괄호 안 배경) x <b>처음 나온 챕터부터 %s챕터 동안 %s배</b>(챕터 %s 이후에 나오는 좀비만). '
-      '챕터 %d 부터는 일반 %d종이 모두 나옵니다. 맨 오른쪽 = 1~%d챕터를 다 더했을 때 그 좀비가 나온 몫(고르게 = 약 %.1f%%).</p>'
+      '챕터 %d 부터는 일반 %d종이 모두 후보입니다. 맨 오른쪽 = 1~%d챕터를 다 더했을 때 그 좀비가 나온 몫(고르게 = 약 %.1f%%).</p>'
       % (num(cf('Zombie_Biome_Mul', 1)), num(cf('Zombie_New_Chapters', 0)), num(cf('Zombie_New_Mul', 1)), num(cf('Zombie_New_From', 6)), steps[-1], len(normal), n_ch, 100 / len(normal)))
 
     # ---------- 색 · 배경 판 · 보스 순환 (11-11)

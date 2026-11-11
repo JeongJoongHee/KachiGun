@@ -9,6 +9,7 @@
   - 시험 154줄 errors=0 (새 11줄: 그림·뼈대 32 · 보스 순환 · 비중 · 색 번호 · **화면 픽셀 색조** · 드럼통 · 강시/스키 · 배경 판) · 캡처 19e~19h
   - 방패 경찰 = 그림만(깨지는 규칙은 나중, 결정 ②) · 산타 = 12월 업데이트로 · 밸런스 영향(1~150 평균) 좀비 체력 x0.99 · 골드 x1.02 → 조정은 마지막에
   - `좀비_정리.html` 44종으로 다시(tools/zombie_sheet.py) · 시안·제안 문서는 완료 문서/
+  - **11-11 추가 (사용자: "마지막 스테이지에 모든 좀비가 나오면 정신없다 → 최소 3 ~ 최대 5종")**: `GameManager.StageKinds(chapter, 스테이지 번호)` 가 스테이지마다 3~5종을 비중대로 골라 둠(다시 와도 같음 · 그 챕터 첫 등장 좀비는 꼭) → `PickZombie(chapter, key)` 는 그 안에서만 · 도전 모드는 key 100000+챕터 · 돈가방은 종류 수에 안 세고 원래 확률(Config Treasure_Outside_Kinds 1, 0 이면 3~5종 안에 들어야) · Config Stage_Kinds_Min 3 / Max 5 · 시험 1줄 바꿈(750 스테이지 모두 3~5종 · 37종 다 나옴) · 체력 x0.98 · 골드 x0.98 (센 좀비가 덜 섞임)
 - **폰 반영 = 9번(결제) 뒤 업데이트 추천**(9번은 이전·결제만 담아 문제 원인 찾기 쉽게) — 사용자가 같이 넣자고 하면 9번에
 - 다시 그리기: PowerShell `python tools/doodle_art.py znew2 [이름]` → `python tools/rig_gen.py <이름>` → 배치 시험 · 표 = zombie_add_1111.py → xlsx2csv → Challenge·Gold_Upgrade·Stage_Table 반올림 차이 되돌리기(Stage 는 Boss_Id 칸만 남김)
 
