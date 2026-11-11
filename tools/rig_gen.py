@@ -37,6 +37,19 @@ ZOMBIE_RIG = {
     'fat':    dict(neck=234, hip=300, crotch=316, knee=340, split=201, armB=([(282, 232, 320, 256)], (262, 247)), armF=([(282, 256, 326, 282)], (262, 266)), legA=11, swing=6),
     'ogre':   dict(neck=214, hip=310, crotch=322, knee=346, split=191, armB=([(20, 196, 118, 370)], (128, 216)), armF=([(280, 262, 340, 372)], (262, 266)), legA=12, swing=7),
     'reaper': dict(neck=236, hip=300, crotch=999, knee=340, split=210, armB=None, armF=None, legA=0, swing=0, robe=True),
+    # 11-11 요청_03 새 좀비 (doodle_art.py zombies_new) — 걷는 좀비는 basic 과 같은 몸, 든 물건 상자만 다름
+    'hatchet':  dict(neck=238, hip=300, crotch=312, knee=338, split=201, armB=([(238, 232, 316, 256)], (226, 247)), armF=([(238, 256, 324, 282), (292, 166, 376, 284)], (218, 266)), legA=14, swing=6),
+    'chainsaw': dict(neck=238, hip=300, crotch=312, knee=338, split=201, armB=None, armF=([(238, 256, 324, 282), (286, 196, 400, 290)], (218, 266)), legA=14, swing=5),
+    'bucketw':  dict(neck=238, hip=300, crotch=312, knee=338, split=201, armB=([(238, 232, 316, 256)], (226, 247)), armF=([(238, 256, 324, 282)], (218, 266)), legA=14, swing=6),
+    'helmet':   dict(neck=238, hip=300, crotch=312, knee=338, split=201, armB=([(238, 232, 316, 256)], (226, 247)), armF=([(238, 256, 324, 282)], (218, 266)), legA=14, swing=6),
+    'suit':     dict(neck=238, hip=300, crotch=312, knee=338, split=201, armB=([(238, 232, 316, 256)], (226, 247)), armF=([(238, 256, 324, 282)], (218, 266)), legA=14, swing=6),
+    'sport':    dict(neck=238, hip=300, crotch=312, knee=338, split=201, armB=([(238, 232, 316, 256)], (226, 247)), armF=([(238, 256, 324, 282)], (218, 266)), legA=16, swing=7),
+    'flag':     dict(neck=238, hip=300, crotch=312, knee=338, split=201, armB=([(238, 232, 316, 256)], (226, 247)), armF=([(238, 256, 324, 282), (300, 30, 345, 350), (240, 30, 345, 120)], (218, 266)), legA=14, swing=5),
+    'miner':    dict(neck=238, hip=300, crotch=312, knee=338, split=201, armB=([(238, 232, 316, 256)], (226, 247)), armF=([(238, 256, 324, 282), (296, 150, 392, 300)], (218, 266)), legA=14, swing=6),
+    'fisher':   dict(neck=238, hip=300, crotch=312, knee=338, split=201, armB=([(238, 232, 316, 256)], (226, 247)), armF=([(238, 256, 324, 282), (296, 86, 400, 290)], (218, 266)), legA=14, swing=5),
+    'ghost':    dict(neck=226, hip=290, crotch=999, knee=326, split=210, armB=None, armF=None, legA=0, swing=0, robe=True),
+    'jason':    dict(neck=172, hip=298, crotch=306, knee=334, split=206, armB=([(84, 200, 130, 316)], (150, 196)), armF=([(292, 200, 346, 286), (300, 120, 394, 262)], (262, 200)), legA=12, swing=6),
+    'pharaoh':  dict(neck=172, hip=298, crotch=342, knee=354, split=208, armB=([(84, 200, 130, 316)], (152, 196)), armF=([(292, 200, 340, 284), (298, 76, 346, 378)], (264, 202)), legA=10, swing=5),
 }
 CRAWL_RIG = {
     # 기어 다니는 좀비: 몸이 가로 — legs(뒤로 끌리는 다리) · pelvis(엉덩이) · spine(몸) · head · armB/armF(번갈아 뻗는 팔)

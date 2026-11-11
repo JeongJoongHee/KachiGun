@@ -6,6 +6,7 @@
 
 사용: PYTHONUTF8=1 python tools/doodle_art.py [capy] [skins] [zombie] [map] [icon]     (없으면 capy·zombie·map) — PowerShell 에서(Bash 에선 Edge 가 안 뜸)
       zdie = 좀비 죽기 칸만 다시(Edge 없이, Bash 에서도 됨)
+      znew = 11-11 요청_03 새 좀비 12종만 (znew jason ghost 처럼 이름을 붙이면 그것만) · 색 변형 = tint_skin()
       → Kachi_Gun/Assets/Resources/Art/{Char,Zombie,Map}/...  · 미리보기 tools/_preview/doodle_*.png
 원래 도트 그림 백업: tools/_build/pixel_orig/ (git 에는 원래 그림이 기록에 있음)
 
@@ -308,18 +309,26 @@ def make_capy(skin=0):
 SKIN = '#8cc56a'
 
 
+def zface(cx, cy, r, sw=6.0, stitches=True):
+    """좀비 얼굴(꿰맨 자국 · 눈 · 입 · 볼 그늘)만 — 머리 동그라미 없이. 11-11 유령·파라오처럼 머리 모양이 다른 좀비용으로 떼어 냄"""
+    out = []
+    if stitches:
+        out += [L(f'M{cx - r * .35} {cy - r * .78} l{r * .2} {r * .16} M{cx - r * .32} {cy - r * .66} l{r * .08} {-r * .08} M{cx - r * .22} {cy - r * .6} l{r * .08} {-r * .08}', sw * .7)]
+    out += [C(cx + r * .2, cy - r * .05, r * .27, '#fffbe8', sw * .8), C(cx + r * .66, cy - r * .1, r * .23, '#fffbe8', sw * .8),
+            f'<circle cx="{cx + r * .29}" cy="{cy - r * .02}" r="{r * .1}" fill="{INK}"/>',
+            f'<circle cx="{cx + r * .73}" cy="{cy - r * .07}" r="{r * .09}" fill="{INK}"/>']
+    mx, my = cx + r * .45, cy + r * .5
+    out += [P(f'M{mx - r * .3} {my - r * .04} Q{mx} {my + r * .26} {mx + r * .32} {my - r * .08} Q{mx} {my + r * .06} {mx - r * .3} {my - r * .04} Z', '#5a2b2b', sw * .8),
+            f'<path d="M{mx - r * .14} {my} l{r * .06} {r * .1} l{r * .06} {-r * .1} M{mx + r * .06} {my} l{r * .06} {r * .1} l{r * .06} {-r * .1}" fill="#fff" stroke="none"/>']
+    out += [f'<ellipse cx="{cx - r * .35}" cy="{cy + r * .38}" rx="{r * .16}" ry="{r * .1}" fill="#000" opacity=".12"/>']
+    return ''.join(out)
+
+
 def zhead(cx, cy, r, skin, eyes='zombie', sw=6.0):
     """둥근 좀비 머리 (오른쪽을 봄)"""
     out = [E(cx, cy, r * 1.06, r, skin, sw)]
     if eyes == 'zombie':
-        out += [L(f'M{cx - r * .35} {cy - r * .78} l{r * .2} {r * .16} M{cx - r * .32} {cy - r * .66} l{r * .08} {-r * .08} M{cx - r * .22} {cy - r * .6} l{r * .08} {-r * .08}', sw * .7)]
-        out += [C(cx + r * .2, cy - r * .05, r * .27, '#fffbe8', sw * .8), C(cx + r * .66, cy - r * .1, r * .23, '#fffbe8', sw * .8),
-                f'<circle cx="{cx + r * .29}" cy="{cy - r * .02}" r="{r * .1}" fill="{INK}"/>',
-                f'<circle cx="{cx + r * .73}" cy="{cy - r * .07}" r="{r * .09}" fill="{INK}"/>']
-        mx, my = cx + r * .45, cy + r * .5
-        out += [P(f'M{mx - r * .3} {my - r * .04} Q{mx} {my + r * .26} {mx + r * .32} {my - r * .08} Q{mx} {my + r * .06} {mx - r * .3} {my - r * .04} Z', '#5a2b2b', sw * .8),
-                f'<path d="M{mx - r * .14} {my} l{r * .06} {r * .1} l{r * .06} {-r * .1} M{mx + r * .06} {my} l{r * .06} {r * .1} l{r * .06} {-r * .1}" fill="#fff" stroke="none"/>']
-        out += [f'<ellipse cx="{cx - r * .35}" cy="{cy + r * .38}" rx="{r * .16}" ry="{r * .1}" fill="#000" opacity=".12"/>']
+        out.append(zface(cx, cy, r, sw))
     return ''.join(out)
 
 
@@ -400,7 +409,218 @@ def zombies():
     Z['bucket'] = crawler(skin='#a6cf72', shirt='#7f9fbf', pants='#4f6290',
                           head_extra=P('M192 280 L198 236 L268 236 L274 280 Z', '#a9b3be') + E(233, 236, 35, 7, '#c9d1da') + L('M204 260 L262 260', 3, '#7d8792'))
     Z['ogre'] = ogre()
+    Z.update(zombies_new())
     return Z
+
+
+# ------------------------------------------------------------------ 11-11 요청_03: 새 좀비 12종 (일반 10 · 보스 2)
+# 피부 말고는 초록을 쓰지 않음 — 색 변형(붉은·푸르딩딩·보라)은 초록 피부만 다른 색으로 돌리기 때문(tint_skin · 게임은 셰이더)
+NEW_ZOMBIES = ['hatchet', 'chainsaw', 'bucketw', 'helmet', 'suit', 'sport', 'flag', 'ghost', 'miner', 'fisher', 'jason', 'pharaoh']
+CLOTH_W = '#f4f0e6'
+
+
+def sleeve_b(color, stripe=False):
+    """walker 뒷팔 소매 (손목·손은 피부로 남김) — hand_item_back 에"""
+    s = limb('M226 247 Q248 245 266 245', 21, shade(color, .9))
+    return s + (L('M230 240 Q248 238 268 238', 3.2, CLOTH_W) if stripe else '')
+
+
+def sleeve_f(color, stripe=False):
+    """walker 앞팔 소매 — hand_item 맨 앞에"""
+    s = limb('M218 266 Q246 264 272 264', 23, color)
+    return s + (L('M222 258 Q246 256 274 256', 3.5, CLOTH_W) if stripe else '')
+
+
+def fist(skin):
+    """앞손을 든 물건 위에 다시 그림 (손잡이를 쥔 모양)"""
+    return C(309, 265, 11, skin)
+
+
+def zombies_new():
+    Z = {}
+    # 손도끼: 나무꾼 (빨간 체크 셔츠 · 털모자 · 손도끼)
+    sk = '#90c46e'
+    Z['hatchet'] = walker(
+        skin=sk, shirt='#c0564a', pants='#5a6ea6',
+        torso_extra=L('M172 266 L236 262 M171 288 L238 284 M190 250 L189 304 M216 248 L217 304', 4, '#8e3a32'),
+        head_extra=P('M152 156 Q148 104 204 98 Q260 102 256 154 Z', '#4f6290')
+        + P('M146 158 Q204 142 262 154 L263 166 Q204 154 146 170 Z', '#3f4f78')
+        + L('M178 112 L176 148 M204 104 L204 144 M230 108 L232 146', 3, '#3f4f78'),
+        hand_item=L('M300 282 L338 196', 9, INK) + L('M300 282 L338 196', 5, '#a8743e')
+        + P('M328 192 L354 172 Q374 190 362 218 L338 208 Z', '#c9d1da') + L('M354 180 Q366 194 358 210', 3, '#eef1f4')
+        + fist(sk))
+    # 자동톱: 앞치마 + 두 손으로 든 전기톱
+    sk = '#8cc56a'
+    saw = (P('M342 244 L388 248 Q399 258 388 268 L342 272 Z', '#c9d1da')
+           + ''.join(f'<path d="M{x} 246 l4 -7 l4 7 Z" fill="{INK}"/>' for x in range(348, 388, 9))
+           + L('M300 232 Q318 200 340 230', 7.5, INK)
+           + rr_(292, 228, 56, 54, 13, '#e89a4a', 6) + rr_(318, 244, 22, 10, 3, '#5d4030', 4)
+           + C(302, 236, 10, shade(sk, .9)) + fist(sk))
+    Z['chainsaw'] = walker(
+        skin=sk, shirt='#8a93a0', pants='#4f5262', shoes='#3f3a36',
+        torso_extra=P('M178 258 L228 254 L232 312 L174 314 Z', '#ece6d6', 4.5) + L('M182 258 L176 244 M224 254 L230 242', 4)
+        + E(196, 284, 7, 5, '#c9b08a', 0) + E(218, 300, 5, 4, '#c9b08a', 0),
+        hand_item=saw)
+    # 양동이 걷는 좀비: 기어 오는 양동이 좀비의 걷는 판 (같은 옷)
+    Z['bucketw'] = walker(
+        skin='#a6cf72', shirt='#7f9fbf', pants='#4f6290',
+        head_extra=P('M150 162 L160 108 L248 108 L258 162 Z', '#a9b3be') + E(204, 108, 44, 8, '#c9d1da')
+        + L('M156 134 L252 134', 3.5, '#7d8792') + P('M142 158 L266 158 L266 170 L142 170 Z', '#959fab', 5)
+        + L('M150 160 Q120 190 150 214', 3.5))
+    # 헬멧 좀비: 중세 기사 투구만 (몸은 낡은 웃옷 + 허리띠)
+    Z['helmet'] = walker(
+        skin='#94c070', shirt='#a0784e', pants='#59606b', shoes='#3f3a36',
+        torso_extra=P('M166 290 L242 286 L242 298 L166 302 Z', '#6b4a32', 4.5),
+        head_extra=P('M142 238 L140 152 Q142 98 204 94 Q266 98 268 152 L270 238 Q206 252 142 238 Z', '#b9c1ca')
+        + L('M142 158 Q206 146 268 154', 4.5, '#7d8792')
+        + P('M196 176 L268 170 L268 186 L198 192 Z', '#2c2836', 4.5)
+        + '<circle cx="224" cy="182" r="4.2" fill="#fffbe8"/><circle cx="250" cy="179" r="3.8" fill="#fffbe8"/>'
+        + ''.join(f'<circle cx="{x}" cy="{y}" r="2.8" fill="{INK}"/>' for x, y in ((228, 208), (241, 206), (254, 204), (228, 221), (241, 219), (254, 217)))
+        + ''.join(f'<circle cx="{x}" cy="{y}" r="2.6" fill="#7d8792"/>' for x, y in ((160, 154), (184, 150), (232, 149), (258, 152))))
+    # 양복 좀비: 넥타이 · 넘긴 머리
+    jk = '#4a4f5e'
+    Z['suit'] = walker(
+        skin='#8cc56a', shirt=jk, pants='#3e4252', shoes='#2e2a28',
+        torso_extra=P('M188 240 L204 282 L220 240 Z', CLOTH_W, 4) + P('M199 248 L209 248 L212 284 L204 292 L196 284 Z', '#c0564a', 3.5)
+        + L('M186 242 L198 286 M222 242 L212 286', 4) + f'<circle cx="206" cy="298" r="3" fill="{INK}"/>',
+        head_extra=P('M150 170 Q144 124 196 118 Q248 116 258 142 Q228 130 202 136 Q172 144 162 176 Z', '#3a3440'),
+        hand_item_back=sleeve_b(jk), hand_item=sleeve_f(jk))
+    # 운동복 좀비: 지퍼 · 흰 줄 · 흰 운동화
+    ts = '#5b7fc4'
+    Z['sport'] = walker(
+        skin='#9ccc74', shirt=ts, pants=ts, shoes=CLOTH_W,
+        torso_extra=L('M204 240 L204 306', 3.5) + L('M187 302 L186 358', 4, CLOTH_W) + L('M217 302 L221 358', 4, CLOTH_W),
+        hand_item_back=sleeve_b(ts, True), hand_item=sleeve_f(ts, True))
+    # 깃발 좀비: 찢어진 깃발 (뼈 X 무늬)
+    sk = '#93c66c'
+    Z['flag'] = walker(
+        skin=sk, shirt='#c2a56e', pants='#7a5a40',
+        hand_item=L('M312 344 L330 40', 7.5, INK) + L('M312 344 L330 40', 4, '#9a6a44') + C(330, 38, 6, '#e8c05a', 4)
+        + P('M327 50 Q292 42 252 52 L262 66 L248 78 L264 90 L252 104 Q292 96 324 106 Z', '#b0504a')
+        + L('M276 64 L304 90 M304 64 L276 90', 6, CLOTH_W) + fist(sk))
+    Z['ghost'] = ghost()
+    # 광부 좀비: 안전모 + 이마 등 · 멜빵 · 곡괭이
+    sk = '#86bf74'
+    Z['miner'] = walker(
+        skin=sk, shirt='#7f8a99', pants='#6a5440',
+        torso_extra=L('M182 250 L183 304 M226 248 L228 304', 5, '#6a5440'),
+        head_extra=P('M152 152 Q150 96 204 92 Q258 96 256 150 Z', '#ef9a4a') + P('M140 152 L268 146 L270 160 L138 164 Z', '#ef9a4a', 5)
+        + L('M204 94 L204 148', 4, '#c9772e') + rr_(232, 112, 26, 22, 6, '#8a8f99', 4.5) + C(250, 123, 8, '#fff2a8', 4),
+        hand_item=L('M300 292 L346 182', 8.5, INK) + L('M300 292 L346 182', 4.5, '#a8743e')
+        + P('M310 172 Q346 156 384 190 Q388 198 378 198 Q346 174 316 184 Q304 180 310 172 Z', '#9aa3ad') + fist(sk))
+    # 어부 좀비: 노란 비옷 · 비 모자 · 낚싯대 + 물고기
+    yc = '#f2c14e'
+    sk = '#8cc56a'
+    Z['fisher'] = walker(
+        skin=sk, shirt=yc, pants='#3e4a6e', shoes='#2e3448',
+        torso_extra=L('M204 244 L204 306', 3.5) + f'<circle cx="213" cy="262" r="3" fill="{INK}"/><circle cx="213" cy="284" r="3" fill="{INK}"/>',
+        head_extra=P('M160 148 Q164 102 206 98 Q246 100 250 144 Q206 136 160 148 Z', yc)
+        + P('M128 158 Q204 130 272 146 Q278 156 264 158 Q204 144 146 170 Q118 178 116 168 Q118 160 128 158 Z', yc),
+        hand_item_back=sleeve_b(yc),
+        hand_item=sleeve_f(yc) + L('M298 290 L380 92', 6.5, INK) + L('M298 290 L380 92', 3.2, '#9a6a44') + L('M380 92 Q386 140 384 196', 2.2)
+        + E(384, 214, 9, 16, '#9fb6c8', 4) + P('M384 228 L375 246 L393 246 Z', '#9fb6c8', 4) + f'<circle cx="381" cy="206" r="2.2" fill="{INK}"/>'
+        + fist(sk))
+    Z['jason'] = jason()
+    Z['pharaoh'] = pharaoh()
+    return Z
+
+
+def ghost():
+    """유령 좀비: 다리 없이 떠다니는 흰 천 몸 · 좀비 얼굴. 뼈대 robe (사신과 같음) — 바닥에서 20px 떠 있음"""
+    body, sh = '#e4edf4', '#c9d6e2'
+    return ''.join([
+        limb('M222 236 Q258 232 290 236', 16, sh),
+        P('M150 338 Q138 262 146 198 Q154 120 212 116 Q270 120 276 196 Q284 262 272 338 Q262 352 250 336 Q238 356 224 338 '
+          'Q210 356 196 338 Q182 356 170 338 Q160 352 150 338 Z', body),
+        L('M170 296 Q174 316 172 330 M252 292 Q256 312 252 328', 3, sh),
+        zface(214, 180, 50, stitches=False),
+        limb('M222 258 Q262 254 298 258', 17, body),
+    ])
+
+
+def jason():
+    """하키 가면 좀비(보스): 큰 몸 · 낡은 작업복 · 흰 하키 가면(원작 상징인 빨간 무늬는 뺌) · 앞손에 큰 칼.
+    뼈대: neck 172 · hip 298 · crotch 306 · knee 334 · split 206 · 뒷팔 상자 (84,200)-(130,316) · 앞팔·칼 상자 (292,200)-(346,286)+(300,120)-(394,262)"""
+    sk, jk, pn, bt = '#8cbf6c', '#6b5d50', '#4f5262', '#3f3a36'
+    return ''.join([
+        limb('M150 196 Q118 236 112 282', 28, shade(jk, .85)), C(110, 292, 16, shade(sk, .9)),
+        P('M158 298 L154 360 L198 360 L202 298 Z', shade(pn, .9)), P('M214 298 L218 360 L260 360 L254 298 Z', pn),
+        P('M144 354 Q144 378 160 378 L204 378 Q206 366 198 354 Z', bt), P('M214 354 Q214 378 230 378 L272 378 Q276 366 262 354 Z', bt),
+        P('M138 182 Q208 160 282 182 Q300 240 288 306 ' + zig(140, 288, 306, 10, 8) + ' Q126 240 138 182 Z', jk),
+        L('M210 176 L208 300', 3.5), L('M170 236 l10 6 M248 222 l-8 10 M232 272 l10 4', 3.5),
+        E(214, 112, 58, 60, sk),
+        L('M158 112 Q190 100 224 98', 9, INK), L('M158 112 Q190 100 224 98', 4, '#3a3440'),     # 가면 끈 한 줄
+        P('M224 64 Q266 62 274 104 Q278 150 252 172 Q232 180 220 160 Q208 118 224 64 Z', '#efe6cf'),
+        E(242, 102, 10, 7, '#2c2836', 4), E(264, 100, 7, 6, '#2c2836', 4),
+        '<circle cx="245" cy="102" r="3" fill="#fffbe8"/><circle cx="265" cy="100" r="2.6" fill="#fffbe8"/>',
+        ''.join(f'<circle cx="{x}" cy="{y}" r="2.6" fill="{INK}"/>' for x, y in ((236, 128), (248, 126), (260, 124), (238, 142), (250, 140), (262, 138), (244, 156), (256, 154))),
+        limb('M262 200 Q298 214 314 248', 30, jk),
+        P('M316 238 L360 146 Q370 126 390 132 Q394 148 382 162 L336 250 Z', '#d9dee6'), L('M330 236 L372 150', 3, '#eef1f4'),
+        P('M306 246 L326 254 L316 280 L298 270 Z', '#5d4030', 5),
+        C(318, 258, 19, sk),
+    ])
+
+
+def pharaoh():
+    """파라오 좀비(보스): 금·파랑 줄무늬 두건(네메스) · 금 목걸이 · 붕대 · 흰 치마 · 금 지팡이.
+    뼈대: neck 172 · hip 298 · crotch 342 · knee 354 · split 208 · 뒷팔 상자 (84,200)-(130,316) · 앞팔·지팡이 상자 (292,200)-(340,284)+(298,76)-(346,378)"""
+    sk, gd, bl, wt = '#94c070', '#e8c05a', '#4a6fb0', '#f4efe2'
+    sk2 = shade(sk, .9)
+    nemes = 'M148 150 Q144 76 214 54 Q284 76 282 148 L294 206 L264 204 L262 118 Q214 98 170 116 L168 206 L136 208 Z'
+    stripes = ''.join(f'<path d="M110 {y} L310 {y - 10}" stroke="{bl}" stroke-width="8"/>' for y in range(68, 230, 18))
+    return ''.join([
+        limb('M152 196 Q122 238 116 282', 26, sk2), C(114, 292, 15, sk2), L('M110 268 L134 272', 10, INK), L('M110 268 L134 272', 5.5, gd),
+        limb('M186 300 L182 358', 30, sk2), limb('M232 300 L238 358', 30, sk),
+        P('M160 360 Q158 378 174 378 L204 378 Q206 368 198 360 Z', '#a8743e'), P('M222 360 Q220 378 236 378 L264 378 Q268 368 256 360 Z', '#a8743e'),
+        P('M146 182 Q214 162 284 182 Q298 238 286 300 L148 300 Q132 238 146 182 Z', sk),
+        P('M150 244 L284 222 L286 238 L150 260 Z', '#e9dfc6', 4.5), P('M156 270 L282 252 L284 266 L158 286 Z', '#e9dfc6', 4.5),
+        P('M144 290 L286 290 L296 340 Q214 352 134 340 Z', wt), P('M142 282 L288 282 L288 298 L142 298 Z', gd, 5),
+        P('M200 298 L232 298 L226 344 L206 344 Z', gd, 4.5),
+        P('M156 184 Q214 214 278 184 Q288 202 272 218 Q214 242 160 218 Q146 202 156 184 Z', gd),
+        L('M162 198 Q214 226 272 198', 5, bl), L('M168 210 Q214 234 266 210', 4, wt),
+        E(214, 112, 56, 58, sk),
+        f'<clipPath id="nemes"><path d="{nemes}"/></clipPath>', P(nemes, gd), f'<g clip-path="url(#nemes)">{stripes}</g>',
+        f'<path d="{nemes}" fill="none" stroke="{INK}" stroke-width="6" stroke-linejoin="round"/>',
+        zface(222, 138, 44, stitches=False),
+        P('M240 170 L254 170 L252 200 L242 200 Z', bl, 4.5), L('M242 180 L253 180 M242 190 L252 190', 3, gd),
+        limb('M264 202 Q298 222 312 252', 26, sk), L('M296 236 L312 222', 10, INK), L('M296 236 L312 222', 5.5, gd),
+        L('M326 372 L334 116', 9, INK), L('M326 372 L334 116', 5.5, gd),
+        ''.join(L(f'M{326 + 8 * (372 - y) / 256 - 4:.1f} {y} l8 0', 4, bl) for y in (150, 190, 300, 340)),
+        L('M334 118 Q336 82 314 82 Q298 84 300 102', 9, INK), L('M334 118 Q336 82 314 82 Q298 84 300 102', 5.5, gd),
+        C(318, 258, 17, sk),
+    ])
+
+
+# 색 변형 (11-11 요청_03): 초록 피부만 다른 색으로 — 게임은 SpriteFlash 셰이더가 같은 식으로 (그림 파일 늘리지 않음)
+#   (목표 색조°, 채도 배, 밝기 배)   초록 피부 = 색조 95° 근처(85~100). 옷·선·금속은 초록을 안 써서 그대로
+SKIN_HUE = 95.0
+TINTS = {'red': (6.0, 0.95, 1.0), 'blue': (200.0, 0.62, 1.03), 'purple': (272.0, 0.80, 1.0)}
+
+
+def _smooth(e0, e1, x):
+    t = np.clip((x - e0) / (e1 - e0), 0, 1)
+    return t * t * (3 - 2 * t)
+
+
+def tint_skin(rgba, tint):
+    """초록 피부만 색 바꾸기 (np RGBA uint8 → 같은 모양). 셰이더 SpriteFlash 의 _SkinHue 식과 같게 둘 것"""
+    hue, satk, valk = TINTS[tint] if isinstance(tint, str) else tint
+    a = rgba.astype(np.float32) / 255.0
+    r, g, b = a[..., 0], a[..., 1], a[..., 2]
+    mx = np.max(a[..., :3], axis=2); mn = np.min(a[..., :3], axis=2); d = mx - mn
+    s = np.where(mx > 1e-5, d / np.maximum(mx, 1e-5), 0)
+    dd = np.maximum(d, 1e-5)
+    h = np.where(mx == r, ((g - b) / dd) % 6, np.where(mx == g, (b - r) / dd + 2, (r - g) / dd + 4)) * 60.0
+    h = np.where(d < 1e-5, 0, h)
+    w = (1 - _smooth(28, 48, np.abs(h - SKIN_HUE))) * _smooth(0.10, 0.22, s) * _smooth(0.12, 0.30, mx)
+    h2 = (h + (hue - SKIN_HUE)) % 360
+    s2 = np.clip(s * satk, 0, 1); v2 = np.clip(mx * valk, 0, 1)
+    k = lambda n: (n + h2 / 60.0) % 6
+    f = lambda n: v2 - v2 * s2 * np.clip(np.minimum(k(n), 4 - k(n)), 0, 1)
+    rgb2 = np.stack([f(5), f(3), f(1)], axis=2)
+    out = a.copy()
+    out[..., :3] = a[..., :3] * (1 - w[..., None]) + rgb2 * w[..., None]
+    return (np.clip(out, 0, 1) * 255 + .5).astype(np.uint8)
 
 
 def reaper():
@@ -449,13 +669,22 @@ def ogre():
 
 
 CRAWLERS = {'crawler', 'bucket'}     # 기어 다니는 좀비 (이미 누워 있음)
+MELTS = {'ghost'}                    # 11-11 유령 = 쓰러지지 않고 아래로 납작하게 꺼짐
 
 
-def zombie_die_cell(a, crawl=False):
+def zombie_die_cell(a, crawl=False, melt=False):
     """죽기 칸(400x380): 바닥(y=376)에 붙인 쓰러진 그림.
     서 있는 좀비 = 뒤로 벌러덩(머리 오른쪽 · 얼굴·팔은 하늘). 11-08 전엔 시계 방향으로 돌려 얼굴·팔이 땅에 박혔음.
     기어 다니는 좀비 = 돌리지 않고 그 자리에 납작 엎어짐(머리 오른쪽 그대로). 11-08 전엔 90도 돌려 물구나무가 됐음.
+    유령(melt) = 돌리지 않고 높이 40% 로 꺼진 모양.
     게임(Zombie.Die): 서 있는 좀비는 맞은 쪽 반대로 뒤집어 그림, 기어 다니는 좀비는 늘 분대 쪽을 봄."""
+    if melt:
+        arr = np.array(a); ys, xs = np.nonzero(arr[..., 3] > 0)
+        ly = a.crop((xs.min(), ys.min(), xs.max() + 1, ys.max() + 1))
+        ly = ly.resize((int(ly.width * 1.12), max(1, int(ly.height * 0.4))), Image.BICUBIC)
+        cell = Image.new('RGBA', (400, 380), (0, 0, 0, 0))
+        cell.alpha_composite(ly, ((400 - ly.width) // 2, 376 - ly.height))
+        return cell
     if crawl:
         ly = a.rotate(-3, resample=Image.BICUBIC, center=(200, 376))      # 머리 쪽이 살짝 땅으로
     else:
@@ -482,7 +711,7 @@ def remake_zombie_die():
         sheet = Image.open(p).convert('RGBA')
         a = sheet.crop((0, 0, 400, 380))
         sheet.paste((0, 0, 0, 0), (2000, 0, 2400, 380))
-        sheet.alpha_composite(zombie_die_cell(a, name in CRAWLERS), (2000, 0))
+        sheet.alpha_composite(zombie_die_cell(a, name in CRAWLERS, name in MELTS), (2000, 0))
         sheet.save(p)
         print('zombie die', name)
 
@@ -497,7 +726,7 @@ def make_zombie(name, svg):
     hit = a.rotate(6, resample=Image.BICUBIC, center=(200, 376))
     sheet.alpha_composite(hit, (1600, 0))
     # 5 죽기
-    sheet.alpha_composite(zombie_die_cell(a, name in CRAWLERS), (2000, 0))
+    sheet.alpha_composite(zombie_die_cell(a, name in CRAWLERS, name in MELTS), (2000, 0))
     # 6 = 흰 실루엣
     al = im[..., 3]
     wh = np.zeros_like(im); wh[..., :3] = 255; wh[..., 3] = al
@@ -506,7 +735,7 @@ def make_zombie(name, svg):
     return a
 
 
-def make_zombies(only=None):
+def make_zombies(only=None, preview='doodle_zombies.png'):
     Z = zombies()
     tiles = []
     for name, svg in Z.items():
@@ -518,7 +747,7 @@ def make_zombies(only=None):
     pv = Image.new('RGBA', (400 * 6, 380 * ((len(tiles) + 5) // 6)), (233, 220, 188, 255))
     for i, (n, t) in enumerate(tiles):
         pv.alpha_composite(t, ((i % 6) * 400, (i // 6) * 380))
-    pv.save(os.path.join(PREV, 'doodle_zombies.png'))
+    pv.save(os.path.join(PREV, preview))
 
 
 # ------------------------------------------------------------------ 배경 (1728x2448, 흙길 y 820~1760 그대로)
@@ -661,6 +890,9 @@ if __name__ == '__main__':
         pv.save(os.path.join(PREV, 'doodle_skins.png'))
     if 'zombie' in what:
         make_zombies()
+    if 'znew' in what:      # 11-11 요청_03 새 좀비만 (+ 이름을 더 붙이면 그것만: znew jason ghost)
+        pick = set(sys.argv[1:]) & set(NEW_ZOMBIES) or set(NEW_ZOMBIES)
+        make_zombies(only=pick, preview='doodle_zombies_new.png')
     if 'zdie' in what:
         remake_zombie_die()
     if 'map' in what:
