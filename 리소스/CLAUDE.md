@@ -2,7 +2,7 @@
 
 ## ▶ 재개 메모 (2026-11-11 밤 — 말풍선 받아치기)
 - 사용자 "랜덤 대화가 가끔은 대답도 하는 형식(배고프당 → 밥이라도 먹고 할까?) · 모든 대화엔 필요 없음 · 동료 없으면 답 없음" → Speech_Lines 에 **Reply_To 칸** + `Trigger=Reply` 줄 20개 (Who **Other** = 방금 말한 동료 말고 · **Back** = 처음 말한 동료가 다시 받아침 → 3마디: 껄껄껄! → 뭐가 그렇게 웃겨? → 그냥~) · 답 달린 대사 12개(가끔 9 · 보스 2 · 클리어 1), rand_2·4·5·7·9 는 혼잣말
-- `Speech.SayLine/QueueReply/UpdateReply` · Config **Speech_Reply_Delay 1초**(두 풍선이 같이 보임) · **Speech_Reply_Chance 0.8**(답 달린 대사도 가끔은 혼잣말 — 1 이면 항상) · 동료 1마리면 답 없음 · 대화 중엔 가끔 대사 쉼
+- `Speech.SayLine/QueueReply/UpdateReply` · Config **Speech_Reply_Delay 1초**(두 풍선이 같이 보임) · **Speech_Reply_Chance 0.8**(답 달린 대사도 가끔은 혼잣말 — 1 이면 항상) — **사용자 확정 "80% 좋음, 유지"** · 동료 1마리면 답 없음 · 대화 중엔 가끔 대사 쉼
 - 사용자가 표에 넣은 3줄(고되다. 고돼! · 우닫다다다닫 · 배고프당!)도 `speech_add_1111.py` 에 옮김(영어 포함) — 대사·답 원본은 이 도구, 표에 직접 넣으면 도구에도 옮길 것
 - 시험 165줄 errors=0 (새 4줄) · 캡처 20d_speech_reply · 20e_speech_reply2 · 표 백업 = 스크래치 speech_before_1112/
 - 폰 반영은 위 메모의 "9번에 같이 넣을지" 결정에 따라감
