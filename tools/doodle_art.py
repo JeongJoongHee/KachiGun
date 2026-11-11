@@ -7,6 +7,8 @@
 사용: PYTHONUTF8=1 python tools/doodle_art.py [capy] [skins] [zombie] [map] [icon]     (없으면 capy·zombie·map) — PowerShell 에서(Bash 에선 Edge 가 안 뜸)
       zdie = 좀비 죽기 칸만 다시(Edge 없이, Bash 에서도 됨)
       znew = 11-11 요청_03 새 좀비 12종만 (znew jason ghost 처럼 이름을 붙이면 그것만) · 색 변형 = tint_skin()
+      znew2 = 11-11 좀비 추가 제안 20종만 (그림 = tools/doodle_zombies2.py)
+      maps = 배경 판 4장 (기본 · 세모 나무 · 죽은 나무 · 황폐)
       → Kachi_Gun/Assets/Resources/Art/{Char,Zombie,Map}/...  · 미리보기 tools/_preview/doodle_*.png
 원래 도트 그림 백업: tools/_build/pixel_orig/ (git 에는 원래 그림이 기록에 있음)
 
@@ -410,6 +412,8 @@ def zombies():
                           head_extra=P('M192 280 L198 236 L268 236 L274 280 Z', '#a9b3be') + E(233, 236, 35, 7, '#c9d1da') + L('M204 260 L262 260', 3, '#7d8792'))
     Z['ogre'] = ogre()
     Z.update(zombies_new())
+    from doodle_zombies2 import zombies_new2     # 11-11 좀비 추가 제안 20종 (일반 17 · 보스 3)
+    Z.update(zombies_new2())
     return Z
 
 
@@ -751,44 +755,100 @@ def make_zombies(only=None, preview='doodle_zombies.png'):
 
 
 # ------------------------------------------------------------------ 배경 (1728x2448, 흙길 y 820~1760 그대로)
-def make_map():
+# 11-11 배경 판: 챕터 좀비 색(Chapter_Summary Zombie_Tint)에 맞춰 숲 띠만 바꿈 — 흙길(y 790~1880)·돌·풀 자리는 같음(같은 난수 순서)
+#   base = 둥근 나무(초록) · pine = 세모 나무(푸르딩딩) · dead = 죽은 나무(보라) · waste = 황폐(붉은: 그루터기·마른 땅·갈라짐)
+MAP_VARIANTS = {'base': 'side_map', 'pine': 'side_map_pine', 'dead': 'side_map_dead', 'waste': 'side_map_waste'}
+MAP_PAL = {
+    'base':  dict(grass='#a9cf86', ground='#e9dcbc', road='#ecdcb8', patch='#e1cda3', tuft='#7fae5c',
+                  tree=["#79b05a", "#86ba62", "#8fc06c"], bush=["#8fc06c", "#9ccb78"]),
+    'pine':  dict(grass='#a4c99a', ground='#e6dcc0', road='#ecdcb8', patch='#e0cfa8', tuft='#78a77a',
+                  tree=["#5f9a74", "#6aa47e", "#76ae88"], bush=["#86b88e", "#93c39a"]),
+    'dead':  dict(grass='#bfc195', ground='#e6dab8', road='#e9d9b6', patch='#ddc9a0', tuft='#a6a070',
+                  tree=["#8a7560", "#7d6a58", "#94806a"], bush=["#b4ad80", "#c0b88a"]),
+    'waste': dict(grass='#d4bf96', ground='#e8d6b0', road='#ead8b2', patch='#dcc49a', tuft='#b39a6a',
+                  tree=["#9a7a5a", "#8a6e52", "#a8866a"], bush=["#c4ab82", "#cdb68e"]),
+}
+
+
+def _tree(v, x, y, r, col):
+    """나무 하나 (x = 줄기 가운데, y = 잎 가운데)"""
+    s = []
+    if v == 'base':
+        s.append(f'<rect x="{x - 14}" y="{y}" width="28" height="{r + 40}" fill="#9a6a44" stroke="{INK}" stroke-width="7"/>')
+        s.append(f'<circle cx="{x}" cy="{y}" r="{r}" fill="{col}" stroke="{INK}" stroke-width="7"/>')
+    elif v == 'pine':
+        s.append(f'<rect x="{x - 12}" y="{y + r * .6}" width="24" height="{r * .4 + 40}" fill="#8a6040" stroke="{INK}" stroke-width="7"/>')
+        for k, (w, top) in enumerate(((1.15, -.2), (.95, -.75), (.72, -1.25))):
+            yb = y + r * (.75 - k * .5)
+            s.append(f'<path d="M{x - r * w} {yb} L{x} {y + r * top - r * .35} L{x + r * w} {yb} Z" fill="{col}" stroke="{INK}" stroke-width="7" stroke-linejoin="round"/>')
+    elif v == 'dead':
+        h = r + 40
+        s.append(f'<path d="M{x - 13} {y + h} L{x - 9} {y - r * .55} L{x + 9} {y - r * .55} L{x + 13} {y + h} Z" fill="{col}" stroke="{INK}" stroke-width="7" stroke-linejoin="round"/>')
+        for sx, a, b in ((-1, .9, .05), (1, .8, -.25), (-1, .55, -.6), (1, .5, -.9)):
+            bx, by = x + sx * 6, y + r * b
+            ex, ey = x + sx * r * a, by - r * .45
+            d = f'M{bx} {by} Q{(bx + ex) / 2} {by - r * .05} {ex} {ey} M{(bx + ex) / 2} {by - r * .12} l{sx * r * .12} {-r * .28}'
+            s.append(f'<path d="{d}" fill="none" stroke="{INK}" stroke-width="15" stroke-linecap="round"/>')
+            s.append(f'<path d="{d}" fill="none" stroke="{col}" stroke-width="7" stroke-linecap="round"/>')
+    else:   # waste: 그루터기
+        s.append(f'<path d="M{x - 26} {y + r + 40} L{x - 20} {y + r * .55} L{x + 20} {y + r * .55} L{x + 26} {y + r + 40} Z" fill="{col}" stroke="{INK}" stroke-width="7" stroke-linejoin="round"/>')
+        s.append(f'<ellipse cx="{x}" cy="{y + r * .55}" rx="21" ry="8" fill="#d8bf98" stroke="{INK}" stroke-width="6"/>')
+    return ''.join(s)
+
+
+def _bush(v, x, y, r, col):
+    if v == 'base' or v == 'pine':
+        return f'<circle cx="{x}" cy="{y}" r="{r}" fill="{col}" stroke="{INK}" stroke-width="7"/>'
+    if v == 'dead':   # 마른 덤불 (낮고 납작)
+        return f'<ellipse cx="{x}" cy="{y + r * .35}" rx="{r}" ry="{r * .55}" fill="{col}" stroke="{INK}" stroke-width="7"/>'
+    # waste: 낮은 흙 둔덕 + 바위
+    return (f'<ellipse cx="{x}" cy="{y + r * .5}" rx="{r * 1.05}" ry="{r * .4}" fill="{col}" stroke="{INK}" stroke-width="7"/>'
+            + f'<ellipse cx="{x + r * .3}" cy="{y + r * .3}" rx="{r * .28}" ry="{r * .2}" fill="#c9c1b3" stroke="{INK}" stroke-width="5"/>')
+
+
+def make_map(v='base'):
     W, H = 1728, 2448
     import random
     rnd = random.Random(5)
-    s = [f'<rect width="{W}" height="{H}" fill="#e9dcbc"/>',
-         f'<rect width="{W}" height="760" fill="#a9cf86"/>',
-         f'<rect y="1840" width="{W}" height="{H - 1840}" fill="#a9cf86"/>']
+    pal = MAP_PAL[v]
+    s = [f'<rect width="{W}" height="{H}" fill="{pal["ground"]}"/>',
+         f'<rect width="{W}" height="760" fill="{pal["grass"]}"/>',
+         f'<rect y="1840" width="{W}" height="{H - 1840}" fill="{pal["grass"]}"/>']
     # 위 숲: 나무 + 덤불 줄
     for i in range(14):
         x = i * 135 + rnd.randint(-30, 30); y = 380 + rnd.randint(-160, 120); r = rnd.randint(80, 120)
-        s.append(f'<rect x="{x - 14}" y="{y}" width="28" height="{r + 40}" fill="#9a6a44" stroke="{INK}" stroke-width="7"/>')
-        s.append(f'<circle cx="{x}" cy="{y}" r="{r}" fill="{rnd.choice(["#79b05a", "#86ba62", "#8fc06c"])}" stroke="{INK}" stroke-width="7"/>')
+        s.append(_tree(v, x, y, r, rnd.choice(pal['tree'])))
     for i in range(16):
         x = i * 118 + rnd.randint(-20, 20); r = rnd.randint(70, 105)
-        s.append(f'<circle cx="{x}" cy="{720 + rnd.randint(-10, 20)}" r="{r}" fill="{rnd.choice(["#8fc06c", "#9ccb78"])}" stroke="{INK}" stroke-width="7"/>')
+        s.append(_bush(v, x, 720 + rnd.randint(-10, 20), r, rnd.choice(pal['bush'])))
     # 흙길 (위 경계 물결)
-    s.append(f'<path d="M0 790 Q300 760 600 785 Q900 810 1200 782 Q1500 760 {W} 790 L{W} 1880 Q1400 1850 1000 1874 Q600 1896 300 1866 Q120 1850 0 1872 Z" fill="#ecdcb8" stroke="{INK}" stroke-width="7"/>')
+    s.append(f'<path d="M0 790 Q300 760 600 785 Q900 810 1200 782 Q1500 760 {W} 790 L{W} 1880 Q1400 1850 1000 1874 Q600 1896 300 1866 Q120 1850 0 1872 Z" fill="{pal["road"]}" stroke="{INK}" stroke-width="7"/>')
     for _ in range(9):
         x = rnd.randint(100, W - 100); y = rnd.randint(900, 1760)
-        s.append(f'<ellipse cx="{x}" cy="{y}" rx="{rnd.randint(150, 320)}" ry="{rnd.randint(40, 80)}" fill="#e1cda3"/>')
+        s.append(f'<ellipse cx="{x}" cy="{y}" rx="{rnd.randint(150, 320)}" ry="{rnd.randint(40, 80)}" fill="{pal["patch"]}"/>')
     for _ in range(26):
         x = rnd.randint(40, W - 40); y = rnd.randint(860, 1820)
         s.append(f'<ellipse cx="{x}" cy="{y}" rx="{rnd.randint(14, 30)}" ry="{rnd.randint(9, 18)}" fill="#c9c1b3" stroke="{INK}" stroke-width="5"/>')
     for _ in range(22):
         x = rnd.randint(40, W - 40); y = rnd.randint(860, 1820)
-        s.append(f'<path d="M{x} {y} l10 -26 M{x + 14} {y} l0 -30 M{x + 28} {y} l-10 -26" fill="none" stroke="#7fae5c" stroke-width="7" stroke-linecap="round"/>')
+        s.append(f'<path d="M{x} {y} l10 -26 M{x + 14} {y} l0 -30 M{x + 28} {y} l-10 -26" fill="none" stroke="{pal["tuft"]}" stroke-width="7" stroke-linecap="round"/>')
+    if v == 'waste':   # 갈라진 땅 (숲 띠에만 — 흙길은 그대로)
+        cr = random.Random(11)
+        for _ in range(16):
+            x = cr.randint(40, W - 40); y = cr.choice([cr.randint(60, 700), cr.randint(1950, 2400)])
+            s.append(f'<path d="M{x} {y} l{cr.randint(20, 40)} {cr.randint(-14, 14)} l{cr.randint(16, 30)} {cr.randint(8, 20)} m-20 -10 l{cr.randint(-6, 10)} {cr.randint(-28, -14)}" fill="none" stroke="{INK}" stroke-width="5" stroke-linecap="round"/>')
     # 아래 숲: 덤불 줄 + 나무
     for i in range(16):
         x = i * 118 + rnd.randint(-20, 20); r = rnd.randint(70, 105)
-        s.append(f'<circle cx="{x}" cy="{1930 + rnd.randint(-10, 30)}" r="{r}" fill="{rnd.choice(["#8fc06c", "#9ccb78"])}" stroke="{INK}" stroke-width="7"/>')
+        s.append(_bush(v, x, 1930 + rnd.randint(-10, 30), r, rnd.choice(pal['bush'])))
     for i in range(14):
         x = i * 135 + rnd.randint(-30, 30); y = 2150 + rnd.randint(-60, 160); r = rnd.randint(80, 120)
-        s.append(f'<rect x="{x - 14}" y="{y}" width="28" height="{r + 40}" fill="#9a6a44" stroke="{INK}" stroke-width="7"/>')
-        s.append(f'<circle cx="{x}" cy="{y}" r="{r}" fill="{rnd.choice(["#79b05a", "#86ba62", "#8fc06c"])}" stroke="{INK}" stroke-width="7"/>')
+        s.append(_tree(v, x, y, r, rnd.choice(pal['tree'])))
     im = render(''.join(s), W, H, wob=6.0, freq=0.008)
-    Image.fromarray(im).convert('RGB').save(os.path.join(ART, 'Map', 'side_map.png'))
-    Image.fromarray(im).convert('RGB').resize((432, 612)).save(os.path.join(PREV, 'doodle_map.png'))
-    print('map')
+    name = MAP_VARIANTS[v]
+    Image.fromarray(im).convert('RGB').save(os.path.join(ART, 'Map', name + '.png'))
+    Image.fromarray(im).convert('RGB').resize((432, 612)).save(os.path.join(PREV, 'doodle_' + name + '.png'))
+    print('map', v)
 
 
 
@@ -893,10 +953,17 @@ if __name__ == '__main__':
     if 'znew' in what:      # 11-11 요청_03 새 좀비만 (+ 이름을 더 붙이면 그것만: znew jason ghost)
         pick = set(sys.argv[1:]) & set(NEW_ZOMBIES) or set(NEW_ZOMBIES)
         make_zombies(only=pick, preview='doodle_zombies_new.png')
+    if 'znew2' in what:     # 11-11 좀비 추가 제안 20종만 (tools/doodle_zombies2.py, 이름을 붙이면 그것만)
+        from doodle_zombies2 import NEW_ZOMBIES2
+        pick = set(sys.argv[1:]) & set(NEW_ZOMBIES2) or set(NEW_ZOMBIES2)
+        make_zombies(only=pick, preview='doodle_zombies_new2.png')
     if 'zdie' in what:
         remake_zombie_die()
     if 'map' in what:
         make_map()
+    if 'maps' in what:      # 11-11 배경 판 4장
+        for v in MAP_VARIANTS:
+            make_map(v)
     if 'icon' in what:
         make_app_icon2('B', apply=False)
         make_app_icon2('A')   # 11-05 저녁: A(상반신) 적용, B 는 미리보기만

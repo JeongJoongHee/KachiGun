@@ -1,6 +1,18 @@
 # 카치건 (좀비 키우기) — 세로 방치형 분대 슈팅, Unity 6000.0.84f1 · 2D URP
 
-## ▶ 재개 메모 (2026-11-10 — 스토어 공개 · 앱 이전 신청 · 문서 정리) — **재개하면 여기부터**
+## ▶ 재개 메모 (2026-11-11 — 새 좀비 32종 · 색 변형 · 배경 판 · 보스 6마리) — **재개하면 여기부터**
+- 사용자 의견(완료 문서/좀비_추가_시안.html 키 kachigun-zombie-1111 · 좀비_추가_제안.html 키 kachigun-zombie-idea-1111) 대로 게임에 넣음:
+  - **그림**: 요청_03 12종(doodle_art.py zombies_new) + 제안 체크 20종(`tools/doodle_zombies2.py`, `doodle_art.py znew2`) · 뼈대 rig_gen.py ZOMBIE_RIG · 스키·강시 = robe(다리 붙음, 흔들림 `robeK`→ anim R)
+  - **표**: `tools/zombie_add_1111.py`(다시 돌려도 같음) → Zombie(Biome·Move·Effect 칸, 일반 38 · 보스 6) · Stage Boss_Id 6챕터 순환(ogre→jason 하키 좀비→pharaoh→yeti→captain→gasgiant) · Boss_Dungeon 레벨마다 같은 순환 · Chapter_Summary Zombie_Tint(초록→붉은→푸르딩딩→보라)·Map_Sprite · Config 7개(Zombie_Biome_Mul 1.5 · Zombie_New_Mul 3 · Zombie_New_Chapters 5 · Zombie_New_From 6 · Tint_Chance 0.8 · Drum_Blast_Mul 3 · Drum_Blast_Radius 1.8) · String 영어 이름. 새 좀비 처음 나오는 챕터 6~60(2챕터마다, 배경 좀비는 그 배경 챕터)
+  - **코드**: 색 변형 = SpriteFlash 셰이더(색 번호를 SpriteRenderer.color.g 에 숨김 `Art.TintColor`, **Linear 색 공간이라 감마로 되돌려 읽음** — 첫 판은 붉은→푸른 버그) · `GameManager.ZombieWeight/PickTint` · 드럼통 `Zombie.Blast` · 강시 `HopPose` · 스키 숙임 · `Field.SetMap` · 표 끝 너머 보스 순환 · HUD 보스 아이콘 = 그 보스 · 안드로이드만 좀비·맵 그림 ASTC 4x4(`ArtImport` 버전 2 — 44종 x 4.2MB 메모리 → 1/4)
+  - **배경 판**: `doodle_art.py maps` → side_map(기본, 그대로) · _waste(황폐, 붉은) · _pine(세모 나무, 푸르딩딩) · _dead(죽은 나무, 보라)
+  - 시험 154줄 errors=0 (새 11줄: 그림·뼈대 32 · 보스 순환 · 비중 · 색 번호 · **화면 픽셀 색조** · 드럼통 · 강시/스키 · 배경 판) · 캡처 19e~19h
+  - 방패 경찰 = 그림만(깨지는 규칙은 나중, 결정 ②) · 산타 = 12월 업데이트로 · 밸런스 영향(1~150 평균) 좀비 체력 x0.99 · 골드 x1.02 → 조정은 마지막에
+  - `좀비_정리.html` 44종으로 다시(tools/zombie_sheet.py) · 시안·제안 문서는 완료 문서/
+- **폰 반영 = 9번(결제) 뒤 업데이트 추천**(9번은 이전·결제만 담아 문제 원인 찾기 쉽게) — 사용자가 같이 넣자고 하면 9번에
+- 다시 그리기: PowerShell `python tools/doodle_art.py znew2 [이름]` → `python tools/rig_gen.py <이름>` → 배치 시험 · 표 = zombie_add_1111.py → xlsx2csv → Challenge·Gold_Upgrade·Stage_Table 반올림 차이 되돌리기(Stage 는 Boss_Id 칸만 남김)
+
+## ▶ 재개 메모 (2026-11-10 — 스토어 공개 · 앱 이전 신청 · 문서 정리)
 - **11-10 스토어 공개 확인**(비로그인으로 페이지 열림 · 개발자 FIBE) → 사용자가 **앱 이전 신청 · Cachisi 수락 끝**(Chrome 확인: 대기 중 · 새 개발자 계정 8145464765433681010 · 앱 com.zkfpf.kachizombie 하나 · 이유 "결제 프로필에 문제가 있음" · 관계 "동일한 모회사에서 소유함") → 구글 처리 영업일 2일(~11-12)
 - 다음: 이전 완료 메일 → 라이선스 키를 키 보관\google_play_license_key.txt → "키 넣었어" → ④ 9번. 그 사이 AdMob 스토어 연결 · 구글 애즈 앱 추가(결제 전까지)
 - **9번에 같이 넣을 것(11-10 사용자 "이전 끝난 후 한번에")**: 클라우드 저장 = 처음 켤 때 구글 계정 조용히 자동 로그인 → 성공하면 저절로 연결·자동 저장(지금은 설정에서 직접 연결해야만 저장 — 안 하고 폰 바꾸면 진행 잃음). 실패하면 지금처럼 설정에서 연결. 코드는 지금 안 고침

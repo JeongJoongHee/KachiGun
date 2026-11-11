@@ -25,11 +25,14 @@ namespace KachiGun
         // 11-04 움직임 다듬기: 지금 속도(출발·멈춤을 부드럽게) · 걷기↔멈춤 섞는 정도 · 번쩍임 쉬는 시간
         float curSpeed, walkW, flashCool;
         bool shaderFlash;      // 번쩍임 = 그림을 하얗게 물들임(SpriteFlash). false = 예전 흰 실루엣 덮기
+        int tint;              // 11-11 색 변형 0 = 원래 초록 · 1 붉은 · 2 푸르딩딩 · 3 보라 (Art.TintColor)
+        bool blastPending;     // 11-11 드럼통: 쓰러진 뒤 잠깐 있다 펑
+        static readonly System.Collections.Generic.List<Target> blastBuf = new();
 
         const float HitTime = 0.16f, FlashTime = 0.09f;
         public static bool Treadmill, TreadmillStop;   // 시험 촬영: 제자리 걷기 · 그 자리에서 멈춤
 
-        public static Zombie Spawn(ZombieRow r, Vector2 pos, double hp, double gold, float scaleMul = 1f, bool boss = false)
+        public static Zombie Spawn(ZombieRow r, Vector2 pos, double hp, double gold, float scaleMul = 1f, bool boss = false, int tint = 0)
         {
             var go = new GameObject("Z_" + r.id);
             go.transform.position = pos;
@@ -74,6 +77,9 @@ namespace KachiGun
                 Art.UseFlash(z.sr);
                 if (z.rig) Art.UseFlash(z.rig.sr);
                 z.flash.enabled = false;
+                z.tint = tint;
+                z.sr.color = Art.TintColor(tint);
+                if (z.rig) z.rig.sr.color = Art.TintColor(tint);
             }
             // 발밑 그림자 (기어 다니는 좀비는 몸이 길어서 넓게)
             z.shadow = Art.Shadow(go.transform, r.shadowW * scaleMul, r.shadowH * scaleMul);
@@ -147,6 +153,8 @@ namespace KachiGun
                 body.localPosition = Vector3.zero;
                 body.localRotation = Quaternion.Euler(0, 0, -dir * 1.5f * walkW);
                 shadow.transform.localScale = shadowScale;
+                if (row.Hop) HopPose();
+                else if (row.Slide) body.localRotation = Quaternion.Euler(0, 0, -dir * (1.5f + 5f * walkW));   // 스키: 앞으로 숙이고 미끄러짐
             }
             else if (hitK > 0)
             {
@@ -291,9 +299,37 @@ namespace KachiGun
             {
                 bool on = ((int)((dieT - 0.75f) / 0.07f)) % 2 == 0;     // 깜빡깜빡
                 float a = Mathf.Clamp01(1 - (dieT - 0.75f) / 0.4f);
-                sr.color = new Color(1, 1, 1, on ? a : a * 0.25f);
+                sr.color = Art.TintColor(tint, on ? a : a * 0.25f);
             }
+            if (blastPending && dieT >= 0.1f) { blastPending = false; Blast(); }
             if (dieT > 1.15f) Destroy(gameObject);
+        }
+
+        /// <summary>11-11 강시(Move=Hop): 두 발 모아 깡총깡총 — 두 걸음마다 한 번 뛰고, 내려앉을 때 살짝 찌그러짐</summary>
+        void HopPose()
+        {
+            float ph = walkDist * 0.5f % 1f;
+            float up = Mathf.Sin(ph * Mathf.PI);
+            float land = Mathf.Clamp01(1f - ph / 0.18f) + Mathf.Clamp01((ph - 0.9f) / 0.1f);   // 뛰기 직전·직후
+            body.localPosition = new Vector3(0, up * 0.26f * scale * walkW, 0);
+            body.localScale = new Vector3(body.localScale.x * (1f + land * 0.07f * walkW), body.localScale.y * (1f - land * 0.08f * walkW), 1);
+            body.localRotation = Quaternion.identity;
+            shadow.transform.localScale = shadowScale * (1f - up * 0.35f * walkW);
+        }
+
+        /// <summary>11-11 드럼통(Effect=Blast): 쓰러진 자리에서 펑 — 주변 좀비에게 이 좀비 최대 체력 x Drum_Blast_Mul (넉백 없음)</summary>
+        void Blast()
+        {
+            float rad = Tables.Cf("Drum_Blast_Radius");
+            if (rad <= 0 || GameManager.I == null) return;
+            Vector2 c = Center;
+            Fx.I?.Boom(c, rad);
+            double dmg = maxHp * Tables.C("Drum_Blast_Mul", 3);
+            blastBuf.Clear(); blastBuf.AddRange(All);
+            foreach (var t in blastBuf)
+                if (t != this && t is Zombie && t.Alive && (t.Center - c).magnitude <= rad + t.radius)
+                    GameManager.I.Damage(t, dmg, c, 1, false);
+            blastBuf.Clear();
         }
 
         public override void Hit(double dmg, Vector2 from, bool knock = true)
@@ -318,7 +354,8 @@ namespace KachiGun
             hp = 0;
             HideBar();
             sr.sprite = f[Art.ZDie];
-            sr.color = Color.white;
+            sr.color = Art.TintColor(tint);
+            blastPending = row != null && row.Blast;
             ShowRig(false);
             if (shaderFlash) { flashT = FlashTime; if (rig) Art.SetFlash(rig.sr, 0); }
             fallFrom = 0.35f * scale;

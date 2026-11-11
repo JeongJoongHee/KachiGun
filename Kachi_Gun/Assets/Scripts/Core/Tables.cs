@@ -20,6 +20,10 @@ namespace KachiGun
     {
         public string id, name; public double hpMul, goldMul; public int minChapter;
         public float speed, speedMin, speedMax, scale, weight, stopMin, stopMax, height, radius, shadowW, shadowH;
+        public string biome, move, effect;      // 11-11: 배경(그 배경에서 더 많이) · 움직임(Hop 깡총 · Slide 미끄럼) · 효과(Blast 죽으면 펑)
+        public bool Hop => move == "Hop";
+        public bool Slide => move == "Slide";
+        public bool Blast => effect == "Blast";
     }
     public class MissionRow
     {
@@ -34,7 +38,7 @@ namespace KachiGun
         public float spawn, bossScale, bossTime;
         public double hp, gold, hpGrowth, goldGrowth, bossHp, bossGold;
     }
-    public class ChapterRow { public int chapter; public string biome; public Color tint; }
+    public class ChapterRow { public int chapter; public string biome, zombieTint, mapSprite; public Color tint; }   // 11-11 좀비 색(green·red·blue·purple) · 배경 판
     public class UpgradeRow { public int lv; public double cost, costGrowth, atk, statGrowth, spd, spdAdd, spdGrowth, gold, goldGrowth; }   // atk·spd·gold = %, spdGrowth > 0 = 공속도 곱으로 오름
     public class ChallengeRow { public int chapter, count; public float time; public double hp, reward; }
     public class BossRaidRow { public int lv, recChapter; public string bossId; public double hp, reward, rewardAdd; public float time, scale; }
@@ -130,7 +134,8 @@ namespace KachiGun
                     hpMul = r.D("HpMul", 1), goldMul = r.D("GoldMul", 1), speed = sp,
                     speedMin = r.F("Actual_Speed_Min", sp * 0.935f), speedMax = r.F("Actual_Speed_Max", sp * 1.265f), scale = r.F("Scale", 1),
                     stopMin = r.F("StopDist_Min", 2f), stopMax = r.F("StopDist_Max", 4.6f), height = r.F("Height", 1.35f), radius = r.F("Radius", 0.5f),
-                    shadowW = r.F("Shadow_W", 0.8f), shadowH = r.F("Shadow_H", 0.22f)
+                    shadowW = r.F("Shadow_W", 0.8f), shadowH = r.F("Shadow_H", 0.22f),
+                    biome = r.S("Biome"), move = r.S("Move"), effect = r.S("Effect")
                 });
             }
 
@@ -145,7 +150,7 @@ namespace KachiGun
                 });
             stages.Sort((a, b) => a.idx.CompareTo(b.idx));
             foreach (var r in Read("Chapter_Summary"))
-                chapters.Add(new ChapterRow { chapter = r.I("Chapter"), biome = r.S("Biome_Name"), tint = r.Hex("Map_Tint_Hex", Color.white) });
+                chapters.Add(new ChapterRow { chapter = r.I("Chapter"), biome = r.S("Biome_Name"), tint = r.Hex("Map_Tint_Hex", Color.white), zombieTint = r.S("Zombie_Tint"), mapSprite = r.S("Map_Sprite") });
             chapters.Sort((a, b) => a.chapter.CompareTo(b.chapter));
             foreach (var r in Read("Gold_Upgrade"))
                 upgrades.Add(new UpgradeRow
@@ -291,7 +296,9 @@ namespace KachiGun
             double hg = Math.Pow(last.hpGrowth, n), gg = Math.Pow(last.goldGrowth, n);
             return new StageRow
             {
-                idx = idx, chapter = idx / 5 + 1, sub = sub, boss = b.boss, bossId = b.bossId, quota = b.quota, maxAlive = b.maxAlive, spawn = b.spawn,
+                // 11-11 보스는 6챕터마다 돌아감 → 표 끝 너머도 30스테이지(6챕터)씩 앞으로 당겨 같은 자리의 보스
+                idx = idx, chapter = idx / 5 + 1, sub = sub, boss = b.boss, bossId = b.boss ? Stage(idx - 30 * ((idx - last.idx + 29) / 30)).bossId : b.bossId,
+                quota = b.quota, maxAlive = b.maxAlive, spawn = b.spawn,
                 hp = b.hp * hg, gold = b.gold * gg, hpGrowth = last.hpGrowth, goldGrowth = last.goldGrowth,
                 bossHp = b.bossHp * hg, bossGold = b.bossGold * gg, bossScale = b.bossScale, bossTime = b.bossTime
             };
@@ -300,7 +307,7 @@ namespace KachiGun
         public static ChapterRow Chapter(int ch)
         {
             Load();
-            if (chapters.Count == 0) return new ChapterRow { chapter = ch, biome = "", tint = Color.white };
+            if (chapters.Count == 0) return new ChapterRow { chapter = ch, biome = "", tint = Color.white, zombieTint = "", mapSprite = "side_map" };
             var r = chapters.Find(c => c.chapter == ch);
             return r ?? chapters[(Math.Max(1, ch) - 1) % chapters.Count];
         }
@@ -348,7 +355,8 @@ namespace KachiGun
             var prev = bossRaids.Count > 1 ? bossRaids[^2] : last;
             int n = lv - last.lv;
             double g = prev.hp > 0 ? last.hp / prev.hp : 1.1;
-            return new BossRaidRow { lv = lv, bossId = last.bossId, hp = last.hp * Math.Pow(g, n), time = last.time, scale = last.scale, reward = last.reward + last.rewardAdd * n, rewardAdd = last.rewardAdd };
+            var cyc = bossRaids.Find(b => b.lv == lv - 6 * ((n + 5) / 6));     // 11-11 보스 6마리가 레벨마다 돌아감
+            return new BossRaidRow { lv = lv, bossId = cyc != null ? cyc.bossId : last.bossId, hp = last.hp * Math.Pow(g, n), time = last.time, scale = last.scale, reward = last.reward + last.rewardAdd * n, rewardAdd = last.rewardAdd };
         }
 
         /// <summary>광산 보상 배율 (지금 챕터에 맞는 단계)</summary>

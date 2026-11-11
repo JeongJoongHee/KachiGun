@@ -232,8 +232,11 @@ namespace KachiGun
                 }
                 case "robe":
                     Move("pelvis", 0, 2f * C(2 * f));
-                    Rot("robe1", 3.5f * S(f));
-                    Rot("robe2", 6f * S(f - 0.9f));
+                {
+                    float R = data.A("R", 1f);   // 11-11 robe 흔들림 세기 (스키·강시 = 다리가 붙은 채 조금만)
+                    Rot("robe1", 3.5f * R * S(f));
+                    Rot("robe2", 6f * R * S(f - 0.9f));
+                }
                     Rot("spine", -3 + 1.5f * S(2 * f + 0.4f));
                     Rot("head", 2 - 2.5f * S(2 * f - 0.6f));
                     break;

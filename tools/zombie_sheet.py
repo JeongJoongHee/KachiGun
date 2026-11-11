@@ -8,6 +8,8 @@
 
 사용: PYTHONUTF8=1 python tools/zombie_sheet.py      → 좀비_정리.html
       좀비 그림(doodle_art.py zombie)이나 Zombie 표를 바꾼 뒤 다시 돌리면 문서가 새로 만들어짐.
+11-11: 좀비 44종(새 32) · 챕터 색 · 배경 판 · 보스 6마리 순환 — 나올 확률은 게임과 같은 식(GameManager.ZombieWeight: 배경 x · 새 얼굴 x)
+       으로 대표 챕터만 · 그림은 WebP(문서 크기)
 """
 import base64
 import csv
@@ -30,7 +32,7 @@ CW, CH = 400, 380            # 시트 한 칸
 DIRT = (238, 222, 184)       # 게임 흙길 색 (그림이 실제로 놓이는 바탕)
 
 CRAWL = {'crawler', 'bucket'}
-ROBE = {'reaper'}
+ROBE = {'reaper', 'ghost'}
 LOOK = {                     # 생김새 한 줄 (doodle_art.py zombies() 의 색·소품 그대로)
     'crawler': '바닥을 기어 오는 좀비. 주황 셔츠 · 보라 바지.',
     'knife': '파란 셔츠, 앞으로 뻗은 손에 칼.',
@@ -44,7 +46,28 @@ LOOK = {                     # 생김새 한 줄 (doodle_art.py zombies() 의 �
     'fat': '배가 나온 뚱보. 웃통을 벗음.',
     'reaper': '후드 달린 긴 망토(다리 없음) · 해골 얼굴 · 낫.',
     'ogre': '뿔 두 개 · 큰 근육 몸 · 뒷손에 방망이.',
+    # 11-11 요청_03
+    'hatchet': '나무꾼 — 빨간 체크 셔츠 · 털모자 · 손도끼.', 'chainsaw': '앞치마 · 두 손으로 든 전기톱.',
+    'bucketw': '기어 오는 양동이 좀비와 같은 옷 · 서서 걸어 옴.', 'helmet': '중세 기사 투구만 · 낡은 웃옷 + 허리띠.',
+    'suit': '정장 · 빨간 넥타이 · 넘긴 머리.', 'sport': '파란 운동복 · 흰 줄 · 흰 운동화.',
+    'flag': '찢어진 빨간 깃발(뼈 X 무늬) — 걸을 때 흔들림.', 'ghost': '다리 없이 떠다니는 흰 몸 · 죽을 땐 아래로 꺼짐.',
+    'miner': '주황 안전모 + 이마 등 · 멜빵 · 곡괭이.', 'fisher': '노란 비옷 · 비 모자 · 낚싯대 끝에 물고기.',
+    'jason': '큰 몸 · 흰 하키 가면 · 큰 칼 (요청의 "제이슨 좀비").', 'pharaoh': '금·파랑 줄무늬 두건 · 금 목걸이 · 붕대 · 금 지팡이.',
+    # 11-11 좀비 추가 제안
+    'padding': '무릎까지 오는 롱패딩 · 방울 털모자 · 귀마개.', 'ski': '고글 · 목도리 · 스키 두 짝 · 폴. 다리를 붙인 채 미끄러져 옴.',
+    'scientist': '흰 가운 · 동그란 안경 · 회색 머리 · 청록 플라스크.', 'patient': '줄무늬 환자복 · 머리 붕대 · 바퀴 달린 링거대.',
+    'hazmat': '노란 방호복이 머리까지 · 방독면. 얼굴이 안 보여 색 변형 없음.', 'tube': '줄무늬 수영복 · 허리에 오리 튜브 · 물안경 · 오리발.',
+    'cowboy': '넓은 챙 모자 · 판초 · 박차 장화 · 올가미.', 'biker': '가죽 재킷 · 선글라스 · 닭 볏 머리 · 쇠사슬.',
+    'camper': '등보다 큰 배낭 · 냄비 · 앞손에 랜턴.', 'delivery': '오토바이 헬멧 · 등에 배달통 · 주황 조끼. 빠름.',
+    'jiangshi': '관모 · 이마에 노란 부적 · 긴 관복. 두 발 모아 깡총깡총.', 'chef': '높은 조리모 · 흰 조리복 · 프라이팬.',
+    'student': '교복 · 빨간 넥타이 · 큰 책가방. 작고 빠름(크기 x0.78).', 'firefighter': '방화복(반사 띠) · 빨간 헬멧 · 소화기.',
+    'money': '줄무늬 옷 · 눈가리개 · $ 자루. 드물게 나오고 골드 x8.', 'drum': '빨간 드럼통(경고 띠 · 청록 독물). 죽으면 펑 — 주변 좀비 피해.',
+    'shield': '남색 제복 · 경찰 모자 · 투명 방패 (깨지는 규칙은 나중).', 'yeti': '흰 털 큰 몸 · 얼음 몽둥이.',
+    'captain': '선장 모자 · 남색 긴 코트(금 단추) · 회색 수염 · 큰 닻.', 'gasgiant': '큰 몸 · 방독면 · 멜빵바지 · 등에 드럼통 둘 · 청록 연기.',
 }
+TINT_KO = {'green': '초록(원래)', 'red': '붉은', 'blue': '푸르딩딩', 'purple': '보라'}
+MAP_KO = {'side_map': '기본 (둥근 나무)', 'side_map_waste': '황폐 (그루터기 · 마른 땅)', 'side_map_pine': '세모 나무', 'side_map_dead': '죽은 나무'}
+SHOW_CH = [1, 2, 3, 5, 6, 13, 20, 28, 40, 60, 100]
 
 
 def rows(name):
@@ -57,10 +80,12 @@ def raw_rows(name):
         return list(csv.reader(f))
 
 
-def b64(im, fmt='PNG', **kw):
+def b64(im, fmt='WEBP', **kw):
     buf = io.BytesIO()
+    if fmt == 'WEBP':
+        kw = {'quality': 88, 'method': 6}
     im.save(buf, fmt, **kw)
-    mime = 'image/png' if fmt == 'PNG' else 'image/jpeg'
+    mime = {'PNG': 'image/png', 'WEBP': 'image/webp'}.get(fmt, 'image/jpeg')
     return 'data:%s;base64,%s' % (mime, base64.b64encode(buf.getvalue()).decode())
 
 
@@ -113,7 +138,8 @@ def main():
         items.append(dict(
             id=zid, name=r['Name'], en=en.get(r['Name'], ''), role=r['Role'], minch=int(r['MinChapter']), weight=weight, boss=boss,
             hp=float(r['HpMul']), gold=float(r['GoldMul']), speed=float(r['Speed']), scale=scale,
-            move='기어 옴' if zid in CRAWL else '망토로 떠서 옴' if zid in ROBE else '걸어 옴',
+            move='기어 옴' if zid in CRAWL else '떠서 옴' if zid in ROBE else '깡총깡총' if r.get('Move') == 'Hop' else '미끄러져 옴' if r.get('Move') == 'Slide' else '걸어 옴',
+            biome=r.get('Biome', ''), effect=r.get('Effect', ''),
             walk=b64(walk, optimize=True), walk_wh=(walk.width, walk.height),
             hit=b64(half(hit), optimize=True), die=b64(half(die), optimize=True),
             small=b64(small, optimize=True), small_wh=(round(walk.width * k), round(walk.height * k)),
@@ -122,13 +148,24 @@ def main():
     normal = [z for z in items if not z['boss']]
     bosses = [z for z in items if z['boss']]
 
-    # 챕터별 나올 확률 (GameManager.PickZombie: MinChapter <= 챕터 인 것들의 Base_Weight 비율)
+    # 챕터별 나올 확률 (GameManager.ZombieWeight 와 같은 식: Base_Weight x 배경이 맞으면 Zombie_Biome_Mul x 처음 나온 뒤 몇 챕터 Zombie_New_Mul)
     steps = sorted({z['minch'] for z in normal})
+    chs = {int(r['Chapter']): r for r in rows('Chapter_Summary')}
+    cf = lambda k, d: float(cfg.get(k, d))
+    def zw(z, ch):
+        if z['minch'] > ch or z['weight'] <= 0: return 0.0
+        w = z['weight']
+        if z['biome'] and z['biome'] == chs[(ch - 1) % n_ch + 1]['Biome_Name']: w *= cf('Zombie_Biome_Mul', 1)
+        if z['minch'] >= cf('Zombie_New_From', 6) and ch - z['minch'] < cf('Zombie_New_Chapters', 0): w *= cf('Zombie_New_Mul', 1)
+        return w
     def prob(ch):
-        pool = [z for z in normal if z['minch'] <= ch]
-        s = sum(z['weight'] for z in pool)
-        return {z['id']: z['weight'] / s * 100 for z in pool}, len(pool)
-    P = [(ch, *prob(ch)) for ch in steps]
+        s = sum(zw(z, ch) for z in normal)
+        return {z['id']: zw(z, ch) / s * 100 for z in normal if zw(z, ch) > 0}, sum(1 for z in normal if zw(z, ch) > 0)
+    P = [(ch, *prob(ch)) for ch in SHOW_CH]
+    # 1~150 동안 나온 몫 (모든 챕터 더함) — "고르게"를 보는 값
+    tot = {z['id']: 0.0 for z in normal}
+    for ch in range(1, n_ch + 1):
+        for k, v in prob(ch)[0].items(): tot[k] += v / n_ch
 
     E = html.escape
     o = []
@@ -176,7 +213,7 @@ td.no{color:#c9bca8}
 .shots figcaption{font-size:13px;color:var(--mut);margin-top:6px}
 </style></head><body><main>''')
     w('<h1>좀비 정리 — 지금 게임에 나오는 좀비 %d종</h1>' % len(items))
-    w('<p class="mut">%s 만듦 · 그림은 %s 판(밝은 낙서풍, 죽는 모습 고친 뒤) · 일반 %d종 + 보스 %d종 · 숫자는 <code>Zombie.xlsx</code> 표 그대로</p>'
+    w('<p class="mut">%s 만듦 · 그림은 %s 판(밝은 낙서풍) · 일반 %d종 + 보스 %d종 · 숫자는 <code>Zombie.xlsx</code> 표 그대로 (새 좀비 숫자는 임시값 — 밸런스는 마지막에)</p>'
       % (day, art_day, len(normal), len(bosses)))
 
     # ---------- 한눈에
@@ -192,11 +229,15 @@ td.no{color:#c9bca8}
 
     # ---------- 카드
     w('<h2>2. 좀비별 그림 — 걷기 · 맞기 · 죽기</h2>')
-    groups = [(ch, [z for z in normal if z['minch'] == ch]) for ch in steps] + [(None, bosses)]
+    # 11-11: 챕터 6 부터는 한 종씩이라 구간으로 묶음 (카드 옆에 '챕터 N 부터' 표시)
+    bands = [(lo, lo) for lo in steps if lo <= 5] + [(6, 20), (21, 40), (41, 80)]
+    groups = [((lo, hi), [z for z in normal if lo <= z['minch'] <= hi]) for lo, hi in bands] + [(None, bosses)]
     for ch, zs in groups:
         if not zs:
             continue
-        w('<h3>%s (%d종)</h3>' % ('보스 전용' if ch is None else '처음부터 나옴 — 챕터 1' if ch == 1 else '챕터 %d 부터 (스테이지 %d-1)' % (ch, ch), len(zs)))
+        lo, hi = ch if ch else (0, 0)
+        title = '보스 전용' if ch is None else '처음부터 나옴 — 챕터 1' if hi == 1 else '챕터 %d 부터 (스테이지 %d-1)' % (lo, lo) if lo == hi else '챕터 %d~%d 에 새로 나옴' % (lo, max(z['minch'] for z in zs))
+        w('<h3>%s (%d종)</h3>' % (title, len(zs)))
         w('<div class="cards">')
         for z in zs:
             w('<div class="card"><div class="pic"><div class="big"><img src="%s" alt="%s 걷기"></div>' % (z['walk'], E(z['name'])))
@@ -219,36 +260,70 @@ td.no{color:#c9bca8}
     # ---------- 확률
     w('<h2>3. 챕터별로 누가 얼마나 나오나</h2>')
     w('<div class="scroll"><table><tr><th>좀비</th><th>나올 비중</th>')
-    for i, (ch, _, n) in enumerate(P):
-        last = i == len(P) - 1
-        w('<th>챕터 %s<br>%d종</th>' % ('%d~%d' % (ch, n_ch) if last else ('%d' % ch if P[i + 1][0] == ch + 1 else '%d~%d' % (ch, P[i + 1][0] - 1)), n))
-    w('</tr>')
+    for ch, _, n in P:
+        w('<th>챕터 %d<br><small>%s</small><br>%d종</th>' % (ch, E(chs[(ch - 1) % n_ch + 1]['Biome_Name']), n))
+    w('<th>1~%d 전체</th></tr>' % n_ch)
     for z in normal:
-        w('<tr><td><img class="mini" src="%s" alt="">%s</td><td>%s</td>' % (z['small'], E(z['name']), num(z['weight'])))
+        w('<tr><td><img class="mini" src="%s" alt="">%s%s</td><td>%s</td>' % (z['small'], E(z['name']), ' <small>(%s)</small>' % E(z['biome']) if z['biome'] else '', num(z['weight'])))
         for ch, pr, _ in P:
             if z['id'] in pr:
                 v = pr[z['id']]
                 w('<td style="background:rgba(143,196,104,%.2f)">%.1f%%</td>' % (min(0.75, v / 50), v))
             else:
                 w('<td class="no">–</td>')
-        w('</tr>')
+        w('<td><b>%.1f%%</b></td></tr>' % tot[z['id']])
     w('</table></div>')
-    w('<p class="mut">좀비가 나올 때마다 "지금 챕터에 나올 수 있는 좀비" 중에서 비중대로 하나를 뽑습니다(<code>GameManager.PickZombie</code>). 챕터 %d 부터는 일반 %d종이 모두 나오고 비율이 끝까지 같습니다.</p>'
-      % (steps[-1], len(normal)))
+    w('<p class="mut">좀비가 나올 때마다 "지금 챕터에 나올 수 있는 좀비" 중에서 비중대로 하나를 뽑습니다(<code>GameManager.PickZombie</code>). '
+      '비중 = 표 Base_Weight x <b>배경이 맞으면 %s배</b>(괄호 안 배경) x <b>처음 나온 챕터부터 %s챕터 동안 %s배</b>(챕터 %s 이후에 나오는 좀비만). '
+      '챕터 %d 부터는 일반 %d종이 모두 나옵니다. 맨 오른쪽 = 1~%d챕터를 다 더했을 때 그 좀비가 나온 몫(고르게 = 약 %.1f%%).</p>'
+      % (num(cf('Zombie_Biome_Mul', 1)), num(cf('Zombie_New_Chapters', 0)), num(cf('Zombie_New_Mul', 1)), num(cf('Zombie_New_From', 6)), steps[-1], len(normal), n_ch, 100 / len(normal)))
+
+    # ---------- 색 · 배경 판 · 보스 순환 (11-11)
+    w('<h2>3-2. 챕터 색 · 배경 판 · 보스</h2>')
+    try:
+        import sys
+        sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+        from doodle_art import tint_skin
+        base = Image.open(os.path.join(ART, 'z_basic.png')).convert('RGBA').crop((0, 0, CW, CH))
+        arr = np.array(base)
+        w('<div class="line">')
+        for tn in ['green', 'red', 'blue', 'purple']:
+            im = base if tn == 'green' else Image.fromarray(tint_skin(arr, tn))
+            im = trim(im); im = im.resize((im.width * 2 // 5, im.height * 2 // 5), Image.LANCZOS)
+            w('<figure><img src="%s" alt=""><figcaption><b>%s</b></figcaption></figure>' % (b64(im), TINT_KO[tn]))
+        w('</div>')
+    except Exception as ex:
+        w('<p class="mut">(색 견본 못 만듦: %s)</p>' % E(str(ex)))
+    w('<div class="scroll"><table><tr><th>챕터</th><th>배경</th><th>좀비 색</th><th>배경 판</th><th>보스</th></tr>')
+    st = rows('Stage_Table')
+    boss_of = {int(r['Chapter']): r['Boss_Id'] for r in st if r['Is_Boss_Stage'] == 'Y'}
+    names = {z['id']: z['name'] for z in items}
+    for ch in range(1, 13):
+        r = chs[ch]
+        w('<tr><td>%d</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td></tr>' % (ch, E(r['Biome_Name']), TINT_KO.get(r.get('Zombie_Tint', ''), '-'),
+          E(MAP_KO.get(r.get('Map_Sprite', ''), r.get('Map_Sprite', ''))), E(names.get(boss_of.get(ch, ''), boss_of.get(ch, '')))))
+    w('<tr><td colspan="5" class="no">… 같은 차례로 %d챕터까지 (배경 6 · 색 4 · 보스 6 이 각각 돌아감)</td></tr></table></div>' % n_ch)
+    w('<p class="mut">좀비 색 = 그 챕터 일반 좀비의 %d%% (나머지 원래 초록, Config <code>Tint_Chance</code>) · 보스는 늘 그 색. 초록 피부만 바뀌고 옷·소품은 그대로(셰이더 <code>SpriteFlash</code>). '
+      '배경 판은 흙길은 같고 위아래 숲 띠만 다름(<code>Art/Map/side_map*.png</code>, <code>doodle_art.py maps</code>). 보스 던전도 레벨마다 같은 6마리가 돌아감.</p>'
+      % round(cf('Tint_Chance', 1) * 100))
 
     # ---------- 어디서
     w('<h2>4. 어디에 나오나</h2><div class="box"><ul>')
     w('<li><b>스테이지</b> — 지금 챕터 기준으로 위 표대로. 한 번에 6~10마리씩 무리로 몰려나옵니다(마릿수 x%s, 한 마리 체력·골드는 그만큼 나눔).</li>' % E(horde))
     w('<li><b>도전</b> — 그 도전 챕터 기준으로 같은 표대로 뽑아 제자리에 세워 둡니다.</li>')
-    for z in bosses:
-        w('<li><b>보스</b> — 챕터마다 N-5 스테이지에 <b>%s</b> (크기 x%s) · 보스 던전에도 같은 그림 (크기 x%s). 로비 [보스] 버튼 아이콘도 이 그림입니다.</li>'
-          % (E(z['name']), num(boss_scale), num(raid_scale)))
+    w('<li><b>보스</b> — 챕터마다 N-5 스테이지에 %s 차례로 (크기 x%s) · 보스 던전도 레벨마다 같은 차례 (크기 x%s). [보스 도전] · 아래 [보스] 버튼 아이콘 = 그 보스.</li>'
+      % (' → '.join(E(names.get(b, b)) for b in [boss_of[c] for c in range(1, 7)]), num(boss_scale), num(raid_scale)))
+    w('<li><b>드럼통 좀비</b> — 죽고 0.1초 뒤 펑: 반경 %s칸 안 좀비에게 드럼통 최대 체력 x%s 피해 (넉백 없음).</li>' % (num(cf('Drum_Blast_Radius', 0)), num(cf('Drum_Blast_Mul', 0))))
     w('<li><b>비밀던전(광산)</b> — 좀비 없음 (광석만).</li>')
     w('</ul></div>')
 
     # ---------- 실제 화면
     shots = [('01b_horde.png', '스테이지 1-1 — 챕터 1 좀비 3종(기어오는 좀비 · 칼 좀비 · 좀비)이 몰려오는 모습'),
-             ('15_boss_raid.png', '보스 던전 — 변이 오우거 (크기 x%s)' % num(raid_scale))]
+             ('15_boss_raid.png', '보스 던전 — 변이 오우거 (크기 x%s)' % num(raid_scale)),
+             ('19f_new_zombies.png', '새 좀비 32종 줄 세우기 (색 변형 돌아가며: 초록 · 붉은 · 푸르딩딩 · 보라)'),
+             ('19e_drum_blast.png', '드럼통 좀비 펑 — 가까운 좀비가 같이 쓰러짐'),
+             ('19g_map_ch1.png', '챕터 1 — 기본 판 · 초록'), ('19g_map_ch2.png', '챕터 2 — 황폐 판 · 붉은'),
+             ('19g_map_ch3.png', '챕터 3 — 세모 나무 판 · 푸르딩딩'), ('19g_map_ch4.png', '챕터 4 — 죽은 나무 판 · 보라')]
     have = [(os.path.join(SHOT, f), c) for f, c in shots if os.path.exists(os.path.join(SHOT, f))]
     if have:
         w('<h2>5. 실제 게임 화면</h2><div class="shots">')
@@ -258,7 +333,7 @@ td.no{color:#c9bca8}
             im = im.crop((0, int(H * 0.25), W, int(H * 0.66)))
             im = im.resize((720, round(im.height * 720 / im.width)), Image.LANCZOS)
             w('<figure><img src="%s" alt=""><figcaption>%s · 자동 시험 촬영 %s</figcaption></figure>'
-              % (b64(im, 'JPEG', quality=84), E(c), datetime.date.fromtimestamp(os.path.getmtime(p)).isoformat()))
+              % (b64(im, 'JPEG', quality=80), E(c), datetime.date.fromtimestamp(os.path.getmtime(p)).isoformat()))
         w('</div>')
 
     # ---------- 파일

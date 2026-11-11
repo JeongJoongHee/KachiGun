@@ -19,6 +19,7 @@ namespace KachiGun
         public RectTransform goldIcon, gemIcon;
         Text goldText, gemText, stageText, pctText, timerText, leftText;
         Image pctFill;
+        Image bossBtnIcon, bossNavIcon;     // 11-11 보스가 6마리로 돌아가서 버튼 아이콘도 그 보스로
         readonly Image[] nodes = new Image[5];
         RectTransform nodeMarker, stageGroup, dungeonGroup;
         Button ecoBtn, missionBtn, quitBtn, autoBtn, bossBtn;
@@ -146,7 +147,7 @@ namespace KachiGun
             // 보스 도전 (보스 실패 뒤 반복 사냥 중에만, 도전 버튼 아래)
             bossBtn = UIKit.ColorBtn(stageGroup, new Color(0.85f, 0.3f, 0.25f), new Vector2(250, 66), L.T("보스 도전"), 34, () => Msg(GM.ChallengeBoss()));
             ((RectTransform)bossBtn.transform).Place(0.5f, 1f, new Vector2(0, -236), new Vector2(250, 66), new Vector2(0.5f, 0.5f));
-            var bi = UIKit.Img(bossBtn.transform, Art.Zombie("ogre")[0], new Vector2(60, 58), "Icon");
+            var bi = bossBtnIcon = UIKit.Img(bossBtn.transform, Art.Zombie("ogre")[0], new Vector2(60, 58), "Icon");
             bi.rectTransform.Place(0, 0.5f, new Vector2(36, 4), new Vector2(60, 58), new Vector2(0.5f, 0.5f));
             bi.raycastTarget = false;
             UIKit.LabelOf(bossBtn).rectTransform.offsetMin = new Vector2(62, 4);
@@ -338,6 +339,7 @@ namespace KachiGun
             var rt = ((RectTransform)sb.b.transform).Place(0.5f, 0, new Vector2(-NavStep * 2 + i * NavStep, 0), new Vector2(NavW, NavH), new Vector2(0.5f, 0));
             var isz = icon != null ? new Vector2(64, 58) : new Vector2(76, 72);
             Image ic = UIKit.Img(rt, icon != null ? Art.Get(icon) : Art.Zombie("ogre")[0], isz, "Icon");
+            if (icon == null) bossNavIcon = ic;
             ic.rectTransform.Place(0.5f, 1, new Vector2(0, icon != null ? -50 : -48), isz, new Vector2(0.5f, 0.5f));
             sb.icon = ic;
             sb.label = UIKit.Fit(UIKit.Label(rt, label, 30, Color.white, TextAnchor.MiddleCenter, 3), 18);
@@ -566,12 +568,16 @@ namespace KachiGun
             if (autoBtn.gameObject.activeSelf != show) autoBtn.gameObject.SetActive(show);
         }
 
+        static string BossId(string id) => string.IsNullOrEmpty(id) || id == "-" ? "ogre" : id;
+
         void RefreshStage()
         {
             bool stage = GM.mode == GameManager.Mode.Stage;
             stageGroup.gameObject.SetActive(stage);
             dungeonGroup.gameObject.SetActive(!stage);
             navBar.gameObject.SetActive(stage);
+            if (bossBtnIcon) bossBtnIcon.sprite = Art.Zombie(BossId(Tables.Stage((S.Chapter - 1) * 5 + 4).bossId))[0];   // 이 챕터 보스
+            if (bossNavIcon) bossNavIcon.sprite = Art.Zombie(BossId(Tables.BossRaid(S.bossLv).bossId))[0];               // 다음 보스 던전 보스
             RefreshAuto();
             ecoBtn.gameObject.SetActive(stage && GM.Unlocked("eco"));
             side["shop"].b.gameObject.SetActive(stage);

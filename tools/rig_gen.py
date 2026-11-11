@@ -50,6 +50,27 @@ ZOMBIE_RIG = {
     'ghost':    dict(neck=226, hip=290, crotch=999, knee=326, split=210, armB=None, armF=None, legA=0, swing=0, robe=True),
     'jason':    dict(neck=172, hip=298, crotch=306, knee=334, split=206, armB=([(84, 200, 130, 316)], (150, 196)), armF=([(292, 200, 346, 286), (300, 120, 394, 262)], (262, 200)), legA=12, swing=6),
     'pharaoh':  dict(neck=172, hip=298, crotch=342, knee=354, split=208, armB=([(84, 200, 130, 316)], (152, 196)), armF=([(292, 200, 340, 284), (298, 76, 346, 378)], (264, 202)), legA=10, swing=5),
+    # 11-11 좀비 추가 제안 20종 (tools/doodle_zombies2.py)
+    'padding': dict(neck=238, hip=300, crotch=344, knee=356, split=201, armB=([(238, 232, 316, 256)], (226, 247)), armF=([(238, 256, 324, 282)], (218, 266)), legA=10, swing=5),
+    'ski':      dict(neck=238, hip=300, crotch=999, knee=340, split=204, armB=None, armF=None, legA=0, swing=0, robe=True, robeK=0.25),
+    'scientist': dict(neck=238, hip=300, crotch=334, knee=350, split=201, armB=([(238, 232, 316, 256)], (226, 247)), armF=([(238, 256, 324, 282), (296, 196, 360, 300)], (218, 266)), legA=11, swing=6),
+    'patient': dict(neck=238, hip=300, crotch=312, knee=338, split=201, armB=([(238, 232, 316, 256)], (226, 247)), armF=([(238, 256, 324, 282), (296, 84, 370, 380)], (218, 266)), legA=12, swing=4),
+    'hazmat': dict(neck=238, hip=300, crotch=312, knee=338, split=201, armB=([(238, 232, 316, 256)], (226, 247)), armF=([(238, 256, 324, 282)], (218, 266)), legA=13, swing=6),
+    'tube': dict(neck=238, hip=300, crotch=312, knee=338, split=201, armB=([(238, 232, 316, 256)], (226, 247)), armF=([(238, 256, 324, 282)], (218, 266)), legA=14, swing=6),
+    'cowboy': dict(neck=238, hip=300, crotch=312, knee=338, split=201, armB=([(238, 232, 316, 256)], (226, 247)), armF=([(238, 256, 324, 282), (290, 256, 342, 316)], (218, 266)), legA=15, swing=6),
+    'biker': dict(neck=238, hip=300, crotch=312, knee=338, split=201, armB=([(238, 232, 316, 256)], (226, 247)), armF=([(238, 256, 324, 282), (300, 250, 328, 354)], (218, 266)), legA=15, swing=6),
+    'camper': dict(neck=238, hip=300, crotch=312, knee=338, split=201, armB=([(238, 232, 316, 256)], (226, 247)), armF=([(238, 256, 324, 282), (294, 260, 338, 330)], (218, 266)), legA=12, swing=6),
+    'delivery': dict(neck=238, hip=300, crotch=312, knee=338, split=201, armB=([(238, 232, 316, 256)], (226, 247)), armF=([(238, 256, 324, 282)], (218, 266)), legA=18, swing=7),
+    'jiangshi': dict(neck=238, hip=300, crotch=999, knee=340, split=204, armB=None, armF=None, legA=0, swing=0, robe=True, robeK=0.3),
+    'chef': dict(neck=238, hip=300, crotch=312, knee=338, split=201, armB=([(238, 232, 316, 256)], (226, 247)), armF=([(238, 256, 324, 282), (296, 196, 398, 282)], (218, 266)), legA=14, swing=6),
+    'student': dict(neck=238, hip=300, crotch=312, knee=338, split=201, armB=([(238, 232, 316, 256)], (226, 247)), armF=([(238, 256, 324, 282)], (218, 266)), legA=16, swing=7),
+    'firefighter': dict(neck=238, hip=300, crotch=312, knee=338, split=201, armB=([(238, 232, 316, 256)], (226, 247)), armF=([(238, 256, 324, 282), (296, 212, 364, 314)], (218, 266)), legA=13, swing=6),
+    'money': dict(neck=238, hip=300, crotch=312, knee=338, split=201, armB=([(238, 232, 316, 256)], (226, 247)), armF=([(238, 256, 324, 282), (280, 196, 384, 354)], (218, 266)), legA=17, swing=7),
+    'drum': dict(neck=238, hip=300, crotch=312, knee=338, split=201, armB=None, armF=([(238, 256, 324, 282), (234, 182, 346, 348)], (218, 266)), legA=12, swing=4),
+    'shield': dict(neck=238, hip=300, crotch=312, knee=338, split=201, armB=None, armF=([(238, 256, 324, 282), (254, 154, 350, 380)], (218, 266)), legA=12, swing=4),
+    'yeti':     dict(neck=172, hip=298, crotch=316, knee=336, split=206, armB=([(84, 200, 130, 316)], (150, 196)), armF=([(292, 200, 346, 290), (294, 100, 392, 292)], (262, 200)), legA=11, swing=6),
+    'captain':  dict(neck=172, hip=298, crotch=306, knee=334, split=206, armB=([(84, 200, 130, 316)], (150, 196)), armF=([(292, 200, 346, 286), (280, 118, 386, 384)], (262, 200)), legA=11, swing=5),
+    'gasgiant': dict(neck=172, hip=298, crotch=306, knee=334, split=206, armB=([(84, 200, 130, 316)], (150, 196)), armF=([(292, 200, 352, 292)], (262, 200)), legA=12, swing=6),
 }
 CRAWL_RIG = {
     # 기어 다니는 좀비: 몸이 가로 — legs(뒤로 끌리는 다리) · pelvis(엉덩이) · spine(몸) · head · armB/armF(번갈아 뻗는 팔)
@@ -303,6 +324,8 @@ def zombie_rig(name):
 
     # 원래 그림의 다리 각도(세로 0°, 앞 +) · 다리 길이 — 걷기 자세 계산 기준
     rig.anim = {'A': p.get('legA', 18), 'S': p.get('swing', 5), 'L': 60.0, 'aF': 0.0, 'aB': 0.0}
+    if p.get('robeK') is not None:
+        rig.anim['R'] = p['robeK']      # 11-11 robe 흔들림 세기 (스키·강시 = 다리가 붙은 채 조금만)
     if legs:
         band = (ys >= bottom - 14)
         for k, sel, px in (('aB', xs < p['split'], p['split'] - 10), ('aF', xs >= p['split'], p['split'] + 10)):
@@ -362,8 +385,9 @@ def pose_angles(kind, an, phase):
         out['head'] = (1.5 * math.sin(f - 0.5), 0, 0)
     elif kind == 'robe':
         out['pelvis'] = (0, 0, 2.0 * math.cos(2 * f))
-        out['robe1'] = (3.5 * math.sin(f), 0, 0)
-        out['robe2'] = (6 * math.sin(f - 0.9), 0, 0)
+        R = an.get('R', 1.0)
+        out['robe1'] = (3.5 * R * math.sin(f), 0, 0)
+        out['robe2'] = (6 * R * math.sin(f - 0.9), 0, 0)
         out['spine'] = (-3 + 1.5 * math.sin(2 * f + 0.4), 0, 0)
         out['head'] = (2 - 2.5 * math.sin(2 * f - 0.6), 0, 0)
     return out

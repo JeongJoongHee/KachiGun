@@ -95,6 +95,16 @@ namespace KachiGun
 
         public void Tint(Color c) { if (map) map.color = c; }
 
+        /// <summary>11-11 배경 판 바꾸기 (Art/Map/&lt;이름&gt;, 흙길은 판마다 같은 자리) — 없으면 기본 side_map</summary>
+        public void SetMap(string name)
+        {
+            if (!map) return;
+            if (string.IsNullOrEmpty(name)) name = "side_map";
+            if (map.sprite && map.sprite.name == "Map/" + name) return;
+            if (Resources.Load<Texture2D>("Art/Map/" + name) == null) name = "side_map";
+            map.sprite = Art.Get("Map/" + name, 100f);
+        }
+
         /// <summary>챕터 맵 색 = Chapter_Summary 의 Map_Tint_Hex</summary>
         /// 11-05 밝은 낙서풍 맵이라 표 색을 Map_Tint_Strength 만큼만 섞음 (1 = 표 색 그대로)
         public static Color ChapterTint(int chapter) => Color.Lerp(Color.white, Tables.Chapter(chapter).tint, Mathf.Clamp01((float)Tables.C("Map_Tint_Strength", 0.45)));

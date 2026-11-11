@@ -770,11 +770,11 @@ namespace KachiGun.EditorTools
                 {
                     var zrows = Tables.Zombies;
                     var dz = new System.Collections.Generic.List<Zombie>();
-                    int dn = zrows.Count, dcol = 4;
+                    int dn = zrows.Count, dcol = 9;     // 11-11 좀비 44종 → 9칸씩
                     for (int i = 0; i < dn; i++)
                     {
-                        float x = Mathf.Lerp(-Field.I.ViewHalfW + 1.3f, Field.I.ViewHalfW - 1.3f, (i % dcol) / (dcol - 1f));
-                        float y = Field.I.PlayTop - 1.6f - (i / dcol) * 2.2f;
+                        float x = Mathf.Lerp(-Field.I.ViewHalfW + 0.8f, Field.I.ViewHalfW - 0.8f, (i % dcol) / (dcol - 1f));
+                        float y = Field.I.PlayTop - 1.6f - (i / dcol) * 1.7f;
                         dz.Add(Zombie.Spawn(zrows[i], new Vector2(x, y), 1e12, 0));
                     }
                     yield return Wait(0.1f);
@@ -790,6 +790,144 @@ namespace KachiGun.EditorTools
                     yield return Wait(0.45f);
                     Capture("19d_zombie_die");
                     GM.ClearTargets();
+                }
+                // 11-11 새 좀비 32종 (요청_03 12 + 좀비 추가 제안 20) · 색 변형 · 배경 판 · 보스 6마리 순환 · 드럼통 · 강시
+                {
+                    var BF = System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic;
+                    string[] news = { "hatchet", "chainsaw", "bucketw", "helmet", "suit", "sport", "flag", "ghost", "miner", "fisher", "jason", "pharaoh",
+                        "padding", "ski", "scientist", "patient", "hazmat", "tube", "cowboy", "biker", "camper", "delivery", "jiangshi", "chef", "student",
+                        "firefighter", "money", "drum", "shield", "yeti", "captain", "gasgiant" };
+                    int okArt = 0;
+                    foreach (var id in news)
+                    {
+                        var row = Tables.Zombie(id);
+                        var fr = Art.Zombie(id);
+                        if (row.id == id && fr[0] != null && fr[0].texture.width == Art.ZW * Art.ZCols && RigData.Get("z_" + id) != null) okArt++;
+                        else Log("새 좀비 문제: " + id);
+                    }
+                    Check(okArt == news.Length, $"새 좀비 {okArt}/{news.Length}종 표 줄 · 그림 · 뼈대");
+                    int normal = 0, bosses = 0;
+                    foreach (var zr2 in Tables.Zombies) { if (zr2.weight > 0) normal++; else bosses++; }
+                    Check(normal == 38 && bosses == 6, $"일반 좀비 {normal}종 · 보스 {bosses}종 (38 · 6)");
+                    // 보스: 챕터마다 ogre → jason → pharaoh → yeti → captain → gasgiant, 표 끝(150챕터) 너머도 이어서
+                    string[] cyc = { "ogre", "jason", "pharaoh", "yeti", "captain", "gasgiant" };
+                    bool bossOk = true;
+                    for (int c = 1; c <= 7; c++) bossOk &= Tables.Stage((c - 1) * 5 + 4).bossId == cyc[(c - 1) % 6];
+                    bossOk &= Tables.Stage(150 * 5 + 4).bossId == "ogre" && Tables.Stage(152 * 5 + 4).bossId == "pharaoh";
+                    bool raidOk = Tables.BossRaid(0).bossId == "ogre" && Tables.BossRaid(1).bossId == "jason" && Tables.BossRaid(155).bossId == cyc[155 % 6];
+                    Check(bossOk && raidOk, $"보스 순환: 챕터 1~7 · 151 · 153 / 보스 던전 Lv.1·2·156 ({Tables.Stage(152 * 5 + 4).bossId} · {Tables.BossRaid(155).bossId})");
+                    // 나올 비중: 롱패딩(28챕터 설원에 처음) = 6 x 배경 1.5 x 새 얼굴 3 · 40챕터 숲 = 6 · 원래 좀비는 새 얼굴 비중 없음
+                    var pad = Tables.Zombie("padding");
+                    float w28 = GameManager.ZombieWeight(pad, 28, Tables.Chapter(28).biome), w40 = GameManager.ZombieWeight(pad, 37, Tables.Chapter(37).biome);
+                    float wArmor = GameManager.ZombieWeight(Tables.Zombie("armor"), 3, Tables.Chapter(3).biome);
+                    Check(Mathf.Abs(w28 - 27f) < 0.01f && Mathf.Abs(w40 - 6f) < 0.01f && Mathf.Abs(wArmor - 3f) < 0.01f && GameManager.ZombieWeight(pad, 27, "") == 0,
+                        $"나올 비중: 롱패딩 28챕터 {w28} · 37챕터 {w40} · 갑옷 3챕터 {wArmor} · 27챕터 0");
+                    int seen = 0; var seenSet = new System.Collections.Generic.HashSet<string>();
+                    for (int i = 0; i < 4000; i++) seenSet.Add(GameManager.PickZombie(80).id);
+                    seen = seenSet.Count;
+                    Check(seen == 38 && !seenSet.Contains("ogre"), $"80챕터에서 뽑힌 좀비 {seen}종 (일반 38 · 보스 없음)");
+                    // 색: 챕터 1 초록 · 2 붉은 · 3 푸르딩딩 · 4 보라 / 꼭짓점 색에 숨김 · 쓰러져도 그대로
+                    Check(GameManager.PickTint(1, true) == 0 && GameManager.PickTint(2, true) == 1 && GameManager.PickTint(3, true) == 2 && GameManager.PickTint(4, true) == 3,
+                        "챕터 색: 1 초록 · 2 붉은 · 3 푸르딩딩 · 4 보라");
+                    var tz = Zombie.Spawn(Tables.Zombie("basic"), new Vector2(0, 2), 10, 0, tint: 2);
+                    var rigF = typeof(Zombie).GetField("rig", BF);
+                    var trv = rigF.GetValue(tz) as RigView;
+                    bool tintOk = Mathf.Abs(tz.sr.color.g - (1f - 16f / 255f)) < 0.002f && trv != null && Mathf.Abs(trv.sr.color.g - tz.sr.color.g) < 0.001f;
+                    tz.Hit(100, tz.Pos + Vector2.left, false);
+                    yield return Wait(0.9f);
+                    Check(tintOk && Mathf.Abs(tz.sr.color.g - (1f - 16f / 255f)) < 0.002f && tz.sr.color.a < 1f, $"색 번호 2 = 꼭짓점 초록 {tz.sr.color.g:0.000} (뼈대 그림도) · 쓰러져 깜빡여도 그대로");
+                    GM.ClearTargets();
+                    // 실제 화면 색: 기본 좀비 4마리(초록 · 붉은 · 푸르딩딩 · 보라) 머리 픽셀을 읽어 색조 확인 (11-11 첫 판은 Linear 색 공간 때문에 붉은 → 푸른)
+                    {
+                        var tzs = new Zombie[4];
+                        GameManager.HoldFire = true;     // 분대가 쏘면 번쩍임·폭발이 덮어서 색을 못 읽음
+                        Fx.I?.FlushMoney();
+                        yield return Wait(0.6f);
+                        for (int k = 0; k < 4; k++) { tzs[k] = Zombie.Spawn(Tables.Zombie("basic"), new Vector2(0.2f + k * 1.4f, 0f), 1e12, 0, tint: k); tzs[k].standStill = true; }
+                        yield return Wait(0.3f);
+                        Capture("19h_tints");
+                        GameManager.HoldFire = false;
+                        var cam = Camera.main;
+                        RenderTexture.active = rt;
+                        var px = new Texture2D(rt.width, rt.height, TextureFormat.RGB24, false);
+                        px.ReadPixels(new Rect(0, 0, rt.width, rt.height), 0, 0); px.Apply();
+                        RenderTexture.active = null;
+                        float[] hue = new float[4];
+                        for (int k = 0; k < 4; k++)
+                        {
+                            // 머리 = 발에서 1.0칸 위 · 얼굴 그늘을 피해 뒤통수 쪽(분대를 보게 뒤집혀 있으니 +x) 9점 평균
+                            Color sum = Color.black;
+                            for (int ax = -1; ax <= 1; ax++) for (int b2 = -1; b2 <= 1; b2++)
+                            {
+                                var sp = cam.WorldToScreenPoint((Vector3)(tzs[k].Pos + new Vector2(0.18f + ax * 0.04f, 1.0f + b2 * 0.04f)));
+                                sum += px.GetPixel((int)sp.x, (int)sp.y);
+                            }
+                            Color.RGBToHSV(sum / 9f, out hue[k], out _, out _);
+                            hue[k] *= 360f;
+                        }
+                        Destroy(px);
+                        bool H(float h, float lo, float hi) => lo < hi ? h >= lo && h <= hi : h >= lo || h <= hi;
+                        Check(H(hue[0], 70, 120) && H(hue[1], 340, 30) && H(hue[2], 170, 230) && H(hue[3], 245, 300),
+                            $"화면 색조: 초록 {hue[0]:0}° · 붉은 {hue[1]:0}° · 푸르딩딩 {hue[2]:0}° · 보라 {hue[3]:0}°");
+                        GM.ClearTargets();
+                    }
+                    // 드럼통: 죽으면 펑 → 가까운 좀비(체력 = 드럼통 x2)는 쓰러지고 먼 좀비는 그대로
+                    var drum = Zombie.Spawn(Tables.Zombie("drum"), new Vector2(0, 1.5f), 100, 0); drum.standStill = true;
+                    var near1 = Zombie.Spawn(Tables.Zombie("basic"), new Vector2(0.9f, 1.5f), 200, 0); near1.standStill = true;
+                    var near2 = Zombie.Spawn(Tables.Zombie("basic"), new Vector2(-0.6f, 2.2f), 200, 0); near2.standStill = true;
+                    var far = Zombie.Spawn(Tables.Zombie("basic"), new Vector2(4.5f, 1.5f), 200, 0); far.standStill = true;
+                    yield return Wait(0.1f);
+                    drum.Hit(1000, drum.Pos + Vector2.left, false);
+                    yield return Wait(0.25f);
+                    Capture("19e_drum_blast");
+                    Check(near1.dead && near2.dead && !far.dead, $"드럼통 펑: 가까운 2마리 쓰러짐({near1.dead},{near2.dead}) · 먼 좀비 그대로({!far.dead})");
+                    GM.ClearTargets();
+                    // 강시: 걸어오며 깡총 (몸이 위로 뜸) · 스키: 걸을 때 앞으로 숙임
+                    var hop = Zombie.Spawn(Tables.Zombie("jiangshi"), new Vector2(Field.I.ViewHalfW - 1f, 1f), 1e9, 0);
+                    var ski = Zombie.Spawn(Tables.Zombie("ski"), new Vector2(Field.I.ViewHalfW - 1f, -1f), 1e9, 0);
+                    float maxUp = 0, maxLean = 0;
+                    float tEnd = Time.realtimeSinceStartup + 1.6f;
+                    while (Time.realtimeSinceStartup < tEnd)
+                    {
+                        maxUp = Mathf.Max(maxUp, hop.sr.transform.localPosition.y);
+                        maxLean = Mathf.Max(maxLean, Mathf.Abs(Mathf.DeltaAngle(0, ski.sr.transform.localEulerAngles.z)));
+                        yield return null;
+                    }
+                    Check(maxUp > 0.08f && maxLean > 4f, $"강시 깡총 높이 {maxUp:0.00} · 스키 숙임 {maxLean:0.0}°");
+                    GM.ClearTargets();
+                    // 새 좀비 줄 세우기 (색 변형 돌아가며) → 캡처
+                    var line = new System.Collections.Generic.List<Zombie>();
+                    for (int i = 0; i < news.Length; i++)
+                    {
+                        int col = i % 8, rowN = i / 8;
+                        float x = Mathf.Lerp(-Field.I.ViewHalfW + 0.9f, Field.I.ViewHalfW - 0.9f, col / 7f);
+                        float y = Field.I.PlayTop - 1.7f - rowN * 1.9f;
+                        var nz = Zombie.Spawn(Tables.Zombie(news[i]), new Vector2(x, y), 1e12, 0, Tables.Zombie(news[i]).weight > 0 ? 1f : 0.8f, false, i % 4);
+                        nz.standStill = true; line.Add(nz);
+                    }
+                    yield return Wait(0.6f);
+                    Capture("19f_new_zombies");
+                    GM.ClearTargets();
+                    // 배경 판 4장 (챕터 색에 맞춤): 1 기본 · 2 황폐 · 3 세모 나무 · 4 죽은 나무
+                    string[] maps = { "side_map", "side_map_waste", "side_map_pine", "side_map_dead" };
+                    bool mapOk = true;
+                    for (int c = 1; c <= 4; c++)
+                    {
+                        mapOk &= Tables.Chapter(c).mapSprite == maps[c - 1];
+                        Field.I.SetMap(Tables.Chapter(c).mapSprite);
+                        Field.I.Tint(Field.ChapterTint(c));
+                        for (int i = 0; i < 6; i++)
+                        {
+                            var mz = Zombie.Spawn(GameManager.PickZombie(60), new Vector2(Mathf.Lerp(-2.5f, 3f, i / 5f), Mathf.Lerp(Field.I.PlayTop - 2f, Field.I.PlayBottom + 2f, (i * 7 % 6) / 5f)), 1e12, 0, tint: GameManager.PickTint(c, true));
+                            mz.standStill = true;
+                        }
+                        yield return Wait(0.3f);
+                        mapOk &= Field.I.map.sprite != null && Field.I.map.sprite.name == "Map/" + maps[c - 1];
+                        Capture("19g_map_ch" + c);
+                        GM.ClearTargets();
+                    }
+                    Check(mapOk, "배경 판: 챕터 1~4 = 기본 · 황폐 · 세모 나무 · 죽은 나무");
+                    GM.ApplyTint();
                 }
                 // 미사일 장착 장면 캡처 (등급 색 폭발 · 네온 오오라)
                 var keep = new System.Collections.Generic.List<int>(S.slots);

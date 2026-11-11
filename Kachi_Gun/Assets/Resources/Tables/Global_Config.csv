@@ -64,3 +64,10 @@ Horde_Pack_Max,10,마리,스테이지,-,11-05 한 번에 몰려나오는 무리 
 Horde_Pack_Depth,2,칸,스테이지,-,11-05 무리 앞뒤 퍼짐 (화면 오른쪽 밖에서 0 ~ 이만큼 뒤에서 나옴). 위아래는 흙 띠 전체를 마릿수만큼 칸으로 나눠 고르게
 Map_Tint_Strength,0.3,비율,맵,Chapter_Summary,"11-05 낙서풍 밝은 맵에 챕터 색(Map_Tint_Hex)을 이만큼만 섞음 (1 = 표 색 그대로, 0 = 색 없음)"
 Capy_Angry_Range,0.5,배,캐릭터,-,"11-05 좀비가 카피바라에게 (장착 총알 사정거리 x 이 값) 안으로 오면 화난 얼굴(추가 요청 4번), 멀어지면 0.6초 뒤 평소 얼굴 — 0.5 = 사정거리 절반"
+Zombie_Biome_Mul,1.5,배,좀비,Zombie.xlsx,11-11 좀비 Biome 칸이 지금 챕터 배경(Chapter_Summary Biome_Name)과 같으면 나올 비중 x 이 값 (1 = 배경 상관없음)
+Zombie_New_Mul,3,배,좀비,Zombie.xlsx,11-11 처음 나오는 챕터(MinChapter)부터 Zombie_New_Chapters 챕터 동안 나올 비중 x 이 값 — 늦게 나오는 좀비도 고르게 보이게 (1 = 끔)
+Zombie_New_Chapters,5,챕터,좀비,Zombie.xlsx,"11-11 위 ""새 얼굴"" 비중이 붙는 챕터 수"
+Tint_Chance,0.8,비율,좀비,Chapter_Summary,11-11 챕터 좀비 색(Zombie_Tint)이 붙을 확률 — 나머지는 원래 초록 (1 = 모두 그 색). 보스는 늘 그 색
+Drum_Blast_Mul,3,배,좀비,Zombie.xlsx,11-11 드럼통 좀비(Effect=Blast)가 죽으면 터지는 피해 = 그 드럼통 최대 체력 x 이 값 (주변 좀비만)
+Drum_Blast_Radius,1.8,칸,좀비,Zombie.xlsx,11-11 드럼통 폭발 반경
+Zombie_New_From,6,챕터,좀비,Zombie.xlsx,11-11 새 얼굴 비중은 MinChapter 가 이 값 이상인 좀비만 (처음 5챕터 원래 좀비 섞임은 그대로)

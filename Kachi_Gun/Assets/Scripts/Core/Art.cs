@@ -85,6 +85,11 @@ namespace KachiGun
             r.SetPropertyBlock(flashMpb);
         }
 
+        /// <summary>11-11 색 변형: 좀비 SpriteRenderer.color (k 0 = 원래 초록 · 1 붉은 · 2 푸르딩딩 · 3 보라).
+        /// 색 번호를 초록 채널에 숨김 — SpriteFlash 셰이더가 읽어 초록 피부만 돌림(값 블록을 안 써서 묶여 그려짐)</summary>
+        public static Color TintColor(int k, float alpha = 1f) => new Color(1f, k > 0 && k <= 3 ? 1f - k * 8f / 255f : 1f, 1f, alpha);
+        public static int TintIndex(string name) => name switch { "red" => 1, "blue" => 2, "purple" => 3, _ => 0 };
+
         public static Texture2D Tex(string path)
         {
             var t = Resources.Load<Texture2D>("Art/" + path);

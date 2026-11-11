@@ -142,21 +142,42 @@ namespace KachiGun
         void SpawnZombie(Vector2 p, float hm)
         {
             var r = PickZombie(S.Chapter);
-            Zombie.Spawn(r, p, Stats.ZombieHp(S.stage) * r.hpMul / hm, Stats.ZombieGold(S.stage) * r.goldMul / hm);
+            Zombie.Spawn(r, p, Stats.ZombieHp(S.stage) * r.hpMul / hm, Stats.ZombieGold(S.stage) * r.goldMul / hm, tint: PickTint(S.Chapter, false));
+        }
+
+        /// <summary>11-11: 나올 비중 = 표 Base_Weight x 배경이 맞으면 Zombie_Biome_Mul x 처음 나온 뒤 Zombie_New_Chapters 챕터 동안 Zombie_New_Mul
+        /// (새 얼굴 비중은 MinChapter 가 Zombie_New_From 이상인 좀비만 — 처음 5챕터의 원래 좀비 섞임은 그대로)</summary>
+        public static float ZombieWeight(ZombieRow z, int chapter, string biome)
+        {
+            if (z.minChapter > chapter || z.weight <= 0) return 0;
+            float w = z.weight;
+            if (!string.IsNullOrEmpty(z.biome) && z.biome == biome) w *= (float)Tables.C("Zombie_Biome_Mul", 1);
+            if (z.minChapter >= Tables.C("Zombie_New_From", 6) && chapter - z.minChapter < Tables.C("Zombie_New_Chapters", 0)) w *= (float)Tables.C("Zombie_New_Mul", 1);
+            return w;
         }
 
         public static ZombieRow PickZombie(int chapter)
         {
+            string biome = Tables.Chapter(chapter).biome;
             float sum = 0;
-            foreach (var z in Tables.Zombies) if (z.minChapter <= chapter && z.weight > 0) sum += z.weight;
+            foreach (var z in Tables.Zombies) sum += ZombieWeight(z, chapter, biome);
             float k = Random.value * sum;
             foreach (var z in Tables.Zombies)
             {
-                if (z.minChapter > chapter || z.weight <= 0) continue;
-                k -= z.weight;
+                float w = ZombieWeight(z, chapter, biome);
+                if (w <= 0) continue;
+                k -= w;
                 if (k <= 0) return z;
             }
             return Tables.Zombies[0];
+        }
+
+        /// <summary>11-11 색 변형: 챕터 색(Chapter_Summary Zombie_Tint) — 일반 좀비는 Tint_Chance 확률, 보스는 늘 (0 = 원래 초록)</summary>
+        public static int PickTint(int chapter, bool boss)
+        {
+            int k = Art.TintIndex(Tables.Chapter(chapter).zombieTint);
+            if (k == 0) return 0;
+            return boss || Random.value < Tables.C("Tint_Chance", 1) ? k : 0;
         }
 
         /// <summary>보스 실패: 보스는 오른쪽으로 물러남(보상 없음) → 지금 스테이지 반복 사냥, [보스 도전] 버튼</summary>
@@ -194,7 +215,7 @@ namespace KachiGun
             var p = Field.I.SpawnPoint();
             double hp = st.bossHp > 0 ? st.bossHp : st.hp * Tables.C("BossHpMul");
             double gold = st.bossGold > 0 ? st.bossGold : st.gold * Tables.C("BossGoldMul");
-            boss = Zombie.Spawn(r, p, hp, gold, st.bossScale > 0 ? st.bossScale : Tables.Cf("BossScale"), true);
+            boss = Zombie.Spawn(r, p, hp, gold, st.bossScale > 0 ? st.bossScale : Tables.Cf("BossScale"), true, PickTint(S.Chapter, true));
             AudioManager.Play(AudioManager.Sfx.BossAppear);
             HUD.I?.Banner(L.T("보스 등장!"), new Color(1f, 0.4f, 0.3f));
             StageChanged?.Invoke();
@@ -240,6 +261,7 @@ namespace KachiGun
                 Mode.Boss => new Color(0.8f, 0.68f, 0.68f),
                 _ => Field.ChapterTint(S.Chapter),
             };
+            Field.I.SetMap(Tables.Chapter(S.Chapter).mapSprite);   // 11-11 챕터 좀비 색에 맞춘 배경 판 (세모 나무 · 죽은 나무 · 황폐)
             Field.I.Tint(c);
         }
 
@@ -705,7 +727,7 @@ namespace KachiGun
                 var r = PickZombie(ch);
                 // 멀리(오른쪽)에 많이: AI 가 가까운 것만 쫓으면 동선이 낭비되도록
                 var p = Field.I.RandomRoad(i < n / 3 ? 0.55f : 0.15f, 1f, 0.6f);
-                var z = Zombie.Spawn(r, p, hp * r.hpMul, 0);
+                var z = Zombie.Spawn(r, p, hp * r.hpMul, 0, tint: PickTint(ch, false));
                 z.standStill = true;
             }
             dungeonTotal = n;
@@ -741,7 +763,7 @@ namespace KachiGun
             var row = Tables.BossRaid(S.bossLv);
             BeginDungeon(Mode.Boss, row.time);
             var r = Tables.Zombie(string.IsNullOrEmpty(row.bossId) ? "ogre" : row.bossId);
-            var z = Zombie.Spawn(r, Field.I.RandomRoad(0.5f, 0.62f, 1.4f), row.hp, 0, row.scale, true);
+            var z = Zombie.Spawn(r, Field.I.RandomRoad(0.5f, 0.62f, 1.4f), row.hp, 0, row.scale, true, PickTint(Mathf.Max(1, row.recChapter), true));
             z.standStill = true;
             dungeonTotal = 1;
             AudioManager.Play(AudioManager.Sfx.BossAppear);
