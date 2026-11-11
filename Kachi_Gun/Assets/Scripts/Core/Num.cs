@@ -14,7 +14,9 @@ namespace KachiGun
             double m = v / Math.Pow(10, k * 3);
             if (m >= 1000) { k++; m /= 1000; }     // 로그 계산 오차 보정(내림 표기라 999,999 = 999k)
             string unit = Unit(k);
-            string s = m < 10 ? Trunc(m, 2).ToString("0.00") : m < 100 ? Trunc(m, 1).ToString("0.0") : Math.Floor(m).ToString("0");
+            // 11-12 나라 설정과 상관없이 소수점은 점 (쉼표를 쓰는 나라 폰에서 "1,50k" 로 보였음 — 아래 끝자리 0 지우기가 점만 찾음)
+            var inv = System.Globalization.CultureInfo.InvariantCulture;
+            string s = m < 10 ? Trunc(m, 2).ToString("0.00", inv) : m < 100 ? Trunc(m, 1).ToString("0.0", inv) : Math.Floor(m).ToString("0", inv);
             if (s.Contains(".")) s = s.TrimEnd('0').TrimEnd('.');
             return s + unit;
         }

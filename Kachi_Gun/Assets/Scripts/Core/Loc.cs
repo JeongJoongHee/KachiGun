@@ -52,6 +52,7 @@ namespace KachiGun
         {
             if (SaveData.Cur.lang == lang) return;
             SaveData.Cur.lang = lang;
+            Fx.I?.FlushMoney();   // 11-12 날아가던 돈을 먼저 넣고 (화면을 다시 만들면 사라짐)
             SaveData.Cur.Save();
             UnityEngine.SceneManagement.SceneManager.LoadScene(0);
         }

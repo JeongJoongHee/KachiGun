@@ -1,4 +1,5 @@
 using System.Collections;
+using System.Collections.Generic;
 using System.IO;
 using UnityEditor;
 using UnityEditor.SceneManagement;
@@ -106,6 +107,8 @@ namespace KachiGun.EditorTools
             CloudAuth.ResetForTest();
             PlayerPrefs.DeleteKey(CloudSave.FakeKey);
             CloudSave.SimulateFail = false;
+            CloudSave.SimulateHang = false;
+            CloudSync.TimeoutSec = 20f;
             CloudAuth.SimulateCancel = false;
             PlayerPrefs.Save();
         }
@@ -687,6 +690,19 @@ namespace KachiGun.EditorTools
                 double og2 = S.gold, want2 = op.gold;
                 HUD.I.Back();
                 Check(!op.gameObject.activeSelf && System.Math.Abs(S.gold - og2 - want2) < want2 * 0.001 + 1, "뒤로 가기 → 방치 창 닫히고 기본 보상");
+
+                // 11-12 코드 점검: 창이 뜬 채로 앱이 꺼져도 그 시간은 세이브에 남아 다음에 이어서 줌
+                S.lastSeen = SaveData.Now - 3600;
+                GM.CheckOffline(); yield return Wait(0.2f);
+                var pendSave = SaveData.Parse(PlayerPrefs.GetString(SaveData.Key));
+                Check(System.Math.Abs(S.offlinePendingSec - 3600) < 5 && pendSave != null && System.Math.Abs(pendSave.offlinePendingSec - 3600) < 5, $"방치 창을 띄우면 못 받은 시간을 세이브에 적음 ({S.offlinePendingSec:0}초)");
+                op.gameObject.SetActive(false); HUD.I.openPopups.Remove(op);   // 받지 않고 앱이 꺼진 셈
+                S.lastSeen = SaveData.Now;                                     // 바로 다시 켬 (새로 비운 시간 없음)
+                bool again = GM.CheckOffline(); yield return Wait(0.2f);
+                Check(again && op.gameObject.activeSelf && System.Math.Abs(op.sec - 3600) < 5, $"못 받고 꺼짐 → 다음에 켤 때 창이 다시 ({op.sec:0}초)");
+                double og3 = S.gold, want3 = op.gold;
+                if (take != null) take.onClick.Invoke();
+                Check(System.Math.Abs(S.gold - og3 - want3) < want3 * 0.001 + 1 && S.offlinePendingSec == 0 && !GM.CheckOffline(), "받으면 못 받은 시간 0 · 또 주지 않음");
                 S.gold = og0;   // 뒤 시험에 영향 없게
                 CloseAll();
             }
@@ -1131,6 +1147,51 @@ namespace KachiGun.EditorTools
             Check(Num.F(1850) == "1.85k" && Num.F(14100000) == "14.1m" && Num.F(396) == "396" && Num.F(1600) == "1.6k" && Num.F(2.5e9) == "2.5b" && Num.F(1e12) == "1t" && Num.F(1e15) == "1aa" && Num.F(999999) == "999k" && Num.F(1e6) == "1m",
                 "숫자 표기 " + Num.F(1850) + " " + Num.F(14100000) + " " + Num.F(2.5e9) + " " + Num.F(1e15));
 
+            // 14) 11-12 코드 점검: 세이브 판 번호 · 칸 지문 · 값 정리 · 다이아 쓴 뒤 곧 저장 · 되살리기 보너스 · 나라 설정
+            {
+                Check(back.ver == SaveData.Version && SaveData.Version >= 1, $"세이브에 판 번호 {back.ver}");
+                uint sig = SaveFieldSig();
+                Check(sig == SaveData.FieldSig, $"세이브 칸 지문 {sig} (SaveData.FieldSig {SaveData.FieldSig}) — 다르면 세이브 칸이 바뀐 것: SaveData.Version 을 +1 하고 FieldSig 를 이 값으로");
+
+                var bad = SaveData.Parse(S.ToJson());
+                bad.gold = -5; bad.stage = -3; bad.skin = 999; bad.missionTier[0] = -2;
+                bad.inv[0] = 99; bad.inv[1] = 7;
+                for (int i = 0; i < bad.slots.Count; i++) bad.slots[i] = 8;
+                var fx = SaveData.ParseFixed(bad.ToJson());
+                Check(fx != null && fx.gold == 0 && fx.stage == 0 && fx.skin == 0 && fx.missionTier[0] == 0 && fx.inv[0] == -1 && fx.inv[1] == -1 && fx.slots[0] == Tables.Code(0, "single") && fx.slots[1] == -1,
+                    "이상한 세이브 값 정리: 음수 골드·스테이지 → 0 · 없는 총알 번호 → 빈칸(장착은 기본 총알) · 없는 코스튬 → 기본");
+                var same = SaveData.ParseFixed(S.ToJson());
+                bool keep = same != null && same.gold == S.gold && same.gems == S.gems && same.skin == S.skin && same.stage == S.stage;
+                for (int i = 0; keep && i < S.inv.Count; i++) keep = same.inv[i] == S.inv[i];
+                for (int i = 0; keep && i < S.slots.Count; i++) keep = same.slots[i] == S.slots[i];
+                Check(keep, "정상 세이브는 값 정리를 거쳐도 그대로");
+                bad.gems = double.NaN;
+                Log($"(참고) 다이아가 숫자 아님(NaN)인 세이브 글자를 다시 읽을 수 있나: {(SaveData.Parse(JsonUtility.ToJson(bad)) != null ? "읽힘" : "못 읽음")} · 값 정리 뒤 다이아 {SaveData.ParseFixed(JsonUtility.ToJson(bad))?.gems}");
+
+                var inv0 = new List<int>(S.inv); double gg0 = S.gems; bool wu0 = S.weaponUnlocked;
+                S.gems = Tables.C("GachaCost") + 7; int emptyAt = S.inv.IndexOf(-1);
+                if (emptyAt < 0) { S.inv[S.inv.Count - 1] = -1; }
+                string gErr = GM.Gacha();
+                var soon = SaveData.Parse(PlayerPrefs.GetString(SaveData.Key));
+                Check(gErr == null && soon != null && System.Math.Abs(soon.gems - 7) < 0.01, "뽑기(다이아를 씀) → 바로 세이브에 반영");
+                for (int i = 0; i < inv0.Count; i++) S.inv[i] = inv0[i];
+                S.gems = gg0; S.weaponUnlocked = wu0;
+
+                var autoRow = Tables.Shop.Find(x => x.id == "auto_upgrade");
+                bool au0 = S.autoUpgrade, ao0 = S.autoOn; double rg0 = S.gems;
+                S.autoUpgrade = false;
+                Iap.Grant(autoRow, true, true);
+                Check(autoRow != null && autoRow.bonusGems > 0 && S.autoUpgrade && S.gems == rg0, $"자동강화 되살리기 → 가짐 · 보너스 다이아 {autoRow?.bonusGems:0} 은 다시 안 줌");
+                S.autoUpgrade = au0; S.autoOn = ao0; S.gems = rg0;
+
+                var cul = System.Globalization.CultureInfo.CurrentCulture;
+                System.Globalization.CultureInfo.CurrentCulture = new System.Globalization.CultureInfo("de-DE");
+                string deNum = Num.F(1500) + " " + Num.F(12340);
+                System.Globalization.CultureInfo.CurrentCulture = cul;
+                Check(deNum == "1.5k 12.3k", $"소수점을 쉼표로 쓰는 나라 설정에서도 숫자 표기 그대로 ({deNum})");
+                S.Save();
+            }
+
             yield return CloudTest();
 
             Log($"DONE errors={errors}");
@@ -1214,6 +1275,95 @@ namespace KachiGun.EditorTools
             yield return Wait(0.6f);
             Check(!CloudSync.Synced && System.Math.Abs(S.gems - 88888) < 0.5, "클라우드 읽기 실패 → 이 기기 진행 그대로 · 올리지 않음");
             CloudSave.SimulateFail = false;
+
+            // ---- 11-12 코드 점검: 같은 진행(saveId 같음) 비교 ----
+            // (1) 옛 진행으로 켬(한 시간 전에 맞춘 그대로) + 다른 기기가 10분 전에 더 한 것을 올림 + 켜자마자 저장(출석 받기·자동 저장)
+            //     → 그래도 클라우드를 받음 (전엔 방금 저장한 이 기기가 "더 새것"이 되어 옛 진행을 올렸음)
+            {
+                long t0 = SaveData.Now - 3600;
+                CloudSync.ResetState();
+                CloudSync.RememberBase(t0, S.saveId);
+                S.loadedSavedAt = t0; S.loadedRealtime = Time.realtimeSinceStartup;
+                var otherDev = SaveData.Parse(S.ToJson());
+                otherDev.gems = 66666; otherDev.stage = S.stage + 2; otherDev.bestEver = System.Math.Max(otherDev.bestEver, otherDev.stage); otherDev.savedAt = SaveData.Now - 600;
+                PlayerPrefs.SetString(CloudSave.FakeKey, otherDev.ToJson());
+                S.Save();
+                Check(S.savedAt > otherDev.savedAt, "(준비) 이 기기 저장 시각이 클라우드보다 늦음");
+                CloudSync.AfterLogin(null, true);
+                yield return Wait(2.0f);
+                SetupCapture();
+                yield return Wait(0.5f);
+                Check(System.Math.Abs(S.gems - 66666) < 0.5 && S.stage == otherDev.stage && CloudSync.Synced, $"옛 진행으로 켜서 바로 저장해도 → 다른 기기가 올린 새 진행을 받음 (다이아 {Num.Gem(S.gems)})");
+            }
+            // (2) 클라우드가 내가 마지막에 맞춘 그대로 → 묻지 않고 이 기기 것을 올림
+            {
+                var mine = SaveData.Parse(PlayerPrefs.GetString(CloudSave.FakeKey, ""));
+                CloudSync.ResetState();
+                CloudSync.RememberBase(mine.savedAt, S.saveId);
+                S.gems = 55555; S.Save();
+                CloudSync.AfterLogin(null, true);
+                yield return Wait(0.8f);
+                up = SaveData.Parse(PlayerPrefs.GetString(CloudSave.FakeKey, ""));
+                var cf2 = HUD.I.Get<CloudConflictPopup>();
+                Check(CloudSync.Synced && up != null && System.Math.Abs(up.gems - 55555) < 0.5 && !(cf2 && cf2.gameObject.activeSelf), "클라우드가 마지막으로 맞춘 그대로 → 이 기기 진행을 올림 (창 없음)");
+            }
+            // (3) 맞춘 뒤 양쪽 다 진행함 → 고르기 창 (올리지 않음)
+            {
+                var div = SaveData.Parse(S.ToJson());
+                div.gems = 44444; div.savedAt = SaveData.Now - 300;
+                PlayerPrefs.SetString(CloudSave.FakeKey, div.ToJson());
+                CloudSync.ResetState();
+                CloudSync.RememberBase(SaveData.Now - 7200, S.saveId);
+                S.loadedSavedAt = SaveData.Now - 1800; S.loadedRealtime = Time.realtimeSinceStartup;
+                CloudSync.AfterLogin(null, true);
+                yield return Wait(0.8f);
+                var cf3 = HUD.I.Get<CloudConflictPopup>();
+                up = SaveData.Parse(PlayerPrefs.GetString(CloudSave.FakeKey, ""));
+                Check(cf3 && cf3.gameObject.activeSelf && !CloudSync.Synced && up != null && System.Math.Abs(up.gems - 44444) < 0.5, "같은 진행을 양쪽 다 더 함 → 고르기 창 · 고르기 전엔 올리지 않음");
+                CloseAll();
+            }
+            // (4) 내가 올린 것인데 "올림 끝"을 못 받고 꺼졌던 경우(클라우드 시각 = 켤 때 시각) → 창 없이 이 기기 것
+            {
+                long tl = SaveData.Now - 900;
+                var mineOld = SaveData.Parse(S.ToJson());
+                mineOld.savedAt = tl; mineOld.gems = 22222;
+                PlayerPrefs.SetString(CloudSave.FakeKey, mineOld.ToJson());
+                CloudSync.ResetState();
+                CloudSync.RememberBase(SaveData.Now - 7200, S.saveId);
+                S.loadedSavedAt = tl; S.loadedRealtime = Time.realtimeSinceStartup;
+                S.gems = 33333;
+                CloudSync.AfterLogin(null, true);
+                yield return Wait(0.8f);
+                up = SaveData.Parse(PlayerPrefs.GetString(CloudSave.FakeKey, ""));
+                var cf4 = HUD.I.Get<CloudConflictPopup>();
+                Check(CloudSync.Synced && up != null && System.Math.Abs(up.gems - 33333) < 0.5 && !(cf4 && cf4.gameObject.activeSelf), "내가 내릴 때 올린 그대로 → 창 없이 이 기기 진행");
+            }
+            // (5) 클라우드 세이브가 더 높은 판 → 받지도 올리지도 않고 업데이트 안내
+            {
+                var future = SaveData.Parse(S.ToJson());
+                future.ver = SaveData.Version + 1; future.gems = 11111; future.savedAt = SaveData.Now - 60;
+                PlayerPrefs.SetString(CloudSave.FakeKey, future.ToJson());
+                CloudSync.ResetState();
+                CloudSync.RememberBase(SaveData.Now - 7200, S.saveId);
+                S.loadedSavedAt = SaveData.Now - 7200; S.loadedRealtime = Time.realtimeSinceStartup;
+                CloudSync.AfterLogin(null, true);
+                yield return Wait(0.8f);
+                up = SaveData.Parse(PlayerPrefs.GetString(CloudSave.FakeKey, ""));
+                Check(!CloudSync.Synced && CloudSync.NeedUpdate && System.Math.Abs(S.gems - 33333) < 0.5 && up != null && System.Math.Abs(up.gems - 11111) < 0.5 && HUD.I.ToastText != null,
+                    $"클라우드가 더 새 판의 세이브 → 받지도 올리지도 않음 · 안내 \"{(HUD.I.ToastText ?? "").Replace("\n", " ")}\"");
+            }
+            // (6) 응답이 끝내 안 옴 → 시간 초과 뒤 다시 할 수 있음
+            {
+                CloudSync.ResetState();
+                CloudSave.SimulateHang = true; CloudSync.TimeoutSec = 0.2f;
+                bool cb = false, cbRes = true;
+                CloudSync.AfterLogin(r => { cb = true; cbRes = r; }, true);
+                bool busyMid = CloudSync.Busy;
+                yield return Wait(2.5f);
+                Check(busyMid && cb && !cbRes && !CloudSync.Busy && !CloudSync.Synced, "클라우드 응답 없음 → 시간 초과로 끝내고 다시 할 수 있음");
+                CloudSave.SimulateHang = false; CloudSync.TimeoutSec = 20f;
+                CloudSync.ResetState();
+            }
             HUD.I.Open<CloudPopup>();
             yield return Wait(0.3f);
             Capture("19d_cloud_popup");
@@ -1636,6 +1786,18 @@ namespace KachiGun.EditorTools
         }
 
         string Inv() => string.Join(",", S.inv.ConvertAll(x => x < 0 ? "-" : Tables.GradeName(Tables.GradeOf(x)) + Tables.TypeOf(x)[0]));
+
+        /// <summary>세이브에 들어가는 칸 목록(이름:종류)의 지문 — 칸을 더하거나 빼면 값이 바뀜 (SaveData.FieldSig 와 비교)</summary>
+        static uint SaveFieldSig()
+        {
+            var names = new List<string>();
+            foreach (var f in typeof(SaveData).GetFields(System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Instance))
+                if (!f.IsNotSerialized) names.Add(f.Name + ":" + f.FieldType.Name);
+            names.Sort(string.CompareOrdinal);
+            uint h = 2166136261;
+            foreach (var n in names) foreach (char c in n + ";") { h ^= c; h *= 16777619; }
+            return h;
+        }
 
         void CloseAll()
         {

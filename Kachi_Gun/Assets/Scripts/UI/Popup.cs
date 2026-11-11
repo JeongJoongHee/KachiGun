@@ -233,17 +233,22 @@ namespace KachiGun
             return t;
         }
 
+        /// <summary>창이 떠 있고 아직 안 받음</summary>
+        public static bool OpenUnclaimed { get { var p = HUD.I ? HUD.I.Get<OfflinePopup>() : null; return p != null && p.gameObject.activeSelf && !p.claimed; } }
+
         /// <summary>창이 이미 떠 있으면(백그라운드를 또 다녀옴) 시간을 더함</summary>
         public static void Show(long away, double sec)
         {
-            var old = HUD.I.Get<OfflinePopup>();
-            bool stack = old != null && old.gameObject.activeSelf && !old.claimed;
+            bool stack = OpenUnclaimed;
             var p = HUD.I.Open<OfflinePopup>();
             if (stack) { away += p.awaySec; sec += p.sec; }
             p.claimed = false;
             p.awaySec = away;
             p.sec = System.Math.Min(sec, GameManager.OfflineMaxSec);
             p.gold = GameManager.I.OfflineGoldPerSec * p.sec;
+            // 11-12: 받기 전에 앱이 꺼져도 사라지지 않게 세이브에 적어 둠 (받으면 0 · 다음에 켤 때 CheckOffline 이 이어서 줌)
+            S.offlinePendingSec = p.sec;
+            S.Save();
             double maxH = Tables.C("Offline_MaxHours", 8);
             // 11-07: 보여 주는 시간도 최대(8시간)에서 멈춤 — 전엔 실제로 비운 시간(10:00 등)이 그대로 보여 무제한으로 쌓이는 것처럼 보였음
             p.timeT.text = L.T("오프라인 시간") + " : " + HhMm((long)p.sec);
@@ -263,6 +268,7 @@ namespace KachiGun
             base.Close();
             double g = gold * mul;
             S.gold += g;
+            S.offlinePendingSec = 0;
             AudioManager.Play(AudioManager.Sfx.Coin);
             H.Bump(false);
             H.Toast(L.T("골드") + " +" + Num.F(g));

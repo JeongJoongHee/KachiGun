@@ -3,6 +3,7 @@
 광고를 불러오는 중입니다. 잠시 뒤 다시 눌러 주세요,Loading the ad. Please tap again in a moment.,Core/AdService.cs
 광고를 띄우지 못했습니다. 잠시 뒤 다시 해 주세요,Couldn't show the ad. Please try again later.,Core/AdService.cs
 테스트 계정,Test Account,Core/Cloud.cs
+클라우드 진행이 더 새 버전의 게임에서 저장되었습니다.\n게임을 업데이트해 주세요,The cloud progress was saved by a newer version of the game.\nPlease update the game.,Core/Cloud.cs
 클라우드를 읽지 못했습니다. 잠시 뒤 다시 해 주세요,Couldn't read the cloud. Please try again later,Core/Cloud.cs
 클라우드에 저장했습니다,Saved to the cloud,Core/Cloud.cs
 클라우드에 저장하지 못했습니다,Couldn't save to the cloud,Core/Cloud.cs
@@ -28,6 +29,7 @@
 관통,Pierce,Core/Tables.cs
 레이저,Laser,Core/Tables.cs
 미사일,Missile,Core/Tables.cs
+보물,Treasure,Game/GameManager.cs
 보스 실패! 강화 후 다시 도전하세요,Boss failed! Upgrade and try again,Game/GameManager.cs
 아직 보스를 만날 때가 아닙니다,It's not time to face the boss yet,Game/GameManager.cs
 보스 등장!,Boss incoming!,Game/GameManager.cs
@@ -96,7 +98,9 @@
 공격력,Attack,UI/HUD.cs
 공격속도,Attack Speed,UI/HUD.cs
 금전 획득량,Gold Gain,UI/HUD.cs
-총알 {0},Ammo {0},UI/HUD.cs
+리더,Leader,UI/HUD.cs
+동료 1,Ally 1,UI/HUD.cs
+동료 2,Ally 2,UI/HUD.cs
 비어 있음,Empty,UI/HUD.cs
 총알,Ammo,UI/HUD.cs
 코스튬,Costumes,UI/HUD.cs
@@ -173,9 +177,6 @@
 {0}일을 다 받으면 1일차부터 다시 시작합니다,"After Day {0}, it starts again from Day 1",UI/Popup.cs
 돌아가기,Back,UI/Popup.cs
 총알 관리,Ammo,UI/WeaponPopup.cs
-리더,Leader,UI/WeaponPopup.cs
-동료 1,Ally 1,UI/WeaponPopup.cs
-동료 2,Ally 2,UI/WeaponPopup.cs
 일괄 합성,Merge All,UI/WeaponPopup.cs
 D 등급 총알 획득!,Got D grade ammo!,UI/WeaponPopup.cs
 뽑기,Draw,UI/WeaponPopup.cs
@@ -298,6 +299,38 @@ D 등급 총알 획득!,Got D grade ammo!,UI/WeaponPopup.cs
 뚱보 좀비,Fat Zombie,Zombie_Master.Name
 사신 좀비,Reaper Zombie,Zombie_Master.Name
 변이 오우거,Mutant Ogre,Zombie_Master.Name
+양동이 좀비 (걷는),Bucket Walker,Zombie_Master.Name
+운동복 좀비,Tracksuit Zombie,Zombie_Master.Name
+양복 좀비,Suit Zombie,Zombie_Master.Name
+학생 좀비,Student Zombie,Zombie_Master.Name
+요리사 좀비,Chef Zombie,Zombie_Master.Name
+손도끼 좀비,Hatchet Zombie,Zombie_Master.Name
+튜브 좀비,Pool Float Zombie,Zombie_Master.Name
+어부 좀비,Fisher Zombie,Zombie_Master.Name
+깃발 좀비,Flag Zombie,Zombie_Master.Name
+광부 좀비,Miner Zombie,Zombie_Master.Name
+카우보이 좀비,Cowboy Zombie,Zombie_Master.Name
+롱패딩 좀비,Puffer Zombie,Zombie_Master.Name
+연구원 좀비,Scientist Zombie,Zombie_Master.Name
+캠핑 좀비,Camper Zombie,Zombie_Master.Name
+배달 좀비,Delivery Zombie,Zombie_Master.Name
+폭주족 좀비,Biker Zombie,Zombie_Master.Name
+헬멧 좀비,Knight Helmet Zombie,Zombie_Master.Name
+자동톱 좀비,Chainsaw Zombie,Zombie_Master.Name
+유령 좀비,Ghost Zombie,Zombie_Master.Name
+실험체 좀비,Test Subject Zombie,Zombie_Master.Name
+방호복 좀비,Hazmat Zombie,Zombie_Master.Name
+스키 좀비,Skier Zombie,Zombie_Master.Name
+강시 좀비,Hopping Zombie,Zombie_Master.Name
+방패 경찰 좀비,Riot Shield Zombie,Zombie_Master.Name
+소방관 좀비,Firefighter Zombie,Zombie_Master.Name
+드럼통 좀비,Barrel Zombie,Zombie_Master.Name
+돈가방 좀비,Treasure Zombie,Zombie_Master.Name
+하키 좀비,Hockey Zombie,Zombie_Master.Name
+파라오 좀비,Pharaoh Zombie,Zombie_Master.Name
+설인 좀비,Yeti Zombie,Zombie_Master.Name
+닻 선장 좀비,Anchor Captain Zombie,Zombie_Master.Name
+방독면 거인,Gas Giant,Zombie_Master.Name
 비상 건빵,Emergency Crackers,Supply_Collection.Name
 통조림 캔,Canned Food,Supply_Collection.Name
 정수 필터,Water Filter,Supply_Collection.Name
@@ -364,6 +397,7 @@ Stage 10-1 에서 열립니다,Unlocks at Stage 10-1,Unlock_Roadmap.Lock_Toast_M
 작은 푸른 보석,Small Blue Gem,Mine_Ore_Spec.Name_KR
 회색 바위,Gray Rock,Mine_Ore_Spec.Name_KR
 거대 황금 크리스탈,Huge Gold Crystal,Mine_Ore_Spec.Name_KR
+총알 {0},Ammo {0},(지금은 안 씀) UI/HUD.cs
 진동,Vibration,(지금은 안 씀) UI/MenuPopups.cs
 불러오기 · 구매 복원 · 문의,Load · Restore · Contact,(지금은 안 씀) UI/MenuPopups.cs
 클라우드 저장·결제 복원·문의는 준비 중입니다,"Cloud save, restore and contact are coming soon",(지금은 안 씀) UI/MenuPopups.cs
@@ -447,72 +481,40 @@ S 등급 레이저 건 즉시 지급,Get an S grade Laser Gun now,(지금은 안
 차원파괴 미사일,Rift Missile,(지금은 안 씀) Weapon_Master.Name
 제네시스 레이저,Genesis Laser,(지금은 안 씀) Weapon_Master.Name
 아포칼립스 미사일,Apocalypse Missile,(지금은 안 씀) Weapon_Master.Name
-양동이 좀비 (걷는),Bucket Walker,Zombie_Master.Name
-운동복 좀비,Tracksuit Zombie,Zombie_Master.Name
-양복 좀비,Suit Zombie,Zombie_Master.Name
-학생 좀비,Student Zombie,Zombie_Master.Name
-요리사 좀비,Chef Zombie,Zombie_Master.Name
-손도끼 좀비,Hatchet Zombie,Zombie_Master.Name
-튜브 좀비,Pool Float Zombie,Zombie_Master.Name
-어부 좀비,Fisher Zombie,Zombie_Master.Name
-깃발 좀비,Flag Zombie,Zombie_Master.Name
-광부 좀비,Miner Zombie,Zombie_Master.Name
-카우보이 좀비,Cowboy Zombie,Zombie_Master.Name
-롱패딩 좀비,Puffer Zombie,Zombie_Master.Name
-연구원 좀비,Scientist Zombie,Zombie_Master.Name
-캠핑 좀비,Camper Zombie,Zombie_Master.Name
-배달 좀비,Delivery Zombie,Zombie_Master.Name
-폭주족 좀비,Biker Zombie,Zombie_Master.Name
-헬멧 좀비,Knight Helmet Zombie,Zombie_Master.Name
-자동톱 좀비,Chainsaw Zombie,Zombie_Master.Name
-유령 좀비,Ghost Zombie,Zombie_Master.Name
-실험체 좀비,Test Subject Zombie,Zombie_Master.Name
-방호복 좀비,Hazmat Zombie,Zombie_Master.Name
-스키 좀비,Skier Zombie,Zombie_Master.Name
-강시 좀비,Hopping Zombie,Zombie_Master.Name
-방패 경찰 좀비,Riot Shield Zombie,Zombie_Master.Name
-소방관 좀비,Firefighter Zombie,Zombie_Master.Name
-드럼통 좀비,Barrel Zombie,Zombie_Master.Name
-돈가방 좀비,Treasure Zombie,Zombie_Master.Name
-하키 좀비,Hockey Zombie,Zombie_Master.Name
-파라오 좀비,Pharaoh Zombie,Zombie_Master.Name
-설인 좀비,Yeti Zombie,Zombie_Master.Name
-닻 선장 좀비,Anchor Captain Zombie,Zombie_Master.Name
-방독면 거인,Gas Giant,Zombie_Master.Name
-스테이지 클리어!,Stage clear!,Speech_Lines.Text
-보스다!! 조심해!!,It's the boss!! Watch out!!,Speech_Lines.Text
-큰 놈이 온다!,Here comes a big one!,Speech_Lines.Text
-좀비가 몰려온다!,Zombies incoming!,Speech_Lines.Text
-다 쓸어버리자!,Let's wipe them out!,Speech_Lines.Text
-모두 힘내!,"Hang in there, everyone!",Speech_Lines.Text
-한 마리도 놓치지 마!,Don't let a single one through!,Speech_Lines.Text
-끝까지 버티자!,Hold the line!,Speech_Lines.Text
-조준 똑바로!,Aim steady!,Speech_Lines.Text
-숲은 우리가 지킨다!,We'll protect the forest!,Speech_Lines.Text
-아직 멀었어!,We're just getting started!,Speech_Lines.Text
-조금 더 힘을 내!,Just a little more!,Speech_Lines.Text
-껄껄껄!,Hahaha!,Speech_Lines.Text
-카피바라는 귀엽다!!,Capybaras are cute!!,Speech_Lines.Text
-고되다. 고돼!,So tiring. So tiring!,Speech_Lines.Text
-우닫다다다닫,Ratatatatat!,Speech_Lines.Text
-배고프당!,I'm hungry~!,Speech_Lines.Text
-밥이라도 먹고 할까?,Wanna grab a bite first?,Speech_Lines.Text
-좋아! 수박 먹자!,Yes! Watermelon time!,Speech_Lines.Text
-이것만 끝내고 먹자!,Let's eat after this!,Speech_Lines.Text
-조금만 더 버텨!,Hang in a bit longer!,Speech_Lines.Text
-나도 힘들어...,Me too...,Speech_Lines.Text
-뭐가 그렇게 웃겨?,What's so funny?,Speech_Lines.Text
-그냥~,Nothing~,Speech_Lines.Text
-당연하지!,Obviously!,Speech_Lines.Text
-지금 그럴 때야?!,Is this really the time?!,Speech_Lines.Text
-입으로 쏘는 거야?,Are you shooting with your mouth?,Speech_Lines.Text
-기분이야!,It's for the vibe!,Speech_Lines.Text
-오케이!,Okay!,Speech_Lines.Text
-너나 잘해~,Worry about yourself~,Speech_Lines.Text
-언제 끝나...,When does it end...,Speech_Lines.Text
-다 덤벼라!,Bring it on!,Speech_Lines.Text
-하고 있거든!,I am!,Speech_Lines.Text
-맡겨 둬!,Leave it to me!,Speech_Lines.Text
-세게 한 방 먹이자!,Let's hit it hard!,Speech_Lines.Text
-수고했어!,Good work!,Speech_Lines.Text
-다음 가자!,On to the next!,Speech_Lines.Text
+스테이지 클리어!,Stage clear!,(지금은 안 씀) Speech_Lines.Text
+보스다!! 조심해!!,It's the boss!! Watch out!!,(지금은 안 씀) Speech_Lines.Text
+큰 놈이 온다!,Here comes a big one!,(지금은 안 씀) Speech_Lines.Text
+좀비가 몰려온다!,Zombies incoming!,(지금은 안 씀) Speech_Lines.Text
+다 쓸어버리자!,Let's wipe them out!,(지금은 안 씀) Speech_Lines.Text
+모두 힘내!,"Hang in there, everyone!",(지금은 안 씀) Speech_Lines.Text
+한 마리도 놓치지 마!,Don't let a single one through!,(지금은 안 씀) Speech_Lines.Text
+끝까지 버티자!,Hold the line!,(지금은 안 씀) Speech_Lines.Text
+조준 똑바로!,Aim steady!,(지금은 안 씀) Speech_Lines.Text
+숲은 우리가 지킨다!,We'll protect the forest!,(지금은 안 씀) Speech_Lines.Text
+아직 멀었어!,We're just getting started!,(지금은 안 씀) Speech_Lines.Text
+조금 더 힘을 내!,Just a little more!,(지금은 안 씀) Speech_Lines.Text
+껄껄껄!,Hahaha!,(지금은 안 씀) Speech_Lines.Text
+카피바라는 귀엽다!!,Capybaras are cute!!,(지금은 안 씀) Speech_Lines.Text
+고되다. 고돼!,So tiring. So tiring!,(지금은 안 씀) Speech_Lines.Text
+우닫다다다닫,Ratatatatat!,(지금은 안 씀) Speech_Lines.Text
+배고프당!,I'm hungry~!,(지금은 안 씀) Speech_Lines.Text
+밥이라도 먹고 할까?,Wanna grab a bite first?,(지금은 안 씀) Speech_Lines.Text
+좋아! 수박 먹자!,Yes! Watermelon time!,(지금은 안 씀) Speech_Lines.Text
+이것만 끝내고 먹자!,Let's eat after this!,(지금은 안 씀) Speech_Lines.Text
+조금만 더 버텨!,Hang in a bit longer!,(지금은 안 씀) Speech_Lines.Text
+나도 힘들어...,Me too...,(지금은 안 씀) Speech_Lines.Text
+뭐가 그렇게 웃겨?,What's so funny?,(지금은 안 씀) Speech_Lines.Text
+그냥~,Nothing~,(지금은 안 씀) Speech_Lines.Text
+당연하지!,Obviously!,(지금은 안 씀) Speech_Lines.Text
+지금 그럴 때야?!,Is this really the time?!,(지금은 안 씀) Speech_Lines.Text
+입으로 쏘는 거야?,Are you shooting with your mouth?,(지금은 안 씀) Speech_Lines.Text
+기분이야!,It's for the vibe!,(지금은 안 씀) Speech_Lines.Text
+오케이!,Okay!,(지금은 안 씀) Speech_Lines.Text
+너나 잘해~,Worry about yourself~,(지금은 안 씀) Speech_Lines.Text
+언제 끝나...,When does it end...,(지금은 안 씀) Speech_Lines.Text
+다 덤벼라!,Bring it on!,(지금은 안 씀) Speech_Lines.Text
+하고 있거든!,I am!,(지금은 안 씀) Speech_Lines.Text
+맡겨 둬!,Leave it to me!,(지금은 안 씀) Speech_Lines.Text
+세게 한 방 먹이자!,Let's hit it hard!,(지금은 안 씀) Speech_Lines.Text
+수고했어!,Good work!,(지금은 안 씀) Speech_Lines.Text
+다음 가자!,On to the next!,(지금은 안 씀) Speech_Lines.Text

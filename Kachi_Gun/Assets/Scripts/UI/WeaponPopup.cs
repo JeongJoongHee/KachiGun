@@ -138,7 +138,15 @@ namespace KachiGun
             ghost.gameObject.SetActive(false);
         }
 
-        public override void Open() { Picking = false; picked.Clear(); base.Open(); }
+        public override void Open()
+        {
+            Picking = false; picked.Clear();
+            // 11-12 끄는 중에 창이 닫혔으면(뒤로 가기) 끌던 그림·흐린 아이콘이 남아 있음 → 열 때 정리
+            if (ghost) ghost.gameObject.SetActive(false);
+            foreach (var c in slots) if (c) c.ResetDrag();
+            foreach (var c in inv) if (c) c.ResetDrag();
+            base.Open();
+        }
 
         public override void Refresh()
         {
@@ -424,6 +432,7 @@ namespace KachiGun
         }
 
         public void Pop() { popT = 0.25f; }
+        public void ResetDrag() { dragging = false; icon.color = Color.white; }
 
         void Update()
         {

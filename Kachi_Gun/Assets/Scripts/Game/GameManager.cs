@@ -423,6 +423,7 @@ namespace KachiGun
             S.inv[empty] = Tables.Code(0, Tables.RandomType(0));   // Merge_Weight 비중
             S.weaponUnlocked = true;
             AudioManager.Play(AudioManager.Sfx.Merge);
+            S.SaveSoon();   // 11-12 다이아가 움직인 동작은 곧 저장소에 (아래 분해·구매·미션도)
             Notify();
             return null;
         }
@@ -486,6 +487,7 @@ namespace KachiGun
             }
             if (n == 0) return 0;
             S.gems += sum;
+            S.SaveSoon();
             AudioManager.Play(AudioManager.Sfx.Coin);
             HUD.I?.Bump(true);
             Notify();
@@ -500,6 +502,7 @@ namespace KachiGun
             double g = Tables.Grade(Tables.GradeOf(c)).salvage;
             S.inv[invIdx] = -1;
             S.gems += g;
+            S.SaveSoon();
             AudioManager.Play(AudioManager.Sfx.Coin);
             HUD.I?.Bump(true);
             Notify();
@@ -526,6 +529,7 @@ namespace KachiGun
             S.gold -= e.gold;
             ok = Random.value * 100 < e.rate;
             if (ok) S.slotLv[slot] = lv + 1;
+            S.SaveSoon();
             AudioManager.Play(ok ? AudioManager.Sfx.Upgrade : AudioManager.Sfx.Fail);
             Notify();
             return null;
@@ -544,6 +548,7 @@ namespace KachiGun
             if (S.gems < r.cost) return L.T("다이아가 부족합니다");
             S.gems -= r.cost;
             S.supplies.Add(id);
+            S.SaveSoon();
             AudioManager.Play(AudioManager.Sfx.Upgrade);
             Notify();
             return null;
@@ -561,6 +566,7 @@ namespace KachiGun
             double g = Stats.ZombieGold(S.stage) * n * Stats.GoldMul;
             S.gems -= price;
             S.gold += g;
+            S.SaveSoon();
             AudioManager.Play(AudioManager.Sfx.Coin);
             HUD.I?.Bump(false);
             HUD.I?.Toast(L.T("골드") + " +" + Num.F(g));
@@ -639,6 +645,7 @@ namespace KachiGun
             S.gems -= r.price;
             S.skins.Add(id);
             S.skin = id;
+            S.SaveSoon();
             Squad.I.SetSkin(id);
             AudioManager.Play(AudioManager.Sfx.Upgrade);
             Notify();
@@ -707,6 +714,7 @@ namespace KachiGun
             S.gems += gems;
             S.gold += gold;
             S.missionTier[i]++;
+            S.SaveSoon();
             AudioManager.Play(AudioManager.Sfx.Coin);
             HUD.I?.Bump(gem);
             HUD.I?.Toast(gem ? L.T("다이아") + " +" + Num.Gem(gems) : L.T("골드") + " +" + Num.F(gold));
@@ -912,18 +920,19 @@ namespace KachiGun
 
         bool offlineReady;   // 첫 프레임 뒤(HUD 다 만든 뒤)부터
 
-        /// <summary>마지막 저장 시각부터 지금까지 오래 비웠으면 방치 보상 창 (true = 창 띄움). 한 번 계산하면 소진(두 번 안 줌)</summary>
+        /// <summary>마지막 저장 시각부터 지금까지 오래 비웠으면 방치 보상 창 (true = 창 띄움). 한 번 계산하면 소진(두 번 안 줌).
+        /// 11-12: 지난번에 창만 띄우고 못 받은 시간(S.offlinePendingSec — 창이 뜬 채로 앱이 꺼짐)이 있으면 그것도 같이</summary>
         public bool CheckOffline()
         {
             if (!offlineReady || HUD.I == null) return false;
             long last = S.loadedLastSeen > 0 ? S.loadedLastSeen : S.lastSeen;
             S.loadedLastSeen = 0;
             S.lastSeen = Math.Max(S.lastSeen, SaveData.Now);   // 11-07 앞으로만 (시간을 뒤로 돌려도 줄지 않음)
-            if (last <= 0) return false;
-            long away = SaveData.Now - last;
-            if (away < Tables.C("Offline_MinMinutes", 5) * 60) return false;   // 기기 시간을 뒤로 돌린 경우(음수)도 여기서 걸림
-            double sec = Math.Min(away, OfflineMaxSec);
-            if (OfflineGoldPerSec * sec <= 0) return false;
+            long away = last > 0 ? SaveData.Now - last : 0;
+            if (away < Tables.C("Offline_MinMinutes", 5) * 60) away = 0;   // 잠깐 나갔다 옴 · 기기 시간을 뒤로 돌린 경우(음수)
+            double pend = OfflinePopup.OpenUnclaimed ? 0 : S.offlinePendingSec;   // 창이 떠 있으면 창이 그 시간을 이미 들고 있음
+            double sec = Math.Min(away + pend, OfflineMaxSec);
+            if (sec <= 0 || OfflineGoldPerSec * sec <= 0) return false;
             OfflinePopup.Show(away, sec);
             return true;
         }

@@ -180,7 +180,9 @@ EN.update({'세이브를 읽지 못해 예비 세이브로 불러왔습니다': 
            '클라우드를 읽지 못했습니다. 잠시 뒤 다시 해 주세요': "Couldn't read the cloud. Please try again later", '클라우드 데이터를 읽지 못했습니다': "Couldn't read the cloud data",
            '클라우드에서 불러왔습니다': 'Loaded from the cloud', '클라우드에 저장된 데이터가 없습니다': 'No data saved in the cloud', '테스트 계정': 'Test Account',
            '카드로 끌어다 놓아 장착 · 같은 탄알끼리 겹쳐 합성': 'Drag onto a card to equip · Drop matching ammo together to merge',
-           '장착: 총알을 위 카드로 끌어다 놓으세요': 'To equip: drag the ammo onto a card above'})
+           '장착: 총알을 위 카드로 끌어다 놓으세요': 'To equip: drag the ammo onto a card above',
+           # 11-12 코드 점검: 클라우드 세이브가 더 새 판의 게임에서 저장됨
+           '클라우드 진행이 더 새 버전의 게임에서 저장되었습니다.\\n게임을 업데이트해 주세요': 'The cloud progress was saved by a newer version of the game.\\nPlease update the game.', '보물': 'Treasure'})
 
 
 def code_strings():

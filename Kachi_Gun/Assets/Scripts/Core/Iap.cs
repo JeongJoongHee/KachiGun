@@ -42,20 +42,22 @@ namespace KachiGun
         /// <summary>상점 버튼 글자: 스토어 가격(받았으면) → 표의 원화</summary>
         public static string PriceText(ShopRow r) => StorePrice(r.id) ?? ShopPopup.KrwText(r.priceValue);
 
-        /// <summary>상품을 받는 처리 (에디터 가짜 결제 · 폰 결제 · 되살리기 공통). 영구 상품을 이미 가졌으면 아무것도 안 함</summary>
-        public static void Grant(ShopRow r, bool quiet = false)
+        /// <summary>상품을 받는 처리 (에디터 가짜 결제 · 폰 결제 · 되살리기 공통). 영구 상품을 이미 가졌으면 아무것도 안 함.
+        /// restore = 구글 구매 기록으로 되살리는 중 (11-12: 처음 살 때 주는 보너스 다이아는 다시 주지 않음 — 자동강화 500)</summary>
+        public static void Grant(ShopRow r, bool quiet = false, bool restore = false)
         {
             if (r == null) return;
             if (Permanent(r) && Owned(r)) return;
             if (r.reward == "NoAllAds") S.noAds = true;
             else if (r.reward == "AutoUpgrade") { S.autoUpgrade = true; S.autoOn = true; }
-            if (r.bonusGems > 0) S.gems += r.bonusGems;
+            double bonus = restore ? 0 : r.bonusGems;
+            if (bonus > 0) S.gems += bonus;
             S.Save();
-            Debug.Log($"[Iap] 지급 {r.id} ({r.reward}, 다이아 +{r.bonusGems})");
+            Debug.Log($"[Iap] {(restore ? "되살림" : "지급")} {r.id} ({r.reward}, 다이아 +{bonus})");
             if (!quiet)
             {
                 AudioManager.Play(AudioManager.Sfx.Coin);
-                if (r.bonusGems > 0) HUD.I?.Bump(true);
+                if (bonus > 0) HUD.I?.Bump(true);
                 HUD.I?.Toast(L.F("{0} 구매 완료!", L.T(r.name)));
             }
             GameManager.I?.Notify();
@@ -208,7 +210,7 @@ namespace KachiGun
                 if (row == null || !Permanent(row) || Owned(row)) continue;
                 if (!ReceiptValid(o.Info?.Receipt, row.id)) continue;
                 Debug.Log("[Iap] 되살림 " + row.id);
-                Grant(row, true);
+                Grant(row, true, true);
                 HUD.I?.Toast(L.F("{0} 구매 기록을 되살렸습니다", L.T(row.name)));
             }
         }

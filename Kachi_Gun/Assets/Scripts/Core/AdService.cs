@@ -92,7 +92,7 @@ namespace KachiGun
     {
         static readonly float[] RetryDelays = { 10f, 30f, 60f, 120f, 300f };
         static RewardedAd ad;
-        static bool started, initialized, loading;
+        static bool started, initialized, loading, consentBusy;
         static int failures;
 
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
@@ -117,11 +117,21 @@ namespace KachiGun
             });
 
             if (ConsentInformation.CanRequestAds()) InitSdk();   // 지난번에 동의를 받았으면 바로
+            RequestConsent();
+        }
+
+        /// <summary>동의 정보 확인 → (필요한 나라만) 동의 창 → 광고 시작.
+        /// 11-12: 켤 때 한 번만 했더니, 설치하고 처음 켤 때 인터넷이 없으면 그 실행 내내 광고가 시작되지 않았음 → 광고 버튼을 누를 때 다시 함</summary>
+        static void RequestConsent()
+        {
+            if (consentBusy) return;
+            consentBusy = true;
             ConsentInformation.Update(new ConsentRequestParameters(), updateError => MainThread.Post(() =>
             {
                 if (updateError != null) Debug.LogWarning("[Ads] 동의 정보 확인 실패: " + updateError.Message);
                 ConsentForm.LoadAndShowConsentFormIfRequired(formError => MainThread.Post(() =>
                 {
+                    consentBusy = false;
                     if (formError != null) Debug.LogWarning("[Ads] 동의 창 실패: " + formError.Message);
                     if (ConsentInformation.CanRequestAds()) InitSdk();
                 }));
@@ -163,7 +173,8 @@ namespace KachiGun
             if (!Ready)
             {
                 HUD.I?.Toast(L.T("광고를 불러오는 중입니다. 잠시 뒤 다시 눌러 주세요"));
-                if (!loading && initialized) { failures = 0; Load(); }
+                if (!initialized) RequestConsent();   // 아직 시작 전(처음 켤 때 통신이 안 됐음) → 동의 확인부터 다시
+                else if (!loading) { failures = 0; Load(); }
                 return;
             }
             var a = ad;

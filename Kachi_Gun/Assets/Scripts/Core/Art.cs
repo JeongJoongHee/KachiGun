@@ -179,7 +179,8 @@ namespace KachiGun
                         for (int i = 0; i < 8; i++)
                         {
                             var xy = parts[i + 1].Split(',');
-                            float x = float.Parse(xy[0]), y = float.Parse(xy[1]);
+                            var ci = System.Globalization.CultureInfo.InvariantCulture;   // 11-12 나라 설정과 상관없이 읽음
+                            float x = float.Parse(xy[0], ci), y = float.Parse(xy[1], ci);
                             v[i] = new Vector2((x - CharFootX) / CharPPU, (CharCell - 8 - y) / CharPPU);
                         }
                         gunPos[int.Parse(parts[0].Substring(5))] = v;

@@ -36,6 +36,7 @@ namespace KachiGun
             bool on = CloudAuth.Configured, linked = CloudAuth.Linked && CloudAuth.SignedIn, ready = linked && CloudSync.Synced;
             string info = L.T("구글 계정에 진행을 저장해 두면\n폰을 바꾸거나 다시 설치해도 이어서 할 수 있어요.");
             if (!on) body.text = info + "\n\n<color=#B07A10>" + L.T("클라우드 저장은 다음 업데이트에서 열립니다") + "</color>";
+            else if (CloudSync.NeedUpdate) body.text = info + "\n\n<color=#B07A10>" + L.T("클라우드 진행이 더 새 버전의 게임에서 저장되었습니다.\n게임을 업데이트해 주세요") + "</color>";
             else if (!linked) body.text = info + (CloudSync.Busy ? "\n\n" + L.T("연결하는 중…") : "");
             else
             {

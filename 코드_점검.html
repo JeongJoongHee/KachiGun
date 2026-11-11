@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="ko"><head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>코드 점검</title>
+<style>
+  :root{
+    --bg:#f6f1e7; --card:#fffdf8; --ink:#2b2218; --soft:#6b5d4d; --line:#e0d5c2;
+    --orange:#d9701a; --orange-bg:#fdebd6; --red:#c23a2b; --red-bg:#fbe4df;
+    --blue:#2f63b8; --blue-bg:#e2ebf9; --green:#2f8a45; --green-bg:#e1f2e4; --gray-bg:#ece6da;
+  }
+  @media (prefers-color-scheme: dark){
+    :root{
+      --bg:#1b1713; --card:#262019; --ink:#f0e8da; --soft:#b3a48f; --line:#3d342a;
+      --orange:#ff9d47; --orange-bg:#40290f; --red:#ff7c6b; --red-bg:#40201b;
+      --blue:#7fa8f0; --blue-bg:#1c2a44; --green:#6fce85; --green-bg:#1a3421; --gray-bg:#322a21;
+    }
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.65 "Malgun Gothic","맑은 고딕",system-ui,sans-serif}
+  main{max-width:920px;margin:0 auto;padding:28px 16px 80px}
+  h1{font-size:28px;margin:0 0 4px}
+  .sub{color:var(--soft);margin:0 0 20px}
+  h2{font-size:21px;margin:40px 0 6px;padding-bottom:6px;border-bottom:2px solid var(--line)}
+  h2 small{font-size:14px;font-weight:normal;color:var(--soft);margin-left:8px}
+  h3{font-size:16px;margin:20px 0 6px;color:var(--orange)}
+  p.note{color:var(--soft);margin:4px 0 10px;font-size:15px}
+  .sum{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin:16px 0}
+  .sum a{display:block;background:var(--card);border:1px solid var(--line);border-radius:10px;padding:12px 14px;text-decoration:none;color:var(--ink)}
+  .sum b{display:block;font-size:26px;line-height:1.2}
+  .sum span{color:var(--soft);font-size:14px}
+  .tip{background:var(--orange-bg);border-left:5px solid var(--orange);border-radius:8px;padding:12px 16px;margin:14px 0}
+  .tip ol,.tip ul{margin:6px 0 0;padding-left:22px}
+  .tip.green{background:var(--green-bg);border-color:var(--green)}
+  .tip.red{background:var(--red-bg);border-color:var(--red)}
+  .tip.blue{background:var(--blue-bg);border-color:var(--blue)}
+  /* 일정 띠 */
+  .flow{display:grid;grid-template-columns:repeat(auto-fit,minmax(128px,1fr));gap:8px;margin:14px 0 6px;counter-reset:st}
+  .flow div{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:10px 12px;font-size:14px;position:relative}
+  .flow div b{display:block;font-size:15px}
+  .flow div i{font-style:normal;color:var(--soft);font-size:13px;display:block}
+  .flow div.today{border:2px solid var(--orange)}
+  .flow div::before{counter-increment:st;content:counter(st);position:absolute;top:8px;right:10px;color:var(--soft);font-weight:bold}
+  ul.todo{list-style:none;margin:0;padding:0;background:var(--card);border:1px solid var(--line);border-radius:10px}
+  ul.todo li{border-top:1px solid var(--line)}
+  ul.todo li:first-child{border-top:0}
+  ul.todo .row{display:flex;align-items:flex-start}
+  ul.todo label{flex:1;display:flex;gap:10px;padding:10px 4px 10px 14px;cursor:pointer;align-items:flex-start}
+  ul.todo input{margin-top:6px;width:17px;height:17px;flex:none;accent-color:var(--orange)}
+  ul.todo input:checked + span{color:var(--soft);text-decoration:line-through}
+  li.pick label span{cursor:pointer}
+  li.pick label:hover span.txt{text-decoration:underline dotted var(--orange)}
+  .pen{flex:none;margin:8px 10px 0 0;border:1px solid var(--line);background:transparent;color:var(--soft);border-radius:6px;padding:1px 8px;font:13px/1.6 inherit;cursor:pointer}
+  .pen:hover{color:var(--orange);border-color:var(--orange)}
+  li.has-note .pen{background:var(--orange-bg);color:var(--orange);border-color:var(--orange);font-weight:bold}
+  .notebox{display:none;padding:0 14px 12px 41px}
+  li.open .notebox{display:block}
+  .notebox textarea{width:100%;min-height:76px;resize:vertical;border:1px solid var(--orange);border-radius:8px;padding:8px 10px;background:var(--bg);color:var(--ink);font:15px/1.55 inherit}
+  .notebox .hint{color:var(--soft);font-size:13px;margin:4px 0 0}
+  .f{color:var(--soft);font-size:14px}
+  .rec{color:var(--green);font-weight:bold}
+  .warn{color:var(--red);font-weight:bold}
+  .tag{display:inline-block;font-size:12px;border-radius:5px;padding:0 7px;margin-right:6px;font-weight:bold;white-space:nowrap}
+  .t-see{background:var(--blue-bg);color:var(--blue)}
+  .t-pick{background:var(--orange-bg);color:var(--orange)}
+  .t-me{background:var(--green-bg);color:var(--green)}
+  .t-wait{background:var(--gray-bg);color:var(--soft)}
+  .t-you{background:var(--orange);color:#fff}
+  .time{display:inline-block;font-size:12px;color:var(--soft);border:1px solid var(--line);border-radius:5px;padding:0 6px;margin-left:4px;white-space:nowrap}
+  ol.opts{margin:4px 0 0;padding-left:22px}
+  ol.opts li{margin:2px 0;border:0}
+  ol.opts ul{margin:2px 0;padding-left:18px}
+  code{background:var(--gray-bg);border-radius:4px;padding:0 5px;font-size:14px;word-break:break-all}
+  table.mini{border-collapse:collapse;width:100%;font-size:14px;margin:6px 0}
+  table.mini th,table.mini td{border:1px solid var(--line);padding:5px 8px;text-align:left;vertical-align:top}
+  table.mini th{background:var(--gray-bg)}
+  .bar{position:sticky;bottom:0;display:flex;gap:10px;align-items:center;justify-content:flex-end;margin-top:24px;padding:18px 0 12px;background:linear-gradient(transparent,var(--bg) 45%)}
+  .bar button{border:0;border-radius:8px;padding:9px 16px;background:var(--orange);color:#fff;font:bold 15px/1.4 inherit;cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,.18)}
+  .bar span{color:var(--soft);font-size:14px;background:var(--card);border-radius:6px;padding:2px 8px}
+  footer{margin-top:40px;color:var(--soft);font-size:14px}
+  details{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:10px 16px}
+  summary{cursor:pointer}
+  details#done{margin:36px 0 0;background:var(--card);border:1px solid var(--line);border-radius:10px;padding:10px 16px}
+  details#done summary{cursor:pointer;font-weight:bold;font-size:17px}
+  ul.donelist{list-style:none;margin:8px 0 4px;padding:0}
+  ul.donelist li{border-top:1px solid var(--line);padding:10px 0}
+  ul.donelist li:first-child{border-top:0}
+  ul.donelist .how{display:block;color:var(--soft);font-size:15px;margin-top:4px}
+</style>
+<style>
+  .sev{display:inline-block;font-size:12px;border-radius:5px;padding:0 7px;margin-right:6px;font-weight:bold;white-space:nowrap}
+  .s-hi{background:var(--red);color:#fff}
+  .s-mid{background:var(--orange);color:#fff}
+  .s-lo{background:var(--gray-bg);color:var(--soft)}
+  .s-odd{background:var(--blue-bg);color:var(--blue)}
+  .how{display:block;color:var(--soft);font-size:14px;margin-top:3px}
+  .fix{display:block;font-size:14px;margin-top:3px}
+</style>
+</head>
+<body><main>
+<h1>코드 전체 점검</h1>
+<p class="sub">카치건 (카피바라vs좀비) · 2026-11-11 밤 · 게임에 들어가는 코드 29개 파일 약 8,700줄(저장 · 진행 · 전투 · 결제 · 광고 · 클라우드 · 화면)을 읽고 — 뼈대 움직임·소리 합성 수식은 구조만 — 표 · 8번 AAB 설정 · 배치 자동 시험(<b>165줄 통과 · errors=0 · 예외 0</b>)으로 확인했습니다. 11-07 버그 점검에서 고친 것·"그대로 두기"로 정한 것은 다시 적지 않았습니다. 체크·의견은 이 브라우저에 저장되고 제가 읽어서 이어 갑니다. <b>11-12: 19개 중 11개 고침 — 남은 것 8개.</b></p>
+
+<div class="sum">
+  <a href="#done"><b>11</b><span>고침 (11-12) — 9번에 들어감</span></a>
+  <a href="#mid"><b>4</b><span>보통 — 9번이 나간 뒤</span></a>
+  <a href="#lo"><b>3</b><span>낮음 — 나중</span></a>
+  <a href="#big"><b>1</b><span>구조 메모 (지금은 안 고침)</span></a>
+</div>
+
+<div class="tip">
+  <b>11-12 진행 상황</b>
+  <ul>
+    <li><b>추천 순서 1·2번 묶음 11개를 고쳤습니다</b> — 높음 1(클라우드 비교) · 세이브 판 번호 · 값 정리 · 응답 없음 처리 · 되살리기 보너스 + 작은 것 6개. 내용은 맨 아래 <a href="#done">끝난 것</a></li>
+    <li>자동 시험 <b>182줄 통과 · errors=0</b>(새 17줄) · 안드로이드 기준 컴파일(실제 광고 · 테스트 광고) 통과. <b>폰 반영은 9번 빌드</b></li>
+    <li>아래에 남은 8개는 <b>9번이 나간 뒤</b>에 할 것들입니다. 그중 <b>오류 기록</b>(보통)과 <b>화면 크기</b>(보통)는 고르실 것이 있습니다 — 급하지 않습니다</li>
+  </ul>
+</div>
+
+<div class="tip green">
+  <b>요약</b>
+  <ul>
+    <li><b>게임이 멈추거나 꺼지는 결함은 찾지 못했습니다.</b> 지금 코드(커밋 ff336f5)로 자동 시험 165줄 모두 통과 · 시험 중 예외 0</li>
+    <li>가장 중요한 것은 <b>클라우드 저장</b>입니다. 9번에서 처음 켜지는 기능인데, <b>"어느 쪽이 더 새것인지" 비교가 거꾸로 될 수 있어서 옛 진행이 새 진행을 덮을 수 있습니다</b> (아래 높음 1번). 아직 폰에서는 꺼져 있어 지금 사용자에게는 영향이 없고, 9번에 넣기 전에 고치면 됩니다</li>
+    <li>구조적으로 빠진 것은 <b>"문제가 생겼을 때 알아채는 장치"</b> 쪽입니다 — 세이브 판 번호 · 표 오타 점검 · 옛 세이브 시험 · 폰에서 난 오류 기록. 게임 규칙·전투·결제·광고 코드 자체는 탄탄합니다</li>
+    <li>전부 고쳐도 하루~하루 반 분량입니다. 맨 아래 <a href="#order">추천 순서</a> 참고</li>
+  </ul>
+</div>
+
+<div class="tip blue">
+  <b>읽는 법</b> — 항목마다 <b>무슨 일이 생기나 → 어디가 원인인가(파일:줄) → 추천</b> 순서입니다. 글자를 누르면 의견 칸이 열립니다. 전부 추천대로면 맨 아래 순서대로 진행하겠습니다. <span class="f">"확인 못 함"이라고 적은 것은 코드만 보고 판단했거나 폰·공식 문서로 확인하지 못한 부분입니다.</span>
+</div>
+
+<h2 id="mid">보통 <small>구조적으로 빠진 것 — 문제가 생겼을 때 알아채고 막는 장치</small></h2>
+<ul class="todo">
+
+  <li data-id="s-oldsave"><label><input type="checkbox"><span><span class="tag t-pick">결정</span><span class="sev s-mid">보통</span><span class="txt"><b>"옛 세이브가 새 판에서 열리는지" 시험이 없음</b>
+    <span class="how"><b>무슨 일:</b> 출시 뒤 가장 무서운 사고는 <b>업데이트했더니 기존 사용자의 진행이 안 열리거나 값이 틀어지는 것</b>입니다. 지금 자동 시험 165줄은 전부 "새로 시작한 세이브"로 돌아서, 세이브 칸을 바꾸거나 표 번호(총알 코드 · 코스튬 번호 · 미션 순서)를 바꿨을 때 옛 세이브가 깨지는지는 잡지 못합니다.</span>
+    <span class="fix"><span class="rec">추천</span> 출시한 판(8번)으로 조금 진행한 세이브 글자를 <code>Assets/Scripts/Editor/OldSaves/save_v8.json</code>으로 보관 → 시험에서 새 코드로 읽어 <b>스테이지 · 다이아 · 장착 총알 · 코스튬 · 산 상품</b>이 그대로인지 확인(1줄). 새 판을 낼 때마다 한 개씩 추가. 1~2시간</span></span></span></label></li>
+
+  <li data-id="s-table"><label><input type="checkbox"><span><span class="tag t-pick">결정</span><span class="sev s-mid">보통</span><span class="txt"><b>표 오타를 잡는 점검 단계가 없음</b>
+    <span class="how"><b>무슨 일:</b> 표(xlsx)에 잘못 적어도 게임은 조용히 넘어가거나, 드물게 멈춥니다. 예: 보스 Id 가 좀비 표에 없으면 <b>말없이 첫 번째 좀비</b>가 보스로 나옴(<code>Tables.cs:496</code>) · 좀비 줄은 있는데 그림 파일이 없으면 <b>그 좀비가 나올 차례마다 오류가 나서 스테이지가 멈춤</b>(<code>Art.cs:193</code>) · 총알 Type 오타는 총알 번호가 틀어짐(<code>Tables.cs:416</code>) · 말풍선 Reply_To 가 없는 대사 Id 를 가리키면 답이 영영 안 나옴. 지금은 새 기능을 넣을 때마다 시험 줄을 따로 써서 막고 있는데, <b>표를 직접 고치실 때(대사 추가처럼)</b>는 그 그물에 안 걸릴 수 있습니다.</span>
+    <span class="fix"><span class="rec">추천</span> 표 변환(xlsx → csv) 끝에 자동으로 도는 <b>표 점검</b> 하나: 보스 Id · 좀비 그림/뼈대 파일 · 총알 종류 · 코스튬/보급품 그림 · Reply_To · 스테이지 수(5의 배수) · 영어 빈 칸 → 틀리면 Unity 콘솔에 빨간 줄로 "어느 표 몇째 줄" + 자동 시험 1줄. 반나절</span></span></span></label></li>
+
+  <li data-id="s-err"><label><input type="checkbox"><span><span class="tag t-pick">결정</span><span class="sev s-mid">보통</span><span class="txt"><b>폰에서 난 코드 오류를 알 방법이 없음</b>
+    <span class="how"><b>무슨 일:</b> 게임 코드 오류(C# 예외)는 앱을 끄지 않습니다. 그래서 Play Console 의 "비정상 종료"에 안 잡힙니다. 그런데 게임 진행 코드 안에서 오류가 나면 <b>매 프레임 같은 오류가 반복</b>되어 사용자에게는 "좀비가 안 나와요 · 버튼이 안 눌려요"로 보이고, 저희는 리뷰 글만으로 추측해야 합니다. (Firebase 는 12-11 에 다시 보기로 정하셨음)</span>
+    <span class="fix"><span class="rec">추천</span> 가벼운 것부터: 오류가 나면 <b>마지막 오류 5개(글자 + 판 번호 + 스테이지)</b>를 기기에 적어 두고, 설정 창에 작은 <b>[오류 기록 복사]</b> 줄(오류가 있을 때만 보임)을 둠 → 문의 메일에 붙여 달라고 안내. 서버·SDK 없이 30줄. Firebase 를 넣게 되면 그때 바꿈.
+    <ol class="opts"><li>추천: 위 "오류 기록 복사" 만</li><li>Unity Cloud Diagnostics(무료 · Unity 계정 연결 필요 · 개인정보처리방침에 한 줄 추가)</li><li>12-11 Firebase 때까지 그대로</li></ol></span></span></span></label></li>
+
+  <li data-id="r-resize"><label><input type="checkbox"><span><span class="tag t-pick">결정</span><span class="sev s-mid">보통</span><span class="txt"><b>실행 중에 화면 크기가 바뀌면 배치를 다시 맞추지 않음 (분할 화면 · 팝업 화면 · 접는 폰)</b>
+    <span class="how"><b>무슨 일:</b> 카메라 크기와 UI 기준(폭/높이 맞춤)을 <b>켤 때 한 번만</b> 계산합니다(<code>Boot.cs:44</code> · <code>Field.cs:51</code>). 8번 AAB 는 창 크기 바꾸기를 허용(<code>resizeableActivity=true</code>)하고 있어서, 게임을 켠 채 분할 화면·팝업 화면으로 바꾸거나 접는 폰을 펴면 맵·카피바라 자리·UI 가 처음 비율 기준으로 남습니다. 방치형은 영상 보면서 분할 화면으로 켜 두는 일이 꽤 있습니다. <span class="f">실제로 어떻게 깨져 보이는지는 폰에서 확인 못 함 (노치 영역은 매 프레임 다시 맞추고 있음)</span></span>
+    <span class="fix"><span class="rec">추천</span> 먼저 폰에서 분할 화면으로 한 번 봐 주시고(아래 1·2 중 고르기):
+    <ol class="opts"><li>추천: 화면 크기가 바뀌면 카메라·UI 기준·분대 자리를 다시 계산 (15줄 + 시험 1줄)</li><li>분할 화면 금지(매니페스트에서 창 크기 고정) — 간단하지만 태블릿·접는 폰 사용자는 불편</li></ol></span></span></span></label></li>
+</ul>
+
+<h2 id="lo">낮음 <small>작은 결함 · 방어 코드</small></h2>
+<ul class="todo">
+
+  <li data-id="l-upload"><label><input type="checkbox"><span><span class="tag t-pick">결정</span><span class="sev s-lo">낮음</span><span class="txt"><b>클라우드 올리기가 켜 둔 내내 1분마다</b>
+    <span class="how">"바뀐 게 있으면 1분마다"인데(<code>Cloud.cs:211 · 323</code>), 방치형이라 골드가 늘 바뀌어서 사실상 켜 둔 동안 계속 1분마다 통신합니다. 8시간 켜 두면 480번. 데이터·배터리를 조금씩 씁니다. <span class="f">구글 쪽 횟수 제한이 있는지는 공식 문서에서 확인 못 함</span></span>
+    <span class="fix"><span class="rec">추천</span> 5분마다 + 앱을 내릴 때 + 스테이지 5개(챕터) 넘길 때 (숫자 하나 + 3줄)</span></span></span></label></li>
+
+  <li data-id="l-ump"><label><input type="checkbox"><span><span class="tag t-pick">결정</span><span class="sev s-lo">낮음</span><span class="txt"><b>(유럽에 낼 때만) 광고 동의를 다시 고르는 버튼이 없음</b>
+    <span class="how">유럽 사용자에게는 켤 때 광고 동의 창이 뜨는데, 나중에 마음을 바꿀 수 있는 메뉴(설정 창의 "개인정보 설정")가 게임에 없습니다. <span class="f">구글 정책에서 꼭 있어야 하는지는 공식 문서 확인 못 함 — 유럽 국가를 출시 국가에 넣기 전에 확인하겠습니다. 한국만 출시면 해당 없음</span></span>
+    <span class="fix">출시 국가를 넓힐 때 같이 보기</span></span></span></label></li>
+
+  <li data-id="l-end"><label><input type="checkbox"><span><span class="tag t-pick">결정</span><span class="sev s-lo">낮음</span><span class="txt"><b>표 끝(750 스테이지 · 강화 1,500레벨)을 넘은 뒤에는 같은 계산을 프레임마다 여러 번 다시 함</b>
+    <span class="how">표 안에서는 줄을 바로 꺼내 쓰지만, 표 끝을 넘으면 물어볼 때마다 표를 처음부터 훑고 새 줄을 계산해 만듭니다(<code>Tables.cs:284~306 · 317~332</code>). 화면·진행 코드가 한 프레임에 여러 번 묻습니다. 150챕터 뒤 이야기라 지금은 영향 없음.</span>
+    <span class="fix"><span class="rec">추천</span> 마지막에 계산한 줄 하나를 기억해 두기 (6줄) — 급하지 않음</span></span></span></label></li>
+</ul>
+
+<h2 id="big">구조 메모 <small>지금 고칠 필요는 없지만 알고 계시면 좋은 것</small></h2>
+<ul class="todo">
+  <li data-id="g-big"><label><input type="checkbox"><span><span class="tag t-pick">결정</span><span class="sev s-lo">메모</span><span class="txt"><b>한 파일에 일이 많이 몰려 있음: GameManager 981줄 · HUD 789줄 · PlayTest 1,706줄</b>
+    <span class="how">GameManager 하나가 스테이지 진행 · 던전 3종 · 뽑기/합성/장착 · 상점 · 미션 · 방치 보상 · 출석을 다 맡고 있습니다. 지금은 자동 시험 165줄이 지켜 주고 있어 동작에 문제는 없지만, 기능을 하나 더 넣을 때마다 "다른 규칙을 건드리지 않았나"를 확인할 범위가 넓어집니다.</span>
+    <span class="fix"><span class="rec">추천</span> 9번이 나간 뒤 다음 큰 기능을 넣기 전에, <b>동작은 그대로 두고 파일만 나누기</b>: GameManager → 스테이지 / 던전 / 총알 / 보상(미션·출석·방치) · PlayTest → 주제별. 코드를 옮기기만 하고 시험이 그대로 통과하는지 확인하는 방식이라 위험이 낮습니다. 반나절</span></span></span></label></li>
+</ul>
+
+<h2>확인했고 문제없는 것</h2>
+<details><summary>펼쳐 보기 (12가지)</summary>
+<ul>
+  <li>배치 자동 시험 165줄 통과 · errors=0 · 시험 중 예외 0 (2026-11-11 23:2x, 커밋 ff336f5) — 시험이 건드린 파일 없음</li>
+  <li>전투: 총알이 대상 목록을 도는 중에 좀비가 추가·삭제되지 않음(폭발·드럼통은 복사본으로 돌고, 지우기는 프레임 끝) · 물러나는 보스는 맞지 않음</li>
+  <li>화면 다시 만들기(언어 바꾸기 · 클라우드 불러오기) 뒤 남는 것 없음: 총알 풀은 지워진 것을 건너뜀 · 대상 목록 · 상점/HUD 의 결제 알림 구독 해제</li>
+  <li>결제: 구글 서명 확인 → 주문 번호 기억 → 지급·저장 → "지급 끝" 순서 · 표에 없는 상품은 지급하지 않고 남겨 둠 · 주문 번호 100개까지만 보관</li>
+  <li>광고: 보상은 끝까지 봤을 때 한 번만 · 버튼 연타로 두 번 뜨지 않음 · 실패하면 10초~5분 간격으로 다시 · 광고 중 게임 소리 멈춤</li>
+  <li>던전: 결과 두 번 받기 안 됨 · 시간 끝과 마지막 처치가 겹쳐도 한 번만 끝남 · 포기 확인 창을 띄운 채 끝나도 문제없음</li>
+  <li>스레드: 보스 배경음 "소리 값 계산"만 따로 돌고 Unity 물체는 건드리지 않음(난수도 따로)</li>
+  <li>비밀 정보: 서명 키 · 비밀번호 · 라이선스 키 파일은 git 에 없음(.gitignore 확인) — 파일 내용은 열어 보지 않았습니다</li>
+  <li>설정 표: 코드가 기본값 없이 읽는 Global_Config 키는 모두 표에 있음</li>
+  <li>8번 AAB 매니페스트: 권한(인터넷 · 광고 ID · 결제) · 게임으로 표시됨 · 세로 고정</li>
+  <li>총알 메뉴가 열렸다가 다시 잠기는 경우: 다이아를 100 아래로 쓸 수 있는 곳이 사실상 뽑기뿐이라(뽑으면 영구 열림) 생기지 않음</li>
+  <li>미션 칸(세이브 8칸) ≥ 미션 수(표 5개) · 표 끝 너머 보스 순환 계산이 표 안으로 돌아옴</li>
+</ul>
+</details>
+
+<h2>이번에 보지 않은 것</h2>
+<ul>
+  <li>폰에서의 실제 동작(화면 크기 바뀜 · 자동 백업 · 광고 동의 창) — 코드와 AAB 설정으로만 판단</li>
+  <li>가져온 플러그인 코드(Google Play Games · 광고 · 결제 SDK) 안쪽</li>
+  <li>빌드 도구(BuildAab 등 Editor 폴더)와 파이썬 도구(tools/) — 게임에 들어가지 않는 코드라 훑어만 봄</li>
+  <li>뼈대 움직임 수식(Rig) · 소리 합성 수식(AudioManager) — 결과는 11-04 · 10-26 에 눈·귀로 확인한 부분이라 구조만 봄</li>
+  <li>밸런스(숫자가 적절한지) — "밸런스는 맨 마지막" 원칙대로 제외</li>
+</ul>
+
+<h2 id="order">남은 순서</h2>
+<ol>
+  <li><b>9번이 나간 뒤</b>: 표 점검 · 옛 세이브 시험(8번 세이브 보관) · 오류 기록 · 화면 크기(폰에서 먼저 확인) · 클라우드 올리기 간격</li>
+  <li><b>나중</b>: 파일 나누기 · 표 끝 너머 계산 · 유럽 광고 동의</li>
+</ol>
+<p class="f">9번 빌드 전에 필요한 코드 수정은 끝났습니다. 9번에 무엇을 담을지(새 좀비 44종·말풍선을 같이 넣을지)는 아직 정하지 않으신 것 — 9번을 굽기 전에 여쭙겠습니다.</p>
+
+<details id="done">
+  <summary>끝난 것 — 11-12 에 고친 11개 (펼쳐 보기)</summary>
+  <p class="note">추천 순서 1번(9번 빌드 전 묶음 5개)과 2번(작은 것 6개). 자동 시험 182줄 errors=0 · 폰 반영은 9번.</p>
+  <ul class="donelist">
+  <li><span class="sev s-hi">높음</span><b>클라우드 "더 새것" 비교가 거꾸로 될 수 있음 → 옛 진행이 새 진행을 덮어씀</b>
+    <span class="how">같은 진행이면 "저장 시각"이 아니라 <b>켤 때 세이브에 적혀 있던 시각</b>과 <b>마지막으로 클라우드와 맞춘 시각</b>으로 비교합니다. 클라우드가 내가 마지막에 맞춘 그대로면 → 이 기기 것을 올림 · 다른 기기가 올렸고 이 기기에서 그 뒤로 한 게 없으면 → 클라우드를 받음 · 양쪽 다 했으면(맞춘 뒤 2분 30초 넘게) → 고르기 창. 켜자마자 출석 [받기]·자동 저장이 먼저 돼도 옛 진행이 새 진행을 덮지 않습니다.</span>
+    <span class="how"><b>확인:</b> 시험 5줄 (옛 진행으로 켜서 바로 저장 → 새 진행을 받음 · 맞춘 그대로 → 올림 · 양쪽 다 진행 → 고르기 창 · 내가 내릴 때 올린 그대로 → 창 없음) · <code>Cloud.cs CloudSync.Compare · SaveData.loadedSavedAt</code></span></li>
+  <li><span class="sev s-mid">보통</span><b>세이브에 "판 번호"가 없음 → 옛 판 앱이 새 판 세이브를 받으면 새 칸이 조용히 사라짐</b>
+    <span class="how">세이브에 <b>판 번호(ver, 지금 1)</b>를 넣었습니다. 클라우드 세이브가 내 앱보다 높은 판이면 받지도 올리지도 않고 "게임을 업데이트해 주세요"를 띄웁니다(알림 + 클라우드 창). 문서에는 "버전 코드를 그대로"라고 적었지만, <b>세이브 칸이 바뀔 때만 올리는 따로 번호</b>로 했습니다 — 칸이 안 바뀐 업데이트에서 옛 판 폰이 괜히 막히지 않게. 칸을 바꾸고 번호를 안 올리면 자동 시험이 잡아 줍니다(칸 목록 지문).</span>
+    <span class="how"><b>확인:</b> 시험 3줄 (판 번호 · 칸 지문 · 더 새 판의 클라우드 세이브 → 받지도 올리지도 않음) · <code>SaveData.Version · FieldSig · CloudSync.TooNew</code></span></li>
+  <li><span class="sev s-lo">낮음</span><b>자동강화를 "되살릴 때"도 보너스 다이아 500 을 또 줌</b>
+    <span class="how">구글 구매 기록으로 되살릴 때는 보너스 다이아 500 을 다시 주지 않습니다.</span>
+    <span class="how"><b>확인:</b> 시험 1줄 · <code>Iap.Grant(restore)</code></span></li>
+  <li><span class="sev s-lo">낮음</span><b>클라우드 응답이 끝내 안 오면 그 실행 동안 클라우드가 멈춤</b>
+    <span class="how">읽기·쓰기 응답이 20초 안에 없으면 실패로 처리하고 다시 할 수 있게 했습니다. 늦게 온 응답은 무시 · 앱을 내려 둔 시간은 세지 않습니다.</span>
+    <span class="how"><b>확인:</b> 시험 1줄 (응답 없음 흉내) · <code>CloudSync.Tick · TimeoutSec</code></span></li>
+  <li><span class="sev s-lo">낮음</span><b>세이브를 읽을 때 값이 말이 되는지는 안 봄</b>
+    <span class="how">세이브를 읽을 때 값도 봅니다: 음수·숫자 아님 → 0 · 표에 없는 총알 번호 → 빈칸(장착이 다 비면 기본 총알) · 가진 목록에 없는 코스튬 → 기본 · 장착 칸은 앞으로 당김. 정상 세이브는 그대로입니다. <span class="f">"숫자 아님(NaN)" 세이브는 읽히고 0 으로 정리되는 것을 시험에서 확인</span></span>
+    <span class="how"><b>확인:</b> 시험 2줄 + 참고 1줄 · <code>SaveData.Fix</code></span></li>
+  <li><span class="sev s-lo">낮음</span><b>설치하고 처음 켤 때 인터넷이 없으면 그 실행 동안 광고가 안 나옴</b>
+    <span class="how">[광고] 버튼을 눌렀는데 광고가 아직 시작 전이면 동의 확인부터 다시 합니다. <span class="f">폰 전용 코드라 안드로이드 기준 컴파일까지만 확인 — 실제 동작(비행기 모드로 처음 켬 → 인터넷 켜고 광고 버튼)은 9번 개발용 APK 에서 확인할 것</span></span>
+    <span class="how"><b>확인:</b> 안드로이드 컴파일(실제 광고 · 테스트 광고) · <code>AdService.RequestConsent</code></span></li>
+  <li><span class="sev s-lo">낮음</span><b>다이아를 쓰거나 받은 직후 바로 저장소에 쓰지 않음</b>
+    <span class="how">뽑기 · 분해 · 보급품/코스튬/골드 구매 · 미션 보상 뒤에는 2초 안에 저장소에 씁니다(연달아 눌러도 매번 쓰지는 않음).</span>
+    <span class="how"><b>확인:</b> 시험 1줄 · <code>SaveData.SaveSoon</code></span></li>
+  <li><span class="sev s-lo">낮음</span><b>방치 보상 창이 떠 있는 채로 앱이 꺼지면 그 보상은 사라짐</b>
+    <span class="how">방치 보상 창을 띄울 때 "못 받은 시간"을 세이브에 적어 둡니다 → 창이 뜬 채로 앱이 꺼져도 다음에 켤 때 창이 다시 뜹니다. 받으면 0 (두 번 주지 않음).</span>
+    <span class="how"><b>확인:</b> 시험 3줄 · <code>SaveData.offlinePendingSec · GameManager.CheckOffline</code></span></li>
+  <li><span class="sev s-lo">낮음</span><b>언어를 바꾸는 순간 날아가던 돈이 안 들어옴</b>
+    <span class="how">언어를 바꾸기 전에 날아가던 돈을 먼저 넣습니다.</span>
+    <span class="how"><b>확인:</b> 코드 1줄 (기존 시험 통과) · <code>Loc.cs</code></span></li>
+  <li><span class="sev s-lo">낮음</span><b>총알을 끄는 중에 창이 닫히면 끌던 그림이 남을 수 있음</b>
+    <span class="how">총알 관리 창을 열 때 끌던 그림과 흐려진 아이콘을 정리합니다.</span>
+    <span class="how"><b>확인:</b> 코드 5줄 (기존 시험 통과) · <code>WeaponPopup.Open</code></span></li>
+  <li><span class="sev s-lo">낮음</span><b>소수점을 쉼표로 쓰는 나라의 폰에서 숫자 표시가 조금 다름 (해외 출시 때)</b>
+    <span class="how">숫자 표기와 그림 좌표 읽기를 나라 설정과 상관없이(소수점 = 점) 하게 했습니다.</span>
+    <span class="how"><b>확인:</b> 시험 1줄 (독일 설정에서 1.5k) · <code>Num.F · Art.cs</code></span></li>
+  </ul>
+</details>
+
+<div class="bar"><span id="stat"></span><button type="button" id="copyNotes">의견 모아 복사</button></div>
+<footer>체크·의견은 이 브라우저(localStorage, 키 <code>kachigun-code-1111</code>)에 저장됩니다. 제가 읽을 때는 <code>python tools/todo_checks.py 코드_점검.html</code>. 못 읽을 때는 [의견 모아 복사] → 대화창에 붙여 넣기.</footer>
+</main>
+<script>
+(function(){
+  // 저장 형식: {"c":{항목id:true}, "n":{항목id:"의견"}} — 항목id 는 li 의 data-id
+  var KEY='kachigun-code-1111', st={c:{},n:{}};
+  try{ var v=JSON.parse(localStorage.getItem(KEY)||'{}'); st.c=v.c||{}; st.n=v.n||{}; }catch(e){}
+  function save(){ try{ localStorage.setItem(KEY,JSON.stringify(st)); }catch(e){} stat(); }
+  var items=document.querySelectorAll('ul.todo li[data-id]');
+  function stat(){
+    var c=0,n=0;
+    items.forEach(function(li){ if(st.c[li.dataset.id]) c++; if((st.n[li.dataset.id]||'').trim()) n++; });
+    document.getElementById('stat').textContent='체크 '+c+' / '+items.length+' · 의견 '+n;
+  }
+  items.forEach(function(li){
+    var id=li.dataset.id, label=li.querySelector('label'), cb=li.querySelector('input');
+    var pick=!!li.querySelector('.t-pick');
+    if(pick) li.classList.add('pick');
+    var row=document.createElement('div'); row.className='row';
+    li.insertBefore(row,label); row.appendChild(label);
+    var pen=document.createElement('button'); pen.type='button'; pen.className='pen'; pen.textContent='✎ 의견';
+    row.appendChild(pen);
+    var box=document.createElement('div'); box.className='notebox';
+    var ta=document.createElement('textarea');
+    ta.placeholder=pick?'어떻게 할지 적어 주세요 (예: 1번 / 추천대로 / 그대로 둬)':'의견이 있으면 적어 주세요';
+    var hint=document.createElement('div'); hint.className='hint'; hint.textContent='적는 대로 이 브라우저에 저장됩니다.';
+    box.appendChild(ta); box.appendChild(hint); li.appendChild(box);
+    cb.checked=!!st.c[id];
+    ta.value=st.n[id]||'';
+    function mark(){ li.classList.toggle('has-note',!!ta.value.trim()); pen.textContent=ta.value.trim()?'✎ 의견 있음':'✎ 의견'; }
+    mark();
+    if(ta.value.trim()) li.classList.add('open');
+    cb.addEventListener('change',function(){ st.c[id]=cb.checked; save(); });
+    ta.addEventListener('input',function(){ if(ta.value.trim()) st.n[id]=ta.value; else delete st.n[id]; mark(); save(); });
+    function toggle(){ li.classList.toggle('open'); if(li.classList.contains('open')) ta.focus(); }
+    pen.addEventListener('click',toggle);
+    if(pick){
+      // 결정 항목: 글자를 누르면 의견 칸 (체크는 체크 칸을 눌러야 바뀜)
+      label.addEventListener('click',function(e){ if(e.target===cb) return; e.preventDefault(); toggle(); });
+    }
+  });
+  document.getElementById('copyNotes').addEventListener('click',function(){
+    var out=[];
+    items.forEach(function(li){
+      var id=li.dataset.id, note=(st.n[id]||'').trim(), on=!!st.c[id];
+      if(!note && !on) return;
+      var t=li.querySelector('label > span').textContent.replace(/\s+/g,' ').trim();
+      out.push((on?'[V] ':'[ ] ')+t.slice(0,80)+(note?'\n    → '+note.replace(/\n/g,'\n      '):''));
+    });
+    var text=out.length?out.join('\n'):'(체크·의견 없음)';
+    function fallback(){ var t=document.createElement('textarea'); t.value=text; document.body.appendChild(t); t.select(); try{document.execCommand('copy');}catch(e){} t.remove(); done(); }
+    function done(){ var b=document.getElementById('copyNotes'); b.textContent='복사했어요'; setTimeout(function(){ b.textContent='의견 모아 복사'; },1500); }
+    if(navigator.clipboard&&navigator.clipboard.writeText) navigator.clipboard.writeText(text).then(done,fallback); else fallback();
+  });
+  stat();
+})();
+</script>
+</body></html>

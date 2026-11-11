@@ -60,6 +60,20 @@ namespace KachiGun
         // 클라우드 저장 (11-07): 같은 진행인지(saveId) · 어느 쪽이 새것인지(savedAt) 비교
         public string saveId = "";               // 이 진행의 번호 (처음 시작할 때 만듦)
         public long savedAt;                     // 마지막 저장 시각 (유닉스 초)
+        /// <summary>11-12 클라우드 비교 기준: 켤 때(또는 클라우드와 마지막으로 맞춘 때) 세이브에 적혀 있던 저장 시각.
+        /// savedAt 은 저장할 때마다 "지금"이 되어서, 켜자마자 출석을 받거나 자동 저장이 한 번 돌면 며칠 전 진행도 "더 새것"으로 보였음</summary>
+        [NonSerialized] public long loadedSavedAt;
+        /// <summary>위 값을 잡은 때 (Time.realtimeSinceStartup) — 그 뒤로 이 기기에서 얼마나 했는지</summary>
+        [NonSerialized] public float loadedRealtime;
+
+        // 11-12 세이브 판 번호: 세이브 칸을 더하거나 뜻을 바꾸면 Version 을 +1 (PlayTest 가 칸 목록 지문 FieldSig 로 잊지 않게 잡아 줌).
+        //   옛 판 앱은 모르는 칸을 읽을 때 버리므로, 클라우드에서 더 높은 판의 세이브를 만나면 받지도 올리지도 않고 업데이트 안내만 (CloudSync.TooNew)
+        public const int Version = 1;
+        public const uint FieldSig = 1422927350;
+        public int ver;                          // 이 세이브를 마지막으로 쓴 앱의 세이브 판 (0 = 판 번호가 없던 1.0.8 까지)
+
+        // 11-12 방치 보상 창을 띄워 놓고 못 받은 시간(초) — 창이 뜬 채로 앱이 꺼져도 다음에 켤 때 이어서 줌 (받으면 0)
+        public double offlinePendingSec;
 
         // ---------- 불러오기·저장 ----------
         static SaveData cur;
@@ -87,8 +101,13 @@ namespace KachiGun
             d ??= new SaveData();
             d.Fix();
             d.loadedLastSeen = d.lastSeen;
+            d.loadedSavedAt = d.savedAt;
+            d.loadedRealtime = Time.realtimeSinceStartup;
             return d;
         }
+
+        /// <summary>세이브 글자 → 데이터 + 값 정리 (못 읽으면 null) — 시험·점검용</summary>
+        public static SaveData ParseFixed(string json) { var d = Parse(json); d?.Fix(); return d; }
 
         /// <summary>세이브 글자 → 데이터 (못 읽으면 null)</summary>
         public static SaveData Parse(string json)
@@ -111,6 +130,8 @@ namespace KachiGun
             // 방치 보상은 이 기기에서 마지막으로 본 시각 기준으로만 (클라우드 저장 시각으로 또 주지 않게)
             d.lastSeen = Math.Max(d.lastSeen, cur != null ? cur.lastSeen : 0);
             d.loadedLastSeen = 0;
+            d.loadedSavedAt = d.savedAt;                       // 클라우드에 적혀 있던 저장 시각 (아래 Save 가 savedAt 을 지금으로 바꾸기 전)
+            d.loadedRealtime = Time.realtimeSinceStartup;
             cur = d;
             d.Save();
             Dirty = false;
@@ -119,22 +140,53 @@ namespace KachiGun
 
         public string ToJson() => JsonUtility.ToJson(this);
 
+        static double Clean(double v) => double.IsNaN(v) || double.IsInfinity(v) || v < 0 ? 0 : v;
+
+        /// <summary>총알 번호가 쓸 수 있는 값인지 (-1 = 빈칸). 표에 없는 종류·등급이면 화면이 그 줄을 못 읽어 멈춤</summary>
+        static bool ValidCode(int c) => c == -1 || (c >= 0 && c % 10 < Tables.Types.Length && Tables.Weapon(c) != null);
+
         void Fix()
         {
+            // 11-12 값 정리: 칸 개수뿐 아니라 값이 말이 되는지도 (클라우드로 다른 기기·다른 판의 세이브가 들어올 수 있음)
+            inv ??= new(); slots ??= new(); skins ??= new(); challengeCleared ??= new(); supplies ??= new();
+            slotLv ??= new(); missionTier ??= new(); iapOrders ??= new();
+            ticketDay ??= ""; attendDay ??= ""; saveId ??= "";
+            gold = Clean(gold); gems = Clean(gems); offlinePendingSec = Clean(offlinePendingSec);
+            stage = Math.Max(0, stage); kills = Math.Max(0, kills); bestEver = Math.Max(bestEver, stage);
+            lvAtk = Math.Max(0, lvAtk); lvSpd = Math.Max(0, lvSpd); lvGold = Math.Max(0, lvGold);
+            mineTickets = Math.Max(0, mineTickets); bossTickets = Math.Max(0, bossTickets); bossLv = Math.Max(0, bossLv);
+            attendCount = Math.Max(0, attendCount); adGemUsed = Math.Max(0, adGemUsed);
+
             while (inv.Count < InvSize) inv.Add(-1);
             while (slots.Count < SlotCount) slots.Add(-1);
+            if (slots.Count > SlotCount) slots.RemoveRange(SlotCount, slots.Count - SlotCount);
+            Tables.Load();
+            if (Tables.Weapons.Count > 0)   // 표를 못 읽었을 때 총알을 다 지우지 않게
+            {
+                for (int i = 0; i < inv.Count; i++) if (!ValidCode(inv[i])) inv[i] = -1;
+                for (int i = 0; i < slots.Count; i++) if (!ValidCode(slots[i])) slots[i] = -1;
+            }
+            var eq = slots.FindAll(x => x >= 0);                // 리더 칸(0)이 비지 않게 앞으로 당김 (GameManager.CompactSlots 와 같음)
+            for (int i = 0; i < slots.Count; i++) slots[i] = i < eq.Count ? eq[i] : -1;
             while (slotLv.Count < SlotCount) slotLv.Add(0);
             if (!skins.Contains(0)) skins.Insert(0, 0);
+            if (!skins.Contains(skin)) skin = 0;                // 가진 목록에 없는 코스튬을 입고 있으면 기본으로
             bool any = false;
             foreach (var s in slots) if (s >= 0) any = true;
             if (!any) slots[0] = Tables.Code(0, "single");   // 처음 = D 리볼버 하나
             while (missionTier.Count < 8) missionTier.Add(0);
+            for (int i = 0; i < missionTier.Count; i++) if (missionTier[i] < 0) missionTier[i] = 0;
             if (firstPlay == 0) firstPlay = Now;
             if (lang != L.Ko && lang != L.En) lang = L.Ko;
             if (string.IsNullOrEmpty(saveId)) saveId = Guid.NewGuid().ToString("N");
         }
 
         static float lastFlush = -999f;
+        static bool flushSoon;
+
+        /// <summary>11-12 다이아를 쓰거나 받은 직후: 메모리에 바로 저장하고, 저장소 쓰기는 다음 자동 저장(5초 안) 때 —
+        /// 뽑기를 연달아 눌러도 저장소를 매번 쓰지 않으면서, 앱이 갑자기 죽어도 잃는 건 몇 초</summary>
+        public void SaveSoon() { flushSoon = true; Save(false); }
 
         /// <summary>flush = 폰 저장소에 바로 씀. 11-08: 5초마다 하는 자동 저장은 flush=false — 저장소 쓰기는 30초마다만
         /// (앱을 나가거나 끌 때 · 보상·구매 같은 저장은 그대로 바로 씀)</summary>
@@ -143,11 +195,12 @@ namespace KachiGun
             // 11-07: 마지막으로 본 시각은 앞으로만 — 폰 시간을 뒤로 돌렸다 되돌리면 오래 비운 것처럼 계산돼 방치 8시간을 계속 받았음
             lastSeen = Math.Max(lastSeen, Now);
             savedAt = Now;
+            ver = Math.Max(ver, Version);
             string json = ToJson();
             PlayerPrefs.SetString(Key, json);
             float t = Time.realtimeSinceStartup;
             if (t - lastBak >= 60f || t < lastBak) { PlayerPrefs.SetString(BakKey, json); lastBak = t; }
-            if (flush || t - lastFlush >= 30f || t < lastFlush) { PlayerPrefs.Save(); lastFlush = t; }
+            if (flush || t - lastFlush >= (flushSoon ? 2f : 30f) || t < lastFlush) { PlayerPrefs.Save(); lastFlush = t; flushSoon = false; }
             Dirty = true;
         }
 
