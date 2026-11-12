@@ -53,6 +53,7 @@
   @media(max-width:700px){table{font-size:13px} .how table{display:block;overflow-x:auto}}
 </style></head><body><main>
 <h1>남은 작업 정리 — 앱 이전 · 결제 · 구글 애즈 광고 <small style="font-size:15px;color:var(--soft)">상세 판</small></h1>
+<p class="note" style="background:var(--orange-bg);border-radius:8px;padding:6px 10px"><b>2026-11-12 (목) 밤 — 11번 (1.0.11) AAB 구움</b>: 쿠폰 · 다이아 부족 창 · 새 버전 알림 · 클라우드 경고 — <a href="#build11">올리는 순서 · 출시 노트 [복사]</a></p>
 <p class="note" style="background:var(--orange-bg);border-radius:8px;padding:6px 10px"><b>2026-11-12 (목) 늦은 밤 — 10번 (1.0.10) 출시 완료</b>: "지금 할 일" 맨 위에 다음 순서(폰 확인 → 캠페인 [사용 설정] → 2주 지켜보기)를 넣었습니다. 체크 키는 그대로입니다.</p>
 <p class="note" style="background:var(--green-bg);border-radius:8px;padding:6px 10px"><b>2026-11-12 (목) 밤 고침 — 구글 애즈 가입 화면을 Chrome 으로 확인</b>: 문서와 다른 곳 10군데를 <a href="#ads-diff">"구글 애즈 화면이 문서와 다른 곳"</a> 표로 모으고 g-onboard · g-pay · g-camp-draft · g-link · g-conv · 참고 표를 실제 화면대로 고쳤습니다. 유튜브 새 판(g-yt3) · 스토어 설명 글(s-desc)은 확인 끝 → 맨 아래로.<br><b>같은 날 낮 고침 — 앱 이전 끝남</b>(Chrome 확인). "지금 할 일" · "지금 상태" · ② 를 오늘 기준으로 바꿨습니다. 항목 · 체크 키는 그대로입니다.</p>
 <p class="note">카치건 (카피바라 vs 좀비) · <b>2026-11-10 밤 상세 판 — 앱 이전 완료 예정 11-12 (목) 기준</b>. 항목마다 <b>준비물 → 순서 → 끝난 표시 → 막히면</b> 을 적었습니다. 항목 · 체크 키는 지난 판(11-10 밤)과 같습니다. <b>체크하면 그 자리에서 취소선 + "확인 대기" → 제가 확인해서 문제없으면 맨 아래로 옮깁니다.</b> 날짜는 구글 처리 · 검토가 보통 속도일 때의 예상이고, 이전이 늦어지면 그 뒤 날짜가 모두 같은 만큼 밀립니다.</p>
@@ -63,6 +64,30 @@
 
 <!-- ============================================================ 지금 할 일 -->
 <h2 id="today">지금 할 일 <small>11-12 (목) 늦은 밤 · 10번 출시 완료 기준</small></h2>
+<div class="tip blue" style="margin-bottom:10px" id="build11"><b>11-12 밤 — 11번 AAB (1.0.11) 구움</b>: <code>Kachi_Gun\Builds\kachizombie-1.0.11-11.aab</code> 63.7MB (5.8분) + 개발용 APK <code>kachizombie-1.0.11-11-debug.apk</code>(테스트 광고). 들어간 것 = <b>쿠폰</b>(설정 › 쿠폰 · KACHI2000 = 다이아 2,000) · <b>다이아 부족 → [상점으로]</b>(코스튬 · 보급품) · <b>새 버전 알림</b>(구글 앱 내 업데이트 라이브러리 → [업데이트] → 스토어) · 클라우드 고르기 <b>"복구할 수 없음"</b> 경고.
+<br>점검: aab_check 모두 통과(패키지 · AD_ID · BILLING · AdMob · Play 게임즈 APP_ID · 64비트 · 서명 · 앱 이름) · bundletool versionCode <b>11</b> · 1.0.11 · <b>권한 10번과 같음</b> · 새로 생긴 것 = 구글 앱 내 업데이트 화면 하나(PlayCoreDialogWrapperActivity — 라이브러리 몫) · AAB 안에 업데이트 라이브러리 · 쿠폰 표 · 새 글자 들어감 · 자동 시험 204줄 errors=0 · <b>세이브 판 2</b>(쿠폰 칸 — 11번이 올린 클라우드 진행은 10번 앱이 받지 않고 "업데이트해 주세요"만 안내).
+<table style="margin-top:8px">
+  <tr><th style="width:44px">순서</th><th>할 일</th><th style="width:80px">누가</th><th style="width:200px">끝나면</th></tr>
+  <tr><td>1</td><td>Play Console › 테스트 및 출시 › <b>내부 테스트</b> › [새 버전 만들기] → <code>kachizombie-1.0.11-11.aab</code> → 출시 노트 = 아래 [복사] 상자 → [다음] → [저장 및 출시]</td><td>직접</td><td>내부 테스터 폰에 1.0.11 (몇 분)</td></tr>
+  <tr><td>2</td><td>폰에서 확인: 설정 › <b>쿠폰</b> › KACHI2000 → 다이아 +2,000 · 한 번 더 넣으면 "이미 사용" · 다이아가 모자랄 때 코스튬 누르기 → "다이아 부족" → [상점으로]</td><td>보기</td><td>이상 없으면 3번</td></tr>
+  <tr><td>3</td><td>테스트 및 출시 › <b>프로덕션</b> › [새 버전 만들기] → [라이브러리에서 추가] → <b>11 (1.0.11)</b> → 같은 출시 노트 → 검토 → <b>[프로덕션 트랙으로 출시 시작]</b>까지 (저장만 하면 "임시"로 남음 — 게시 개요에 "11 (1.0.11) 전체 출시" 줄 확인)</td><td>직접</td><td>검토 몇 시간 ~ 1~3일 · 관리형 게시 꺼짐 = 통과하면 바로 나감</td></tr>
+</table>
+<p style="margin:8px 0 2px"><b>출시 노트</b> (한국어 · 영어 둘 다 · 언어 태그 포함 통째로 붙여 넣기 · 쿠폰 번호는 노트에 안 넣음 — 알릴 곳은 따로 정하세요)</p>
+<ul class="copy-list" data-plain="한국어 147자 · 영어 268자 (각 500자 안)"><li><span class="t" style="white-space:pre-line;display:block">&lt;ko-KR&gt;
+1.0.11 업데이트
+- 쿠폰: 설정 › 쿠폰에서 쿠폰 번호를 넣고 보상을 받으세요
+- 코스튬 · 보급품을 살 때 다이아가 부족하면 바로 상점으로 갈 수 있어요
+- 새 버전이 나오면 게임 안에서 알려 드려요
+- 클라우드 진행을 고를 때 안내를 더 분명하게 바꿨어요
+&lt;/ko-KR&gt;
+&lt;en-US&gt;
+Version 1.0.11
+- Coupons: enter a coupon code in Settings › Coupon to get rewards
+- Not enough gems for a costume or supply? Jump straight to the Shop
+- The game now tells you when a new version is available
+- Clearer warning when choosing which cloud progress to keep
+&lt;/en-US&gt;</span></li></ul>
+<p class="note" style="margin:6px 0 0">새 버전 알림은 11번을 깐 폰에서 <b>12번이 나왔을 때부터</b> 보입니다(10번에는 이 코드가 없음). 지난 판 10번 AAB 는 Builds 에 그대로 있음.</p></div>
 <div class="tip blue" style="margin-bottom:10px"><b>11-12 늦은 밤 — 10번 (1.0.10) 출시 완료</b> (사용자 알림 → 제가 확인): 비로그인 스토어 페이지 = <b>버전 1.0.10 · "인앱 구매" · "광고 포함" · 개발자 Cachisi · 업데이트 2026-11-12</b> · Play Console 게시 개요 = <b>검토 중인 변경사항 없음 · 최근 게시일 11-12</b>(관리형 게시 꺼짐) · 구글 애즈 = 캠페인 <b>카피바라vs좀비_한국_설치 "일시중지됨" · ₩30,000/일</b> · 상태 줄 "모든 광고그룹이 검토 중임, 입찰 전략 학습 중" · 알림 없음(광고주 인증 요청 아직 없음).
 <table style="margin-top:8px">
   <tr><th style="width:44px">순서</th><th>할 일</th><th style="width:80px">누가</th><th style="width:90px">시간</th><th style="width:200px">끝나면</th></tr>
