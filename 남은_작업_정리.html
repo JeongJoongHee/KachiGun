@@ -53,6 +53,7 @@
   @media(max-width:700px){table{font-size:13px} .how table{display:block;overflow-x:auto}}
 </style></head><body><main>
 <h1>남은 작업 정리 — 앱 이전 · 결제 · 구글 애즈 광고 <small style="font-size:15px;color:var(--soft)">상세 판</small></h1>
+<p class="note" style="background:var(--orange-bg);border-radius:8px;padding:6px 10px"><b>2026-11-12 (목) 늦은 밤 — 10번 (1.0.10) 출시 완료</b>: "지금 할 일" 맨 위에 다음 순서(폰 확인 → 캠페인 [사용 설정] → 2주 지켜보기)를 넣었습니다. 체크 키는 그대로입니다.</p>
 <p class="note" style="background:var(--green-bg);border-radius:8px;padding:6px 10px"><b>2026-11-12 (목) 밤 고침 — 구글 애즈 가입 화면을 Chrome 으로 확인</b>: 문서와 다른 곳 10군데를 <a href="#ads-diff">"구글 애즈 화면이 문서와 다른 곳"</a> 표로 모으고 g-onboard · g-pay · g-camp-draft · g-link · g-conv · 참고 표를 실제 화면대로 고쳤습니다. 유튜브 새 판(g-yt3) · 스토어 설명 글(s-desc)은 확인 끝 → 맨 아래로.<br><b>같은 날 낮 고침 — 앱 이전 끝남</b>(Chrome 확인). "지금 할 일" · "지금 상태" · ② 를 오늘 기준으로 바꿨습니다. 항목 · 체크 키는 그대로입니다.</p>
 <p class="note">카치건 (카피바라 vs 좀비) · <b>2026-11-10 밤 상세 판 — 앱 이전 완료 예정 11-12 (목) 기준</b>. 항목마다 <b>준비물 → 순서 → 끝난 표시 → 막히면</b> 을 적었습니다. 항목 · 체크 키는 지난 판(11-10 밤)과 같습니다. <b>체크하면 그 자리에서 취소선 + "확인 대기" → 제가 확인해서 문제없으면 맨 아래로 옮깁니다.</b> 날짜는 구글 처리 · 검토가 보통 속도일 때의 예상이고, 이전이 늦어지면 그 뒤 날짜가 모두 같은 만큼 밀립니다.</p>
 <div class="bar"><span id="stat"></span><button id="copyNotes" type="button">의견 모아 복사</button>
@@ -61,14 +62,22 @@
 <div class="legend"><span class="who w-pick">결정</span>정해 주셔야 함 <span class="who w-me">직접</span>구글 계정으로 직접 <span class="who w-dev">개발</span>제가 함 <span class="who w-see">보기</span>폰·화면으로 보고 괜찮은지만 <span class="who w-wait">대기</span>기다리기 &nbsp;|&nbsp; 항목 안: <span class="need" style="display:inline"><b>준비물</b></span> · 순서 · <span class="ok" style="display:inline">✔ 끝난 표시</span> · <span class="stuck" style="display:inline"><b>막히면</b></span></div>
 
 <!-- ============================================================ 지금 할 일 -->
-<h2 id="today">지금 할 일 <small>11-12 (목) 밤 · 구글 애즈 화면 Chrome 확인 기준</small></h2>
+<h2 id="today">지금 할 일 <small>11-12 (목) 늦은 밤 · 10번 출시 완료 기준</small></h2>
+<div class="tip blue" style="margin-bottom:10px"><b>11-12 늦은 밤 — 10번 (1.0.10) 출시 완료</b> (사용자 알림 → 제가 확인): 비로그인 스토어 페이지 = <b>버전 1.0.10 · "인앱 구매" · "광고 포함" · 개발자 Cachisi · 업데이트 2026-11-12</b> · Play Console 게시 개요 = <b>검토 중인 변경사항 없음 · 최근 게시일 11-12</b>(관리형 게시 꺼짐) · 구글 애즈 = 캠페인 <b>카피바라vs좀비_한국_설치 "일시중지됨" · ₩30,000/일</b> · 상태 줄 "모든 광고그룹이 검토 중임, 입찰 전략 학습 중" · 알림 없음(광고주 인증 요청 아직 없음).
+<table style="margin-top:8px">
+  <tr><th style="width:44px">순서</th><th>할 일</th><th style="width:80px">누가</th><th style="width:90px">시간</th><th style="width:200px">끝나면</th></tr>
+  <tr><td><b>1</b></td><td><a href="#i-go-check">시작 전 확인</a>의 남은 2가지 — <b>테스터가 아닌 계정</b> 폰에서 1.0.10 으로 업데이트 → 상점 원화 5줄이 보이는지(사지 않아도 됨) · 처음 켤 때 구글 로그인이 조용히 되는지. (스토어 페이지 · 게시 개요 2가지는 제가 확인 ✔)</td><td>보기</td><td>10분</td><td>원화 5줄 보임 → 2번으로. 안 보이면 캠페인 켜지 말고 알려 주세요(새 판이 폰에 내려오기까지 몇 시간 걸릴 수 있음)</td></tr>
+  <tr><td><b>2</b></td><td><a href="#i-g-camp">구글 애즈 캠페인 [사용 설정]</a> — 캠페인 목록 › 카피바라vs좀비_한국_설치 상태 점 → [사용 설정]. 시작일이 이미 11-12 라 켜는 순간부터 나감</td><td>직접</td><td>5분</td><td>상태 "운영 가능"(또는 소재 검토 중) · 다음 날 노출 &gt; 0</td></tr>
+  <tr><td>3</td><td><a href="#g-link-anchor">Play Console ↔ 구글 애즈 연결</a> · <a href="#g-conv-anchor">인앱 구매 전환(보조)</a> — 캠페인을 막지 않음, 이번 주 안</td><td>직접</td><td>10분</td><td>Play 연결된 서비스 "연결됨" · 전환 요약 두 줄</td></tr>
+  <tr><td>4</td><td><a href="#s5">2주 지켜보기</a> — 켠 뒤 7~14일은 예산 · 소재 건드리지 않기 · 광고주 인증 메일이 오면 바로(g-verify)</td><td>보기</td><td>2~3일에 5분</td><td>12-01 쯤 결과 보고서</td></tr>
+</table></div>
 <div class="tip green"><b>오늘 끝난 것 (Chrome 으로 하나씩 확인)</b>: 앱 이전 · 라이선스 키 · Play 게임즈(App ID · 동의 화면 · 인증 정보 · <b>저장된 게임 사용 · 게시 "출시됨"</b>) · 개인정보처리방침 배포 · 앱 콘텐츠(<b>광고 = 예 · 데이터 보안 9유형 · 콘텐츠 등급 새 설문</b> → 검토 중) · 판매자 상태 · <b>9번 범위 결정 = 새 좀비 · 말풍선 같이</b>. 모두 맨 아래 "끝난 것"으로 옮겼습니다.
 <br><b>9번 AAB 다 구움 (11-12 16시)</b> — <code>Kachi_Gun\Builds\kachizombie-1.0.9-9.aab</code> 63.6MB · 점검 모두 통과(버전 9 · 결제 권한 · 광고 ID · AdMob · Play 게임즈 APP_ID 667458878000 · 64비트 · 서명 · 권한 10개 8번과 같음) · 시험 188줄 errors=0 · 영어 화면 · 개발용 APK(테스트 광고) <code>kachizombie-1.0.9-9-debug.apk</code>. 9번은 내부 테스트에 올라감(11-12 16:16 Chrome 확인). <b>그 뒤 "모든 광고 제거 + 다이아 1000"(사용자 요청)을 넣어 10번을 다시 구움</b>: <code>Kachi_Gun\Builds\kachizombie-1.0.10-10.aab</code> 63.6MB · 점검 모두 통과(버전 10 · 1.0.10 · 권한 9번과 같음) · 시험 190줄 errors=0(새 2줄: 구매 +1000 · 되살리기 때 다시 안 줌) · 한국어/영어 상점 글자 칸 안 · 개발용 APK <code>kachizombie-1.0.10-10-debug.apk</code>. <b>다음 = 내부 테스트에 10번 올리기</b> → 상품 5개 → 시험 결제(출시 노트는 <a href="#i-p-release">p-release</a> [복사] · 1.0.10 으로 고쳐 둠).
 <table style="margin-top:8px">
   <tr><th style="width:44px">순서</th><th>할 일</th><th style="width:80px">누가</th><th style="width:90px">시간</th><th style="width:200px">끝나면</th></tr>
   <tr style="opacity:.55;text-decoration:line-through"><td>1</td><td>✔ 11-12 16시 끝 — <a href="#i-p-build9">9번 AAB (1.0.9) 굽기</a> — 결제 키 · Play 게임즈 App ID · 자동 로그인 · 새 좀비 44종 · 말풍선 다 들어감</td><td>개발</td><td>반나절</td><td>AAB + 점검 표 + 출시 노트를 답으로 드림 · <b>Unity 닫아 주세요</b></td></tr>
-  <tr><td>2</td><td>검토 기다리기 — 게시 개요 "검토 중인 변경사항" 6줄(스토어 그림 3 · 콘텐츠 등급 · 광고 선언 · 데이터 보안)</td><td>대기</td><td>몇 시간 ~ 하루</td><td>게시 개요가 비면 끝 · 스토어에 "광고 포함"</td></tr>
-  <tr><td>3</td><td><a href="#i-p-internal">내부 테스트에 10번(9번은 올라감 ✔)</a> → <a href="#i-p-products">상품 5개</a> → <a href="#i-p-test">폰 시험 결제 · 클라우드</a></td><td>직접</td><td>50분</td><td>9번이 나온 뒤</td></tr>
+  <tr style="opacity:.55;text-decoration:line-through"><td>2</td><td>✔ 11-12 늦은 밤 끝(게시 개요 비어 있음) — 검토 기다리기 — 게시 개요 "검토 중인 변경사항" 6줄(스토어 그림 3 · 콘텐츠 등급 · 광고 선언 · 데이터 보안)</td><td>대기</td><td>몇 시간 ~ 하루</td><td>게시 개요가 비면 끝 · 스토어에 "광고 포함"</td></tr>
+  <tr style="opacity:.55;text-decoration:line-through"><td>3</td><td>✔ 11-12 끝 — <a href="#i-p-internal">내부 테스트에 10번(9번은 올라감 ✔)</a> → <a href="#i-p-products">상품 5개</a> → <a href="#i-p-test">폰 시험 결제 · 클라우드</a></td><td>직접</td><td>50분</td><td>9번이 나온 뒤</td></tr>
   <tr style="opacity:.55;text-decoration:line-through"><td>4</td><td>✔ 11-12 밤 Chrome 확인 — <a href="#i-g-onboard">구글 애즈 캠페인 만들기</a> · <a href="#i-g-pay">결제</a>(수동 결제 ₩600,000 · 가입 혜택 2027-01-11 까지)</td><td>직접</td><td>—</td><td>끝</td></tr>
   <tr style="opacity:.55;text-decoration:line-through"><td><b>4b</b></td><td>✔ 11-12 밤 일시중지됨(Chrome 확인 · 계정 예산 ₩0/일 · "게재 중인 광고가 없습니다") — <a href="#i-g-camp-draft"><b>지금 캠페인 일시중지</b></a> — 캠페인이 <b>시작일 11-12 · "운영중"</b>으로 켜져 있음(소재 26개 검토 중 · 검토가 끝나는 대로 결제 없는 8번 광고가 나가기 시작). 10번 공개 날 다시 켬</td><td>직접</td><td>1분</td><td><b>오늘 밤</b> · 상태 "일시중지됨"</td></tr>
   <tr style="opacity:.55;text-decoration:line-through"><td>5</td><td>✔ 11-12 확인 — 스토어 자세한 설명 글 "44종 · 보스 6종"(공개 페이지 비로그인 확인)</td><td>직접</td><td>3분</td><td>끝</td></tr>
@@ -456,7 +465,7 @@ Version 1.0.10
     <span class="ok">✔ 끝난 표시: 광고주 인증 화면 "인증됨"</span>
     <span class="stuck"><b>막히면</b> 결제 프로필의 이름 · 주소가 서류와 정확히 같아야 함(다르면 반려). 인증된 이름은 광고 정보에 공개. 기한 안에 안 하면 계정이 멈춤. 요청이 결제 직후가 아니라 며칠 뒤에 뜰 수도 있음. 인증이 끝나기 전에 광고가 나가는지는 (확인 못 함) — 캠페인 켤 때 상태 화면을 같이 봄.</span></span></label></li>
 
-  <li data-id="g-link"><label><input type="checkbox"><span><span class="tag t-me">직접</span><b>Play Console ↔ 구글 애즈 연결</b> <span class="time">5분 · 이전 뒤</span>
+  <li data-id="g-link"><label><input type="checkbox"><span><span class="tag t-me">직접</span><b id="g-link-anchor">Play Console ↔ 구글 애즈 연결</b> <span class="time">5분 · 이전 뒤</span>
     <span class="how">11-12 밤 Chrome: Play Console 쪽 Google Ads 칸 = <b>연결 없음</b>. 메뉴 이름이 문서와 달랐음 → 아래 1번이 실제 경로.</span>
     <span class="how"><ol><li>kachigoogoo Play Console 홈(Cachisi) › 오른쪽 위 <b>[계정 관리]</b> › <b>Play 앱 설정</b>(오른쪽 ∨ 눌러 펼치기) › <b>연결된 서비스</b> (주소 끝 <code>/linked-accounts</code>) › Google Ads › <b>[Google Ads 계정 연결]</b></li>
     <li>고객 ID <code>342-871-2272</code> 넣기 → 앱 = 카피바라vs좀비 → [연결 요청]</li>
@@ -464,7 +473,7 @@ Version 1.0.10
     <span class="ok">✔ 끝난 표시: 양쪽 화면 모두 "연결됨"</span>
     <span class="why">설치 수는 연결 없이도 Play 가 자동으로 셈. 연결은 <b>인앱 구매를 전환으로 세려면</b> 필요(누가 광고를 보고 들어와 샀는지). 같은 Gmail(kachigoogoo)이라 승인 단계가 없이 바로 될 수도 있음.</span></span></label></li>
 
-  <li data-id="g-conv"><label><input type="checkbox"><span><span class="tag t-me">직접</span><b>전환 확인</b> <span class="time">5분 · 상품을 켠 뒤</span>
+  <li data-id="g-conv"><label><input type="checkbox"><span><span class="tag t-me">직접</span><b id="g-conv-anchor">전환 확인</b> <span class="time">5분 · 상품을 켠 뒤</span>
     <span class="how">설치 전환은 <b>이미 있음</b>(11-12 밤 입찰 화면: <code>com.zkfpf.kachizombie(Android) 설치</code> · 2026-11-11 17:32 생성 · Google Play) → 남은 것 = 인앱 구매(보조).</span>
     <span class="how"><ol><li>구글 애즈 › 목표 › 전환 › <b>요약</b> → 위 설치 줄이 "기본"인지</li>
     <li>없거나, 인앱 구매를 추가하려면: [새 전환 액션] › 앱 › Google Play › <b>인앱 구매</b> → 앱 고르기 → 저장 (g-link 가 끝나 있어야 고를 수 있음)</li>
@@ -476,9 +485,10 @@ Version 1.0.10
 <!-- ============================================================ ④ -->
 <h2 id="s4">④ 서비스 시작 날 <small>~11-17 (화) · 9번이 스토어에 보인 날 · 2항목</small></h2>
 <ul class="todo">
-  <li data-id="go-check"><label><input type="checkbox"><span><span class="tag t-see">보기</span><b>시작 전 확인 4가지</b> <span class="time">10분 · 캠페인 켜기 직전</span>
-    <span class="how"><ol><li>스토어 페이지에 <b>"인앱 구매 포함"</b> · 개발자 이름 <b>Cachisi</b> · 버전 1.0.9 (제가 비로그인으로도 열어 봄)</li>
-    <li><b>테스터가 아닌 계정</b>의 폰(가족 폰 등)에서 9번으로 업데이트 → 상점에 원화 5줄이 보이는지 (사지는 않아도 됨 — 결제창에 실제 카드가 뜨면 정상)</li>
+  <li data-id="go-check"><label><input type="checkbox"><span><span class="tag t-see">보기</span><b id="i-go-check">시작 전 확인 4가지</b> <span class="time">10분 · 캠페인 켜기 직전</span>
+    <span class="tip green" style="display:block;margin:6px 0">✔ <b>11-12 늦은 밤 제가 확인한 2가지</b>: ① 스토어 페이지(비로그인) 버전 <b>1.0.10</b> · "인앱 구매" · "광고 포함" · Cachisi · 업데이트 11-12 ④ 게시 개요 검토 중인 변경사항 없음 · 최근 게시일 11-12. <b>남은 것 = ② ③ (폰)</b></span>
+    <span class="how"><ol><li>스토어 페이지에 <b>"인앱 구매 포함"</b> · 개발자 이름 <b>Cachisi</b> · 버전 1.0.10 (제가 비로그인으로도 열어 봄)</li>
+    <li><b>테스터가 아닌 계정</b>의 폰(가족 폰 등)에서 10번(1.0.10)으로 업데이트 → 상점에 원화 5줄이 보이는지 (사지는 않아도 됨 — 결제창에 실제 카드가 뜨면 정상)</li>
     <li>그 폰에서 광고 한 번 · 처음 켤 때 구글 로그인이 조용히 되는지</li>
     <li>Play Console › 게시 개요에 거절 · 정책 경고가 없는지</li></ol></span>
     <span class="ok">✔ 끝난 표시: 네 가지 모두 됨 → 캠페인 켜기</span>
