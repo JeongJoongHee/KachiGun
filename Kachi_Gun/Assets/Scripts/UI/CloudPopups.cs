@@ -73,13 +73,17 @@ namespace KachiGun
 
         void OnLoad()
         {
-            ConfirmPopup.Ask($"<size=46>{L.T("불러오기")}</size>\n\n" + L.T("클라우드에 저장된 진행으로 바꿀까요?\n이 기기의 지금 진행은 지워집니다."), CloudSync.Download, "불러오기");
+            ConfirmPopup.Ask($"<size=46>{L.T("불러오기")}</size>\n\n" + L.T("클라우드에 저장된 진행으로 바꿀까요?\n이 기기의 지금 진행은 지워집니다.") + CloudConflictPopup.NoUndoLine, CloudSync.Download, "불러오기");
         }
     }
 
     /// <summary>클라우드와 이 기기의 진행이 서로 다를 때 (11-07): 두 쪽 요약을 보고 하나를 고름 → 한 번 더 확인</summary>
     public class CloudConflictPopup : Popup
     {
+        /// <summary>11-12 진행을 지우는 확인 창 아래 경고 — 서버가 없어 지워진 진행은 운영자도 되살릴 수 없음</summary>
+        public const string NoUndo = "지워진 진행은 복구할 수 없으니 신중히 골라 주세요.";
+        public static string NoUndoLine => "\n\n<size=30><color=#C0392B>" + L.T(NoUndo) + "</color></size>";
+
         protected override Vector2 Size => new(960, 1040);
         protected override string Title => "진행 고르기";
         protected override bool CloseOnDim => false;
@@ -124,7 +128,7 @@ namespace KachiGun
         {
             var cb = pick;
             string other = cloud ? L.T("이 기기") : L.T("클라우드");
-            ConfirmPopup.Ask(L.F("{0} 진행으로 이어서 할까요?\n{1}의 진행은 지워집니다.", cloud ? L.T("클라우드") : L.T("이 기기"), other), () =>
+            ConfirmPopup.Ask(L.F("{0} 진행으로 이어서 할까요?\n{1}의 진행은 지워집니다.", cloud ? L.T("클라우드") : L.T("이 기기"), other) + NoUndoLine, () =>
             {
                 pick = null;
                 base.Close();

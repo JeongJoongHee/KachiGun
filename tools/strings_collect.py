@@ -174,6 +174,7 @@ EN.update({'세이브를 읽지 못해 예비 세이브로 불러왔습니다': 
            '구글 계정에 연결하지 못했습니다': "Couldn't connect to your Google account", '클라우드에 저장했습니다': 'Saved to the cloud',
            '클라우드에 저장하지 못했습니다': "Couldn't save to the cloud",
            '클라우드에 저장된 진행으로 바꿀까요?\\n이 기기의 지금 진행은 지워집니다.': 'Replace with the progress saved in the cloud?\\nThe current progress on this device will be lost.',
+           '지워진 진행은 복구할 수 없으니 신중히 골라 주세요.': 'Lost progress cannot be recovered. Please choose carefully.',
            '진행 고르기': 'Choose Progress', '이 기기와 클라우드의 진행이 다릅니다.\\n이어서 할 진행을 골라 주세요.': 'This device and the cloud have different progress.\\nChoose which one to continue.',
            '이 기기': 'This Device', '클라우드': 'Cloud', '{0} 쓰기': 'Use {0}', '코스튬 {0}개': '{0} costumes',
            '{0} 진행으로 이어서 할까요?\\n{1}의 진행은 지워집니다.': 'Continue with the {0} progress?\\nThe {1} progress will be lost.',

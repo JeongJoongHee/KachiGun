@@ -1303,6 +1303,10 @@ namespace KachiGun.EditorTools
             useLocal?.onClick.Invoke();
             yield return Wait(0.2f);
             var ask = HUD.I.Get<ConfirmPopup>();
+            bool warned = false;   // 11-12 지워진 진행은 복구 못 함 경고
+            if (ask) foreach (var t in ask.GetComponentsInChildren<Text>(false)) if (t.text.Contains(L.T(CloudConflictPopup.NoUndo))) warned = true;
+            Check(warned, "고르기 확인 창에 '복구할 수 없음' 경고 줄");
+            Capture("19d_cloud_confirm");
             Button ok = null;
             if (ask) foreach (var b in ask.GetComponentsInChildren<Button>(false)) { var lt = UIKit.LabelOf(b); if (lt != null && lt.text == L.T("확인")) ok = b; }
             ok?.onClick.Invoke();

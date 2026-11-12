@@ -79,6 +79,7 @@
 다시 연결,Reconnect,UI/CloudPopups.cs
 구글 계정에 연결하지 못했습니다,Couldn't connect to your Google account,UI/CloudPopups.cs
 클라우드에 저장된 진행으로 바꿀까요?\n이 기기의 지금 진행은 지워집니다.,Replace with the progress saved in the cloud?\nThe current progress on this device will be lost.,UI/CloudPopups.cs
+지워진 진행은 복구할 수 없으니 신중히 골라 주세요.,Lost progress cannot be recovered. Please choose carefully.,UI/CloudPopups.cs
 진행 고르기,Choose Progress,UI/CloudPopups.cs
 이 기기와 클라우드의 진행이 다릅니다.\n이어서 할 진행을 골라 주세요.,This device and the cloud have different progress.\nChoose which one to continue.,UI/CloudPopups.cs
 이 기기,This Device,UI/CloudPopups.cs
