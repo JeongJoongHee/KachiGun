@@ -92,7 +92,7 @@ Version 1.0.11
 <table style="margin-top:8px">
   <tr><th style="width:44px">순서</th><th>할 일</th><th style="width:80px">누가</th><th style="width:90px">시간</th><th style="width:200px">끝나면</th></tr>
   <tr><td><b>1</b></td><td><a href="#i-go-check">시작 전 확인</a>의 남은 2가지 — <b>테스터가 아닌 계정</b> 폰에서 1.0.10 으로 업데이트 → 상점 원화 5줄이 보이는지(사지 않아도 됨) · 처음 켤 때 구글 로그인이 조용히 되는지. (스토어 페이지 · 게시 개요 2가지는 제가 확인 ✔)</td><td>보기</td><td>10분</td><td>원화 5줄 보임 → 2번으로. 안 보이면 캠페인 켜지 말고 알려 주세요(새 판이 폰에 내려오기까지 몇 시간 걸릴 수 있음)</td></tr>
-  <tr><td><b>2</b></td><td><a href="#i-g-camp">구글 애즈 캠페인 [사용 설정]</a> — <b>11-12 사용자 결정: 11번(1.0.11)이 스토어에 공개된 뒤 켬</b> — <b>✔ 11-12 1.0.11 공개 확인(비로그인 스토어 페이지) → 이제 켜면 됨</b>. 비로그인 스토어 페이지 버전 1.0.11 확인 → 캠페인 목록 › 카피바라vs좀비_한국_설치 상태 점 → [사용 설정]. 시작일이 이미 11-12 라 켜는 순간부터 나감</td><td>직접</td><td>5분</td><td>상태 "운영 가능"(또는 소재 검토 중) · 다음 날 노출 &gt; 0</td></tr>
+  <tr><td><b>2</b></td><td><a href="#i-g-camp">구글 애즈 캠페인 [사용 설정]</a> — <b>11-12 사용자 결정: 11번(1.0.11)이 스토어에 공개된 뒤 켬</b> — <b>✔ 11-12 1.0.11 공개 확인 → ✔ 캠페인 켜짐(Chrome 확인: 상태 "운영 가능(학습 중) · 입찰 전략 학습 중" · 광고그룹 "운영 가능" · ₩30,000/일 · 잔액 ₩600,000 · 아직 노출 0)</b>. 비로그인 스토어 페이지 버전 1.0.11 확인 → 캠페인 목록 › 카피바라vs좀비_한국_설치 상태 점 → [사용 설정]. 시작일이 이미 11-12 라 켜는 순간부터 나감</td><td>직접</td><td>5분</td><td>상태 "운영 가능"(또는 소재 검토 중) · 다음 날 노출 &gt; 0</td></tr>
   <tr><td>3</td><td><a href="#g-link-anchor">Play Console ↔ 구글 애즈 연결</a> · <a href="#g-conv-anchor">인앱 구매 전환(보조)</a> — 캠페인을 막지 않음, 이번 주 안</td><td>직접</td><td>10분</td><td>Play 연결된 서비스 "연결됨" · 전환 요약 두 줄</td></tr>
   <tr><td>4</td><td><a href="#s5">2주 지켜보기</a> — 켠 뒤 7~14일은 예산 · 소재 건드리지 않기 · 광고주 인증 메일이 오면 바로(g-verify)</td><td>보기</td><td>2~3일에 5분</td><td>12-01 쯤 결과 보고서</td></tr>
 </table></div>
@@ -707,7 +707,7 @@ Play — <code>게시 과정\구글_답변_앱이전_1107.txt</code> · 앱 이�
   // 저장 형식: {"c":{항목id:true}, "n":{항목id:"의견"}} — 항목id 는 li 의 data-id
   var KEY='kachigun-todo-1110', st={c:{},n:{}};
   // 체크 → 취소선 + "확인 대기". Claude 가 확인해 문제없으면 여기에 id 를 넣음 → 맨 아래 "이번 판에서 확인한 작업"으로
-  var CONFIRMED=['g-yt2','g-yt3','s-desc','r-admob','m-wait','m-privacy-prep','m-check','m-trader','m-privacy','p-pgs','p-forms','p-scope9','p-build9','p-internal','p-products','g-onboard','g-pay','g-yt3','s-desc','g-camp-draft','p-test','p-release'];   // 11-12 밤 10번 프로덕션 제출 확인   // 11-12 18:48 폰 로그로 결제 · 되살림 확인   // 11-12 밤 구글 애즈 · 스토어 확인   // 11-12 밤: g-yt3 새 주소 4개 · s-desc 공개 페이지 44종 확인   // 11-12 17시: 10번 내부 테스트 · 상품 5개 활성 Chrome 확인   // 11-12 저녁 Chrome 확인: PGS 게시 · 앱 콘텐츠 검토 중 · 결정 같이   // 11-12 15시: m-trader 는 11-09 에 이미 '적용됨'   // 11-12 13:30 라이선스 키 392자 · 게임에 넣음   // 11-12: 유튜브 4개(11-10 판 주소 확인) · AdMob "준비됨" · 이전 끝 · 방침 새 판 파일
+  var CONFIRMED=['g-camp','g-yt2','g-yt3','s-desc','r-admob','m-wait','m-privacy-prep','m-check','m-trader','m-privacy','p-pgs','p-forms','p-scope9','p-build9','p-internal','p-products','g-onboard','g-pay','g-yt3','s-desc','g-camp-draft','p-test','p-release'];   // 11-12 밤 10번 프로덕션 제출 확인   // 11-12 18:48 폰 로그로 결제 · 되살림 확인   // 11-12 밤 구글 애즈 · 스토어 확인   // 11-12 밤: g-yt3 새 주소 4개 · s-desc 공개 페이지 44종 확인   // 11-12 17시: 10번 내부 테스트 · 상품 5개 활성 Chrome 확인   // 11-12 저녁 Chrome 확인: PGS 게시 · 앱 콘텐츠 검토 중 · 결정 같이   // 11-12 15시: m-trader 는 11-09 에 이미 '적용됨'   // 11-12 13:30 라이선스 키 392자 · 게임에 넣음   // 11-12: 유튜브 4개(11-10 판 주소 확인) · AdMob "준비됨" · 이전 끝 · 방침 새 판 파일
   try{ var v=JSON.parse(localStorage.getItem(KEY)||'{}'); st.c=v.c||{}; st.n=v.n||{}; }catch(e){}
   // 제가 확인해 끝난 항목은 체크하지 않으셨어도 끝난 것으로 (한 번도 건드리지 않은 칸만 — 직접 풀면 그대로 둠)
   CONFIRMED.forEach(function(id){ if(st.c[id]===undefined) st.c[id]=true; });
