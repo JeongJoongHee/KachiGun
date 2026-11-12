@@ -8,6 +8,7 @@ import glob, os, re, subprocess, sys, zipfile
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 JDK = 'C:/Program Files/Unity Hub/6000.0.84f1/Editor/Data/PlaybackEngines/AndroidPlayer/OpenJDK/bin'
 ADMOB_APP_ID = 'ca-app-pub-5299482082775448~5156919833'   # 키 보관/admob.txt
+GAMES_APP_ID = '667458878000'   # 11-12 Play Console › Play Games 서비스 › 설정 "프로젝트 ID" (GpgsTools.AppId)
 
 
 def main():
@@ -25,6 +26,8 @@ def main():
     print('광고 ID 권한 있음 (AD_ID)     :', ok(has('com.google.android.gms.permission.AD_ID')), '— Play Console 광고 ID 선언 = 예')
     print('결제 권한 있음 (BILLING)      :', ok(has('com.android.vending.BILLING')))
     print('AdMob 앱 ID                   :', ok(has(ADMOB_APP_ID)), ADMOB_APP_ID)
+    # 11-12 9번부터: Play 게임즈(클라우드 저장) App ID — 매니페스트에 "6…" 로 적혀 빌드 때 글자 "667458878000" 이 됨
+    print('Play 게임즈 APP_ID            :', ok(has('com.google.android.gms.games.APP_ID') and has(GAMES_APP_ID)), GAMES_APP_ID)
     text = man.decode(enc, errors='ignore') if apk else man.decode('latin-1')
     perms = sorted(set(re.findall(r'[a-z.]+\.permission\.[A-Z_]+', text)))
     print('권한 목록                     :', ', '.join(perms) or '없음')
