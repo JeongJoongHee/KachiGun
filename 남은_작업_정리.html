@@ -68,7 +68,7 @@
   <tr><th style="width:44px">순서</th><th>할 일</th><th style="width:80px">누가</th><th style="width:90px">시간</th><th style="width:190px">끝나면</th></tr>
   <tr><td>1</td><td><a href="#i-p-pgs">Play 게임즈: 저장된 게임 "사용" → 저장 → 게시 [출시]</a> (+ 테스터에 zkfpf1)</td><td>직접</td><td>5분</td><td>"봐줘" — 제가 Chrome 으로 확인</td></tr>
   <tr><td>2</td><td><a href="#i-p-scope9">9번에 새 좀비 44종 · 말풍선을 같이 넣을지</a> — 추천 = 같이 넣기 · <b>9번을 막는 마지막 하나</b></td><td>결정</td><td>1분</td><td>"추천대로" 또는 "결제만"</td></tr>
-  <tr><td>3</td><td><a href="#i-m-privacy">개인정보처리방침 배포</a> — 새 판 파일은 준비 끝(개발자 Cachisi · 클라우드 저장 · 구매 기록)</td><td>개발</td><td>10분</td><td>대화창에 <b>"배포해도 돼"</b></td></tr>
+  <tr style="opacity:.55;text-decoration:line-through"><td>3</td><td>✔ 11-12 배포 끝 (버전 0f381a0a) — <a href="#i-m-privacy">개인정보처리방침 배포</a> — 새 판 파일은 준비 끝(개발자 Cachisi · 클라우드 저장 · 구매 기록)</td><td>개발</td><td>10분</td><td>대화창에 <b>"배포해도 돼"</b></td></tr>
   <tr><td>4</td><td><a href="#i-p-forms">앱 콘텐츠 답 다시</a> — <b>새 답안 <a href="스토어 등록/앱_콘텐츠_답안.html">스토어 등록/앱_콘텐츠_답안.html</a></b> 순서대로: ① <b>광고 "없음" → 예</b>(지금 틀려 있음 · 오늘) ② 방침 배포 ③ 데이터 보안 ④ 콘텐츠 등급(주의 필요) ⑤ 검토 전송</td><td>직접</td><td>30분</td><td>게시 개요 "검토 중" 3줄</td></tr>
   <tr style="opacity:.55;text-decoration:line-through"><td>5</td><td>✔ 이미 되어 있음 — <a href="#i-m-trader">앱 수준 판매자 상태</a> "판매자 상태가 이 앱에 적용됨" (11-09 · 11-12 Chrome 확인)</td><td>직접</td><td>—</td><td>—</td></tr>
 </table>
@@ -606,7 +606,7 @@ Play — <code>게시 과정\구글_답변_앱이전_1107.txt</code> · 앱 이�
   // 저장 형식: {"c":{항목id:true}, "n":{항목id:"의견"}} — 항목id 는 li 의 data-id
   var KEY='kachigun-todo-1110', st={c:{},n:{}};
   // 체크 → 취소선 + "확인 대기". Claude 가 확인해 문제없으면 여기에 id 를 넣음 → 맨 아래 "이번 판에서 확인한 작업"으로
-  var CONFIRMED=['g-yt2','r-admob','m-wait','m-privacy-prep','m-check','m-trader'];   // 11-12 15시: m-trader 는 11-09 에 이미 '적용됨'   // 11-12 13:30 라이선스 키 392자 · 게임에 넣음   // 11-12: 유튜브 4개(11-10 판 주소 확인) · AdMob "준비됨" · 이전 끝 · 방침 새 판 파일
+  var CONFIRMED=['g-yt2','r-admob','m-wait','m-privacy-prep','m-check','m-trader','m-privacy'];   // 11-12 15시: m-trader 는 11-09 에 이미 '적용됨'   // 11-12 13:30 라이선스 키 392자 · 게임에 넣음   // 11-12: 유튜브 4개(11-10 판 주소 확인) · AdMob "준비됨" · 이전 끝 · 방침 새 판 파일
   try{ var v=JSON.parse(localStorage.getItem(KEY)||'{}'); st.c=v.c||{}; st.n=v.n||{}; }catch(e){}
   // 제가 확인해 끝난 항목은 체크하지 않으셨어도 끝난 것으로 (한 번도 건드리지 않은 칸만 — 직접 풀면 그대로 둠)
   CONFIRMED.forEach(function(id){ if(st.c[id]===undefined) st.c[id]=true; });
