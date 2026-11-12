@@ -53,7 +53,7 @@
   @media(max-width:700px){table{font-size:13px} .how table{display:block;overflow-x:auto}}
 </style></head><body><main>
 <h1>남은 작업 정리 — 앱 이전 · 결제 · 구글 애즈 광고 <small style="font-size:15px;color:var(--soft)">상세 판</small></h1>
-<p class="note" style="background:var(--green-bg);border-radius:8px;padding:6px 10px"><b>2026-11-12 (목) 고침 — 앱 이전 끝남</b>(Chrome 확인). "지금 할 일" · "지금 상태" · ② 를 오늘 기준으로 바꿨습니다. 항목 · 체크 키는 그대로입니다.</p>
+<p class="note" style="background:var(--green-bg);border-radius:8px;padding:6px 10px"><b>2026-11-12 (목) 밤 고침 — 구글 애즈 가입 화면을 Chrome 으로 확인</b>: 문서와 다른 곳 10군데를 <a href="#ads-diff">"구글 애즈 화면이 문서와 다른 곳"</a> 표로 모으고 g-onboard · g-pay · g-camp-draft · g-link · g-conv · 참고 표를 실제 화면대로 고쳤습니다. 유튜브 새 판(g-yt3) · 스토어 설명 글(s-desc)은 확인 끝 → 맨 아래로.<br><b>같은 날 낮 고침 — 앱 이전 끝남</b>(Chrome 확인). "지금 할 일" · "지금 상태" · ② 를 오늘 기준으로 바꿨습니다. 항목 · 체크 키는 그대로입니다.</p>
 <p class="note">카치건 (카피바라 vs 좀비) · <b>2026-11-10 밤 상세 판 — 앱 이전 완료 예정 11-12 (목) 기준</b>. 항목마다 <b>준비물 → 순서 → 끝난 표시 → 막히면</b> 을 적었습니다. 항목 · 체크 키는 지난 판(11-10 밤)과 같습니다. <b>체크하면 그 자리에서 취소선 + "확인 대기" → 제가 확인해서 문제없으면 맨 아래로 옮깁니다.</b> 날짜는 구글 처리 · 검토가 보통 속도일 때의 예상이고, 이전이 늦어지면 그 뒤 날짜가 모두 같은 만큼 밀립니다.</p>
 <div class="bar"><span id="stat"></span><button id="copyNotes" type="button">의견 모아 복사</button>
   <a href="#today">지금 할 일</a><a href="#plan">일정표</a><a href="#flow">흐름</a><a href="#signal">신호</a><a href="#rules">지킬 순서</a><a href="#s1">①</a><a href="#s2">②</a><a href="#s3">③</a><a href="#s4">④</a><a href="#s5">⑤</a><a href="#risk">밀릴 수 있는 곳</a><a href="#ref">참고 표</a><a href="#done">끝난 것</a></div>
@@ -61,7 +61,7 @@
 <div class="legend"><span class="who w-pick">결정</span>정해 주셔야 함 <span class="who w-me">직접</span>구글 계정으로 직접 <span class="who w-dev">개발</span>제가 함 <span class="who w-see">보기</span>폰·화면으로 보고 괜찮은지만 <span class="who w-wait">대기</span>기다리기 &nbsp;|&nbsp; 항목 안: <span class="need" style="display:inline"><b>준비물</b></span> · 순서 · <span class="ok" style="display:inline">✔ 끝난 표시</span> · <span class="stuck" style="display:inline"><b>막히면</b></span></div>
 
 <!-- ============================================================ 지금 할 일 -->
-<h2 id="today">지금 할 일 <small>11-12 (목) 저녁 · 체크 11개 Chrome 확인 기준</small></h2>
+<h2 id="today">지금 할 일 <small>11-12 (목) 밤 · 구글 애즈 화면 Chrome 확인 기준</small></h2>
 <div class="tip green"><b>오늘 끝난 것 (Chrome 으로 하나씩 확인)</b>: 앱 이전 · 라이선스 키 · Play 게임즈(App ID · 동의 화면 · 인증 정보 · <b>저장된 게임 사용 · 게시 "출시됨"</b>) · 개인정보처리방침 배포 · 앱 콘텐츠(<b>광고 = 예 · 데이터 보안 9유형 · 콘텐츠 등급 새 설문</b> → 검토 중) · 판매자 상태 · <b>9번 범위 결정 = 새 좀비 · 말풍선 같이</b>. 모두 맨 아래 "끝난 것"으로 옮겼습니다.
 <br><b>9번 AAB 다 구움 (11-12 16시)</b> — <code>Kachi_Gun\Builds\kachizombie-1.0.9-9.aab</code> 63.6MB · 점검 모두 통과(버전 9 · 결제 권한 · 광고 ID · AdMob · Play 게임즈 APP_ID 667458878000 · 64비트 · 서명 · 권한 10개 8번과 같음) · 시험 188줄 errors=0 · 영어 화면 · 개발용 APK(테스트 광고) <code>kachizombie-1.0.9-9-debug.apk</code>. 9번은 내부 테스트에 올라감(11-12 16:16 Chrome 확인). <b>그 뒤 "모든 광고 제거 + 다이아 1000"(사용자 요청)을 넣어 10번을 다시 구움</b>: <code>Kachi_Gun\Builds\kachizombie-1.0.10-10.aab</code> 63.6MB · 점검 모두 통과(버전 10 · 1.0.10 · 권한 9번과 같음) · 시험 190줄 errors=0(새 2줄: 구매 +1000 · 되살리기 때 다시 안 줌) · 한국어/영어 상점 글자 칸 안 · 개발용 APK <code>kachizombie-1.0.10-10-debug.apk</code>. <b>다음 = 내부 테스트에 10번 올리기</b> → 상품 5개 → 시험 결제(출시 노트는 <a href="#i-p-release">p-release</a> [복사] · 1.0.10 으로 고쳐 둠).
 <table style="margin-top:8px">
@@ -69,10 +69,28 @@
   <tr style="opacity:.55;text-decoration:line-through"><td>1</td><td>✔ 11-12 16시 끝 — <a href="#i-p-build9">9번 AAB (1.0.9) 굽기</a> — 결제 키 · Play 게임즈 App ID · 자동 로그인 · 새 좀비 44종 · 말풍선 다 들어감</td><td>개발</td><td>반나절</td><td>AAB + 점검 표 + 출시 노트를 답으로 드림 · <b>Unity 닫아 주세요</b></td></tr>
   <tr><td>2</td><td>검토 기다리기 — 게시 개요 "검토 중인 변경사항" 6줄(스토어 그림 3 · 콘텐츠 등급 · 광고 선언 · 데이터 보안)</td><td>대기</td><td>몇 시간 ~ 하루</td><td>게시 개요가 비면 끝 · 스토어에 "광고 포함"</td></tr>
   <tr><td>3</td><td><a href="#i-p-internal">내부 테스트에 10번(9번은 올라감 ✔)</a> → <a href="#i-p-products">상품 5개</a> → <a href="#i-p-test">폰 시험 결제 · 클라우드</a></td><td>직접</td><td>50분</td><td>9번이 나온 뒤</td></tr>
-  <tr><td>4</td><td><a href="#i-g-onboard">구글 애즈 앱 추가</a> → <a href="#i-g-pay">결제 설정</a>(가입 혜택 60일 시작)</td><td>직접</td><td>25분</td><td>11-13</td></tr>
-  <tr><td>5</td><td><a href="#i-s-desc">스토어 자세한 설명 글 "좀비 12종 → 44종"</a> — 그림은 바뀌었는데 설명 글은 옛 판</td><td>직접</td><td>3분</td><td>9번 프로덕션 출시하는 날</td></tr>
-  <tr><td>6</td><td><a href="#i-g-yt3">유튜브 영상 4개 11-11 판으로</a></td><td>직접</td><td>20분</td><td>캠페인 켜기 전</td></tr>
+  <tr><td>4</td><td><a href="#i-g-onboard">구글 애즈 캠페인 칸 채우기</a>(지금 "캠페인 설정"까지 와 있음 — <b>위치를 대한민국으로 · 시작일 11-17 · 타겟 설치당비용 체크 풀기</b>) → <a href="#i-g-pay">결제 세부정보</a>(가입 혜택 60일 시작 · 결제를 내면 캠페인이 게시됨)</td><td>직접</td><td>40분</td><td>11-13</td></tr>
+  <tr style="opacity:.55;text-decoration:line-through"><td>5</td><td>✔ 11-12 확인 — 스토어 자세한 설명 글 "44종 · 보스 6종"(공개 페이지 비로그인 확인)</td><td>직접</td><td>3분</td><td>끝</td></tr>
+  <tr style="opacity:.55;text-decoration:line-through"><td>6</td><td>✔ 11-12 확인 — 유튜브 영상 4개 11-11 판(<code>영상 주소.txt</code> 새 주소 · 채널 구구카치)</td><td>직접</td><td>20분</td><td>끝</td></tr>
 </table></div>
+
+<h3 id="ads-diff">구글 애즈 화면이 문서와 다른 곳 <small style="font-weight:normal;color:var(--soft)">— 11-12 밤 Chrome 으로 kachigoogoo 의 만들던 캠페인(App-1)을 열어 봄 · 칸은 하나도 바꾸지 않음</small></h3>
+<table>
+  <tr><th style="width:150px">칸</th><th style="width:230px">문서에 적었던 것</th><th>실제 화면 (11-12 밤)</th><th style="width:230px">할 일</th></tr>
+  <tr><td>진행 단계</td><td>"비즈니스에 대해 이야기해 볼까요?" 첫 화면에서 멈춤 → 앱 고르기 → 결제 화면에서 멈춤</td><td>이미 지남. 왼쪽 단계 = <b>비즈니스 정보 추가 ✔</b>(비즈니스 정보 · 계정 연결) → <b>캠페인 만들기</b>(목표 선택 ✔ · 캠페인 선택 ✔ · 캠페인 설정 · 광고그룹 · 입찰 및 예산) → <b>검토</b> → <b>결제 세부정보 입력</b>(자물쇠 — 검토가 통과해야 열림). 앱 <code>com.zkfpf.kachizombie</code> 는 골라져 있음</td><td><b>결제는 맨 마지막</b> — 캠페인 칸을 다 채워야 결제 화면이 열림 (g-onboard 순서 고침)</td></tr>
+  <tr><td>위치</td><td>대한민국</td><td>기본값이 <b>"모든 국가 및 지역"</b>으로 골라져 있음</td><td><b>[대한민국]</b>으로 바꾸기</td></tr>
+  <tr><td>시작일</td><td>"시작일 칸이 있는지 확인 못 함 → 결제 뒤 일시중지"</td><td><b>있음</b> — 캠페인 설정 맨 아래 <b>[설정 더보기] › 시작일 및 종료일</b>: 시작일 2026-11-12(오늘) · 종료일 미설정</td><td>시작일을 <b>11-17</b>로 (10번 공개가 늦어지면 날짜를 미루거나 일시중지)</td></tr>
+  <tr><td>타겟 설치당비용</td><td>"비워 두고 시작"</td><td><b>"타겟 설치당비용 설정(선택사항)" 체크가 기본으로 켜져 있고</b> 금액이 비어 빨간 오류 "금액을 입력하세요" → 검토 화면의 유일한 오류. 구글 안내 "다른 앱의 일반적인 설치당비용 ₩231"</td><td><b>체크를 풀기</b>(11-09 정함 "목표 비용 없이 설치 수 최대") — 비우기만 하면 다음으로 안 넘어감</td></tr>
+  <tr><td>통화</td><td>결제 설정 때 KRW 고름</td><td><b>입찰 및 예산 › 예산</b> 칸 앞에 통화 드롭다운 "대한민국 원(KRW ₩)"</td><td>KRW 그대로 · 하루 ₩20,000~30,000</td></tr>
+  <tr><td>문서에 없던 칸</td><td>—</td><td><b>조회 후 전환 최적화</b>(체크 켜짐) · <b>EU 정치 광고</b>(필수 — "아니요" 골라져 있음) · 광고그룹의 <b>우선 제품</b>(제품 피드) · <b>프로모션</b> · <b>잠재고객 신호</b>(비우면 노란 "추천"만) · 입찰의 <b>사용자 유형</b>("모든 사용자")</td><td>조회 후 전환 켠 채 · EU 아니요 · 우선 제품 · 프로모션 · 잠재고객 신호는 비워 둠 · 모든 사용자</td></tr>
+  <tr><td>광고 애셋</td><td>제목 5 · 설명 5 · 이미지 9 · 영상 4</td><td>제목 0/5 · 설명 0/5 · 이미지 0/20 · 동영상 0/20 · <b>HTML5 칸도 보임</b>(0/20). "먼저 광고 제목을 2개 추가" 안내. 미리보기는 스토어 그래픽 이미지 · 아이콘을 저절로 씀</td><td>문서 표 그대로 넣기(제목 · 설명 [복사]) · 영상은 <b>새 주소 4개</b>. HTML5 는 <a href="#i-g-h5">g-h5</a></td></tr>
+  <tr><td>설치 전환</td><td>"앱 캠페인을 만들면 저절로 생김 — 확인"</td><td>입찰 화면 "설치 수를 어떻게 추적" = <b>com.zkfpf.kachizombie(Android) 설치 (2026-11-11 17:32 생성)</b> · Google Play</td><td>이미 있음 — g-conv 는 인앱 구매(보조)만 남음</td></tr>
+  <tr><td>이름</td><td>—</td><td>캠페인 이름 <b>App-1</b> · 광고그룹 <b>Ad group 1</b> (검토 화면에서 고칠 수 있음)</td><td>캠페인 이름 <code>카피바라vs좀비_한국_설치</code> 추천(아무 이름이나 됨)</td></tr>
+  <tr><td>Play ↔ 애즈 연결</td><td>Play Console › 설정 › 연결된 서비스</td><td>메뉴 이름이 다름: <b>홈 › [계정 관리] › Play 앱 설정(펼치기) › 연결된 서비스</b>. Google Ads 칸 = <b>연결 없음</b>(「Google Ads 계정 연결」 링크만). 애즈 쪽 "계정 연결" 단계 ✔ 는 무엇을 연결한 것인지 (확인 못 함)</td><td>g-link 경로 고침 · 결제 뒤 연결</td></tr>
+  <tr><td>앱 개발자 이름</td><td>—</td><td>애즈 화면엔 아직 <b>"FIBE"</b>(이전 전 정보가 남음 · 스토어는 Cachisi)</td><td>그대로 두기 — 광고엔 스토어 정보가 쓰임 · 며칠 뒤 저절로 바뀔 것으로 봄 (확인 못 함)</td></tr>
+  <tr><td>가입 혜택 표시</td><td>오른쪽 위 "₩600,000" 아이콘(11-08 캡처 <code>게시 과정\구글 광고_01.png</code>)</td><td>캠페인 만들기 화면 위쪽엔 안 보임(도움말 · 프로필만)</td><td>결제 화면에서 ₩600,000 혜택이 붙어 있는지 보고 [제출] — 안 보이면 멈추고 "크롬으로 봐줘"</td></tr>
+</table>
+<p class="note"><b>조심</b>: 왼쪽 단계를 눌러 다른 단계로 가면 "캠페인 초안으로 저장하시겠습니까? [취소] [삭제] [저장]" 창이 뜰 수 있음 — <b>[삭제]는 누르지 않기</b>(지금까지 채운 칸이 지워짐). 이어서 하려면 [취소] 또는 [저장].</p>
 
 <!-- ============================================================ 일정표 -->
 <h2 id="plan">최적 일정 <small>한눈에 — 아래 ①~⑤ 단계와 같은 번호</small></h2>
@@ -80,7 +98,7 @@
   <tr><th style="width:130px">날짜 (예상)</th><th style="width:150px">단계</th><th>할 일</th><th style="width:150px">이날 끝나야 하는 것</th></tr>
   <tr><td>11-10 (화) ~ 11-11 (수)</td><td>① 이전 기다리는 동안 <b>(끝)</b></td><td><span class="who w-me">직접</span>유튜브 영상 4개 새 판으로 · AdMob 스토어 연결(11-11 다시) · 구글 애즈 가입 화면 이어서 앱 추가(결제 화면에서 멈춤) · <span class="who w-see">보기</span>8번 계속 플레이 · <span class="who w-dev">개발</span>개인정보처리방침 새 판 미리</td><td>영상 4개 새 주소 · AdMob 연결 신청</td></tr>
   <tr class="now"><td>11-12 (목)</td><td>② 이전 끝난 날 <b>(오늘)</b></td><td><b>이전 끝 · 확인함</b> → <span class="who w-me">직접</span>이전 확인 · <b>라이선스 키</b> · <b>Play 게임즈 설정(App ID)</b> · 앱 콘텐츠 답 · 판매자 상태 → <span class="who w-dev">개발</span>개인정보처리방침 배포 · <b>Unity 닫아 두기</b></td><td><b>키 파일 + App ID 숫자</b> (9번 재료)</td></tr>
-  <tr><td>11-13 (금)</td><td>③ 9번 + 광고 결제</td><td><span class="who w-dev">개발</span>9번 (결제 · 클라우드 · 자동 로그인, 반나절) → <span class="who w-me">직접</span>내부 테스트 · 상품 5개 → <span class="who w-see">보기</span>시험 결제 · 클라우드 · <span class="who w-me">직접</span><b>구글 애즈 결제</b>(가입 혜택 60일 시작) · Play ↔ 애즈 연결 · 캠페인은 꺼 둔 채 저장</td><td>폰에서 시험 결제 성공</td></tr>
+  <tr><td>11-13 (금)</td><td>③ 9번 + 광고 결제</td><td><span class="who w-dev">개발</span>9번 (결제 · 클라우드 · 자동 로그인, 반나절) → <span class="who w-me">직접</span>내부 테스트 · 상품 5개 → <span class="who w-see">보기</span>시험 결제 · 클라우드 · <span class="who w-me">직접</span>구글 애즈 캠페인 칸 채우기(<b>시작일 11-17</b>) → <b>결제</b>(가입 혜택 60일 시작 · 캠페인은 "시작 예정") · Play ↔ 애즈 연결</td><td>폰에서 시험 결제 성공</td></tr>
   <tr><td>11-14 (토)</td><td>③ 9번 프로덕션</td><td><span class="who w-me">직접</span>9번 프로덕션 출시 → <span class="who w-wait">대기</span>검토 1~3일 (주말이라 조금 늦을 수 있음)</td><td>"9 (1.0.9) 전체 출시" 검토 중</td></tr>
   <tr class="goal"><td>~11-17 (화)</td><td>④ 서비스 시작</td><td>9번 공개 · 폰에서 원화 결제 보임 → <span class="who w-me">직접</span>구글 애즈 캠페인 켜기 = <b>홍보 시작</b></td><td>캠페인 "운영 중"</td></tr>
   <tr><td>~11-20 (금)</td><td>④ 광고주 인증</td><td>11-13 결제 뒤 인증 요청이 뜨면 바로 → 검토 영업일 최대 5일</td><td>인증 완료</td></tr>
@@ -99,7 +117,7 @@
   <span class="f me">프로덕션 9 출시<br><small>직접 · 검토 1~3일</small></span><i>→</i>
   <span class="f goal">공개 = 캠페인 켜기<br><small>~11-17</small></span>
 </div>
-<p class="note">옆에서 같이 가는 줄: <b>앱 콘텐츠 답 · 판매자 상태</b>(11-12, 상품 활성화 전까지) · <b>개인정보처리방침 배포</b>(11-12) · <b>구글 애즈 결제 → 광고주 인증 → Play 연결 → 캠페인 저장</b>(11-13, 9번과 상관없이 진행 · 켜는 것만 9번 공개 날).</p>
+<p class="note">옆에서 같이 가는 줄: <b>앱 콘텐츠 답 · 판매자 상태</b>(11-12, 상품 활성화 전까지) · <b>개인정보처리방침 배포</b>(11-12) · <b>구글 애즈 캠페인 칸(시작일 11-17) → 결제 → 광고주 인증 → Play 연결</b>(11-13, 9번과 상관없이 진행 · 광고가 나가는 것은 시작일 = 공개 날).</p>
 
 <div class="tip blue"><b>이 순서가 가장 빠르고 안전한 이유</b>
 <ul>
@@ -136,11 +154,11 @@
   <tr><th>kachigoogoo</th><td>계정 준비 끝(사업자 · 통신판매업 · 결제 프로필 · 라이선스 테스터 "결제테스트" = zkfpf1 — 불도깨비 11-06). 카치건용으로 새로 할 것 = Play 게임즈 설정 · 앱 콘텐츠 답 · 판매자 상태 · 상품 5개</td></tr>
   <tr><th>프로덕션 권장 조치</th><td>프로덕션 화면에 "권장 조치 3개"(더 넓은 화면 표시 2 · R8 최적화 1)가 보임 — 경고가 아니라 권장이고 출시를 막지 않음. 9번 뒤에 볼 것(코드_점검 "화면 크기" 항목과 같은 주제)</td></tr>
   <tr><th>AdMob</th><td>광고 계정 그대로(pub-5299482082775448) · 카피바라vs좀비 앱 ~5156919833 <b>승인 상태 "준비됨" · 스토어 Google Play 연결됨 · 광고 단위 1개 운영 중</b>(11-12 Chrome 확인)</td></tr>
-  <tr><th>구글 애즈</th><td>kachigoogoo@gmail.com · 고객 ID <code>342-871-2272</code> · 가입 혜택 ₩600,000 단계 · <b>결제 아직 안 함(11-13 까지 그대로)</b></td></tr>
-  <tr><th>광고 소재</th><td>유튜브 4개 = 11-10 판(<code>영상 주소.txt</code> · 제목 "카피바라 vs 좀비" · 채널 구구카치 확인). 11-11 에 코스튬 섞은 판으로 다시 만들었으니 캠페인 켜기 전에 한 번 더 바꾸기 → ① g-yt3</td></tr>
+  <tr><th>구글 애즈</th><td>kachigoogoo@gmail.com · 고객 ID <code>342-871-2272</code> · 가입 혜택 ₩600,000 단계 · <b>결제 아직 안 함</b>. <b>11-12 밤 Chrome</b>: 만들던 앱 캠페인 <b>App-1</b> 이 "캠페인 설정" 단계에 저장됨(비즈니스 정보 · 목표 · 앱 끝) · 설치 전환 "com.zkfpf.kachizombie(Android) 설치" 있음 · 남은 칸 = 위치 · 시작일 · 애셋 · 입찰 체크 · 예산 → 결제 (<a href="#ads-diff">다른 곳 표</a>)</td></tr>
+  <tr><th>광고 소재</th><td><b>유튜브 4개 = 11-11 판으로 바뀜(11-12 확인)</b> — <code>영상 주소.txt</code> 새 주소 4개(0q3fe… · n6Vech… · 8V9iLG… · sgAjKY…) · 제목 "카피바라vs좀비 플레이 영상" · 채널 구구카치. 캠페인 동영상 칸엔 이 4개</td></tr>
   <tr><th>개인정보처리방침</th><td><b>새 판 배포 끝(11-12 · 버전 0f381a0a)</b>: 개발자 카치(Cachisi) · 클라우드 저장 · 구매 기록 · 삭제 방법 · 국외 이전 · 영어 — 주소 그대로 /kachigun-privacy</td></tr>
   <tr><th>앱 콘텐츠</th><td><b>주의 필요 0개</b> · 조치됨 11개 · 검토 중 3줄: <b>광고 = 예</b>("광고 포함" 라벨) · <b>데이터 보안</b>(요약 "6가지" = 묶음 6개 · 유형은 9개 다 들어감 · 외부 계정 로그인 예 · 계정 생성 "기타") · <b>콘텐츠 등급</b> 새 설문(한국 전체이용가 · PEGI 7 · ESRB · USK 12 등 — 불도깨비와 같은 등급) · 판매자 상태 "적용됨"(11-09) — 답안 <code>스토어 등록\앱_콘텐츠_답안.html</code></td></tr>
-  <tr><th>스토어 등록정보</th><td>검토 중 3줄(한국어): 앱 아이콘 · 휴대전화 스크린샷 · 그래픽 이미지 = 11-11 새 그림. <b>자세한 설명 글은 옛 판 그대로</b>("12종의 좀비와 챕터마다 기다리는 보스" · 723자) → <a href="#i-s-desc">s-desc</a>. 공개 페이지는 아직 옛 그림 · 옛 글(검토 통과 뒤 바뀜)</td></tr>
+  <tr><th>스토어 등록정보</th><td>검토 중 3줄(한국어): 앱 아이콘 · 휴대전화 스크린샷 · 그래픽 이미지 = 11-11 새 그림. <b>자세한 설명 글도 바뀜</b> — 11-12 밤 공개 페이지(비로그인)에 "44종" · "보스 6종" 보이고 "12종"은 없음 · 개발자 Cachisi · "인앱 구매" 표시 (s-desc 끝)</td></tr>
 </table>
 
 <!-- ============================================================ 규칙 -->
@@ -151,7 +169,7 @@
   <li><b>시험 결제 때 결제창에 "테스트 카드, 항상 승인"이 안 보이면 멈춤</b> — 그대로 누르면 실제로 결제됨.</li>
   <li><b>프로덕션은 [저장]이 아니라 [프로덕션 트랙으로 출시 시작]</b> → 게시 개요에 "9 (1.0.9) 전체 출시" 줄 확인 (8번 때 "임시"로 남았던 일).</li>
   <li><b>구글 애즈 결제는 11-13</b>(가입 혜택 60일이 그날부터) · 통화 KRW · 시간대 서울은 나중에 못 바꿈 · Play ↔ 구글 애즈 연결은 이전 끝난 뒤 kachigoogoo 에서.</li>
-  <li><b>광고 캠페인은 9번이 공개된 날 켬</b> — 그 전엔 꺼 둔 채.</li>
+  <li><b>광고 캠페인은 결제 든 판(10번)이 공개된 날부터</b> — 결제를 내면 캠페인이 바로 게시되므로 <b>결제 전에 시작일 11-17</b>(공개가 늦으면 미루거나 일시중지).</li>
   <li>광고 수익은 지금 AdMob(pub-5299482082775448) 그대로 — 이전 · 9번 때 광고 ID · app-ads.txt 손대지 않음 (11-09 정함).</li>
   <li>모든 광고 소재에 <b>"확률형 아이템 포함"</b> 표시 (게임 안 [총알 뽑기] · 게임산업법 2024-03). 다른 AI·외주 소재도 같게.</li>
   <li><b>라이선스 키 · 비밀번호는 대화창에 붙이지 않기</b> — 파일로만.</li>
@@ -200,14 +218,15 @@
     <span class="ok">✔ 끝난 표시: 앱 설정에 스토어 주소가 보이고 앱 상태가 "검토 중" 또는 "준비됨"</span>
     <span class="stuck"><b>막히면</b> 11-10 Chrome 확인: [스토어 추가] 창에서 패키지 이름 · 스토어 주소 둘 다 "앱을 찾을 수 없음" — 공개 첫날이라 아직 안 잡힌 것으로 봄(심심할 때 하는 게임은 공개 다음 날 연결됨). "확인할 앱"에 카피바라vs좀비(광고 요청 114 · 설정이 완료되지 않음)가 떠 있음 — <b>[내 앱이 아님]은 누르지 않기</b>, [설정 마침]은 화면을 같이 보고. 11-11 에도 안 되면 "크롬으로 봐줘", 11-12 에도 안 되면 하루 더.</span></span></label></li>
 
-  <li data-id="g-onboard"><label><input type="checkbox"><span><span class="tag t-me">직접</span><b id="i-g-onboard">구글 애즈 가입 화면 이어서 → 앱 추가</b> <span class="time">10분 · 결제 화면 전까지만</span>
-    <span class="how">11-08 에 가입 첫 화면에서 멈췄습니다(앱이 공개 전이라 검색이 안 됐음). 이제 공개됐으니 앱을 고르는 데까지만 미리 해 둡니다.</span>
-    <span class="how"><ol><li><code>ads.google.com</code> (오른쪽 위 kachigoogoo · 고객 ID 342-871-2272) → 멈춘 "먼저 비즈니스에 대해 이야기해 볼까요?" 화면</li>
-    <li>비즈니스 이름(선택 · 비워도 됨) → <b>[앱 다운로드 페이지]</b> → [모바일 앱 › 추가] → Android → <code>com.zkfpf.kachizombie</code> 또는 "카피바라 vs 좀비" 검색 → 앱 고르고 [완료] → [다음]</li>
-    <li>이후 캠페인 화면(목표 · 소재 · 예산)은 <a href="#ads-table">광고 설정 표</a> · <a href="#copy">광고 문구</a> 값으로 채우기. 영상 칸엔 g-yt2 의 유튜브 주소 4개</li>
-    <li><b>결제 정보 화면이 나오면 거기서 멈추고 탭을 닫기</b> → ③ g-pay(11-13) 때 이어서</li></ol></span>
-    <span class="ok">✔ 끝난 표시: 앱 "카피바라 vs 좀비"가 골라져 있고 결제 화면 앞까지 옴</span>
-    <span class="stuck"><b>막히면</b> 앱이 검색에 안 나오면 스토어 주소(<code>https://play.google.com/store/apps/details?id=com.zkfpf.kachizombie</code>)를 직접 넣거나 하루 뒤 다시. 앱 고른 뒤의 화면들은 아직 본 적이 없음 — 칸이 문서와 다르면 "크롬으로 봐줘". <b>결제를 실수로 끝내면 가입 혜택 60일이 그날부터 흘러감</b>(큰 문제는 아니지만 4일쯤 손해).</span></span></label></li>
+  <li data-id="g-onboard"><label><input type="checkbox"><span><span class="tag t-me">직접</span><b id="i-g-onboard">구글 애즈 캠페인 칸 채우기 (결제 세부정보 앞까지)</b> <span class="time">30분 · 11-12 ~ 11-13 · 11-12 밤 Chrome 으로 실제 화면 확인</span>
+    <span class="how">비즈니스 정보 · 앱 고르기 · 목표(앱 설치)는 <b>이미 끝나</b> 있고, 만들던 캠페인 <b>App-1</b> 이 "캠페인 설정" 단계에 저장돼 있습니다. <code>ads.google.com</code> (kachigoogoo 로 로그인 · 주소 끝 <code>authuser=1</code>)을 열면 그 화면으로 바로 이어짐. 결제 세부정보는 <b>맨 마지막 단계</b>(검토가 통과해야 자물쇠가 풀림)라, 칸을 다 채운 다음이 g-pay 입니다.</span>
+    <span class="how"><ol><li><b>캠페인 설정</b>: 모바일 앱 = 카피바라vs좀비 ✔ · <b>위치 [대한민국]</b>(기본값 "모든 국가 및 지역"에서 바꾸기) · 언어 한국어 ✔ · 조회 후 전환 최적화 체크 그대로 · EU 정치 광고 "아니요" ✔ · 맨 아래 <b>[설정 더보기] › 시작일 및 종료일 → 시작일 2026-11-17</b>, 종료일 없음 → [다음]</li>
+    <li><b>광고그룹 › 광고 애셋</b>: 제목 5 · 설명 5 = <a href="#copy">광고 문구</a> [복사] (대표 2줄을 맨 앞) · [+ 이미지] 9장 = <code>광고 소재\이미지\</code> 1200x628 · 1200x1200 · 1200x1500 x 3컨셉 · [+ 동영상] = <code>영상 주소.txt</code> 의 <b>새 주소 4개</b> · 우선 제품 · HTML5 · 프로모션 · 잠재고객 신호는 비워 둠 → [다음]</li>
+    <li><b>입찰</b>: 중점 = 설치 수량 · 설치 추적 = <code>com.zkfpf.kachizombie(Android) 설치</code>(이미 있음) · 사용자 유형 = 모든 사용자 · <b>"타겟 설치당비용 설정(선택사항)" 체크 풀기</b>(켜져 있으면 금액 오류로 못 넘어감)</li>
+    <li><b>예산</b>: 통화 <b>대한민국 원(KRW ₩)</b> 그대로 · 하루 <b>20,000~30,000</b> → [다음]</li>
+    <li><b>검토</b>: 맨 위 빨간 오류 칸이 비었는지 · 캠페인 이름 App-1 → <code>카피바라vs좀비_한국_설치</code>(추천) · 위치 "대한민국" · 시작일 11-17 다시 확인 → [다음] 누르면 결제 세부정보(= g-pay)</li></ol></span>
+    <span class="ok">✔ 끝난 표시: 검토 화면에 빨간 오류가 없고 [다음]이 파란색 · 왼쪽 "결제 세부정보 입력"의 자물쇠가 풀림</span>
+    <span class="stuck"><b>막히면</b> 왼쪽 단계를 누르면 "캠페인 초안으로 저장하시겠습니까?" 창 → <b>[삭제]는 누르지 않기</b>([취소] 또는 [저장]). 노란 "잠재고객 신호 추가" 는 추천일 뿐이라 넘어가도 됨. 이미지 · 영상이 "거부"되면 그 문구를 붙여 주세요. 11-12 밤 확인한 화면은 <a href="#ads-diff">다른 곳 표</a>.</span></span></label></li>
 
   <li data-id="s-play8"><label><input type="checkbox"><span><span class="tag t-see">보기</span><b id="i-s-play8">8번 계속 플레이</b> <span class="time">~11-12 · 틈틈이</span>
     <span class="how">7번 한 바퀴는 끝(11-10 "플레이 완료"). 스토어에서 받은 8번으로 계속 하시면서 아래를 눈여겨봐 주세요. <b>11-12 까지 의견에 적은 것은 9번에 같이</b> 넣고, 그 뒤 것은 10번으로.
@@ -401,7 +420,9 @@ Version 1.0.10
 <ul class="todo">
   <li data-id="g-pay"><label><input type="checkbox"><span><span class="tag t-me">직접</span><b id="i-g-pay">구글 애즈 결제 설정</b> <span class="time">15분 · 11-13 · 이날부터 가입 혜택 60일 시작</span>
     <span class="need"><b>준비물</b> 사업자등록증(이름 · 주소 · 번호를 그대로 옮겨 적기) · 결제할 카드</span>
-    <span class="how"><ol><li>① g-onboard 에서 멈춘 결제 화면 이어서 (또는 구글 애즈 › 오른쪽 위 도구 › 결제 › 설정)</li>
+    <span class="how"><b>11-12 밤 확인</b>: 새 가입 흐름에서는 결제 세부정보가 <b>캠페인 검토 다음, 맨 마지막 단계</b>입니다 → 결제를 [제출]하면 캠페인도 같이 게시됨. 그래서 <b>g-onboard 에서 시작일 11-17 을 먼저 넣어 두는 것</b>이 "바로 안 나가게" 하는 길입니다.</span>
+    <span class="how"><ol><li>① g-onboard 를 끝낸 검토 화면에서 [다음] → 왼쪽 "결제 세부정보 입력"</li>
+    <li>화면에 <b>₩600,000 가입 혜택</b>이 붙어 있는지 먼저 보기 (캠페인 만들기 화면 위쪽엔 11-12 밤 안 보였음) — 안 보이면 멈추고 "크롬으로 봐줘"</li>
     <li>청구서 수신 국가 <b>대한민국</b> · 시간대 <b>(GMT+09:00) 서울</b> · 통화 <b>KRW</b> — <b>통화와 시간대는 나중에 못 바꿈</b></li>
     <li>결제 프로필 유형 <b>조직(사업자)</b> · 사업자 이름 · 주소는 사업자등록증과 글자 그대로 · 세금 정보에 사업자등록번호</li>
     <li>결제 수단 = 카드(자동 결제) · 가입 혜택 = <b>₩600,000 단계</b>(11-09 정함 · 지금 골라져 있는 것 그대로)</li>
@@ -410,11 +431,11 @@ Version 1.0.10
     <span class="stuck"><b>막히면</b> 기존 결제 프로필(Play 판매자용 Cachisi)을 고르라는 칸이 나오면 써도 되는지는 (확인 못 함) → 그 화면에서 고르기 전에 "크롬으로 봐줘". KRW 계정 + 사업자등록번호 → 매달 10일 전에 지난달 전자 세금계산서가 결제 연락처 메일로 옴. <b>이전이 늦어지면 결제도 같은 만큼 늦춤</b>(혜택 60일을 아끼려고).</span></span></label></li>
 
   <li data-id="g-camp-draft"><label><input type="checkbox"><span><span class="tag t-me">직접</span><b>캠페인은 저장하되 바로 안 나가게</b> <span class="time">결제 직후 2분</span>
-    <span class="how"><ol><li>캠페인 화면에 <b>시작일</b> 칸이 있으면 서비스 시작 날(일단 11-17)로</li>
-    <li>칸이 없으면: 결제 뒤 캠페인 목록 › 카피바라 캠페인 이름 앞 녹색 점 → <b>[일시중지]</b></li>
-    <li>목록의 상태 칸이 "일시중지됨"(또는 "시작 예정")인지 확인</li></ol></span>
-    <span class="ok">✔ 끝난 표시: 캠페인 상태 "일시중지됨" · 다음 날 비용 0원</span>
-    <span class="why">결제 없는 8번에 광고 손님이 들어오지 않게. 새 가입 화면에 시작일 칸이 있는지는 (확인 못 함) — 일시중지가 확실한 길.</span></span></label></li>
+    <span class="how"><ol><li><b>시작일 칸 있음(11-12 밤 확인)</b>: 캠페인 설정 맨 아래 [설정 더보기] › 시작일 및 종료일 → 결제 전에 <b>2026-11-17</b> 로 (g-onboard 1번에서 이미 했으면 확인만)</li>
+    <li>결제 뒤 캠페인 목록의 상태 칸이 <b>"시작 예정"</b>(또는 "검토 중")인지 확인</li>
+    <li>10번 공개가 11-17 보다 늦어질 것 같으면: 캠페인 › 설정 › 시작일을 미루거나, 이름 앞 녹색 점 → <b>[일시중지]</b></li></ol></span>
+    <span class="ok">✔ 끝난 표시: 캠페인 상태 "시작 예정"(또는 "일시중지됨") · 다음 날 비용 0원</span>
+    <span class="why">결제 없는 8번에 광고 손님이 들어오지 않게. 시작일은 기본값이 "오늘"이라 그대로 두고 결제하면 바로 나감.</span></span></label></li>
 
   <li data-id="g-verify"><label><input type="checkbox"><span><span class="tag t-me">직접</span><b>광고주 인증</b> <span class="time">요청이 뜨면 바로 · 검토 영업일 최대 5일(~11-20)</span>
     <span class="need"><b>준비물</b> 사업자등록증 · 대표자 신분증 — <b>실물을 폰 기본 카메라로 찍은 원본 사진</b>(스캔 · 스크린샷 · 편집본 안 됨)</span>
@@ -425,14 +446,16 @@ Version 1.0.10
     <span class="stuck"><b>막히면</b> 결제 프로필의 이름 · 주소가 서류와 정확히 같아야 함(다르면 반려). 인증된 이름은 광고 정보에 공개. 기한 안에 안 하면 계정이 멈춤. 요청이 결제 직후가 아니라 며칠 뒤에 뜰 수도 있음. 인증이 끝나기 전에 광고가 나가는지는 (확인 못 함) — 캠페인 켤 때 상태 화면을 같이 봄.</span></span></label></li>
 
   <li data-id="g-link"><label><input type="checkbox"><span><span class="tag t-me">직접</span><b>Play Console ↔ 구글 애즈 연결</b> <span class="time">5분 · 이전 뒤</span>
-    <span class="how"><ol><li>kachigoogoo Play Console 첫 화면 › 왼쪽 <b>설정 › 연결된 서비스</b> (못 찾으면 맨 위 검색창 "연결된 서비스") › Google Ads › [계정 연결]</li>
+    <span class="how">11-12 밤 Chrome: Play Console 쪽 Google Ads 칸 = <b>연결 없음</b>. 메뉴 이름이 문서와 달랐음 → 아래 1번이 실제 경로.</span>
+    <span class="how"><ol><li>kachigoogoo Play Console 홈(Cachisi) › 오른쪽 위 <b>[계정 관리]</b> › <b>Play 앱 설정</b>(오른쪽 ∨ 눌러 펼치기) › <b>연결된 서비스</b> (주소 끝 <code>/linked-accounts</code>) › Google Ads › <b>[Google Ads 계정 연결]</b></li>
     <li>고객 ID <code>342-871-2272</code> 넣기 → 앱 = 카피바라vs좀비 → [연결 요청]</li>
     <li>구글 애즈 › 도구 › <b>데이터 관리자</b>(연결된 계정) › Google Play → 요청 [승인]</li></ol></span>
     <span class="ok">✔ 끝난 표시: 양쪽 화면 모두 "연결됨"</span>
     <span class="why">설치 수는 연결 없이도 Play 가 자동으로 셈. 연결은 <b>인앱 구매를 전환으로 세려면</b> 필요(누가 광고를 보고 들어와 샀는지). 같은 Gmail(kachigoogoo)이라 승인 단계가 없이 바로 될 수도 있음.</span></span></label></li>
 
   <li data-id="g-conv"><label><input type="checkbox"><span><span class="tag t-me">직접</span><b>전환 확인</b> <span class="time">5분 · 상품을 켠 뒤</span>
-    <span class="how"><ol><li>구글 애즈 › 목표 › 전환 › <b>요약</b> → "Google Play 앱 다운로드(설치)" 줄이 있는지 (앱 캠페인을 만들면 저절로 생김)</li>
+    <span class="how">설치 전환은 <b>이미 있음</b>(11-12 밤 입찰 화면: <code>com.zkfpf.kachizombie(Android) 설치</code> · 2026-11-11 17:32 생성 · Google Play) → 남은 것 = 인앱 구매(보조).</span>
+    <span class="how"><ol><li>구글 애즈 › 목표 › 전환 › <b>요약</b> → 위 설치 줄이 "기본"인지</li>
     <li>없거나, 인앱 구매를 추가하려면: [새 전환 액션] › 앱 › Google Play › <b>인앱 구매</b> → 앱 고르기 → 저장 (g-link 가 끝나 있어야 고를 수 있음)</li>
     <li>인앱 구매 전환은 <b>"보조"</b>(관찰만)로 — 첫 2주는 설치 수로만 최적화(11-09 정함)</li></ol></span>
     <span class="ok">✔ 끝난 표시: 전환 요약에 앱 다운로드 = 기본 · 인앱 구매 = 보조 두 줄</span>
@@ -489,7 +512,7 @@ Version 1.0.10
 <h3>나중 · 참고</h3>
 <ul class="todo">
   <li data-id="g-h5"><label><input type="checkbox"><span><span class="tag t-wait">나중</span><b>플레이어블(HTML5) 광고</b>
-    <span class="how">구글은 HTML5 를 쓰려면 계정 조건(정책 위반 없는 기록 · 결제 기록 · 누적 광고비)을 따로 봄 → 새 계정은 처음엔 못 쓸 가능성 큼. 쓸 수 있게 되면 <code>광고 소재\플레이어블\카피바라vs좀비_플레이어블_구글광고.zip</code>(0.48MB) → 구글 HTML5 검사 도구 먼저. 메타 · 유니티 애즈 등 다른 곳에 쓸 때도 그 네트워크 검사 도구부터(기본 · MRAID html 이 따로 있음).</span></span></label></li>
+    <span class="how">구글은 HTML5 를 쓰려면 계정 조건(정책 위반 없는 기록 · 결제 기록 · 누적 광고비)을 따로 봄 → 새 계정은 처음엔 못 쓸 가능성 큼. <b>11-12 밤: 광고그룹 화면에 [+ HTML5] 칸은 보임</b> — 칸이 보이는 것과 올린 파일이 승인되는 것은 다를 수 있음 (확인 못 함). 첫 캠페인은 비워 두고 2주 결과를 본 뒤 추천. 쓸 수 있게 되면 <code>광고 소재\플레이어블\카피바라vs좀비_플레이어블_구글광고.zip</code>(0.48MB) → 구글 HTML5 검사 도구 먼저. 메타 · 유니티 애즈 등 다른 곳에 쓸 때도 그 네트워크 검사 도구부터(기본 · MRAID html 이 따로 있음).</span></span></label></li>
   <li data-id="d-site"><label><input type="checkbox"><span><span class="tag t-wait">나중</span><b>개발자 사이트 첫 화면</b>
     <span class="how">jeongjoonghee.github.io 첫 화면에 세 게임(심심할 때 하는 게임 · 불도깨비 키우기 · 카피바라 vs 좀비) 목록 + 스토어 링크 + 각 개인정보처리방침 링크. 파일은 만들어 드리고 올리기는 직접. <b>app-ads.txt 는 안 건드림</b>(AdMob 이 보는 파일).</span></span></label></li>
   <li data-id="d-balance"><label><input type="checkbox"><span><span class="tag t-wait">나중</span><b>밸런스</b>
@@ -521,11 +544,14 @@ Version 1.0.10
   <tr><th style="width:140px">칸</th><th>넣을 값</th></tr>
   <tr><td>캠페인 목표</td><td>앱 프로모션 → 캠페인 유형 <b>앱</b> → <b>앱 설치</b> (가입 화면에선 "앱 다운로드 페이지"를 고르면 이쪽으로 감)</td></tr>
   <tr><td>앱</td><td>Android · <code>com.zkfpf.kachizombie</code> (스토어 공개 뒤에만 검색됨, 안 되면 스토어 주소 직접)</td></tr>
-  <tr><td>위치 · 언어</td><td>대한민국 · 한국어 (영어 판은 해외 확장 때 캠페인을 따로)</td></tr>
-  <tr><td>입찰</td><td>설치 수 · 목표 설치당 비용은 <b>비워 두고 시작</b>(칸이 선택일 때) — 2주 뒤 실제 값으로</td></tr>
-  <tr><td>예산</td><td>하루 예산 <b>2~3만원</b> — 결제 설정 뒤 60일 안에 ₩600,000 (11-09 정함)</td></tr>
-  <tr><td>소재</td><td>제목 5 · 설명 5(아래) · 이미지 9장(<code>광고 소재\이미지\</code> 의 1200x628 · 1200x1200 · 1200x1500 x 3컨셉) · 유튜브 영상 4개 링크. 1080x1920 이미지는 앱 캠페인 칸에 안 맞음(다른 광고 네트워크용)</td></tr>
-  <tr><td>시작일</td><td>서비스 시작 날 (그 전엔 일시중지)</td></tr>
+  <tr><td>위치 · 언어</td><td><b>대한민국</b>(기본값 "모든 국가 및 지역"에서 바꾸기) · 한국어 (영어 판은 해외 확장 때 캠페인을 따로)</td></tr>
+  <tr><td>조회 후 전환 · EU 정치 광고</td><td>조회 후 전환 최적화 체크 그대로 · EU 정치 광고 "아니요"</td></tr>
+  <tr><td>입찰</td><td>중점 설치 수량 · 설치 추적 <code>com.zkfpf.kachizombie(Android) 설치</code> · 모든 사용자 · <b>"타겟 설치당비용 설정(선택사항)" 체크 풀기</b>(기본으로 켜져 있음 — 켜 두고 비우면 오류) — 2주 뒤 실제 값으로 (구글 안내 일반 값 ₩231)</td></tr>
+  <tr><td>예산</td><td>통화 대한민국 원(KRW ₩) · 하루 예산 <b>2~3만원</b> — 결제 설정 뒤 60일 안에 ₩600,000 (11-09 정함)</td></tr>
+  <tr><td>소재</td><td>제목 5 · 설명 5(아래) · 이미지 9장(<code>광고 소재\이미지\</code> 의 1200x628 · 1200x1200 · 1200x1500 x 3컨셉) · 유튜브 영상 4개 링크(<code>영상 주소.txt</code> 11-12 새 주소). 1080x1920 이미지는 앱 캠페인 칸에 안 맞음(다른 광고 네트워크용)</td></tr>
+  <tr><td>시작일</td><td>캠페인 설정 › [설정 더보기] › 시작일 및 종료일 → <b>2026-11-17</b>(기본값은 만든 날) · 종료일 없음</td></tr>
+  <tr><td>비우는 칸</td><td>우선 제품 · 프로모션 · 잠재고객 신호 · HTML5 (노란 "추천"은 넘어가도 됨)</td></tr>
+  <tr><td>이름</td><td>캠페인 <code>카피바라vs좀비_한국_설치</code>(추천 · 지금 App-1) · 광고그룹 Ad group 1 그대로 둬도 됨</td></tr>
   <tr><td>가입 혜택</td><td>₩600,000 단계 (11-09 정함)</td></tr>
 </table>
 
@@ -632,7 +658,7 @@ Play — <code>게시 과정\구글_답변_앱이전_1107.txt</code> · 앱 이�
   // 저장 형식: {"c":{항목id:true}, "n":{항목id:"의견"}} — 항목id 는 li 의 data-id
   var KEY='kachigun-todo-1110', st={c:{},n:{}};
   // 체크 → 취소선 + "확인 대기". Claude 가 확인해 문제없으면 여기에 id 를 넣음 → 맨 아래 "이번 판에서 확인한 작업"으로
-  var CONFIRMED=['g-yt2','r-admob','m-wait','m-privacy-prep','m-check','m-trader','m-privacy','p-pgs','p-forms','p-scope9','p-build9','p-internal','p-products'];   // 11-12 17시: 10번 내부 테스트 · 상품 5개 활성 Chrome 확인   // 11-12 저녁 Chrome 확인: PGS 게시 · 앱 콘텐츠 검토 중 · 결정 같이   // 11-12 15시: m-trader 는 11-09 에 이미 '적용됨'   // 11-12 13:30 라이선스 키 392자 · 게임에 넣음   // 11-12: 유튜브 4개(11-10 판 주소 확인) · AdMob "준비됨" · 이전 끝 · 방침 새 판 파일
+  var CONFIRMED=['g-yt2','g-yt3','s-desc','r-admob','m-wait','m-privacy-prep','m-check','m-trader','m-privacy','p-pgs','p-forms','p-scope9','p-build9','p-internal','p-products'];   // 11-12 밤: g-yt3 새 주소 4개 · s-desc 공개 페이지 44종 확인   // 11-12 17시: 10번 내부 테스트 · 상품 5개 활성 Chrome 확인   // 11-12 저녁 Chrome 확인: PGS 게시 · 앱 콘텐츠 검토 중 · 결정 같이   // 11-12 15시: m-trader 는 11-09 에 이미 '적용됨'   // 11-12 13:30 라이선스 키 392자 · 게임에 넣음   // 11-12: 유튜브 4개(11-10 판 주소 확인) · AdMob "준비됨" · 이전 끝 · 방침 새 판 파일
   try{ var v=JSON.parse(localStorage.getItem(KEY)||'{}'); st.c=v.c||{}; st.n=v.n||{}; }catch(e){}
   // 제가 확인해 끝난 항목은 체크하지 않으셨어도 끝난 것으로 (한 번도 건드리지 않은 칸만 — 직접 풀면 그대로 둠)
   CONFIRMED.forEach(function(id){ if(st.c[id]===undefined) st.c[id]=true; });
