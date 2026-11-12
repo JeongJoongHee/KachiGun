@@ -110,6 +110,16 @@ namespace KachiGun.EditorTools
             CloudSave.SimulateHang = false;
             CloudSync.TimeoutSec = 20f;
             CloudAuth.SimulateCancel = false;
+            CloudAuth.SimulateAutoLogin = false;
+            PlayerPrefs.Save();
+        }
+
+        /// <summary>연결 상태만 지움 (가짜 클라우드 칸의 데이터는 둠) — "새 폰에서 처음 켬" 시험</summary>
+        public static void ResetCloudKeepData()
+        {
+            string keep = PlayerPrefs.GetString(CloudSave.FakeKey, "");
+            ResetCloud();
+            PlayerPrefs.SetString(CloudSave.FakeKey, keep);
             PlayerPrefs.Save();
         }
 
@@ -1204,6 +1214,49 @@ namespace KachiGun.EditorTools
             DontDestroyOnLoad(gameObject);   // 불러오기가 씬을 다시 불러도 시험은 이어서
             PlayTest.ResetCloud();
             CloseAll();
+
+            // ---- 11-12 (9번) 처음 켤 때 자동 로그인: 연결한 적 없는 기기 ----
+            {
+                CloudSync.AutoStart();
+                yield return Wait(0.8f);
+                Check(!CloudAuth.Linked && !CloudSync.Synced, "(에디터) 자동 로그인 스위치가 꺼져 있으면 켤 때 아무것도 안 함");
+
+                CloudAuth.SimulateAutoLogin = true;
+                CloudAuth.SimulateCancel = true;   // Play 게임즈 계정 없음 · 거절
+                CloudSync.AutoStart();
+                yield return Wait(0.8f);
+                var cfA = HUD.I.Get<CloudConflictPopup>();
+                Check(!CloudAuth.Linked && !CloudSync.Synced && !CloudAuth.SignedIn && !(cfA && cfA.gameObject.activeSelf) && PlayerPrefs.GetString(CloudSave.FakeKey, "") == "",
+                    "처음 켬 · 자동 로그인 안 됨 → 조용히 그대로 (연결 안 됨 · 올리지 않음 · 창 없음)");
+                CloudAuth.SimulateCancel = false;
+                CloudSync.AutoStart();             // 같은 실행에서 씬이 다시 만들어져 또 불려도
+                yield return Wait(0.8f);
+                Check(!CloudAuth.Linked && !CloudSync.Synced, "자동 로그인은 한 실행에 한 번만 해 봄");
+
+                CloudSync.ResetState();            // 다음에 켬
+                CloudSync.AutoStart();
+                yield return Wait(1.5f);
+                var upA = SaveData.Parse(PlayerPrefs.GetString(CloudSave.FakeKey, ""));
+                Check(CloudAuth.Linked && CloudSync.Synced && CloudAuth.DisplayName != "" && upA != null && upA.saveId == S.saveId,
+                    $"처음 켬 · 자동 로그인 됨 → 저절로 연결({CloudAuth.DisplayName}) · 이 기기 진행을 올림");
+
+                // 새 폰(갓 시작한 진행) + 클라우드에 옛 폰의 진행 → 묻지 않고 받음
+                var oldPhone = SaveData.Parse(S.ToJson());
+                oldPhone.saveId = "old-phone"; oldPhone.gems = 99999; oldPhone.stage = S.stage + 3; oldPhone.bestEver = System.Math.Max(oldPhone.bestEver, oldPhone.stage); oldPhone.savedAt = SaveData.Now - 86400;
+                PlayerPrefs.SetString(CloudSave.FakeKey, oldPhone.ToJson());
+                PlayTest.ResetCloudKeepData();
+                CloudAuth.SimulateAutoLogin = true;
+                S.bestEver = 1; S.noAds = false; S.autoUpgrade = false; S.iapOrders = new System.Collections.Generic.List<string>();
+                Check(CloudSync.IsFresh(S), "(준비) 이 기기 = 갓 시작한 진행");
+                CloudSync.AutoStart();
+                yield return Wait(2.2f);
+                SetupCapture();
+                yield return Wait(0.5f);
+                Check(CloudAuth.Linked && CloudSync.Synced && S.saveId == "old-phone" && System.Math.Abs(S.gems - 99999) < 0.5 && GameManager.I != null && HUD.I != null,
+                    $"새 폰에서 처음 켬 → 자동 로그인 → 클라우드의 옛 진행을 받아 화면 다시 만듦 (다이아 {Num.Gem(S.gems)})");
+                PlayTest.ResetCloud();
+                CloseAll();
+            }
             var sp = HUD.I.Open<SettingsPopup>();
             yield return Wait(0.2f);
             Button cloudRow = null;

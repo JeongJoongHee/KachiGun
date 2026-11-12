@@ -15,64 +15,96 @@ h2 { font-size:18px; margin:30px 0 8px; padding-bottom:4px; border-bottom:2px so
 .meta { color:var(--soft); font-size:14px; margin:0 0 20px; }
 li { margin:4px 0; }
 hr { border:0; border-top:1px solid var(--line); margin:40px 0; }
+.tw { overflow-x:auto; }
+table { border-collapse:collapse; width:100%; font-size:15px; margin:8px 0; }
+th, td { border:1px solid var(--line); padding:8px 10px; text-align:left; vertical-align:top; }
+th { color:var(--soft); font-weight:600; }
 </style>
 </head>
 <body>
 <main>
 <h1>카피바라vs좀비 개인정보처리방침</h1>
-<p class="meta">개발자: FIBE · 연락처: jjhfibe@gmail.com · 시행일: 2026년 10월 30일 (처음 시행 2026년 10월 24일)</p>
+<p class="meta">개발자: 카치(Cachisi) · 연락처: jjhfibe@gmail.com · 시행일: 2026년 11월 12일 (처음 시행 2026년 10월 24일)</p>
 
-<p>FIBE(이하 "개발자")는 모바일 게임 「카피바라vs좀비」(이하 "게임")를 이용하는 분의 개인정보를 소중히 다루며, 「개인정보 보호법」 등 관련 법령을 지킵니다. 이 방침은 게임이 어떤 정보를 어떻게 처리하는지 알려 드립니다.</p>
+<p>카치(Cachisi, 이하 "개발자")는 모바일 게임 「카피바라vs좀비」(이하 "게임")를 이용하는 분의 개인정보를 소중히 다루며, 「개인정보 보호법」 등 관련 법령을 지킵니다. 이 방침은 게임이 어떤 정보를 어떻게 처리하는지 알려 드립니다.</p>
 
-<h2>1. 개발자가 직접 수집하는 정보</h2>
-<p>개발자는 <b>개인정보를 직접 수집하거나 서버에 저장하지 않습니다.</b> 회원 가입·로그인이 없습니다.</p>
-<ul>
-  <li>게임 진행 데이터(스테이지·강화·재화·설정·구매한 상품 표시 등)는 <b>이용자의 기기 안에만</b> 저장됩니다.</li>
-</ul>
+<h2>1. 처리하는 정보와 목적</h2>
+<p>개발자는 <b>자체 서버를 운영하지 않으며, 이용자의 정보를 개발자의 서버로 받거나 보관하지 않습니다.</b> 게임 안에 따로 만드는 회원 가입은 없습니다. 아래 정보는 이용자의 기기와 Google 의 서비스 안에서 처리됩니다.</p>
+<div class="tw"><table>
+  <tr><th>정보</th><th>언제</th><th>목적 · 보관되는 곳</th></tr>
+  <tr><td>게임 진행 데이터 (스테이지 · 강화 · 재화 · 설정 · 구매한 상품 표시 등)</td><td>게임을 하는 동안</td><td>이어서 하기. <b>이용자의 기기 안</b>에 저장됩니다</td></tr>
+  <tr><td>Google Play 게임즈 계정 정보 (게이머 ID · 닉네임)</td><td>기기에서 Google Play 게임즈에 로그인되어 있거나, 설정 › [클라우드 저장]에서 구글 계정을 연결했을 때</td><td>클라우드 저장에 쓸 계정 확인, 연결된 계정 이름 표시</td></tr>
+  <tr><td>게임 진행 데이터의 사본 (클라우드 저장)</td><td>위와 같이 Google Play 게임즈에 연결되었을 때</td><td>폰을 바꾸거나 다시 설치했을 때 진행 복원. <b>이용자의 Google 계정</b>(Google Play 게임즈 "저장된 게임")에 저장됩니다</td></tr>
+  <tr><td>구매 기록 (주문 번호 · 상품 · 구매 시각)</td><td>게임 안 유료 상품을 살 때</td><td>구매 확인과 상품 지급, 같은 주문을 두 번 지급하지 않기. 게임 진행 데이터에 함께 저장됩니다(클라우드 저장을 쓰면 그 사본에도)</td></tr>
+  <tr><td>광고 ID · 기기 정보(기종 · OS 버전 · 언어) · IP 주소로 추정한 대략적인 위치 · 광고 노출 · 클릭 기록 · 비정상 종료 · 진단 정보</td><td>광고가 나올 때 (Google AdMob 이 자동 수집)</td><td>광고 표시 · 성과 측정 · 부정 클릭 방지 — 아래 2번</td></tr>
+  <tr><td>SDK 진단 · 분석 정보</td><td>Google Play 게임즈 기능이 동작할 때 (Google 이 자동 수집)</td><td>Google 서비스의 안정성 개선</td></tr>
+</table></div>
+<p>게임은 이름(실명) · 전화번호 · 이메일 · 정확한 위치 · 연락처 · 사진 등은 수집하지 않습니다.</p>
 
 <h2>2. 광고 (Google AdMob)</h2>
-<p>게임에는 이용자가 직접 눌러서 보는 <b>보상형 광고</b>가 있습니다. 광고는 Google LLC 의 AdMob 이 보여 주며, 광고를 보여 주고 측정하기 위해 AdMob 이 다음 정보를 처리할 수 있습니다.</p>
+<p>게임에는 이용자가 직접 눌러서 보는 <b>보상형 광고</b>가 있습니다. 광고는 Google LLC 의 AdMob 이 보여 주며, 위 표의 광고 정보는 개발자가 아니라 Google 이 처리합니다.</p>
 <ul>
-  <li>광고 ID(Android 광고 ID), 기기 정보(기종·OS 버전·언어), IP 주소로 추정한 대략적인 위치, 광고 노출·클릭 등 광고 이용 기록, 앱 비정상 종료·진단 정보</li>
-  <li>목적: 광고 표시, 광고 성과 측정, 부정 클릭 방지</li>
-  <li>이 정보는 개발자가 아니라 Google 이 처리하며, 자세한 내용은 <a href="https://policies.google.com/technologies/ads">Google 광고 정책</a>과 <a href="https://policies.google.com/privacy">Google 개인정보처리방침</a>을 따릅니다.</li>
+  <li>자세한 내용은 <a href="https://policies.google.com/technologies/ads">Google 광고 정책</a>과 <a href="https://policies.google.com/privacy">Google 개인정보처리방침</a>을 따릅니다.</li>
   <li>맞춤 광고를 원하지 않으면 휴대폰 <b>설정 › Google › 광고</b>에서 광고 ID 를 삭제하거나 재설정할 수 있습니다. 유럽 등 동의가 필요한 지역에서는 게임을 처음 켤 때 동의 창이 나옵니다.</li>
   <li>「모든 광고 제거」 상품을 사면 광고를 보지 않고 바로 보상을 받습니다.</li>
 </ul>
 
 <h2>3. 앱 안 결제 (Google Play 결제)</h2>
-<p>게임 안 유료 상품은 <b>Google Play 결제</b>로만 팔립니다. 결제 수단·이름·주소 등 결제 정보는 Google 이 처리하며 개발자는 받지 않습니다. 게임은 구매가 정상인지 확인하고 상품을 지급하기 위해 Google 이 보내는 구매 기록(주문 번호·상품·구매 시각)을 기기 안에서 확인하고, 같은 주문을 두 번 지급하지 않도록 주문 번호를 기기 안에 저장합니다.</p>
+<p>게임 안 유료 상품은 <b>Google Play 결제</b>로만 팔립니다. 결제 수단 · 이름 · 주소 등 결제 정보는 Google 이 처리하며 개발자는 받지 않습니다. 게임은 구매가 정상인지 확인하고 상품을 지급하기 위해 Google 이 보내는 구매 기록(주문 번호 · 상품 · 구매 시각)을 기기 안에서 확인하고, 같은 주문을 두 번 지급하지 않도록 주문 번호를 게임 진행 데이터에 함께 저장합니다.</p>
 
-<h2>4. 보관 기간과 삭제</h2>
+<h2>4. 클라우드 저장 (Google Play 게임즈)</h2>
 <ul>
-  <li>기기 안 게임 데이터는 게임을 삭제하거나 휴대폰 설정 › 앱 › 카피바라vs좀비 › 저장공간 › 데이터 삭제를 하면 지워집니다. 한 번 사면 계속 쓰는 상품(모든 광고 제거·자동강화)은 같은 Google 계정으로 다시 설치하면 Google Play 구매 기록으로 되살아납니다.</li>
-  <li>개발자는 이용자 데이터를 서버에 보관하지 않으므로 별도로 삭제할 서버 데이터가 없습니다. Google 이 처리하는 광고·결제 정보는 Google 계정 설정에서 관리할 수 있습니다.</li>
+  <li>게임 버전 1.0.9 부터, 게임을 켤 때 기기에서 Google Play 게임즈에 로그인되어 있으면 게임이 그 계정에 저절로 연결되고, 게임 진행 데이터가 이용자의 Google 계정에 자동으로 저장됩니다(약 1분마다 · 게임을 내릴 때). 로그인되어 있지 않으면 아무 일도 일어나지 않으며, 설정 › [클라우드 저장]에서 직접 연결할 수 있습니다.</li>
+  <li>저장되는 곳은 이용자의 Google 계정이며, 개발자는 이 데이터를 받아 보거나 따로 보관하지 않습니다.</li>
+  <li>클라우드 저장을 원하지 않으면 Google Play 게임즈 앱 › 프로필 › 설정에서 이 게임의 자동 로그인을 끄거나, Google Play 게임즈에 로그인하지 않고 이용할 수 있습니다. 그때는 진행이 기기 안에만 저장됩니다.</li>
 </ul>
 
-<h2>5. 제3자 제공 · 처리 위탁</h2>
-<p>개발자는 이용자의 정보를 판매하지 않습니다. 위 2·3번처럼 광고와 결제를 위해 Google LLC(AdMob · Google Play)가 정보를 처리합니다. 게임은 Google Play 를 통해 배포됩니다.</p>
+<h2>5. 보관 기간과 삭제</h2>
+<ul>
+  <li><b>기기 안 데이터</b>: 게임을 삭제하거나 휴대폰 설정 › 앱 › 카피바라vs좀비 › 저장공간 › 데이터 삭제를 하면 지워집니다.</li>
+  <li><b>클라우드 저장 데이터</b>: 이용자의 Google 계정에 보관되며, Google Play 게임즈 앱 › 프로필 › 설정 › 「Play 게임즈 계정 및 데이터 삭제」에서 이 게임의 데이터를 직접 삭제할 수 있습니다(메뉴 이름은 앱 버전에 따라 조금 다를 수 있습니다). 방법을 찾기 어려우면 아래 연락처로 문의해 주시면 안내해 드립니다.</li>
+  <li>한 번 사면 계속 쓰는 상품(모든 광고 제거 · 자동강화)은 같은 Google 계정으로 다시 설치하면 Google Play 구매 기록으로 되살아납니다.</li>
+  <li>개발자는 이용자 데이터를 자체 서버에 보관하지 않으므로 개발자가 따로 삭제할 서버 데이터가 없습니다. Google 이 처리하는 광고 · 결제 정보는 Google 계정 설정에서 관리할 수 있습니다.</li>
+</ul>
 
-<h2>6. 아동의 개인정보</h2>
+<h2>6. 제3자 제공 · 처리 위탁 · 국외 이전</h2>
+<p>개발자는 이용자의 정보를 판매하지 않습니다. 아래 기능을 위해 Google 이 정보를 처리합니다.</p>
+<div class="tw"><table>
+  <tr><th>받는 곳</th><th>내용</th><th>위치</th></tr>
+  <tr><td>Google LLC</td><td>광고(AdMob) · 앱 안 결제(Google Play 결제) · Google Play 게임즈 로그인과 클라우드 저장 · 게임 배포(Google Play)</td><td>Google 데이터 센터 (국외 포함)</td></tr>
+</table></div>
+<p>정보는 게임을 이용할 때 인터넷(HTTPS 암호화)으로 전송됩니다.</p>
+
+<h2>7. 이용자의 권리</h2>
+<p>이용자는 언제든지 자신의 정보에 대해 열람 · 정정 · 삭제 · 처리 정지를 요청할 수 있으며, 아래 연락처로 요청하시면 지체 없이 안내해 드립니다.</p>
+
+<h2>8. 아동의 개인정보</h2>
 <p>게임은 만 13세 이상을 대상으로 하며, 아동을 대상으로 한 맞춤 광고를 요청하지 않습니다.</p>
 
-<h2>7. 문의</h2>
-<p>개인정보 관련 문의는 <b>jjhfibe@gmail.com</b> 으로 보내 주세요. 빠르게 답변드리겠습니다.</p>
+<h2>9. 개인정보 보호 책임자 및 문의</h2>
+<p>책임자: 카치(Cachisi) · 이메일: <b>jjhfibe@gmail.com</b> — 빠르게 답변드리겠습니다.</p>
 
-<h2>8. 방침 변경</h2>
-<p>이 방침이 바뀌면 이 페이지에 시행일과 함께 알립니다. (2026-10-30: 광고·앱 안 결제 내용 추가)</p>
+<h2>10. 방침 변경</h2>
+<p>이 방침이 바뀌면 이 페이지에 바뀐 내용과 시행일을 알립니다.</p>
+<ul>
+  <li>2026-10-30: 광고 · 앱 안 결제 내용 추가</li>
+  <li>2026-11-12: 앱을 새 개발자 계정으로 옮기며 개발자 이름을 카치(Cachisi)로 변경 · 클라우드 저장(Google Play 게임즈) 추가 · 구매 기록 저장 위치 설명 보완</li>
+</ul>
 
 <hr>
 
 <h1>Capybara vs Zombies — Privacy Policy</h1>
-<p class="meta">Developer: FIBE · Contact: jjhfibe@gmail.com · Effective: October 30, 2026 (first: October 24, 2026)</p>
+<p class="meta">Developer: Cachisi · Contact: jjhfibe@gmail.com · Effective: November 12, 2026 (first: October 24, 2026)</p>
 <ul>
-  <li><b>We do not collect personal data on our own servers.</b> There is no sign-up or login. Game progress is stored <b>only on your device</b>.</li>
+  <li><b>We do not run our own servers and do not receive or keep your data on them.</b> There is no separate sign-up inside the game. Game progress is stored <b>on your device</b>.</li>
+  <li><b>Cloud save (Google Play Games):</b> from version 1.0.9, if you are signed in to Google Play Games on your device when the game starts — or you connect a Google account in Settings › Cloud Save — the game uses your Play Games gamer ID and display name to identify the account, and automatically stores a copy of your game progress in <b>your own Google account</b> (Play Games "Saved Games") so that you can continue after changing phones or reinstalling. We cannot see this data. If you are not signed in, nothing happens. You can turn off automatic sign-in for this game or delete the saved data in the Google Play Games app (Profile › Settings).</li>
   <li><b>Ads:</b> the game shows optional rewarded ads from Google AdMob. To show and measure ads, AdMob may process the advertising ID, device information, approximate location from the IP address, ad interactions and crash/diagnostic data. See the <a href="https://policies.google.com/privacy">Google Privacy Policy</a>. You can reset or delete your advertising ID in your phone settings (Settings › Google › Ads). Users in regions that require consent are asked when the game first starts.</li>
-  <li><b>In-app purchases</b> are handled by Google Play Billing. We never receive your payment details. The game checks Google's purchase record on the device and keeps order numbers on the device so an order is not granted twice. Permanent items (Remove All Ads, Auto Upgrade) are restored from Google Play when you reinstall with the same Google account.</li>
-  <li>We do not sell your information. Google LLC processes data only for ads and payments as described above.</li>
+  <li><b>In-app purchases</b> are handled by Google Play Billing. We never receive your payment details. The game checks Google's purchase record on the device and keeps order numbers in the game save data (and in its cloud copy, if cloud save is on) so an order is not granted twice. Permanent items (Remove All Ads, Auto Upgrade) are restored from Google Play when you reinstall with the same Google account.</li>
+  <li>We do not sell your information. Google LLC processes data for ads, payments, Play Games sign-in and cloud save as described above, in Google data centers (which may be outside your country).</li>
   <li>The game is intended for users aged 13 and over and does not request child-directed ads.</li>
-  <li>Uninstalling the game or clearing its app data deletes the data stored on your device.</li>
-  <li>Questions: <b>jjhfibe@gmail.com</b></li>
+  <li><b>Deleting data:</b> uninstalling the game or clearing its app data deletes the data stored on your device. Cloud save data can be deleted in the Google Play Games app (Profile › Settings › Delete Play Games account &amp; data). We keep no data on servers of our own.</li>
+  <li>Questions or requests about your data: <b>jjhfibe@gmail.com</b></li>
+  <li>Changes — 2026-10-30: ads and in-app purchases added · 2026-11-12: developer name changed to Cachisi (the app moved to a new developer account), cloud save added.</li>
 </ul>
 </main>
 </body>

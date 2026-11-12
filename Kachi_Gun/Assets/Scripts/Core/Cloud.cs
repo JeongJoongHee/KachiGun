@@ -14,6 +14,8 @@ namespace KachiGun
     ///  - 에디터 = 가짜 로그인·가짜 클라우드 (PlayerPrefs "FakeCloud.Kachi")
     /// 흐름: 설정 > [클라우드 저장] > [구글 계정 연결] → 클라우드와 비교(CloudSync.AfterLogin) → 그 뒤 1분마다·앱을 내릴 때 올림.
     ///       연결해 둔 기기는 켤 때 자동 로그인 → 같은 비교.
+    /// 11-12 (9번) 처음 켤 때도: 연결한 적 없는 기기도 켤 때 창 없이 로그인을 한 번 해 봄(CloudSync.AutoStart) → 되면 저절로 연결 · 자동 저장,
+    ///       안 되면(Play 게임즈 계정 없음 · 거절 · 인터넷 없음) 아무 창 없이 그대로 — 설정에서 직접 연결. 한 실행에 한 번만 해 봄.
     /// </summary>
     public static class CloudAuth
     {
@@ -94,11 +96,17 @@ namespace KachiGun
             if (interactive) p.ManuallyAuthenticate(cb);
             else p.Authenticate(cb);
         }
+
+        /// <summary>연결한 적 없는 기기에서도 켤 때 창 없이 로그인을 해 봄</summary>
+        public static bool AutoLoginAllowed => true;
 #else
         /// <summary>에디터 = 가짜 로그인으로 늘 켜짐 · 그 밖(Android 아닌 빌드) = 꺼짐</summary>
         public static bool Configured => Application.isEditor;
         /// <summary>시험용: 로그인 실패(창 닫음) 흉내</summary>
         public static bool SimulateCancel;
+        /// <summary>에디터에서는 꺼 둠 — 가짜 로그인은 늘 성공해서, 켜 두면 평소 재생·다른 시험마다 클라우드가 끼어듦. 자동 로그인 시험이 켬</summary>
+        public static bool SimulateAutoLogin;
+        public static bool AutoLoginAllowed => SimulateAutoLogin;
 
         static void RunImpl(bool interactive, Action<bool, string> done) =>
             MainThread.After(0.3f, () =>
@@ -223,7 +231,7 @@ namespace KachiGun
         /// <summary>같은 진행에서 "맞춘 뒤로 이 기기에서 더 했다"고 보는 최소 시간(초) — 올리기 간격보다 넉넉히</summary>
         public static long SlackSec = 150;
 
-        static bool synced, busy;
+        static bool synced, busy, autoTried;
         static float lastUpload = -999f, busyT;
         static int op;                  // 통신 번호 — 시간 초과로 버린 통신의 늦은 응답은 무시
         static Action onTimeout;
@@ -249,7 +257,7 @@ namespace KachiGun
 
         public static void ResetState()
         {
-            synced = false; busy = false; lastUpload = -999f; onTimeout = null; op++; NeedUpdate = false;
+            synced = false; busy = false; autoTried = false; lastUpload = -999f; onTimeout = null; op++; NeedUpdate = false;
             PlayerPrefs.DeleteKey(LastUpKey); PlayerPrefs.DeleteKey(BaseKey); PlayerPrefs.DeleteKey(BaseIdKey);
         }
 
@@ -257,12 +265,24 @@ namespace KachiGun
         /// <summary>응답이 왔을 때: 내 통신이 아직 살아 있으면 true (시간 초과로 이미 버렸으면 false → 응답 무시)</summary>
         static bool End(int my) { if (my != op || !busy) return false; busy = false; onTimeout = null; return true; }
 
-        /// <summary>켤 때: 연결해 둔 기기면 자동 로그인 → 맞추기 (실패해도 조용히)</summary>
+        /// <summary>켤 때(씬이 만들어질 때마다 불림): 창 없이 로그인 → 맞추기 (실패해도 조용히)
+        ///   - 연결해 둔 기기: 맞출 때까지 씬이 다시 만들어질 때마다 해 봄
+        ///   - 11-12 연결한 적 없는 기기: 한 실행에 한 번만 해 보고, 되면 저절로 연결(그 뒤로는 연결해 둔 기기와 같음)</summary>
         public static void AutoStart()
         {
             CloudRunner.Get();
-            if (!CloudAuth.Linked || !CloudAuth.Configured || synced) return;
-            CloudAuth.SilentLogin((ok, name) => { if (ok) AfterLogin(null, true); });
+            if (!CloudAuth.Configured || synced || busy) return;
+            if (!CloudAuth.Linked)
+            {
+                if (autoTried || !CloudAuth.AutoLoginAllowed) return;
+                autoTried = true;
+            }
+            CloudAuth.SilentLogin((ok, name) =>
+            {
+                if (!ok) return;
+                if (!CloudAuth.Linked) CloudAuth.SetLinked(name);
+                AfterLogin(null, true);
+            });
         }
 
         public enum Pick { Local, Cloud, Ask }

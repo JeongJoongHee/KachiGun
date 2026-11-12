@@ -53,6 +53,7 @@
   @media(max-width:700px){table{font-size:13px} .how table{display:block;overflow-x:auto}}
 </style></head><body><main>
 <h1>남은 작업 정리 — 앱 이전 · 결제 · 구글 애즈 광고 <small style="font-size:15px;color:var(--soft)">상세 판</small></h1>
+<p class="note" style="background:var(--green-bg);border-radius:8px;padding:6px 10px"><b>2026-11-12 (목) 고침 — 앱 이전 끝남</b>(Chrome 확인). "지금 할 일" · "지금 상태" · ② 를 오늘 기준으로 바꿨습니다. 항목 · 체크 키는 그대로입니다.</p>
 <p class="note">카치건 (카피바라 vs 좀비) · <b>2026-11-10 밤 상세 판 — 앱 이전 완료 예정 11-12 (목) 기준</b>. 항목마다 <b>준비물 → 순서 → 끝난 표시 → 막히면</b> 을 적었습니다. 항목 · 체크 키는 지난 판(11-10 밤)과 같습니다. <b>체크하면 그 자리에서 취소선 + "확인 대기" → 제가 확인해서 문제없으면 맨 아래로 옮깁니다.</b> 날짜는 구글 처리 · 검토가 보통 속도일 때의 예상이고, 이전이 늦어지면 그 뒤 날짜가 모두 같은 만큼 밀립니다.</p>
 <div class="bar"><span id="stat"></span><button id="copyNotes" type="button">의견 모아 복사</button>
   <a href="#today">지금 할 일</a><a href="#plan">일정표</a><a href="#flow">흐름</a><a href="#signal">신호</a><a href="#rules">지킬 순서</a><a href="#s1">①</a><a href="#s2">②</a><a href="#s3">③</a><a href="#s4">④</a><a href="#s5">⑤</a><a href="#risk">밀릴 수 있는 곳</a><a href="#ref">참고 표</a><a href="#done">끝난 것</a></div>
@@ -60,24 +61,25 @@
 <div class="legend"><span class="who w-pick">결정</span>정해 주셔야 함 <span class="who w-me">직접</span>구글 계정으로 직접 <span class="who w-dev">개발</span>제가 함 <span class="who w-see">보기</span>폰·화면으로 보고 괜찮은지만 <span class="who w-wait">대기</span>기다리기 &nbsp;|&nbsp; 항목 안: <span class="need" style="display:inline"><b>준비물</b></span> · 순서 · <span class="ok" style="display:inline">✔ 끝난 표시</span> · <span class="stuck" style="display:inline"><b>막히면</b></span></div>
 
 <!-- ============================================================ 지금 할 일 -->
-<h2 id="today">지금 할 일 <small>11-10 (화) 밤 ~ 11-11 (수) · 이전을 기다리는 이틀</small></h2>
-<div class="tip green"><b>지금 막혀 있는 것은 하나 — 구글의 앱 이전 처리(~11-12).</b> 그 전에 끝낼 수 있는 것은 아래 다섯 가지뿐이고, 다 합쳐 직접 하실 일은 40분쯤입니다.
+<h2 id="today">지금 할 일 <small>11-12 (목) · 이전 끝난 날</small></h2>
+<div class="tip green"><b>앱 이전이 끝났습니다 (11-12 Chrome 확인).</b> kachigoogoo(Cachisi) Play Console 앱 목록에 카피바라vs좀비 + 불도깨비 키우기 두 줄 · 대시보드 열림 · 스토어 페이지 개발자 이름 <b>Cachisi</b>(비로그인 확인) · 프로덕션 <b>8 (1.0.8) 활성</b> · [새 버전 만들기] 눌리는 색.
+<br><b>지금 9번을 막고 있는 것 = 아래 1~3번 세 가지</b>입니다. 직접 하실 일은 20분쯤.
 <table style="margin-top:8px">
-  <tr><th style="width:44px">순서</th><th>할 일</th><th style="width:80px">누가</th><th style="width:90px">시간</th><th style="width:150px">언제</th></tr>
-  <tr><td>1</td><td><a href="#i-g-yt2">유튜브 광고 영상 4개를 새 판으로 바꾸기</a></td><td>직접</td><td>20분</td><td>오늘 ~ 내일</td></tr>
-  <tr><td>2</td><td><a href="#i-r-admob">AdMob 스토어 연결</a> (11-10 엔 "앱을 찾을 수 없음")</td><td>직접</td><td>5분</td><td><b>11-11 에 다시</b></td></tr>
-  <tr><td>3</td><td><a href="#i-g-onboard">구글 애즈 가입 화면 이어서 앱 추가</a> — <b>결제 화면에서 멈춤</b></td><td>직접</td><td>10분</td><td>11-11 (앱 검색되는 날)</td></tr>
-  <tr><td>4</td><td><a href="#i-s-play8">8번 계속 플레이</a> — 고칠 점은 의견에 (11-12 까지 = 9번에 반영)</td><td>보기</td><td>틈틈이</td><td>~11-12</td></tr>
-  <tr><td>5</td><td><a href="#i-m-privacy-prep">개인정보처리방침 새 판 파일 준비</a> (배포는 이전 뒤)</td><td>개발</td><td>30분</td><td>"방침 준비해줘" 하시면 바로</td></tr>
+  <tr><th style="width:44px">순서</th><th>할 일</th><th style="width:80px">누가</th><th style="width:90px">시간</th><th style="width:190px">끝나면</th></tr>
+  <tr><td>1</td><td><a href="#i-m-check">라이선스 키를 파일로 저장</a> — 수익 창출 › 수익 창출 설정 › 라이선스 [복사] → <code>키 보관\google_play_license_key.txt</code></td><td>직접</td><td>5분</td><td>대화창에 <b>"키 넣었어"</b></td></tr>
+  <tr><td>2</td><td><a href="#i-p-pgs">Play 게임즈 서비스 만들기 → App ID</a> (1번 단계만 먼저)</td><td>직접</td><td>10분</td><td>대화창에 <b>App ID 숫자</b></td></tr>
+  <tr><td>3</td><td><a href="#i-p-scope9">9번에 새 좀비 44종 · 말풍선을 같이 넣을지</a> — 추천 = 같이 넣기</td><td>결정</td><td>1분</td><td>"추천대로" 또는 "결제만"</td></tr>
+  <tr><td>4</td><td><a href="#i-m-privacy">개인정보처리방침 배포</a> — 새 판 파일은 준비 끝(개발자 Cachisi · 클라우드 저장 · 구매 기록)</td><td>개발</td><td>10분</td><td>대화창에 <b>"배포해도 돼"</b></td></tr>
+  <tr><td>5</td><td><a href="#i-p-pgs">Play 게임즈 2~4번 단계</a> · <a href="#i-p-forms">앱 콘텐츠 답 다시</a> · <a href="#i-m-trader">앱 수준 판매자 상태</a> — 제가 9번을 굽는 동안</td><td>직접</td><td>50분</td><td>화면에서 막히면 "크롬으로 봐줘"</td></tr>
 </table>
-그리고 <b>11-12 (목) 에는 Unity 를 닫아 두기</b> — 키 두 개를 받는 순간 9번을 바로 시작합니다.</div>
+<b>Unity 는 닫아 두세요</b>(지금 닫혀 있음) — 1~3번이 오면 바로 9번을 시작합니다. 9번에 들어갈 "처음 켤 때 자동 로그인" 코드는 오늘 미리 넣어 자동 시험까지 끝냈습니다(188줄 errors=0).</div>
 
 <!-- ============================================================ 일정표 -->
 <h2 id="plan">최적 일정 <small>한눈에 — 아래 ①~⑤ 단계와 같은 번호</small></h2>
 <table class="plan">
   <tr><th style="width:130px">날짜 (예상)</th><th style="width:150px">단계</th><th>할 일</th><th style="width:150px">이날 끝나야 하는 것</th></tr>
-  <tr class="now"><td>11-10 (화) ~ 11-11 (수)</td><td>① 이전 기다리는 동안</td><td><span class="who w-me">직접</span>유튜브 영상 4개 새 판으로 · AdMob 스토어 연결(11-11 다시) · 구글 애즈 가입 화면 이어서 앱 추가(결제 화면에서 멈춤) · <span class="who w-see">보기</span>8번 계속 플레이 · <span class="who w-dev">개발</span>개인정보처리방침 새 판 미리</td><td>영상 4개 새 주소 · AdMob 연결 신청</td></tr>
-  <tr><td>11-12 (목)</td><td>② 이전 끝난 날</td><td><span class="who w-wait">대기</span>이전 완료 메일 → <span class="who w-me">직접</span>이전 확인 · <b>라이선스 키</b> · <b>Play 게임즈 설정(App ID)</b> · 앱 콘텐츠 답 · 판매자 상태 → <span class="who w-dev">개발</span>개인정보처리방침 배포 · <b>Unity 닫아 두기</b></td><td><b>키 파일 + App ID 숫자</b> (9번 재료)</td></tr>
+  <tr><td>11-10 (화) ~ 11-11 (수)</td><td>① 이전 기다리는 동안 <b>(끝)</b></td><td><span class="who w-me">직접</span>유튜브 영상 4개 새 판으로 · AdMob 스토어 연결(11-11 다시) · 구글 애즈 가입 화면 이어서 앱 추가(결제 화면에서 멈춤) · <span class="who w-see">보기</span>8번 계속 플레이 · <span class="who w-dev">개발</span>개인정보처리방침 새 판 미리</td><td>영상 4개 새 주소 · AdMob 연결 신청</td></tr>
+  <tr class="now"><td>11-12 (목)</td><td>② 이전 끝난 날 <b>(오늘)</b></td><td><b>이전 끝 · 확인함</b> → <span class="who w-me">직접</span>이전 확인 · <b>라이선스 키</b> · <b>Play 게임즈 설정(App ID)</b> · 앱 콘텐츠 답 · 판매자 상태 → <span class="who w-dev">개발</span>개인정보처리방침 배포 · <b>Unity 닫아 두기</b></td><td><b>키 파일 + App ID 숫자</b> (9번 재료)</td></tr>
   <tr><td>11-13 (금)</td><td>③ 9번 + 광고 결제</td><td><span class="who w-dev">개발</span>9번 (결제 · 클라우드 · 자동 로그인, 반나절) → <span class="who w-me">직접</span>내부 테스트 · 상품 5개 → <span class="who w-see">보기</span>시험 결제 · 클라우드 · <span class="who w-me">직접</span><b>구글 애즈 결제</b>(가입 혜택 60일 시작) · Play ↔ 애즈 연결 · 캠페인은 꺼 둔 채 저장</td><td>폰에서 시험 결제 성공</td></tr>
   <tr><td>11-14 (토)</td><td>③ 9번 프로덕션</td><td><span class="who w-me">직접</span>9번 프로덕션 출시 → <span class="who w-wait">대기</span>검토 1~3일 (주말이라 조금 늦을 수 있음)</td><td>"9 (1.0.9) 전체 출시" 검토 중</td></tr>
   <tr class="goal"><td>~11-17 (화)</td><td>④ 서비스 시작</td><td>9번 공개 · 폰에서 원화 결제 보임 → <span class="who w-me">직접</span>구글 애즈 캠페인 켜기 = <b>홍보 시작</b></td><td>캠페인 "운영 중"</td></tr>
@@ -88,7 +90,7 @@
 
 <h3 id="flow">무엇이 무엇을 기다리나 <small style="font-weight:normal;color:var(--soft)">— 앞 칸이 끝나야 뒤 칸을 할 수 있음</small></h3>
 <div class="flow">
-  <span class="f wait">구글: 앱 이전 처리<br><small>~11-12</small></span><i>→</i>
+  <span class="f wait">구글: 앱 이전 처리<br><small>✔ 11-12 끝</small></span><i>→</i>
   <span class="f me">라이선스 키<br>+ Play 게임즈 App ID<br><small>직접 · 40분</small></span><i>→</i>
   <span class="f dev">9번 AAB<br><small>개발 · 반나절</small></span><i>→</i>
   <span class="f me">내부 테스트에 9번<br><small>직접 · 10분</small></span><i>→</i>
@@ -123,17 +125,19 @@
 </table>
 
 <!-- ============================================================ 지금 상태 -->
-<h2>지금 상태 <small>11-10 밤 확인</small></h2>
+<h2>지금 상태 <small>11-12 (목) 확인</small></h2>
 <table>
-  <tr><th style="width:150px">Play 스토어</th><td><b>프로덕션 8 (1.0.8) 공개</b>(11-10 · 대한민국 · 개발자 FIBE · 비로그인으로 페이지 열림). 결제 · 클라우드는 꺼진 판 — 라이선스 키가 없어 상점의 원화 상품 줄 · 자동강화 버튼이 숨겨져 있음</td></tr>
-  <tr><th>앱 이전</th><td>11-10 신청 · kachigoogoo(Cachisi · 개발자 계정 8145464765433681010) 수락 끝 · <b>대기 중 → 완료 예정 11-12 (목)</b></td></tr>
+  <tr><th style="width:150px">Play 스토어</th><td><b>프로덕션 8 (1.0.8) 공개</b> · 개발자 이름 <b>Cachisi</b>(11-12 비로그인으로 페이지 확인 — FIBE 는 더 안 보임). 결제 · 클라우드는 꺼진 판 — 라이선스 키가 없어 상점의 원화 상품 줄 · 자동강화 버튼이 숨겨져 있음</td></tr>
+  <tr><th>앱 이전</th><td><b>끝남 (11-12 Chrome 확인)</b> — kachigoogoo(Cachisi · 개발자 계정 8145464765433681010) 앱 목록에 카피바라vs좀비 · 앱 번호 4973745386467551429 그대로 · 대시보드 열림 · 프로덕션 "활성 · 최신 출시 버전 8 (1.0.8) · 국가 1 · 설치 18" · [새 버전 만들기] 눌리는 색</td></tr>
+  <tr><th>Play Console 주소</th><td><code>play.google.com/console/u/1/developers/8145464765433681010/app/4973745386467551429/app-dashboard</code> (kachigoogoo = <code>/u/1/</code>)</td></tr>
   <tr><th>빌드</th><td>가장 새 것 = <code>Kachi_Gun\Builds\kachizombie-1.0.8-8.aab</code> · 다음 = <b>9번 (1.0.9)</b>. Unity 빌드 창의 [버전 코드 +1] 은 누르지 말아 주세요(번호가 건너뜀)</td></tr>
-  <tr><th>코드</th><td>8번까지 전부 커밋. 9번에 넣을 것 = 라이선스 키 · Play 게임즈 App ID · [클라우드 저장] 줄 다시 보이기 · 처음 켤 때 구글 계정 자동 로그인(11-10 정함: 이전 뒤 한 번에) · 11-12 까지 받은 의견</td></tr>
+  <tr><th>코드</th><td>9번용 <b>"처음 켤 때 자동 로그인" 코드 11-12 에 미리 끝</b>(자동 시험 188줄 errors=0 · 안드로이드 기준 컴파일 통과). 남은 것 = 라이선스 키 · Play 게임즈 App ID 넣기 → 굽기. 지금 코드에는 11-11 새 좀비 44종 · 한 스테이지 3~5종 · 말풍선 · 요청_04 · 11-12 코드 점검 11개도 들어 있음 → <a href="#i-p-scope9">같이 낼지 결정</a></td></tr>
   <tr><th>kachigoogoo</th><td>계정 준비 끝(사업자 · 통신판매업 · 결제 프로필 · 라이선스 테스터 "결제테스트" = zkfpf1 — 불도깨비 11-06). 카치건용으로 새로 할 것 = Play 게임즈 설정 · 앱 콘텐츠 답 · 판매자 상태 · 상품 5개</td></tr>
-  <tr><th>AdMob</th><td>광고 계정 그대로(pub-5299482082775448) · 앱 ~5156919833 "검토 필요·제한" · 스토어 연결은 11-10 "앱을 찾을 수 없음"(공개 첫날) → <b>11-11 다시</b></td></tr>
-  <tr><th>구글 애즈</th><td>kachigoogoo@gmail.com · 고객 ID <code>342-871-2272</code> · 가입 첫 화면에서 멈춤 · 가입 혜택 ₩600,000 단계 · <b>결제 아직 안 함(11-13 까지 그대로)</b></td></tr>
-  <tr><th>광고 소재</th><td>11-08 새 판("확률형 아이템 포함" + 좀비 죽는 모습 고친 뒤 촬영): 영상 4 · 이미지 12 · 플레이어블 · AI 요청서. 유튜브에 올라가 있는 4개는 옛 판 → ① g-yt2</td></tr>
-  <tr><th>개인정보처리방침</th><td>/kachigun-privacy 지금 판 = 개발자 FIBE · 광고 절까지. 구매 기록 · 클라우드 저장 문장 없음 → ① 준비 · ② 배포</td></tr>
+  <tr><th>프로덕션 권장 조치</th><td>프로덕션 화면에 "권장 조치 3개"(더 넓은 화면 표시 2 · R8 최적화 1)가 보임 — 경고가 아니라 권장이고 출시를 막지 않음. 9번 뒤에 볼 것(코드_점검 "화면 크기" 항목과 같은 주제)</td></tr>
+  <tr><th>AdMob</th><td>광고 계정 그대로(pub-5299482082775448) · 카피바라vs좀비 앱 ~5156919833 <b>승인 상태 "준비됨" · 스토어 Google Play 연결됨 · 광고 단위 1개 운영 중</b>(11-12 Chrome 확인)</td></tr>
+  <tr><th>구글 애즈</th><td>kachigoogoo@gmail.com · 고객 ID <code>342-871-2272</code> · 가입 혜택 ₩600,000 단계 · <b>결제 아직 안 함(11-13 까지 그대로)</b></td></tr>
+  <tr><th>광고 소재</th><td>유튜브 4개 = 11-10 판(<code>영상 주소.txt</code> · 제목 "카피바라 vs 좀비" · 채널 구구카치 확인). 11-11 에 코스튬 섞은 판으로 다시 만들었으니 캠페인 켜기 전에 한 번 더 바꾸기 → ① g-yt3</td></tr>
+  <tr><th>개인정보처리방침</th><td><b>새 판 파일 준비 끝(11-12)</b>: 개발자 카치(Cachisi) · 클라우드 저장(Google Play 게임즈 · 켤 때 자동 연결) · 구매 기록 · 삭제 방법 · 국외 이전 표 · 영어. 실서버 /kachigun-privacy 는 아직 옛 판(FIBE) → <b>"배포해도 돼"</b> 하시면 배포</td></tr>
 </table>
 
 <!-- ============================================================ 규칙 -->
@@ -223,7 +227,7 @@
 </ul>
 
 <!-- ============================================================ ② -->
-<h2 id="s2">② 이전 끝난 날 <small>11-12 (목) · kachigoogoo · 9번 재료(키 두 개) 받기 · 9항목</small></h2>
+<h2 id="s2">② 이전 끝난 날 <small>11-12 (목) · <b>오늘</b> · kachigoogoo · 9번 재료(키 두 개) 받기 · 9항목</small></h2>
 <div class="tip gray"><b>이날의 순서</b>: 이전 확인 → <b>라이선스 키(5분)</b> → <b>Play 게임즈 1번 단계에서 App ID(10분)</b> → 저에게 둘 다 알려 주기 → (제가 9번을 굽는 동안) Play 게임즈 2~4번 단계 · 앱 콘텐츠 답 · 판매자 상태. <b>Unity 는 닫아 두세요.</b> kachigoogoo Play Console 주소는 <code>play.google.com/console/u/1/…</code> (zkfpf1 은 <code>/u/0/</code>) — 오른쪽 위 계정 그림으로 어느 계정인지 먼저 확인.</div>
 <ul class="todo">
   <li data-id="m-wait"><label><input type="checkbox"><span><span class="tag t-wait">대기</span><b>이전 완료 메일</b> <span class="time">~11-12</span>
@@ -231,12 +235,12 @@
     <span class="ok">✔ 끝난 표시: kachigoogoo Play Console 첫 화면 앱 목록에 불도깨비 키우기 + 카피바라vs좀비 두 줄</span>
     <span class="stuck"><b>막히면</b> 11-12 저녁까지 없으면 kachigoogoo Play Console › 계정 관리 › 앱 이전 화면을 "크롬으로 봐줘". 영업일 2일은 구글 안내 기준이라 하루쯤 밀릴 수 있음(그러면 뒤 날짜도 하루씩). 불도깨비는 신청 뒤 3일째(11-03 → 11-06)에 끝났음.</span></span></label></li>
 
-  <li data-id="m-check"><label><input type="checkbox"><span><span class="tag t-me">직접</span><b>이전 뒤 확인 + 라이선스 키</b> <span class="time">10분 · 가장 먼저</span>
-    <span class="how"><b>확인 3가지</b>
-    <ol><li>kachigoogoo Play Console 앱 목록에 카피바라vs좀비 → 눌러 들어가 대시보드가 열리는지</li>
-    <li>스토어 페이지(폰 Play 스토어 또는 브라우저)의 개발자 이름이 FIBE → <b>Cachisi</b> 로 바뀌었는지 (조금 늦게 바뀔 수 있음)</li>
-    <li>테스트 및 출시 › 프로덕션 → 8 (1.0.8) 이 "활성"이고 [새 버전 만들기] 버튼이 눌리는 색인지</li></ol>
-    <b>라이선스 키</b>
+  <li data-id="m-check"><label><input type="checkbox"><span><span class="tag t-me">직접</span><b id="i-m-check">이전 뒤 확인 + 라이선스 키</b> <span class="time">5분 · 가장 먼저 · 확인은 끝, 키만 남음</span>
+    <span class="how"><b>확인 3가지 — ✔ 11-12 제가 Chrome 으로 확인 끝</b>
+    <ol><li>✔ kachigoogoo Play Console 앱 목록에 카피바라vs좀비 · 대시보드 열림</li>
+    <li>✔ 스토어 페이지 개발자 이름 = <b>Cachisi</b> (비로그인으로 받은 페이지에 FIBE 0번 · Cachisi 6번)</li>
+    <li>✔ 프로덕션 "활성 · 최신 출시 버전 8 (1.0.8)" · [새 버전 만들기] 눌리는 색</li></ol>
+    <b>라이선스 키 — 남은 것은 이것 하나</b>
     <ol><li>카피바라vs좀비 › 왼쪽 <b>수익 창출</b> 아래 <b>수익 창출 설정</b> (못 찾으면 맨 위 검색창에 "라이선스")</li>
     <li>"라이선스" 칸의 긴 글자(<code>MIIBIjANBgkq…</code> 로 시작 · 약 390자 · 한 줄) 옆 [복사]</li>
     <li>메모장에 붙여 <code>D:\00 Final_Game\키 보관\google_play_license_key.txt</code> 로 저장 (앞뒤 빈 줄 없이 한 줄)</li>
@@ -244,16 +248,17 @@
     <span class="ok">✔ 끝난 표시: 제가 파일을 읽어 "392자쯤 · MIIB 로 시작 · 한 줄"을 확인했다고 답함 (내용은 화면에 찍지 않음)</span>
     <span class="stuck"><b>막히면</b> 이 키는 앱마다 다르고, 이전해도 보통 그대로(불도깨비는 이전 전 · 뒤 392자가 같았음) — 카치건은 아직 한 번도 키를 넣은 적이 없어 비교할 것 없이 새 계정에 보이는 값을 그대로 씀. <code>키 보관\</code> 은 git 에 안 올라감. "수익 창출 설정" 메뉴가 안 보이면 캡처.</span></span></label></li>
 
-  <li data-id="p-pgs"><label><input type="checkbox"><span><span class="tag t-me">직접</span><b>Play 게임즈 서비스 설정 (카치건)</b> <span class="time">30분 · 불도깨비와 같은 흐름 · 1번만 끝나도 9번 시작 가능</span>
+  <li data-id="p-pgs"><label><input type="checkbox"><span><span class="tag t-me">직접</span><b id="i-p-pgs">Play 게임즈 서비스 설정 (카치건)</b> <span class="time">30분 · 불도깨비와 같은 흐름 · 1번만 끝나도 9번 시작 가능</span>
     <span class="how">클라우드 저장 · 구글 계정 자동 로그인에 필요합니다. 카치건은 Play 게임즈를 처음 만드는 것이라(옛 계정에서 만든 적 없음) 이전으로 넘어온 것이 없고 kachigoogoo 에서 새로 만듭니다.
     <ol><li><b>만들기 → App ID</b>: kachigoogoo › 카피바라vs좀비 › 왼쪽 <b>Play 게임즈 서비스</b> › 설정 및 관리 › <b>설정</b> → "아니요, 게임에서 Google API 를 사용하지 않습니다" 쪽으로 [만들기] (새 Google Cloud 프로젝트가 생김) → 화면 위쪽 게임 이름 아래 <b>프로젝트 ID(숫자 12자리쯤) = App ID</b> → 대화창에 숫자를 알려 주세요 (비밀 아님)</li>
     <li><b>사용자 인증 정보</b>: 같은 화면 "사용자 인증 정보" [사용자 인증 정보 추가] → 유형 Android → [OAuth 클라이언트 만들기] 안내를 따라 Google Cloud 로 → 패키지 <code>com.zkfpf.kachizombie</code> · SHA-1 = <b>앱 서명 키</b> 지문(테스트 및 출시 › 앱 무결성 › Play 앱 서명 › "앱 서명 키 인증서"의 SHA-1) → 만들고 돌아와 그 클라이언트를 고르고 [저장]</li>
     <li><b>OAuth 동의 화면</b>(Google Cloud › API 및 서비스): 브랜딩에 앱 이름 · 지원 이메일 · 홈페이지 · 개인정보처리방침 링크 · 승인된 도메인 → 대상 [앱 게시](프로덕션 단계). <b>앱 로고는 올리지 않음</b>(올리면 인증 심사로 감)</li>
     <li><b>저장된 게임 + 게시</b>: Play 게임즈 서비스 › 설정 › 속성 [수정] → "저장된 게임" 켜기 · 설명 · 게임 카테고리 · 그래픽 이미지 1024x500(<code>스토어 등록\그래픽이미지_1024x500.png</code>) → 게시 › [검토 및 게시]</li></ol></span>
+    <span class="why">9번부터는 켤 때 이 Play 게임즈 로그인이 저절로 됩니다(자동 로그인). 로그인 창이 뜨는지 · 프로필이 없는 폰에서 어떻게 보이는지는 (확인 못 함) → 내부 테스트 9번으로 폰에서 같이 봄.</span>
     <span class="ok">✔ 끝난 표시: 1번 = App ID 숫자를 받음 · 전체 = Play 게임즈 서비스 상태 "게시됨", 사용자 인증 정보 1줄, 저장된 게임 "사용"</span>
     <span class="stuck"><b>막히면</b> 버튼 이름 · 선택지 문구는 불도깨비 10월 화면 기준이라 다를 수 있음 → 다르면 고르기 전에 "크롬으로 봐줘". [앱 게시]가 회색이면 브랜딩의 홈페이지 · 개인정보처리방침 링크 · 승인된 도메인(workers.dev 면 <code>&lt;계정&gt;.workers.dev</code>)이 비어 있는 것(불도깨비 때 겪음). 게시 전에는 테스터로 넣은 계정만 로그인될 수 있어 — 4번이 늦어지면 Play 게임즈 서비스 › 테스터에 zkfpf1 · kachigoogoo 를 넣고 시험. 개발용 APK(서명이 다름)로 로그인까지 보려면 업로드 키 SHA-1 인증 정보가 하나 더 필요 — 그때 제가 지문을 알려 드림.</span></span></label></li>
 
-  <li data-id="p-forms"><label><input type="checkbox"><span><span class="tag t-me">직접</span><b>앱 콘텐츠 답 다시</b> <span class="time">15분 · 상품 활성화 전에 · 되도록 11-12 에 먼저 보내기</span>
+  <li data-id="p-forms"><label><input type="checkbox"><span><span class="tag t-me">직접</span><b id="i-p-forms">앱 콘텐츠 답 다시</b> <span class="time">15분 · 상품 활성화 전에 · 되도록 11-12 에 먼저 보내기</span>
     <span class="how">결제 · 클라우드 저장이 들어가면 답이 달라지는 설문 두 개입니다. 메뉴: 카피바라vs좀비 › 왼쪽 맨 아래 <b>모니터링 및 개선 › 정책 및 프로그램 › 앱 콘텐츠</b> (못 찾으면 맨 위 검색창 "앱 콘텐츠").
     <ol><li><b>콘텐츠 등급</b> › [새 설문지 시작] → 이메일 · 카테고리(게임)는 그대로 → 지난번과 같게 답하되 아래 두 칸만 바꿈
       <table style="margin:6px 0"><tr><th>질문</th><th>지난 답</th><th>새 답</th></tr>
@@ -271,9 +276,9 @@
       전송 중 암호화 = 예 → [저장]</li>
     <li>게시 개요 › "검토를 위해 변경사항 전송" (관리형 게시가 꺼져 있으면 저절로 보내짐 — 게시 개요에 "검토 중"으로 뜨는지 확인)</li></ol></span>
     <span class="ok">✔ 끝난 표시: 게시 개요 "검토 중인 변경사항"에 콘텐츠 등급 새 설문 · 데이터 보안 줄이 있음 (통과까지 몇 시간 ~ 며칠)</span>
-    <span class="stuck"><b>막히면</b> Play 게임즈 줄 5개는 불도깨비 10-16 답(구글 "Play 게임즈 서비스 데이터 공개" 안내 기준)을 그대로 옮긴 것이고, 광고 때문에 이미 같은 유형(앱 상호작용 · 진단)이 들어 있으면 용도만 더 체크. <b>"계정 생성 방법" · "데이터 삭제 요청" 질문</b>은 카치건에 랭킹 서버가 없어 불도깨비와 답이 다를 수 있음 (확인 못 함) → 그 화면에서 저장 전에 "크롬으로 봐줘". 설문 중간에 나가면 저장 안 됨.</span></span></label></li>
+    <span class="stuck"><b>막히면</b> Play 게임즈 줄 5개는 불도깨비 10-16 답(구글 "Play 게임즈 서비스 데이터 공개" 안내 기준)을 그대로 옮긴 것이고, 광고 때문에 이미 같은 유형(앱 상호작용 · 진단)이 들어 있으면 용도만 더 체크. 9번은 켤 때 Play 게임즈에 저절로 연결되므로 사용자 ID · 이름 · 기타 작업의 "필수 · 선택"은 화면의 뜻풀이("사용자가 수집 여부를 고를 수 있음" = 선택)를 보고 정함 — Play 게임즈 앱에서 자동 로그인을 끌 수 있어 "선택"으로 적었지만 (확인 못 함) → 저장 전에 "크롬으로 봐줘". <b>"계정 생성 방법" · "데이터 삭제 요청" 질문</b>은 카치건에 랭킹 서버가 없어 불도깨비와 답이 다를 수 있음 (확인 못 함) → 그 화면에서 저장 전에 "크롬으로 봐줘". 설문 중간에 나가면 저장 안 됨.</span></span></label></li>
 
-  <li data-id="m-trader"><label><input type="checkbox"><span><span class="tag t-me">직접</span><b>앱 수준 판매자 상태</b> <span class="time">3분</span>
+  <li data-id="m-trader"><label><input type="checkbox"><span><span class="tag t-me">직접</span><b id="i-m-trader">앱 수준 판매자 상태</b> <span class="time">3분</span>
     <span class="how">유럽(DSA) 규정 때문에 앱마다 "이 앱을 판매자로서 파는가"를 고르는 칸입니다. 계정(kachigoogoo)은 이미 판매자로 선언돼 있습니다.
     <ol><li>카피바라vs좀비 › 앱 콘텐츠 (또는 게시 개요의 알림) › <b>판매자 상태 및 서비스 약관</b></li>
     <li><b>"예, 이 앱에 판매자 상태가 적용됨"</b> — 불도깨비와 같게 (사업자로 유료 상품을 팔기 때문. "아니요"는 유럽 · 영국 사용자에게 "소비자 보호법 적용 안 됨"이 표시되는 선택)</li>
@@ -281,7 +286,7 @@
     <span class="ok">✔ 끝난 표시: 게시 개요 "검토 중인 변경사항"에 판매자 상태 선언 줄</span>
     <span class="stuck"><b>막히면</b> 이전 직후엔 이 칸이 아직 안 보일 수 있음 — 안 보이면 건너뛰고 상품 만들 때 다시. 약관 URL 없이 저장이 안 되면 캡처(약관 페이지를 만들어 드림 · 배포는 허락 뒤).</span></span></label></li>
 
-  <li data-id="m-privacy"><label><input type="checkbox"><span><span class="tag t-dev">개발</span><b>개인정보처리방침 배포</b> <span class="time">10분 · "배포해도 돼" 받은 뒤</span>
+  <li data-id="m-privacy"><label><input type="checkbox"><span><span class="tag t-dev">개발</span><b id="i-m-privacy">개인정보처리방침 배포</b> <span class="time">10분 · "배포해도 돼" 받은 뒤 · <b>파일 준비 끝 · 이전도 끝 → 지금 가능</b></span>
     <span class="how"><ol><li>이전이 끝나 스토어 개발자 이름이 Cachisi 로 보이면 → 사용자 <b>"배포해도 돼"</b></li>
     <li>① 에서 만든 새 판을 Cloudflare Worker 에 배포(주소 그대로 <code>/kachigun-privacy</code>)</li>
     <li>배포 뒤 주소를 열어 확인: 개발자 = 카치(Cachisi) · FIBE 없음 · 구매 기록 · 클라우드 저장 절 · 개정 날짜 / 같은 Worker 의 다른 주소(불도깨비 /privacy · 랭킹)가 그대로 200 인지</li>
@@ -304,11 +309,19 @@
 <div class="tip gray"><b>게임 코드 상태</b> — 결제(상품 5개 · 앱 안 서명 확인 · 같은 주문 두 번 지급 안 함 · 결제 직후 꺼져도 다음 실행 때 지급 · 영구 상품 되살리기) · 클라우드 저장(설정 › [클라우드 저장] › 구글 계정 연결 · 1분마다 자동 · 두 폰 진행이 다르면 고르기 창)은 11-07 까지 만들어 자동 시험을 통과했고, <b>폰에서는 키가 없어 꺼져 있을 뿐</b>입니다. 켜지는 조건 = 라이선스 키(결제) · Play 게임즈 App ID(클라우드) · 스토어에 활성 상품(원화 줄). 9번에서 새로 쓰는 코드는 "처음 켤 때 자동 로그인" 하나.</div>
 <h3>9번</h3>
 <ul class="todo">
+  <li data-id="p-scope9"><label><input type="checkbox"><span><span class="tag t-pick">결정</span><b id="i-p-scope9">9번에 새 좀비 44종 · 말풍선 · 요청_04 를 같이 넣을지</b> <span class="time">9번 굽기 전에 꼭</span>
+    <span class="how">지금 코드(main)에는 결제 · 클라우드 말고도 8번 뒤에 만든 것이 다 들어 있습니다: 새 좀비 32종(모두 44종) · 보스 6마리 순환 · 챕터 색 변형 · 배경 판 3장 · 한 스테이지 3~5종 · 말풍선(받아치기) · 요청_04(아이콘 · 마디 네온 · 해금 빛) · 코드 점검 11개 · 자동 로그인.
+    <table style="margin:6px 0"><tr><th style="width:150px">고르기</th><th>내용</th><th style="width:150px">9번까지</th></tr>
+    <tr><td><b>1. 같이 넣기 (추천)</b></td><td>9번 = 지금 코드 그대로. 스토어 그림 · 글(s-icon) · 유튜브(g-yt3)도 9번이 공개되는 날 같이 바꿈 → 광고 · 스토어 · 게임이 한 번에 맞고, 캠페인으로 들어온 사람이 새 좀비 · 말풍선이 든 판을 봄. 폰에서 볼 것이 늘어남(새 좀비 그림 · 색 · 말풍선 — 내부 테스트 때 20분쯤)</td><td>키 · App ID 받은 뒤 반나절</td></tr>
+    <tr><td>2. 결제 · 클라우드만</td><td>8번 코드에서 가지를 따로 따 결제 · 클라우드 · 코드 점검 가운데 필요한 것만 골라 옮김 → 새 좀비는 10번으로. 9번에 문제가 생겼을 때 원인이 결제 · 클라우드 쪽으로 좁혀짐. 대신 골라 옮기고 시험을 다시 맞추는 데 하루쯤 더 + 10번 검토 한 번 더</td><td>하루 반 ~ 이틀</td></tr></table></span>
+    <span class="why"><b>추천이 바뀐 까닭</b> — 11-11 에는 "9번은 결제만, 새 좀비는 그 뒤 업데이트"를 추천했습니다. 그런데 그 뒤 11-12 코드 점검에서 클라우드 저장의 중요한 고침(어느 쪽이 새것인지 비교 · 세이브 판 번호 · 응답 없음 처리)이 새 좀비 코드 위에 올라갔습니다. 이제 "결제만"으로 내려면 그 고침을 옛 코드로 골라 옮겨야 하는데, 옮기다 빠뜨리는 쪽이 같이 내는 것보다 더 위험합니다. 지금 코드는 자동 시험 188줄 errors=0 입니다.</span>
+    <span class="ok">✔ 끝난 표시: 의견 칸이나 대화창에 "추천대로"(같이 넣기) 또는 "결제만"</span></span></label></li>
+
   <li data-id="p-build9"><label><input type="checkbox"><span><span class="tag t-dev">개발</span><b>9번 AAB (1.0.9)</b> <span class="time">키 · App ID 받은 뒤 반나절 · Unity 닫혀 있어야 함</span>
     <span class="need"><b>준비물</b> <code>키 보관\google_play_license_key.txt</code>(m-check) · Play 게임즈 App ID 숫자(p-pgs 1번) · 11-12 까지의 8번 의견 · Unity 닫힘</span>
     <span class="how"><ol><li><b>키 넣기</b>: 배치 <code>IapTools.SetKeyFromFileBatch</code> → <code>GooglePlayTangle</code> 에 키 → 결제 켜짐(<code>Iap.Configured</code>)</li>
     <li><b>App ID 넣기</b>: Play 게임즈 설정 파일(<code>PlayGamesSettings.asset</code> · 매니페스트 APP_ID — 지금 빈 값) → 설정 창 [클라우드 저장] 줄이 다시 보임(<code>CloudAuth.Configured</code>)</li>
-    <li><b>처음 켤 때 자동 로그인</b>(11-10 정함): 켤 때 구글 계정 조용히 로그인 → 성공하면 저절로 클라우드 연결 · 1분 자동 저장 · 클라우드 진행이 더 앞서면 고르기 창. 실패 · 거절이면 아무 창 없이 지금처럼(설정에서 직접 연결). 지금은 설정에서 직접 연결해야만 저장돼, 안 하고 폰을 바꾸면 진행을 잃음</li>
+    <li><b>처음 켤 때 자동 로그인</b>(11-10 정함) — <b>✔ 코드 · 시험 11-12 에 미리 끝</b>(시험 5줄 추가 · 188줄 errors=0): 켤 때 구글 계정 조용히 로그인 → 성공하면 저절로 클라우드 연결 · 1분 자동 저장 · 클라우드 진행이 더 앞서면 고르기 창. 실패 · 거절이면 아무 창 없이 지금처럼(설정에서 직접 연결). 지금은 설정에서 직접 연결해야만 저장돼, 안 하고 폰을 바꾸면 진행을 잃음</li>
     <li>8번 의견 반영 → 자동 시험(지금 143줄 + 자동 로그인 검사 줄 추가) · 영어 화면 · 안드로이드 기준 컴파일</li>
     <li>개발용 APK → 폰에서 켜짐 · 로그인 창 확인(서명이 달라 스토어 판을 지워야 깔림 — 세이브가 지워지니 원하실 때만. 아니면 내부 테스트 판으로 확인)</li>
     <li>8번 AAB 스크래치 백업 → <b>AAB 1.0.9 (버전 코드 9)</b> → 점검: 버전 코드 · 서명 · 64비트 · 광고 ID 권한 · AdMob ID · <b>결제 권한(BILLING)</b> · <b>게임즈 APP_ID = 받은 숫자</b> · 8번과 권한 목록 비교</li>
@@ -590,8 +603,10 @@ Play — <code>게시 과정\구글_답변_앱이전_1107.txt</code> · 앱 이�
   // 저장 형식: {"c":{항목id:true}, "n":{항목id:"의견"}} — 항목id 는 li 의 data-id
   var KEY='kachigun-todo-1110', st={c:{},n:{}};
   // 체크 → 취소선 + "확인 대기". Claude 가 확인해 문제없으면 여기에 id 를 넣음 → 맨 아래 "이번 판에서 확인한 작업"으로
-  var CONFIRMED=[];   // 11-10 새 판 — 확인한 항목 id 를 여기에
+  var CONFIRMED=['g-yt2','r-admob','m-wait','m-privacy-prep'];   // 11-12: 유튜브 4개(11-10 판 주소 확인) · AdMob "준비됨" · 이전 끝 · 방침 새 판 파일
   try{ var v=JSON.parse(localStorage.getItem(KEY)||'{}'); st.c=v.c||{}; st.n=v.n||{}; }catch(e){}
+  // 제가 확인해 끝난 항목은 체크하지 않으셨어도 끝난 것으로 (한 번도 건드리지 않은 칸만 — 직접 풀면 그대로 둠)
+  CONFIRMED.forEach(function(id){ if(st.c[id]===undefined) st.c[id]=true; });
   function save(){ try{ localStorage.setItem(KEY,JSON.stringify(st)); }catch(e){} stat(); }
   var items=document.querySelectorAll('ul.todo > li[data-id]');
   var doneList=document.getElementById('doneList'), decided=document.getElementById('decided');
