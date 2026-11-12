@@ -258,7 +258,13 @@
     구글 문서(아래 링크)는 옛 화면("아니요, Google API 를 사용하지 않습니다" → 이름 → [만들기]) 기준이라 지금 화면과 다릅니다 — 지금은 <b>클라우드 프로젝트를 먼저 만들고 고르는</b> 순서.</div>
     <ol><li><b>만들기 → App ID</b>
       <ol type="a"><li>위 화면에서 <b>"새 Play Games 서비스 프로젝트 만들기"</b> 동그라미</li>
-      <li><b>[새 클라우드 프로젝트 만들기]</b> → 프로젝트 이름 = <code>Kachizombie</code> (영문 추천 · 계정 kachigoogoo 로 만들어져 자동으로 소유자) · 조직 칸이 나오면 "조직 없음" → [만들기]. 이 버튼이 같은 화면의 창을 띄우는지 Google Cloud 새 탭을 여는지는 (확인 못 함) — 새 탭이면 만든 뒤 그 탭은 닫고 Play Console 로 돌아옴. 결제 계정을 물으면 넣지 말고 멈추고 "크롬으로 봐줘"</li>
+      <li><b>[새 클라우드 프로젝트 만들기]</b> → Google Cloud "새 프로젝트" 화면 (11-12 Chrome 으로 칸 확인 — 같은 화면 주소 <code>console.cloud.google.com/projectcreate</code>, 오른쪽 위 계정 그림이 kachigoogoo 인지 먼저)
+        <table style="margin:6px 0"><tr><th style="width:150px">칸</th><th>처음 값</th><th>넣을 것</th></tr>
+        <tr><td>노란 상자 "projects 할당량이 12개 남았습니다"</td><td>—</td><td>안내일 뿐 · 그대로</td></tr>
+        <tr><td>프로젝트 이름 *</td><td>My Project 숫자</td><td>지우고 <code>Kachizombie</code></td></tr>
+        <tr><td>프로젝트 ID (이름 아래 작은 글씨 · "나중에 변경할 수 없습니다")</td><td>자동 이름(단어-단어-숫자)</td><td><b>[수정] 누르지 말고 그대로</b> — 게임 코드에 쓰는 App ID 는 이것이 아니라 Play Console 이 보여 주는 숫자 (불도깨비도 자동 ID <code>flash-gasket-…</code> 그대로 씀)</td></tr>
+        <tr><td>상위 리소스 *</td><td>조직 없음</td><td>그대로</td></tr></table>
+        → [만들기] → 몇 초 뒤 알림(종 모양)에 "프로젝트 만듦" → 그 탭은 닫고 Play Console 로. 결제 계정 · 무료 체험($300) 안내는 누르지 않음(위쪽 "무료로 시작하기" 띠 포함)</li>
       <li>Play Console 로 돌아와 <b>[클라우드 프로젝트 새로고침]</b> → "클라우드 프로젝트" 목록에서 방금 만든 <code>Kachizombie</code> 고르기</li>
       <li>약관 3개(Play Games 서비스 · Google Cloud Platform · Google API) 안내를 읽고 오른쪽 아래 <b>[사용]</b></li>
       <li>"Play Games 서비스 설정" 화면 위쪽 게임 이름 아래 <b>프로젝트 ID(숫자 12자리쯤) = App ID</b> → 대화창에 숫자를 알려 주세요 (비밀 아님 · 불도깨비 것은 1095783083551 같은 모양)</li></ol></li>
