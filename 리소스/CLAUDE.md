@@ -1,6 +1,7 @@
 # 카치건 (좀비 키우기) — 세로 방치형 분대 슈팅, Unity 6000.0.84f1 · 2D URP
 
 ## ▶ 재개 메모 (2026-11-12 낮 — 앱 이전 끝 · 9번 재료 대기)
+- **11-12 밤 구글 애즈 Chrome 확인**(칸은 안 바꿈): 만들던 앱 캠페인 App-1 이 "캠페인 설정" 단계에 저장됨 · 결제 세부정보는 검토 다음 **맨 마지막**(결제 = 게시) · 위치 기본값 "모든 국가" → 대한민국 · **[설정 더보기] › 시작일** 있음(기본 오늘 → 11-17) · **타겟 설치당비용 체크가 기본으로 켜져 있음 → 풀기** · 설치 전환 이미 있음(11-11 생성) · HTML5 칸 보임 · Play 연결 = 계정 관리 › Play 앱 설정 › 연결된 서비스(아직 없음). 남은_작업에 "구글 애즈 화면이 문서와 다른 곳" 표(#ads-diff) + g-onboard/g-pay/g-camp-draft/g-link/g-conv/참고 표 고침 · g-yt3(새 주소 4개) · s-desc(공개 페이지 44종) CONFIRMED · 옛 판 = 스크래치 남은_작업_정리_before_1112d.html · 커밋 f4dbc26
 - 사용자 "이전 끝났어" → **Chrome 확인**: kachigoogoo(Cachisi · /console/u/1/developers/8145464765433681010) 앱 목록에 카피바라vs좀비(앱 번호 4973745386467551429 그대로) + 불도깨비 · 대시보드 열림 · 스토어 개발자 이름 Cachisi(비로그인 curl: FIBE 0번) · 프로덕션 "활성 · 8 (1.0.8) · 설치 18" · [새 버전 만들기] 눌림 · 권장 조치 3개(더 넓은 화면 2 · R8 — 출시 안 막음, 9번 뒤) · **AdMob 카치건 "준비됨" · Google Play 연결됨**(r-admob 끝)
 - **13:30 라이선스 키 받음**(사용자 파일 이름 오타 googel_ → google_ 로 바꿈 · 392자 RSA 공개 키) → `SetKeyFromFileBatch` → GooglePlayTangle 커밋 · 결제·광고 점검 [OK] 3줄
 - **13:45 Play 게임즈 App ID `667458878000`** (사용자 · 클라우드 프로젝트 Kachizombie) → 새 도구 `Editor/GpgsTools.cs` (`SetupBatch` = 플러그인 PerformSetup 배치 · 메뉴 카치건 > Play 게임즈 점검) → PlayGamesSettings mAppId · 매니페스트 APP_ID `667458878000`(6 = "6") · GooglePlayGameSettings.txt · Gvh 설정 2줄 · 점검 [OK] 5줄 · GPGSIds.cs 는 안 생김(쓰는 곳 없음)
