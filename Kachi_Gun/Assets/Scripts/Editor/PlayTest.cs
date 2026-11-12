@@ -1033,7 +1033,9 @@ namespace KachiGun.EditorTools
                         Check(rpSeen.Count == 2, $"배고프당! 답 {rpSeen.Count}종 ({string.Join(" / ", rpSeen)})");
                     }
                     // 스테이지 마디 네온: 지금 서브 스테이지 마디 자리 · 깜빡임
-                    float a0 = HUD.I.NodeGlowColor.a; yield return Wait(0.37f); float a1 = HUD.I.NodeGlowColor.a;
+                    // 11-12 두 번만 재면 깜빡임 주기와 맞아 같은 밝기가 잡힐 때가 있음 → 1초 동안 여러 번 재서 가장 어둡고 밝은 값
+                    float a0 = HUD.I.NodeGlowColor.a, a1 = a0;
+                    for (int gi = 0; gi < 8; gi++) { yield return Wait(0.13f); float ga = HUD.I.NodeGlowColor.a; a0 = Mathf.Min(a0, ga); a1 = Mathf.Max(a1, ga); }
                     var gp = HUD.I.NodeGlowPos;
                     Check(Mathf.Abs(gp.x - (-200 + (S.Sub - 1) * 100)) < 0.5f && Mathf.Abs(a0 - a1) > 0.02f, $"스테이지 마디 네온: 마디 {S.Sub} 자리 x {gp.x} · 밝기 {a0:0.00}→{a1:0.00}");
                     // 눌러서 강화: 54 · 빨강
@@ -1314,6 +1316,9 @@ namespace KachiGun.EditorTools
             up = SaveData.Parse(PlayerPrefs.GetString(CloudSave.FakeKey, ""));
             Check(up != null && up.saveId == S.saveId && S.gems != 54321, "[이 기기 쓰기] → 확인 → 이 기기 진행을 클라우드에 올림");
 
+            // 11-12 다이아 부족 → [상점으로] → 상점 다이아 줄 · 새 버전 알림
+            yield return GemShortAndUpdate();
+
             // 같은 진행인데 클라우드가 더 새것(다른 폰에서 더 함) → 불러오기 → 씬 다시 불러옴
             var newer = SaveData.Parse(S.ToJson());
             newer.gems = 77777; newer.stage = S.stage + 1; newer.savedAt = SaveData.Now + 60;
@@ -1435,6 +1440,71 @@ namespace KachiGun.EditorTools
             Capture("19d_cloud_popup");
             CloseAll();
             PlayTest.ResetCloud();
+        }
+
+        /// <summary>창 안에서 글자가 text 인 버튼</summary>
+        static Button BtnOf(Component root, string text)
+        {
+            if (root) foreach (var b in root.GetComponentsInChildren<Button>(false)) { var lt = UIKit.LabelOf(b); if (lt != null && lt.text == text) return b; }
+            return null;
+        }
+
+        /// <summary>11-12 코스튬 · 보급품 다이아 부족 → [상점으로] → 상점 다이아 줄 · 새 버전 알림(다른 창이 닫힌 뒤에만)</summary>
+        IEnumerator GemShortAndUpdate()
+        {
+            double gems0 = S.gems;
+            var tap = typeof(SkinPopup).GetMethod("Tap", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+            var skin = Tables.Skins.Find(x => !S.skins.Contains(x.id) && x.price > 0);
+            CloseAll();
+            S.gems = 0;
+            var sp = HUD.I.Open<SkinPopup>();
+            if (skin != null) tap.Invoke(sp, new object[] { skin.id });
+            yield return Wait(0.3f);
+            var cp = HUD.I.Get<ConfirmPopup>();
+            Check(skin != null && cp && cp.gameObject.activeSelf && cp.title.text == L.T("다이아 부족") && BtnOf(cp, L.T("상점으로")) != null && !S.skins.Contains(skin.id),
+                  "코스튬 다이아 부족 → '다이아 부족' 창 + [상점으로] (사지 않음)");
+            Capture("19e_gem_short");
+            BtnOf(cp, L.T("상점으로"))?.onClick.Invoke();
+            yield return Wait(0.4f);
+            var shop = HUD.I.Get<ShopPopup>();
+            var sr = shop ? shop.GetComponentInChildren<ScrollRect>() : null;
+            float top = sr && shop.GemRowY >= 0 ? shop.GemRowY - sr.content.anchoredPosition.y : -1, viewH = sr ? ((RectTransform)sr.transform).rect.height : 0;
+            Check(shop && shop.gameObject.activeSelf && HUD.I.openPopups[HUD.I.openPopups.Count - 1] == shop && top >= 0 && top + 155 <= viewH + 1,
+                  $"[상점으로] → 상점이 코스튬 창 위에 열리고 다이아 줄이 화면 안 (줄 위치 {top:0} / 보이는 높이 {viewH:0})");
+            Capture("19f_shop_gems");
+
+            var supTap = typeof(SupplyPopup).GetMethod("Tap", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+            var sup = Tables.Supplies.Find(x => !S.supplies.Contains(x.id) && x.cost > 0);
+            int best0 = S.bestEver;
+            if (sup != null && GM.BestChapter < sup.unlockChapter) S.bestEver = (sup.unlockChapter - 1) * 5;   // 잠시 열어 둠 (아래에서 되돌림)
+            CloseAll();
+            var sup0 = HUD.I.Open<SupplyPopup>();
+            if (sup != null) supTap.Invoke(sup0, new object[] { sup.id });
+            yield return Wait(0.3f);
+            cp = HUD.I.Get<ConfirmPopup>();
+            Check(sup == null || (cp && cp.gameObject.activeSelf && cp.title.text == L.T("다이아 부족") && !S.supplies.Contains(sup.id)),
+                  sup == null ? "보급품 다이아 부족 (열린 보급품이 없어 건너뜀)" : "보급품 다이아 부족 → '다이아 부족' 창");
+            CloseAll();
+            S.gems = gems0;
+            S.bestEver = best0;
+
+            // 새 버전 알림: 다른 창이 떠 있으면 기다렸다가 닫히면 뜸
+            AppUpdateCheck.ResetForTest();
+            AppUpdateCheck.FakeAvailable = true;
+            HUD.I.Open<SkinPopup>();
+            AppUpdateCheck.Start();
+            yield return Wait(1.2f);
+            Check(AppUpdateCheck.Available && !AppUpdateCheck.Shown, "새 버전 있음 + 다른 창이 떠 있음 → 아직 안 띄움");
+            CloseAll();
+            yield return Wait(1.2f);
+            cp = HUD.I.Get<ConfirmPopup>();
+            Check(AppUpdateCheck.Shown && cp && cp.gameObject.activeSelf && cp.title.text == L.T("업데이트") && BtnOf(cp, L.T("업데이트")) != null,
+                  "창이 닫힌 뒤 [업데이트] 창");
+            Capture("19g_update");
+            AppUpdateCheck.Start();   // 한 실행에 한 번만
+            Check(AppUpdateCheck.StoreUrl == "market://details?id=" + Application.identifier, $"[업데이트] → {AppUpdateCheck.StoreUrl}");
+            CloseAll();
+            AppUpdateCheck.FakeAvailable = false;
         }
 
         /// <summary>영어 화면: 진행을 조금 해 둔 세이브 + English → 씬 다시 불러 메인·창 촬영</summary>

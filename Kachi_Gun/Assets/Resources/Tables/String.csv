@@ -2,6 +2,9 @@
 [테스트] 광고 대신 바로 지급,[Test] Reward given without an ad,Core/AdService.cs
 광고를 불러오는 중입니다. 잠시 뒤 다시 눌러 주세요,Loading the ad. Please tap again in a moment.,Core/AdService.cs
 광고를 띄우지 못했습니다. 잠시 뒤 다시 해 주세요,Couldn't show the ad. Please try again later.,Core/AdService.cs
+새 버전,New Version,Core/AppUpdateCheck.cs
+새 버전이 나왔습니다.\n스토어에서 업데이트해 주세요.,A new version is available.\nPlease update from the store.,Core/AppUpdateCheck.cs
+업데이트,Update,Core/AppUpdateCheck.cs
 테스트 계정,Test Account,Core/Cloud.cs
 클라우드 진행이 더 새 버전의 게임에서 저장되었습니다.\n게임을 업데이트해 주세요,The cloud progress was saved by a newer version of the game.\nPlease update the game.,Core/Cloud.cs
 클라우드를 읽지 못했습니다. 잠시 뒤 다시 해 주세요,Couldn't read the cloud. Please try again later,Core/Cloud.cs
@@ -124,6 +127,10 @@
 공격력 +{0}% · 공격속도 +{1}% · 금전 획득량 +{2}%,ATK +{0}% · SPD +{1}% · Gold +{2}%,UI/MenuPopups.cs
 입는 중,Wearing,UI/MenuPopups.cs
 보유,Owned,UI/MenuPopups.cs
+필요 {0} · 보유 {1},Need {0} · Have {1},UI/MenuPopups.cs
+상점에서 다이아를 얻을 수 있어요.,You can get gems in the Shop.,UI/MenuPopups.cs
+다이아 부족,Not Enough Gems,UI/MenuPopups.cs
+상점으로,Go to Shop,UI/MenuPopups.cs
 광고,Ad,UI/MenuPopups.cs
 {0} 으로 살까요?,Buy for {0}?,UI/MenuPopups.cs
 보유 중,Owned,UI/MenuPopups.cs

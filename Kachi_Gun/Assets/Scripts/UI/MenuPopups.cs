@@ -67,6 +67,7 @@ namespace KachiGun
         {
             var r = Tables.Skins.Find(x => x.id == id);
             if (S.skins.Contains(id)) { Msg(GM.BuySkin(id)); Refresh(); return; }
+            if (S.gems < r.price) { ShopPopup.GemShort(r.price); return; }   // 11-12 다이아 부족 → [상점으로]
             ConfirmPopup.Ask($"<size=46>{L.T(r.name)}</size>\n\n" + L.F("다이아 {0} 으로 살까요?", Comma(r.price)) + "\n\n" + L.T("보유 효과") + "\n" + L.F("공격력 +{0}% · 공격속도 +{1}% · 금전 +{2}%", r.atk, r.spd, r.gold),
                 () => { Msg(GM.BuySkin(id)); H.Open<SkinPopup>(); }, "코스튬 구매");
         }
@@ -111,6 +112,35 @@ namespace KachiGun
         protected override Vector2 Size => new(1000, 1600);
         protected override string Title => "상점";
         Button adGemBtn;
+        ScrollRect scroll;
+        float gemRowY = -1;   // 다이아를 얻는 첫 줄(다이아 상품 · 없으면 무료 다이아)의 위치 — 다이아 부족에서 열 때 여기로
+        public float GemRowY => gemRowY;
+
+        /// <summary>11-12 다이아가 모자랄 때 (코스튬 · 보급품): 필요 · 보유를 보여 주고 [상점으로] → 상점의 다이아 줄</summary>
+        public static void GemShort(double need)
+        {
+            ConfirmPopup.Ask(L.T("다이아가 부족합니다") + "\n\n" + L.F("필요 {0} · 보유 {1}", GemN(need), GemN(SaveData.Cur.gems)) + "\n\n" + L.T("상점에서 다이아를 얻을 수 있어요."),
+                OpenGems, "다이아 부족", "상점으로");
+        }
+
+        /// <summary>다이아 개수 1,900 (코스튬 목록 가격과 같은 모양)</summary>
+        static string GemN(double v) => System.Math.Floor(v + 1e-6).ToString("N0", System.Globalization.CultureInfo.InvariantCulture);
+
+        /// <summary>상점을 열고 다이아 줄이 맨 위에 보이게 스크롤</summary>
+        public static void OpenGems()
+        {
+            var p = HUD.I.Open<ShopPopup>();
+            p.ScrollToGems();
+        }
+
+        public void ScrollToGems()
+        {
+            if (!scroll || gemRowY < 0) return;
+            scroll.StopMovement();
+            var inner = scroll.content;
+            float maxY = Mathf.Max(0, inner.rect.height - ((RectTransform)scroll.transform).rect.height);
+            inner.anchoredPosition = new Vector2(inner.anchoredPosition.x, Mathf.Min(gemRowY, maxY));
+        }
 
         protected override void Build()
         {
@@ -143,7 +173,11 @@ namespace KachiGun
                 else { price = r.priceType == "Ad" ? L.T("광고") : r.priceValue; kind = r.priceType == "Ad" ? 0 : 2; act = () => Iap.Buy(row.id); }
                 items.Add((r.id, L.T(r.name), L.T(r.desc), price, kind, act));
             }
-            var scroll = SkinPopup.MakeScroll(content, new Vector2(0, -10), new Vector2(900, 1430), out var inner);
+            scroll = SkinPopup.MakeScroll(content, new Vector2(0, -10), new Vector2(900, 1430), out var inner);
+            gemRowY = -1;
+            int gi = items.FindIndex(x => x.id.StartsWith("gem_pack"));
+            if (gi < 0) gi = items.FindIndex(x => x.id == "free_gems_ad");
+            if (gi >= 0) gemRowY = gi * 170;
             inner.sizeDelta = new Vector2(0, items.Count * 170 + 10);
             for (int i = 0; i < items.Count; i++)
             {
@@ -252,6 +286,7 @@ namespace KachiGun
             if (r == null) return;
             if (S.supplies.Contains(id)) { H.Toast(L.T("이미 가진 보급품입니다")); return; }
             if (GM.BestChapter < r.unlockChapter) { H.Toast(L.F("챕터 {0} 에서 열립니다", r.unlockChapter)); return; }
+            if (S.gems < r.cost) { ShopPopup.GemShort(r.cost); return; }   // 11-12 다이아 부족 → [상점으로]
             ConfirmPopup.Ask($"<size=46>{L.T(r.name)}</size>\n<color=#{ColorUtility.ToHtmlStringRGB(GradeColor(r.grade) * 0.75f)}>{L.T(r.grade)}</color>\n\n" + L.F("다이아 {0} 으로 살까요?", r.cost.ToString("0")) + "\n\n" + L.T("보유 효과") + $"\n{Effect(r)}",
                 () => { Msg(GM.BuySupply(id)); Refresh(); }, "보급품 구매");
         }

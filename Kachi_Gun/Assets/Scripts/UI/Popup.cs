@@ -111,13 +111,14 @@ namespace KachiGun
         }
 
         /// <summary>titleText 는 한국어 그대로 주면 지금 언어로 바뀜</summary>
-        public static void Ask(string text, Action yes, string titleText = "확인")
+        /// <param name="okText">버튼 글자 (한국어 그대로 주면 지금 언어로) — 11-12 [상점으로] · [업데이트]</param>
+        public static void Ask(string text, Action yes, string titleText = "확인", string okText = "확인")
         {
             var p = HUD.I.Open<ConfirmPopup>();
             p.title.text = L.T(titleText);
             p.body.text = text;
             p.onOk = yes;
-            UIKit.LabelOf(p.ok).text = L.T("확인");
+            UIKit.LabelOf(p.ok).text = L.T(okText);
         }
 
         public static void Dungeon(Kind k)

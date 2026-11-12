@@ -41,6 +41,9 @@ namespace KachiGun.EditorTools
         /// <summary>배치용 APK — 개발용 키로 서명 (비밀번호 필요 없음)</summary>
         public static void BuildApkDebug() => ExitAfter(() => DoBuild(null, null, true, true));
 
+        /// <summary>11-12 배치용 — 빌드 없이 안드로이드 라이브러리 정리만 (mainTemplate.gradle 에 새 라이브러리 줄 넣기 → 커밋해 두면 창 빌드도 같음)</summary>
+        public static void ResolveBatch() => ExitAfter(PrepareAndroidDependencies);
+
         static void ExitAfter(Func<bool> build)
         {
             int code = 1;
@@ -213,11 +216,14 @@ namespace KachiGun.EditorTools
 
             // 4) 광고 라이브러리 줄 확인
             string gradle = Path.Combine(Application.dataPath, "Plugins", "Android", "mainTemplate.gradle");
-            if (!File.Exists(gradle) || !File.ReadAllText(gradle).Contains("com.google.android.gms:play-services-ads"))
-            {
-                Debug.LogError("[BuildAab] mainTemplate.gradle 에 광고 라이브러리 줄이 없음 — 메뉴 Assets > External Dependency Manager > Android Resolver > Force Resolve 를 누른 뒤 다시 빌드하세요");
-                return false;
-            }
+            string gt = File.Exists(gradle) ? File.ReadAllText(gradle) : "";
+            // 11-12 앱 내 업데이트(새 버전 알림) 라이브러리 줄도
+            foreach (var lib in new[] { "com.google.android.gms:play-services-ads", "com.google.android.play:app-update" })
+                if (!gt.Contains(lib))
+                {
+                    Debug.LogError($"[BuildAab] mainTemplate.gradle 에 {lib} 줄이 없음 — 메뉴 Assets > External Dependency Manager > Android Resolver > Force Resolve 를 누른 뒤 다시 빌드하세요");
+                    return false;
+                }
             return true;
         }
 
