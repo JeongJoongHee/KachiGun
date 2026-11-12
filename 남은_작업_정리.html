@@ -349,6 +349,11 @@
     <span class="stuck"><b>막히면</b> 순서는 불도깨비 11-06 화면 기준. <b>상품 ID 는 나중에 못 바꾸고, 지운 ID 는 다시 못 씀</b> — 잘못 만들었으면 지우지 말고 먼저 알려 주세요. 메뉴가 회색이면 결제 권한이 든 빌드가 아직 안 올라갔거나 결제 프로필 연결 문제 → 캡처. 다섯 개 모두 Play Console 에선 같은 "일회성 제품" — 다이아(쓰면 없어짐) / 광고 제거 · 자동강화(영구)의 구분은 게임 코드가 함.</span></span></label></li>
 
   <li data-id="p-test"><label><input type="checkbox"><span><span class="tag t-see">보기</span><b id="i-p-test">폰으로 시험 결제 · 클라우드</b> <span class="time">20분 · zkfpf1 로그인 폰(라이선스 테스터) · 내부 테스트 9번</span>
+    <span class="tip orange" style="display:block;margin:6px 0"><b>11-12 17시 "상품을 올렸는데 게임에서 안 보여" → Chrome 확인</b>: 내부 테스트 <b>10 (1.0.10) 제공됨 · 오후 4:50</b> · 상품 5개 ID 모두 맞음 · 각각 구매 옵션 <code>buy</code> "이전 버전과의 호환성" · 국가 174개 · <b>활성</b> (remove_all_ads 설명에 다이아 1000 들어감) → <b>Play Console 쪽은 정상</b>. 게임은 켤 때 스토어에서 상품 정보를 받아야만 원화 줄을 보여 줌(<code>Iap.CanSell</code>) — 그래서 원인은 폰 쪽. 아래 순서로:
+<ol><li><b>폰의 게임 버전 확인</b>: 폰 설정 › 애플리케이션 › 카피바라vs좀비 › 맨 아래 "버전" — <b>1.0.10</b> 이어야 함. 1.0.8 이면 스토어 판(결제 꺼짐) → 2번으로</li>
+<li><b>테스터 참여</b>: Play Console › 내부 테스트 › 테스터 탭 › "웹에서 참여 · 링크 복사" → 폰(Play 스토어 계정 = <b>zkfpf1</b>)에서 링크 열기 → [테스터 되기] → [Google Play 에서 다운로드] → 카피바라vs좀비 <b>[업데이트]</b>. (폰의 Play 스토어 계정이 kachigoogoo 나 다른 계정이면 그 계정은 "결제테스트" 목록에 없어 테스트 결제가 안 됨)</li>
+<li>1.0.10 인데도 안 보이면: 게임을 <b>최근 앱에서 완전히 끄고</b> 다시 켜기 → 상점. 그래도 없으면 폰 설정 › 애플리케이션 › <b>Google Play 스토어 › 저장공간 › 캐시 지우기</b> → 게임 다시 켜기. 상품을 막 만든 직후엔 늦게 보일 수 있음(얼마나 걸리는지는 확인 못 함 — 보통 몇 분)</li>
+<li>그래도 안 보이면: 폰을 USB 로 PC 에 연결(개발자 옵션 › USB 디버깅) → "폰 연결했어" — 제가 게임 로그의 <code>[Iap]</code> 줄(연결됨 · 상품 N개 · 실패 이유)을 읽어 원인을 찾음</li></ol></span>
     <span class="how"><b>결제</b>
     <ol><li>상점에 <b>원화 5줄</b>(모든 광고 제거 9,900 · 자동강화 5,900 · 다이아 2,900 / 5,900 / 11,900)이 보이는지 — 안 보이면 상점을 닫고 30초 뒤 다시, 그래도 없으면 앱 다시 켜기(상품을 막 만든 직후엔 몇 분 걸림)</li>
     <li>다이아 한 줌 → 결제창에 <b>"테스트 카드, 항상 승인"</b>이 보이는지 <b>(안 보이면 멈추고 캡처 — 실제 결제됨)</b> → 구매 → 다이아 +500</li>
@@ -627,7 +632,7 @@ Play — <code>게시 과정\구글_답변_앱이전_1107.txt</code> · 앱 이�
   // 저장 형식: {"c":{항목id:true}, "n":{항목id:"의견"}} — 항목id 는 li 의 data-id
   var KEY='kachigun-todo-1110', st={c:{},n:{}};
   // 체크 → 취소선 + "확인 대기". Claude 가 확인해 문제없으면 여기에 id 를 넣음 → 맨 아래 "이번 판에서 확인한 작업"으로
-  var CONFIRMED=['g-yt2','r-admob','m-wait','m-privacy-prep','m-check','m-trader','m-privacy','p-pgs','p-forms','p-scope9','p-build9'];   // 11-12 저녁 Chrome 확인: PGS 게시 · 앱 콘텐츠 검토 중 · 결정 같이   // 11-12 15시: m-trader 는 11-09 에 이미 '적용됨'   // 11-12 13:30 라이선스 키 392자 · 게임에 넣음   // 11-12: 유튜브 4개(11-10 판 주소 확인) · AdMob "준비됨" · 이전 끝 · 방침 새 판 파일
+  var CONFIRMED=['g-yt2','r-admob','m-wait','m-privacy-prep','m-check','m-trader','m-privacy','p-pgs','p-forms','p-scope9','p-build9','p-internal','p-products'];   // 11-12 17시: 10번 내부 테스트 · 상품 5개 활성 Chrome 확인   // 11-12 저녁 Chrome 확인: PGS 게시 · 앱 콘텐츠 검토 중 · 결정 같이   // 11-12 15시: m-trader 는 11-09 에 이미 '적용됨'   // 11-12 13:30 라이선스 키 392자 · 게임에 넣음   // 11-12: 유튜브 4개(11-10 판 주소 확인) · AdMob "준비됨" · 이전 끝 · 방침 새 판 파일
   try{ var v=JSON.parse(localStorage.getItem(KEY)||'{}'); st.c=v.c||{}; st.n=v.n||{}; }catch(e){}
   // 제가 확인해 끝난 항목은 체크하지 않으셨어도 끝난 것으로 (한 번도 건드리지 않은 칸만 — 직접 풀면 그대로 둠)
   CONFIRMED.forEach(function(id){ if(st.c[id]===undefined) st.c[id]=true; });
