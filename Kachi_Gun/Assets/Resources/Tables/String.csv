@@ -53,8 +53,13 @@
 골드,Gold,Game/GameManager.cs
 최소 1개의 총알을 장착해야 합니다,You must equip at least 1 ammo,Game/GameManager.cs
 빈 칸에만 놓을 수 있습니다,Can only be placed in an empty slot,Game/GameManager.cs
-{0}초 뒤에 다시 볼 수 있습니다,Available again in {0}s,Game/GameManager.cs
+쿠폰 번호를 넣어 주세요,Please enter a coupon code,Game/GameManager.cs
+없는 쿠폰 번호입니다,Invalid coupon code,Game/GameManager.cs
+이미 사용한 쿠폰입니다,This coupon has already been used,Game/GameManager.cs
+아직 사용할 수 없는 쿠폰입니다,This coupon is not available yet,Game/GameManager.cs
+기간이 지난 쿠폰입니다,This coupon has expired,Game/GameManager.cs
 다이아,Gems,Game/GameManager.cs
+{0}초 뒤에 다시 볼 수 있습니다,Available again in {0}s,Game/GameManager.cs
 모든 단계를 끝냈습니다,All tiers completed,Game/GameManager.cs
 아직 달성하지 못했습니다,Not achieved yet,Game/GameManager.cs
 오늘은 다 받았습니다 (내일 다시),All claimed today (come back tomorrow),Game/GameManager.cs
@@ -156,9 +161,14 @@
 효과음,Sound,UI/MenuPopups.cs
 던전에서는 바꿀 수 없습니다,Can't change during a dungeon,UI/MenuPopups.cs
 저장했습니다 (기기 안),Saved (on this device),UI/MenuPopups.cs
+쿠폰,Coupon,UI/MenuPopups.cs
 게임 종료,Quit Game,UI/MenuPopups.cs
 켜짐,On,UI/MenuPopups.cs
 꺼짐,Off,UI/MenuPopups.cs
+쿠폰 번호를 넣고 [사용]을 눌러 주세요.\n같은 쿠폰은 한 번만 쓸 수 있어요.,Enter a coupon code and tap [Use].\nEach coupon can be used only once.,UI/MenuPopups.cs
+쿠폰 번호,Coupon code,UI/MenuPopups.cs
+사용,Use,UI/MenuPopups.cs
+쿠폰 보상: {0},Coupon reward: {0},UI/MenuPopups.cs
 확인,OK,UI/Popup.cs
 시작,Start,UI/Popup.cs
 {0}초 안에 좀비 {1}마리를 모두 처치!,Defeat all {1} zombies within {0}s!,UI/Popup.cs

@@ -378,10 +378,10 @@ namespace KachiGun
     {
         // 출시 빌드에는 [테스트용] 버튼이 없어 창이 짧음 (10-24 출시용 정리 — 테스트 버튼은 에디터에서만)
 #if UNITY_EDITOR
-        protected override Vector2 Size => new(1000, 1500);
+        protected override Vector2 Size => new(1000, 1650);   // 11-12 [쿠폰] 줄 +150
 #else
         // 11-09 8번: Play 게임즈 App ID 가 없으면(9번 전) [클라우드 저장] 줄을 빼서 한 줄(-150) 짧게
-        protected override Vector2 Size => new(1000, CloudAuth.Configured ? 1070 : 920);   // 11-07 진동 줄 삭제로 -150
+        protected override Vector2 Size => new(1000, CloudAuth.Configured ? 1220 : 1070);   // 11-07 진동 줄 삭제로 -150 · 11-12 [쿠폰] 줄 +150
 #endif
         protected override string Title => "설정";
         Button bgm, sfx, lang;
@@ -402,11 +402,12 @@ namespace KachiGun
             // 11-09: 클라우드는 App ID 를 넣은 빌드(9번)부터 — 그 전엔 줄을 빼고 [게임 종료]를 한 칸 올림
             bool cloud = CloudAuth.Configured;
             if (cloud) Row(L.T("클라우드 저장"), 4, new Color(0.3f, 0.55f, 0.95f), () => H.Open<CloudPopup>());
-            Row(L.T("게임 종료"), cloud ? 5 : 4, new Color(0.8f, 0.32f, 0.26f), () => H.Open<QuitPopup>());
+            Row(L.T("쿠폰"), cloud ? 5 : 4, new Color(0.45f, 0.7f, 0.3f), () => H.Open<CouponPopup>());   // 11-12
+            Row(L.T("게임 종료"), cloud ? 6 : 5, new Color(0.8f, 0.32f, 0.26f), () => H.Open<QuitPopup>());
 
 #if UNITY_EDITOR
             var t = UIKit.Label(content, "[테스트용 — 에디터에서만 보임]", 30, UIKit.Red, TextAnchor.MiddleCenter, 2);
-            t.rectTransform.Place(0.5f, 1, new Vector2(0, -940), new Vector2(880, 40), new Vector2(0.5f, 0.5f));
+            t.rectTransform.Place(0.5f, 1, new Vector2(0, -1090), new Vector2(880, 40), new Vector2(0.5f, 0.5f));
             Small("다이아 +1000", 0, () => { S.gems += 1000; GM.Notify(); });
             Small("골드 x100", 1, () => { S.gold = System.Math.Max(S.gold, 100) * 100; GM.Notify(); });
             Small("다음 스테이지", 2, () => { if (GM.mode == GameManager.Mode.Stage) GM.AdvanceStage(); });
@@ -443,7 +444,7 @@ namespace KachiGun
         void Small(string name, int i, System.Action a)
         {
             var b = UIKit.ColorBtn(content, new Color(0.5f, 0.3f, 0.25f), new Vector2(430, 110), name, 34, a);
-            ((RectTransform)b.transform).Place(0.5f, 1, new Vector2(i % 2 == 0 ? -225 : 225, -990 - (i / 2) * 130), new Vector2(430, 110), new Vector2(0.5f, 1));
+            ((RectTransform)b.transform).Place(0.5f, 1, new Vector2(i % 2 == 0 ? -225 : 225, -1140 - (i / 2) * 130), new Vector2(430, 110), new Vector2(0.5f, 1));
         }
 
         public override void Refresh()
@@ -459,6 +460,53 @@ namespace KachiGun
         {
             UIKit.LabelOf(b).text = L.T(on ? "켜짐" : "꺼짐");
             UIKit.SetOn(b, on);
+        }
+    }
+
+    /// <summary>
+    /// 쿠폰 (11-12, 설정 > [쿠폰]): 번호를 넣고 [사용] → GameManager.UseCoupon (Coupon_List 표) · 성공하면 받은 것을 알리고 칸을 비움
+    /// </summary>
+    public class CouponPopup : Popup
+    {
+        protected override Vector2 Size => new(900, 780);
+        protected override string Title => "쿠폰";
+        public InputField input;
+
+        protected override void Build()
+        {
+            var info = UIKit.Label(content, L.T("쿠폰 번호를 넣고 [사용]을 눌러 주세요.\n같은 쿠폰은 한 번만 쓸 수 있어요."), 34, UIKit.Ink, TextAnchor.MiddleCenter, 0);
+            info.rectTransform.Place(0.5f, 1, new Vector2(0, -70), new Vector2(800, 120), new Vector2(0.5f, 0.5f));
+
+            var box = UIKit.KitImg(content, "bubble", new Vector2(720, 120), "Input");
+            box.rectTransform.Place(0.5f, 1, new Vector2(0, -250), new Vector2(720, 120), new Vector2(0.5f, 0.5f));
+            var txt = UIKit.Label(box.transform, "", 46, UIKit.Ink, TextAnchor.MiddleCenter, 0);
+            txt.rectTransform.Fill(24, 6, 24, 6);
+            txt.supportRichText = false;
+            var ph = UIKit.Label(box.transform, L.T("쿠폰 번호"), 40, new Color(0.33f, 0.19f, 0.1f, 0.35f), TextAnchor.MiddleCenter, 0);
+            ph.rectTransform.Fill(24, 6, 24, 6);
+            input = box.gameObject.AddComponent<InputField>();
+            input.textComponent = txt;
+            input.placeholder = ph;
+            input.characterLimit = 24;
+            input.contentType = InputField.ContentType.Alphanumeric;
+            input.targetGraphic = box;
+
+            var use = UIKit.ColorBtn(content, new Color(0.45f, 0.7f, 0.3f), new Vector2(360, 116), L.T("사용"), 42, Use);
+            ((RectTransform)use.transform).Place(0.5f, 0, new Vector2(0, 10), new Vector2(360, 116), new Vector2(0.5f, 0));
+        }
+
+        public override void Open()
+        {
+            base.Open();
+            if (input) input.text = "";
+        }
+
+        public void Use()
+        {
+            string err = GM.UseCoupon(input.text, out string reward);
+            if (err != null) { H.Toast(err); return; }
+            input.text = "";
+            H.Toast(L.F("쿠폰 보상: {0}", reward));
         }
     }
 }

@@ -180,6 +180,12 @@ EN.update({'세이브를 읽지 못해 예비 세이브로 불러왔습니다': 
            '새 버전이 나왔습니다.\\n스토어에서 업데이트해 주세요.': 'A new version is available.\\nPlease update from the store.',
            '다이아 부족': 'Not Enough Gems', '필요 {0} · 보유 {1}': 'Need {0} · Have {1}',
            '상점에서 다이아를 얻을 수 있어요.': 'You can get gems in the Shop.', '상점으로': 'Go to Shop',
+           # 11-12 쿠폰
+           '쿠폰': 'Coupon', '쿠폰 번호': 'Coupon code', '사용': 'Use', '쿠폰 보상: {0}': 'Coupon reward: {0}',
+           '쿠폰 번호를 넣고 [사용]을 눌러 주세요.\\n같은 쿠폰은 한 번만 쓸 수 있어요.': 'Enter a coupon code and tap [Use].\\nEach coupon can be used only once.',
+           '쿠폰 번호를 넣어 주세요': 'Please enter a coupon code', '없는 쿠폰 번호입니다': 'Invalid coupon code',
+           '이미 사용한 쿠폰입니다': 'This coupon has already been used', '아직 사용할 수 없는 쿠폰입니다': 'This coupon is not available yet',
+           '기간이 지난 쿠폰입니다': 'This coupon has expired',
            '진행 고르기': 'Choose Progress', '이 기기와 클라우드의 진행이 다릅니다.\\n이어서 할 진행을 골라 주세요.': 'This device and the cloud have different progress.\\nChoose which one to continue.',
            '이 기기': 'This Device', '클라우드': 'Cloud', '{0} 쓰기': 'Use {0}', '코스튬 {0}개': '{0} costumes',
            '{0} 진행으로 이어서 할까요?\\n{1}의 진행은 지워집니다.': 'Continue with the {0} progress?\\nThe {1} progress will be lost.',

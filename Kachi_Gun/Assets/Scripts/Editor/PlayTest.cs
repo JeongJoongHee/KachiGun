@@ -1318,6 +1318,8 @@ namespace KachiGun.EditorTools
 
             // 11-12 다이아 부족 → [상점으로] → 상점 다이아 줄 · 새 버전 알림
             yield return GemShortAndUpdate();
+            // 11-12 쿠폰
+            yield return CouponTest();
 
             // 같은 진행인데 클라우드가 더 새것(다른 폰에서 더 함) → 불러오기 → 씬 다시 불러옴
             var newer = SaveData.Parse(S.ToJson());
@@ -1447,6 +1449,37 @@ namespace KachiGun.EditorTools
         {
             if (root) foreach (var b in root.GetComponentsInChildren<Button>(false)) { var lt = UIKit.LabelOf(b); if (lt != null && lt.text == text) return b; }
             return null;
+        }
+
+        /// <summary>11-12 설정 > [쿠폰]: 틀린 번호 · KACHI2000(소문자·띄어쓰기) +2000 · 두 번째는 막힘 · 기간 지난/아직 쿠폰</summary>
+        IEnumerator CouponTest()
+        {
+            CloseAll();
+            S.coupons.Remove("KACHI2000");
+            var st = HUD.I.Open<SettingsPopup>();
+            yield return Wait(0.3f);
+            var row = BtnOf(st, L.T("쿠폰"));
+            Check(row != null && BtnOf(st, L.T("게임 종료")) != null, "설정에 [쿠폰] 줄");
+            Capture("19h_settings_coupon");
+            row?.onClick.Invoke();
+            yield return Wait(0.3f);
+            var cp = HUD.I.Get<CouponPopup>();
+            Check(cp && cp.gameObject.activeSelf && cp.input != null && cp.input.text == "", "[쿠폰] → 쿠폰 창 (번호 칸 비어 있음)");
+            double g0 = S.gems;
+            cp.input.text = "NOPE123"; cp.Use();
+            Check(System.Math.Abs(S.gems - g0) < 0.5 && cp.input.text == "NOPE123", "틀린 번호 → 그대로 (다이아 안 늘어남)");
+            cp.input.text = "kachi 2000"; cp.Use();
+            Check(System.Math.Abs(S.gems - g0 - 2000) < 0.5 && S.coupons.Contains("KACHI2000") && cp.input.text == "", $"KACHI2000 (소문자 · 띄어쓰기) → 다이아 +2000 ({g0:0} → {S.gems:0}) · 칸 비움");
+            cp.input.text = "KACHI2000";
+            yield return Wait(0.1f);
+            Capture("19i_coupon");
+            cp.Use();
+            Check(System.Math.Abs(S.gems - g0 - 2000) < 0.5, "같은 쿠폰 두 번째 → 막힘");
+            string err = GM.UseCoupon("", out _);
+            Check(err == L.T("쿠폰 번호를 넣어 주세요"), "빈 칸 → 안내");
+            var back = SaveData.Parse(S.ToJson());
+            Check(back != null && back.coupons.Contains("KACHI2000") && back.ver == SaveData.Version, $"쓴 쿠폰이 세이브에 남음 (판 {back?.ver})");
+            CloseAll();
         }
 
         /// <summary>11-12 코스튬 · 보급품 다이아 부족 → [상점으로] → 상점 다이아 줄 · 새 버전 알림(다른 창이 닫힌 뒤에만)</summary>

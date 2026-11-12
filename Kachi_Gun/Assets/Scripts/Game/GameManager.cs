@@ -634,6 +634,41 @@ namespace KachiGun
         }
 
         // =====================================================================
+        // 쿠폰 (11-12): Coupon_List 표(Table/Coupon.xlsx) — 서버 없이 앱 안 표로 확인 · 같은 쿠폰은 세이브(클라우드)마다 한 번
+        //   Code(대소문자 · 띄어쓰기 무시) · Reward_Type(Gems · Gold) · Reward_Value · Start_Date/End_Date(yyyy-MM-dd, 폰 날짜 · 비우면 제한 없음)
+        //   새 쿠폰은 표에 줄만 더하면 되지만 앱 안 표라 업데이트에 실어야 폰에 들어감
+        // =====================================================================
+        public static string CouponKey(string code) => (code ?? "").Replace(" ", "").Replace("-", "").Trim().ToUpperInvariant();
+
+        /// <summary>쿠폰 쓰기 — 성공이면 null + reward 에 받은 글자, 실패면 안내 글자</summary>
+        public string UseCoupon(string code, out string reward)
+        {
+            reward = null;
+            string key = CouponKey(code);
+            if (key.Length == 0) return L.T("쿠폰 번호를 넣어 주세요");
+            Tables.Row row = null;
+            foreach (var r in Tables.ReadTable("Coupon_List")) if (CouponKey(r.S("Code")) == key) { row = r; break; }
+            if (row == null) return L.T("없는 쿠폰 번호입니다");
+            if (S.coupons.Contains(key)) return L.T("이미 사용한 쿠폰입니다");
+            string today = DateTime.Now.ToString("yyyy-MM-dd", System.Globalization.CultureInfo.InvariantCulture);
+            string from = row.S("Start_Date"), to = row.S("End_Date");
+            if (from.Length > 0 && string.CompareOrdinal(today, from) < 0) return L.T("아직 사용할 수 없는 쿠폰입니다");
+            if (to.Length > 0 && string.CompareOrdinal(today, to) > 0) return L.T("기간이 지난 쿠폰입니다");
+            double v = row.D("Reward_Value");
+            string type = row.S("Reward_Type");
+            if (v <= 0) return L.T("없는 쿠폰 번호입니다");
+            if (type == "Gems") { S.gems += v; reward = L.T("다이아") + " " + v.ToString("N0", System.Globalization.CultureInfo.InvariantCulture); }
+            else if (type == "Gold") { S.gold += v; reward = L.T("골드") + " " + Num.F(v); }
+            else return L.T("없는 쿠폰 번호입니다");
+            S.coupons.Add(key);
+            S.SaveSoon();
+            AudioManager.Play(AudioManager.Sfx.Upgrade);
+            Notify();
+            Debug.Log($"[Coupon] {key} → {type} {v}");
+            return null;
+        }
+
+        // =====================================================================
         // 스킨 (기획서 7.1 — 가진 스킨 능력치는 전부 합산)
         // =====================================================================
         public string BuySkin(int id)
