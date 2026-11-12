@@ -67,7 +67,7 @@
 <table style="margin-top:8px">
   <tr><th style="width:44px">순서</th><th>할 일</th><th style="width:80px">누가</th><th style="width:90px">시간</th><th style="width:190px">끝나면</th></tr>
   <tr style="opacity:.55;text-decoration:line-through"><td>1</td><td>✔ 13:30 끝 — <a href="#i-m-check">라이선스 키를 파일로 저장</a> — 수익 창출 › 수익 창출 설정 › 라이선스 [복사] → <code>키 보관\google_play_license_key.txt</code></td><td>직접</td><td>5분</td><td>대화창에 <b>"키 넣었어"</b></td></tr>
-  <tr><td>2</td><td><a href="#i-p-pgs">Play 게임즈 서비스 만들기 → App ID</a> (1번 단계만 먼저)</td><td>직접</td><td>10분</td><td>대화창에 <b>App ID 숫자</b></td></tr>
+  <tr><td>2</td><td><a href="#i-p-pgs">Play 게임즈 서비스 만들기 → App ID</a> (1번 단계만 먼저) — <b>"새 프로젝트 만들기" → [새 클라우드 프로젝트 만들기]</b>, "기존 프로젝트(불도깨비)"는 고르지 않기</td><td>직접</td><td>10분</td><td>대화창에 <b>App ID 숫자</b></td></tr>
   <tr><td>3</td><td><a href="#i-p-scope9">9번에 새 좀비 44종 · 말풍선을 같이 넣을지</a> — 추천 = 같이 넣기</td><td>결정</td><td>1분</td><td>"추천대로" 또는 "결제만"</td></tr>
   <tr><td>4</td><td><a href="#i-m-privacy">개인정보처리방침 배포</a> — 새 판 파일은 준비 끝(개발자 Cachisi · 클라우드 저장 · 구매 기록)</td><td>개발</td><td>10분</td><td>대화창에 <b>"배포해도 돼"</b></td></tr>
   <tr><td>5</td><td><a href="#i-p-pgs">Play 게임즈 2~4번 단계</a> · <a href="#i-p-forms">앱 콘텐츠 답 다시</a> · <a href="#i-m-trader">앱 수준 판매자 상태</a> — 제가 9번을 굽는 동안</td><td>직접</td><td>50분</td><td>화면에서 막히면 "크롬으로 봐줘"</td></tr>
@@ -250,10 +250,23 @@
 
   <li data-id="p-pgs"><label><input type="checkbox"><span><span class="tag t-me">직접</span><b id="i-p-pgs">Play 게임즈 서비스 설정 (카치건)</b> <span class="time">30분 · 불도깨비와 같은 흐름 · 1번만 끝나도 9번 시작 가능</span>
     <span class="how">클라우드 저장 · 구글 계정 자동 로그인에 필요합니다. 카치건은 Play 게임즈를 처음 만드는 것이라(옛 계정에서 만든 적 없음) 이전으로 넘어온 것이 없고 kachigoogoo 에서 새로 만듭니다.
-    <ol><li><b>만들기 → App ID</b>: kachigoogoo › 카피바라vs좀비 › 왼쪽 <b>Play 게임즈 서비스</b> › 설정 및 관리 › <b>설정</b> → "아니요, 게임에서 Google API 를 사용하지 않습니다" 쪽으로 [만들기] (새 Google Cloud 프로젝트가 생김) → 화면 위쪽 게임 이름 아래 <b>프로젝트 ID(숫자 12자리쯤) = App ID</b> → 대화창에 숫자를 알려 주세요 (비밀 아님)</li>
+    <div class="tip blue" style="margin:6px 0"><b>11-12 Chrome 으로 본 실제 화면</b> (제가 선택지만 눌러 보고 [사용] · [새 클라우드 프로젝트 만들기]는 누르지 않음 — 아무것도 저장 안 됨)<br>
+    메뉴: 왼쪽 <b>사용자 늘리기 › Play Games 서비스 › 설정 및 관리 › 설정</b> → 제목 "Play Games 서비스 설정" · 질문 <b>"어떤 Play Games 서비스 프로젝트를 사용하시겠어요?"</b> 선택지 2개
+    <table style="margin:6px 0"><tr><th style="width:230px">선택지</th><th>누르면 나오는 것</th><th style="width:140px">고를까?</th></tr>
+    <tr><td><b>새 Play Games 서비스 프로젝트 만들기</b></td><td>"클라우드 프로젝트 *"(필수) 목록 — <b>지금 비어 있음</b>(안내: 클라우드 프로젝트는 Play Games 서비스 프로젝트 1개에만 연결 · 목록에 보이려면 그 클라우드 프로젝트의 "소유자"여야 함) · 아래 [클라우드 프로젝트 새로고침] · <b>[새 클라우드 프로젝트 만들기]</b> · 오른쪽 아래 [사용]</td><td><b>✔ 이것</b></td></tr>
+    <tr><td>기존 Play Games 서비스 프로젝트를 사용합니다</td><td>"게임 프로젝트" 목록에 <b>불도깨비 키우기 (1095783083551)</b> 하나</td><td><b>✘ 고르지 마세요</b> — 고르면 카치건이 불도깨비와 같은 게임 프로젝트를 써서 클라우드 저장 · 플레이어 정보가 섞임 (구글 문서: 유료/무료판처럼 같은 게임일 때만 쓰는 선택)</td></tr></table>
+    구글 문서(아래 링크)는 옛 화면("아니요, Google API 를 사용하지 않습니다" → 이름 → [만들기]) 기준이라 지금 화면과 다릅니다 — 지금은 <b>클라우드 프로젝트를 먼저 만들고 고르는</b> 순서.</div>
+    <ol><li><b>만들기 → App ID</b>
+      <ol type="a"><li>위 화면에서 <b>"새 Play Games 서비스 프로젝트 만들기"</b> 동그라미</li>
+      <li><b>[새 클라우드 프로젝트 만들기]</b> → 프로젝트 이름 = <code>Kachizombie</code> (영문 추천 · 계정 kachigoogoo 로 만들어져 자동으로 소유자) · 조직 칸이 나오면 "조직 없음" → [만들기]. 이 버튼이 같은 화면의 창을 띄우는지 Google Cloud 새 탭을 여는지는 (확인 못 함) — 새 탭이면 만든 뒤 그 탭은 닫고 Play Console 로 돌아옴. 결제 계정을 물으면 넣지 말고 멈추고 "크롬으로 봐줘"</li>
+      <li>Play Console 로 돌아와 <b>[클라우드 프로젝트 새로고침]</b> → "클라우드 프로젝트" 목록에서 방금 만든 <code>Kachizombie</code> 고르기</li>
+      <li>약관 3개(Play Games 서비스 · Google Cloud Platform · Google API) 안내를 읽고 오른쪽 아래 <b>[사용]</b></li>
+      <li>"Play Games 서비스 설정" 화면 위쪽 게임 이름 아래 <b>프로젝트 ID(숫자 12자리쯤) = App ID</b> → 대화창에 숫자를 알려 주세요 (비밀 아님 · 불도깨비 것은 1095783083551 같은 모양)</li></ol></li>
     <li><b>사용자 인증 정보</b>: 같은 화면 "사용자 인증 정보" [사용자 인증 정보 추가] → 유형 Android → [OAuth 클라이언트 만들기] 안내를 따라 Google Cloud 로 → 패키지 <code>com.zkfpf.kachizombie</code> · SHA-1 = <b>앱 서명 키</b> 지문(테스트 및 출시 › 앱 무결성 › Play 앱 서명 › "앱 서명 키 인증서"의 SHA-1) → 만들고 돌아와 그 클라이언트를 고르고 [저장]</li>
     <li><b>OAuth 동의 화면</b>(Google Cloud › API 및 서비스): 브랜딩에 앱 이름 · 지원 이메일 · 홈페이지 · 개인정보처리방침 링크 · 승인된 도메인 → 대상 [앱 게시](프로덕션 단계). <b>앱 로고는 올리지 않음</b>(올리면 인증 심사로 감)</li>
-    <li><b>저장된 게임 + 게시</b>: Play 게임즈 서비스 › 설정 › 속성 [수정] → "저장된 게임" 켜기 · 설명 · 게임 카테고리 · 그래픽 이미지 1024x500(<code>스토어 등록\그래픽이미지_1024x500.png</code>) → 게시 › [검토 및 게시]</li></ol></span>
+    <li><b>저장된 게임 + 게시</b>: Play 게임즈 서비스 › 설정 › 속성 [수정] → "저장된 게임" 켜기 · 표시 이름 = 스토어 이름과 같게(<code>카피바라vs좀비: 방치형 슈팅</code>) · 설명 · 게임 카테고리 · 그래픽 이미지 1024x500(<code>스토어 등록\그래픽이미지_1024x500.png</code>) → 게시 › [검토 및 게시]</li>
+    <li><b>테스터</b>: Play Games 서비스 › 설정 및 관리 › <b>테스터</b> › [테스터 추가] → <code>zkfpf1@gmail.com</code> · <code>kachigoogoo@gmail.com</code> (구글 문서: "본인을 테스터로 추가해야 함" · 넣은 뒤 2시간 안에 적용). 4번 게시 전에 내부 테스트 9번으로 로그인 · 클라우드를 시험하려면 꼭 필요</li></ol></span>
+    <span class="why"><b>구글 문서의 "피해야 할 사항"에서 카치건에 해당하는 것</b>: ① OAuth 클라이언트를 Google Cloud 에서만 만들면 연결이 안 됨 → 꼭 Play Console 의 [사용자 인증 정보 추가]로 · ② App ID = 클라이언트 ID 앞 숫자 = 설정 화면 맨 위 "프로젝트 ID" · ③ 인증서 지문이 다르면 로그인 실패 → 스토어 판(앱 서명 키) 1개 + 개발용 APK(업로드 키) 1개, 둘 다 패키지 <code>com.zkfpf.kachizombie</code> · ⑥ 동의 화면을 게시해야 테스터 아닌 사람이 쓸 수 있음 · ⑦ <b>9번 프로덕션 출시 전에 Play Games 서비스 설정을 먼저 게시</b> (안 하면 일반 사용자는 로그인 오류) · 동의 화면 범위 = games · games_lite · drive.appdata (앱 인증 필요 없음)</span>
     <span class="why">9번부터는 켤 때 이 Play 게임즈 로그인이 저절로 됩니다(자동 로그인). 로그인 창이 뜨는지 · 프로필이 없는 폰에서 어떻게 보이는지는 (확인 못 함) → 내부 테스트 9번으로 폰에서 같이 봄.</span>
     <span class="ok">✔ 끝난 표시: 1번 = App ID 숫자를 받음 · 전체 = Play 게임즈 서비스 상태 "게시됨", 사용자 인증 정보 1줄, 저장된 게임 "사용"</span>
     <span class="stuck"><b>막히면</b> 버튼 이름 · 선택지 문구는 불도깨비 10월 화면 기준이라 다를 수 있음 → 다르면 고르기 전에 "크롬으로 봐줘". [앱 게시]가 회색이면 브랜딩의 홈페이지 · 개인정보처리방침 링크 · 승인된 도메인(workers.dev 면 <code>&lt;계정&gt;.workers.dev</code>)이 비어 있는 것(불도깨비 때 겪음). 게시 전에는 테스터로 넣은 계정만 로그인될 수 있어 — 4번이 늦어지면 Play 게임즈 서비스 › 테스터에 zkfpf1 · kachigoogoo 를 넣고 시험. 개발용 APK(서명이 다름)로 로그인까지 보려면 업로드 키 SHA-1 인증 정보가 하나 더 필요 — 그때 제가 지문을 알려 드림.</span></span></label></li>
@@ -363,7 +376,8 @@
     <span class="stuck"><b>막히면</b> 시험 결제는 돈이 안 나가고 며칠 뒤 자동 취소됨. "테스트 카드"가 안 보이면 라이선스 테스터 반영이 안 된 것(계정 관리 › Play 앱 설정 › 라이선스 테스트에 "결제테스트" 체크돼 있는지 · 폰 Play 스토어 계정이 zkfpf1 인지). 결제는 됐는데 다이아가 안 들어오면 그대로 두고 알려 주세요 — 키가 다를 때 나는 증상.</span></span></label></li>
 
   <li data-id="p-release"><label><input type="checkbox"><span><span class="tag t-me">직접</span><b>9번 프로덕션 출시</b> <span class="time">11-14 · 10분 + 검토 1~3일 · 시험 결제가 된 뒤</span>
-    <span class="how"><ol><li>테스트 및 출시 › <b>프로덕션</b> → [새 버전 만들기] → [라이브러리에서 추가] → <b>9 (1.0.9)</b> 체크 → 출시 노트(9번 때 이 자리에 [복사] 상자를 넣어 드림) → [다음]</li>
+    <span class="how"><ol><li><b>먼저 확인</b>: Play Games 서비스 › 게시 가 <b>"게시됨"</b>인지 (p-pgs 4번) — 아니면 일반 사용자는 클라우드 저장 로그인이 안 됨(구글 문서 "출시 전에 Play Games 서비스 설정을 먼저 게시")</li>
+    <li>테스트 및 출시 › <b>프로덕션</b> → [새 버전 만들기] → [라이브러리에서 추가] → <b>9 (1.0.9)</b> 체크 → 출시 노트(9번 때 이 자리에 [복사] 상자를 넣어 드림) → [다음]</li>
     <li>경고 · 오류 목록을 읽기 — 오류(빨강)가 있으면 멈추고 캡처</li>
     <li><b>[저장]이 아니라 [프로덕션 트랙으로 출시 시작]</b> · 출시 비율 100%</li>
     <li>게시 개요 › "검토 중인 변경사항"에 <b>"9 (1.0.9) 전체 출시"</b> 줄이 있는지 꼭 확인 → "9번 올렸어"</li></ol></span>
@@ -567,6 +581,7 @@
 <a href="https://support.google.com/google-ads/answer/1722096?hl=ko">HTML5 사용 조건</a> ·
 <a href="https://support.google.com/google-ads/answer/2393021?hl=ko">프로모션 유형</a> ·
 <a href="https://support.google.com/google-ads/answer/16323427?hl=ko">프로모션 진행 확인</a><br>
+Play 게임즈 — <a href="https://developer.android.com/games/pgs/console/setup?hl=ko">Play 게임즈 서비스 설정하기</a>(11-12 읽음 · 설정 화면 설명은 옛 화면 기준) · 11-12 Chrome 으로 본 실제 "Play Games 서비스 설정" 화면<br>
 Play — <code>게시 과정\구글_답변_앱이전_1107.txt</code> · 앱 이전 문서(answer/6230247) · <b>불도깨비 11-03~11-07 실제 진행</b>(이전 → 라이선스 키 → 앱 콘텐츠 답 → 판매자 상태 → 상품 → 시험 결제 — 이 문서의 Play Console 순서 · 버튼 이름은 그때 화면 기준이고, 그 뒤 화면이 바뀌었을 수 있음)<br>
 확률형 아이템(뉴스) — <a href="https://www.segye.com/newsView/20231113512094">세계일보 — 연매출 1억원 이하 제외</a> · <a href="https://zdnet.co.kr/view/?no=20240222164405">지디넷 — 유·무료 구분</a></p>
 <p class="note">체크 · 의견은 이 브라우저(localStorage, 키 <code>kachigun-todo-1110</code>)에 저장됩니다. 제가 읽을 때는 <code>python tools/todo_checks.py</code>. 못 읽을 때는 [의견 모아 복사] → 대화창에 붙여 넣기. 체크하면 그 자리에서 취소선 + "확인 대기" → 제가 확인한 항목만 맨 아래 "끝난 것 › 이번 판에서 확인한 작업"으로 옮김(스크립트의 <code>CONFIRMED</code> 목록). 확인된 항목도 체크를 풀면 제자리로. 상세 판 전의 문서 = 스크래치 <code>남은_작업_정리_before_1110b.html</code>.</p>
