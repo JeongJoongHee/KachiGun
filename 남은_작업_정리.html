@@ -67,7 +67,7 @@
 <table style="margin-top:8px">
   <tr><th style="width:44px">순서</th><th>할 일</th><th style="width:80px">누가</th><th style="width:90px">시간</th><th style="width:190px">끝나면</th></tr>
   <tr style="opacity:.55;text-decoration:line-through"><td>1</td><td>✔ 13:30 끝 — <a href="#i-m-check">라이선스 키를 파일로 저장</a> — 수익 창출 › 수익 창출 설정 › 라이선스 [복사] → <code>키 보관\google_play_license_key.txt</code></td><td>직접</td><td>5분</td><td>대화창에 <b>"키 넣었어"</b></td></tr>
-  <tr><td>2</td><td><a href="#i-p-pgs">Play 게임즈 서비스 만들기 → App ID</a> (1번 단계만 먼저) — <b>"새 프로젝트 만들기" → [새 클라우드 프로젝트 만들기]</b>, "기존 프로젝트(불도깨비)"는 고르지 않기</td><td>직접</td><td>10분</td><td>대화창에 <b>App ID 숫자</b></td></tr>
+  <tr style="opacity:.55;text-decoration:line-through"><td>2</td><td>✔ 13:45 끝 (App ID 667458878000) — <a href="#i-p-pgs">Play 게임즈 서비스 만들기 → App ID</a> (1번 단계만 먼저) — <b>"새 프로젝트 만들기" → [새 클라우드 프로젝트 만들기]</b>, "기존 프로젝트(불도깨비)"는 고르지 않기</td><td>직접</td><td>10분</td><td>대화창에 <b>App ID 숫자</b></td></tr>
   <tr><td>3</td><td><a href="#i-p-scope9">9번에 새 좀비 44종 · 말풍선을 같이 넣을지</a> — 추천 = 같이 넣기</td><td>결정</td><td>1분</td><td>"추천대로" 또는 "결제만"</td></tr>
   <tr><td>4</td><td><a href="#i-m-privacy">개인정보처리방침 배포</a> — 새 판 파일은 준비 끝(개발자 Cachisi · 클라우드 저장 · 구매 기록)</td><td>개발</td><td>10분</td><td>대화창에 <b>"배포해도 돼"</b></td></tr>
   <tr><td>5</td><td><a href="#i-p-pgs">Play 게임즈 2~4번 단계</a> · <a href="#i-p-forms">앱 콘텐츠 답 다시</a> · <a href="#i-m-trader">앱 수준 판매자 상태</a> — 제가 9번을 굽는 동안</td><td>직접</td><td>50분</td><td>화면에서 막히면 "크롬으로 봐줘"</td></tr>
@@ -256,7 +256,8 @@
     <tr><td><b>새 Play Games 서비스 프로젝트 만들기</b></td><td>"클라우드 프로젝트 *"(필수) 목록 — <b>지금 비어 있음</b>(안내: 클라우드 프로젝트는 Play Games 서비스 프로젝트 1개에만 연결 · 목록에 보이려면 그 클라우드 프로젝트의 "소유자"여야 함) · 아래 [클라우드 프로젝트 새로고침] · <b>[새 클라우드 프로젝트 만들기]</b> · 오른쪽 아래 [사용]</td><td><b>✔ 이것</b></td></tr>
     <tr><td>기존 Play Games 서비스 프로젝트를 사용합니다</td><td>"게임 프로젝트" 목록에 <b>불도깨비 키우기 (1095783083551)</b> 하나</td><td><b>✘ 고르지 마세요</b> — 고르면 카치건이 불도깨비와 같은 게임 프로젝트를 써서 클라우드 저장 · 플레이어 정보가 섞임 (구글 문서: 유료/무료판처럼 같은 게임일 때만 쓰는 선택)</td></tr></table>
     구글 문서(아래 링크)는 옛 화면("아니요, Google API 를 사용하지 않습니다" → 이름 → [만들기]) 기준이라 지금 화면과 다릅니다 — 지금은 <b>클라우드 프로젝트를 먼저 만들고 고르는</b> 순서.</div>
-    <ol><li><b>만들기 → App ID</b>
+    <div class="tip green" style="margin:6px 0">✔ <b>1번 끝 (11-12 13:45)</b> — 클라우드 프로젝트 Kachizombie · <b>App ID <code>667458878000</code></b> → 제가 게임 설정에 넣음(<code>GpgsTools.SetupBatch</code> · PlayGamesSettings · 매니페스트 APP_ID · 점검 5줄 [OK]). <b>남은 것 = 아래 2~5번</b>(9번을 굽는 데는 필요 없고, 폰에서 로그인 · 클라우드를 시험하기 전까지)</div>
+    <ol><li><b>만들기 → App ID</b> ✔
       <ol type="a"><li>위 화면에서 <b>"새 Play Games 서비스 프로젝트 만들기"</b> 동그라미</li>
       <li><b>[새 클라우드 프로젝트 만들기]</b> → Google Cloud "새 프로젝트" 화면 (11-12 Chrome 으로 칸 확인 — 같은 화면 주소 <code>console.cloud.google.com/projectcreate</code>, 오른쪽 위 계정 그림이 kachigoogoo 인지 먼저)
         <table style="margin:6px 0"><tr><th style="width:150px">칸</th><th>처음 값</th><th>넣을 것</th></tr>
