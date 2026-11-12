@@ -293,8 +293,27 @@
       <li>왼쪽 <b>데이터 액세스</b> → [범위 추가 또는 삭제] → 오른쪽 창 위 필터에 <code>games</code> 를 넣어 <code>.../auth/games</code> · <code>.../auth/games_lite</code> 체크, <code>drive.appdata</code> 를 넣어 <code>.../auth/drive.appdata</code> 체크 → [업데이트] → 표 "민감하지 않은 범위"에 3줄 · 민감한 범위 · 제한된 범위는 "표시할 행이 없습니다" 인지 → 맨 아래 <b>[Save]</b> (불도깨비 = 이 3줄 그대로)</li>
       <li>왼쪽 <b>대상</b> → "게시 상태: 테스트 중" 아래 <b>[앱 게시]</b> → 확인 창 [확인] → "<b>프로덕션 단계</b> · 사용자 유형 외부" 가 되면 끝 (불도깨비 = 프로덕션 단계 · 외부). [앱 게시]가 회색이면 b 의 홈페이지 · 방침 · 승인된 도메인 중 빈 칸이 있는 것</li>
       <li>Play Console 로 돌아와 그 상자의 <b>[새로고침]</b> (또는 [설정] 창의 [구성 확인]) → 체크 목록 3/6 · [사용자 인증 정보 추가]가 파란색이 되면 다음</li></ol></li>
-    <li><b>사용자 인증 정보</b>: 같은 화면 "사용자 인증 정보" <b>[사용자 인증 정보 추가]</b> → 유형 <b>Android</b> → 이름 아무거나(<code>Kachizombie Android</code>) · [OAuth 클라이언트 만들기] 안내를 따라 Google Cloud 로 → 애플리케이션 유형 Android · 패키지 <code>com.zkfpf.kachizombie</code> · SHA-1 = <b>앱 서명 키</b> 지문 → [만들기] → Play Console 로 돌아와 [새로고침] → 방금 만든 클라이언트 고르기 → [변경사항 저장]
-      <div class="tip gray" style="margin:6px 0"><b>SHA-1 찾는 곳</b> (11-12 Chrome 확인): Play Console 왼쪽 방패 아이콘 <b>Google Play로 보호됨 › 앱 무결성 › 앱 서명</b> → <b>"앱 서명 키 · 사용 중"</b> 칸 오른쪽 <b>[SHA-1 인증서 지문]</b> 버튼 = 복사 (값은 버튼 뒤에 숨어 있어 제가 읽지 못함 — 눌러서 복사해 붙여 넣기). 그 아래 "이전 앱 서명 키" · "업로드 키" 의 SHA-1 이 아닌 <b>맨 위 "사용 중"</b> 것. 개발용 APK 로도 로그인을 보려면 같은 순서로 <b>업로드 키</b> SHA-1 인증 정보를 하나 더 (구글 문서: 출시용 · 디버그용 두 개)</div></li>
+    <li><b>사용자 인증 정보</b>
+      <div class="tip blue" style="margin:6px 0"><b>11-12 14:40 Chrome 으로 본 실제 화면</b> (사용자 "2.e 까지 끝, 3번에서 막힘") — 체크 목록 <b>3/6</b>(OAuth 동의 화면 ✔) · [사용자 인증 정보 추가] 파란색 · Google Cloud Kachizombie 의 OAuth 클라이언트 = <b>아직 0개</b>.<br>
+      <b>막히는 곳</b>: Play Console "사용자 인증 정보 추가" 화면의 [OAuth 클라이언트 만들기] → 창 "OAuth 클라이언트를 만드는 방법"의 <b>"OAuth 클라이언트 ID 만들기" 링크가 만들기 화면이 아니라 빈 "클라이언트" 목록("표시할 OAuth 클라이언트가 없습니다")으로 감</b> → 그 목록 위 <b>[+ 클라이언트 만들기]</b>를 한 번 더 눌러야 입력 칸이 나옴.</div>
+      <ol type="a">
+      <li>Play Console › Play Games 서비스 › 설정 › "사용자 인증 정보" 오른쪽 <b>[사용자 인증 정보 추가]</b> → "사용자 인증 정보 추가" 화면
+        <table style="margin:6px 0"><tr><th style="width:170px">칸</th><th>지금 값</th><th>넣을 것</th></tr>
+        <tr><td>유형 *</td><td>Android (선택됨)</td><td>그대로 (<b>게임 서버</b> 아님)</td></tr>
+        <tr><td>이름 *</td><td>Kachizombie (11/30)</td><td>안내 "Play 게임즈 앱에서 플레이어에게 보이는 게임 이름 · 스토어 앱 이름과 일치해야" → <code>카피바라vs좀비</code> 로 바꾸기 추천(30자 제한이라 스토어 이름 전체 <code>카피바라vs좀비: 방치형 슈팅</code> 이 들어가면 그것). 테스트엔 상관없어 그대로 둬도 됨 — 4번 게시 전에만 맞추면 됨</td></tr>
+        <tr><td>불법 복제 방지 사용 *</td><td>사용 안함</td><td><b>사용 안함 그대로</b> — "사용"이면 Play 스토어에서 받지 않은 설치본은 로그인이 막힘. 개발용 APK 로 시험할 수 없게 되고, 불도깨비도 안 씀</td></tr>
+        <tr><td>OAuth 클라이언트 *</td><td>"사용할 수 있는 OAuth 클라이언트 없음" (회색)</td><td>아래 b 에서 만든 뒤 c</td></tr></table></li>
+      <li>그 화면 맨 아래 <b>[OAuth 클라이언트 만들기]</b> → 창에 넣을 값 4개가 나옴 (창은 열어 둔 채로) → 창 안 <b>"OAuth 클라이언트 ID 만들기"</b> 링크(새 탭 · Google Cloud · 위쪽 프로젝트 <b>Kachizombie</b> 확인) → "클라이언트" 목록이 나오면 위 <b>[+ 클라이언트 만들기]</b> → "OAuth 클라이언트 ID 만들기"
+        <table style="margin:6px 0"><tr><th style="width:170px">칸</th><th>넣을 것 (Play Console 창의 값 그대로)</th></tr>
+        <tr><td>애플리케이션 유형 *</td><td><b>Android</b> (목록: 웹 애플리케이션 · Android · Chrome 확장 · iOS · TV · 데스크톱)</td></tr>
+        <tr><td>이름 *</td><td><code>Kachizombie</code> (콘솔에서만 보이는 이름 · 처음 값 "Android 클라이언트 1" 이어도 상관없음)</td></tr>
+        <tr><td>패키지 이름 *</td><td><code>com.zkfpf.kachizombie</code></td></tr>
+        <tr><td>SHA-1 인증서 디지털 지문 *</td><td><code>AB:9A:33:EE:9B:85:04:6B:96:A7:63:74:21:AD:27:4F:34:8B:19:01</code> — Play Console 창에 나온 값 = <b>앱 서명 키</b>(스토어 판). 제가 8번 AAB 의 업로드 키 지문(<code>C1:61:07:7F:…</code>)과 다른 것을 확인함 → 스토어에서 받은 판용이 맞음</td></tr>
+        <tr><td>앱 소유권 확인(선택사항)</td><td>건너뜀 ([소유권 확인] 회색)</td></tr>
+        <tr><td>고급 설정 › AI 기반 에이전트에 이 클라이언트 사용</td><td>체크 안 함</td></tr></table>
+        → <b>[만들기]</b> → 클라이언트 ID 가 적힌 창이 뜨면 [확인]/닫기 (클라이언트 ID 는 따로 적어 둘 필요 없음 — 앞 숫자가 App ID 와 같은지만 보면 됨) · 화면 아래 "설정이 적용되는 데 5분에서 몇 시간" 안내</li>
+      <li>Play Console 탭으로 돌아와 창의 <b>[완료]</b> (= 목록 새로고침) → "OAuth 클라이언트" 목록에서 <code>Kachizombie</code> 고르기 → 오른쪽 아래 <b>[변경사항 저장]</b> → "사용자 인증 정보" 칸 Android 아래에 1줄 · 체크 목록 4/6. 목록에 안 나오면 [OAuth 클라이언트 새로고침]을 1~2분 뒤 다시</li></ol>
+      <div class="tip gray" style="margin:6px 0"><b>SHA-1 찾는 곳</b> (11-12 Chrome 확인): Play Console 왼쪽 방패 아이콘 <b>Google Play로 보호됨 › 앱 무결성 › 앱 서명</b> → <b>"앱 서명 키 · 사용 중"</b> 칸 오른쪽 <b>[SHA-1 인증서 지문]</b> 버튼 = 복사 (값은 버튼 뒤에 숨어 있어 제가 읽지 못함 — 눌러서 복사해 붙여 넣기). 그 아래 "이전 앱 서명 키" · "업로드 키" 의 SHA-1 이 아닌 <b>맨 위 "사용 중"</b> 것. 개발용 APK 로도 로그인을 보려면 같은 순서로 <b>업로드 키</b> SHA-1 <code>C1:61:07:7F:A1:A3:5D:17:41:45:B5:93:6D:2B:6E:1D:0E:24:6D:5B</code>(8번 AAB 서명에서 제가 읽음 · 소유자 CN=FIBE) 인증 정보를 하나 더 (구글 문서: 출시용 · 디버그용 두 개). 내부 테스트 9번으로 시험하면 필요 없음 — 내부 테스트도 앱 서명 키로 서명됨</div></li>
     <li><b>저장된 게임 + 게시</b>: Play 게임즈 서비스 › 설정 › 속성 [수정] → "저장된 게임" 켜기 · 표시 이름 = 스토어 이름과 같게(<code>카피바라vs좀비: 방치형 슈팅</code>) · 설명 · 게임 카테고리 · 그래픽 이미지 1024x500(<code>스토어 등록\그래픽이미지_1024x500.png</code>) → 게시 › [검토 및 게시]</li>
     <li><b>테스터</b>: Play Games 서비스 › 설정 및 관리 › <b>테스터</b> › [테스터 추가] → <code>zkfpf1@gmail.com</code> · <code>kachigoogoo@gmail.com</code> (구글 문서: "본인을 테스터로 추가해야 함" · 넣은 뒤 2시간 안에 적용). 4번 게시 전에 내부 테스트 9번으로 로그인 · 클라우드를 시험하려면 꼭 필요</li></ol></span>
     <span class="why"><b>구글 문서의 "피해야 할 사항"에서 카치건에 해당하는 것</b>: ① OAuth 클라이언트를 Google Cloud 에서만 만들면 연결이 안 됨 → 꼭 Play Console 의 [사용자 인증 정보 추가]로 · ② App ID = 클라이언트 ID 앞 숫자 = 설정 화면 맨 위 "프로젝트 ID" · ③ 인증서 지문이 다르면 로그인 실패 → 스토어 판(앱 서명 키) 1개 + 개발용 APK(업로드 키) 1개, 둘 다 패키지 <code>com.zkfpf.kachizombie</code> · ⑥ 동의 화면을 게시해야 테스터 아닌 사람이 쓸 수 있음 · ⑦ <b>9번 프로덕션 출시 전에 Play Games 서비스 설정을 먼저 게시</b> (안 하면 일반 사용자는 로그인 오류) · 동의 화면 범위 = games · games_lite · drive.appdata (앱 인증 필요 없음)</span>
