@@ -66,7 +66,7 @@
 <br><b>지금 9번을 막고 있는 것 = 아래 1~3번 세 가지</b>입니다. 직접 하실 일은 20분쯤.
 <table style="margin-top:8px">
   <tr><th style="width:44px">순서</th><th>할 일</th><th style="width:80px">누가</th><th style="width:90px">시간</th><th style="width:190px">끝나면</th></tr>
-  <tr><td>1</td><td><a href="#i-m-check">라이선스 키를 파일로 저장</a> — 수익 창출 › 수익 창출 설정 › 라이선스 [복사] → <code>키 보관\google_play_license_key.txt</code></td><td>직접</td><td>5분</td><td>대화창에 <b>"키 넣었어"</b></td></tr>
+  <tr style="opacity:.55;text-decoration:line-through"><td>1</td><td>✔ 13:30 끝 — <a href="#i-m-check">라이선스 키를 파일로 저장</a> — 수익 창출 › 수익 창출 설정 › 라이선스 [복사] → <code>키 보관\google_play_license_key.txt</code></td><td>직접</td><td>5분</td><td>대화창에 <b>"키 넣었어"</b></td></tr>
   <tr><td>2</td><td><a href="#i-p-pgs">Play 게임즈 서비스 만들기 → App ID</a> (1번 단계만 먼저)</td><td>직접</td><td>10분</td><td>대화창에 <b>App ID 숫자</b></td></tr>
   <tr><td>3</td><td><a href="#i-p-scope9">9번에 새 좀비 44종 · 말풍선을 같이 넣을지</a> — 추천 = 같이 넣기</td><td>결정</td><td>1분</td><td>"추천대로" 또는 "결제만"</td></tr>
   <tr><td>4</td><td><a href="#i-m-privacy">개인정보처리방침 배포</a> — 새 판 파일은 준비 끝(개발자 Cachisi · 클라우드 저장 · 구매 기록)</td><td>개발</td><td>10분</td><td>대화창에 <b>"배포해도 돼"</b></td></tr>
@@ -240,7 +240,7 @@
     <ol><li>✔ kachigoogoo Play Console 앱 목록에 카피바라vs좀비 · 대시보드 열림</li>
     <li>✔ 스토어 페이지 개발자 이름 = <b>Cachisi</b> (비로그인으로 받은 페이지에 FIBE 0번 · Cachisi 6번)</li>
     <li>✔ 프로덕션 "활성 · 최신 출시 버전 8 (1.0.8)" · [새 버전 만들기] 눌리는 색</li></ol>
-    <b>라이선스 키 — 남은 것은 이것 하나</b>
+    <b>라이선스 키 — ✔ 11-12 13:30 끝</b> (392자 · MIIB · 한 줄 · RSA 공개 키 모양 확인 → 게임에 넣음, 결제·광고 점검 [OK])
     <ol><li>카피바라vs좀비 › 왼쪽 <b>수익 창출</b> 아래 <b>수익 창출 설정</b> (못 찾으면 맨 위 검색창에 "라이선스")</li>
     <li>"라이선스" 칸의 긴 글자(<code>MIIBIjANBgkq…</code> 로 시작 · 약 390자 · 한 줄) 옆 [복사]</li>
     <li>메모장에 붙여 <code>D:\00 Final_Game\키 보관\google_play_license_key.txt</code> 로 저장 (앞뒤 빈 줄 없이 한 줄)</li>
@@ -603,7 +603,7 @@ Play — <code>게시 과정\구글_답변_앱이전_1107.txt</code> · 앱 이�
   // 저장 형식: {"c":{항목id:true}, "n":{항목id:"의견"}} — 항목id 는 li 의 data-id
   var KEY='kachigun-todo-1110', st={c:{},n:{}};
   // 체크 → 취소선 + "확인 대기". Claude 가 확인해 문제없으면 여기에 id 를 넣음 → 맨 아래 "이번 판에서 확인한 작업"으로
-  var CONFIRMED=['g-yt2','r-admob','m-wait','m-privacy-prep'];   // 11-12: 유튜브 4개(11-10 판 주소 확인) · AdMob "준비됨" · 이전 끝 · 방침 새 판 파일
+  var CONFIRMED=['g-yt2','r-admob','m-wait','m-privacy-prep','m-check'];   // 11-12 13:30 라이선스 키 392자 · 게임에 넣음   // 11-12: 유튜브 4개(11-10 판 주소 확인) · AdMob "준비됨" · 이전 끝 · 방침 새 판 파일
   try{ var v=JSON.parse(localStorage.getItem(KEY)||'{}'); st.c=v.c||{}; st.n=v.n||{}; }catch(e){}
   // 제가 확인해 끝난 항목은 체크하지 않으셨어도 끝난 것으로 (한 번도 건드리지 않은 칸만 — 직접 풀면 그대로 둠)
   CONFIRMED.forEach(function(id){ if(st.c[id]===undefined) st.c[id]=true; });
