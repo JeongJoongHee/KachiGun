@@ -269,8 +269,32 @@
       <li>Play Console 로 돌아와 <b>[클라우드 프로젝트 새로고침]</b> → "클라우드 프로젝트" 목록에서 방금 만든 <code>Kachizombie</code> 고르기</li>
       <li>약관 3개(Play Games 서비스 · Google Cloud Platform · Google API) 안내를 읽고 오른쪽 아래 <b>[사용]</b></li>
       <li>"Play Games 서비스 설정" 화면 위쪽 게임 이름 아래 <b>프로젝트 ID(숫자 12자리쯤) = App ID</b> → 대화창에 숫자를 알려 주세요 (비밀 아님 · 불도깨비 것은 1095783083551 같은 모양)</li></ol></li>
-    <li><b>사용자 인증 정보</b>: 같은 화면 "사용자 인증 정보" [사용자 인증 정보 추가] → 유형 Android → [OAuth 클라이언트 만들기] 안내를 따라 Google Cloud 로 → 패키지 <code>com.zkfpf.kachizombie</code> · SHA-1 = <b>앱 서명 키</b> 지문(테스트 및 출시 › 앱 무결성 › Play 앱 서명 › "앱 서명 키 인증서"의 SHA-1) → 만들고 돌아와 그 클라이언트를 고르고 [저장]</li>
-    <li><b>OAuth 동의 화면</b>(Google Cloud › API 및 서비스): 브랜딩에 앱 이름 · 지원 이메일 · 홈페이지 · 개인정보처리방침 링크 · 승인된 도메인 → 대상 [앱 게시](프로덕션 단계). <b>앱 로고는 올리지 않음</b>(올리면 인증 심사로 감)</li>
+    <li><b>OAuth 동의 화면 먼저</b> — <b>사용자 인증 정보보다 이것이 먼저입니다</b>
+      <div class="tip blue" style="margin:6px 0"><b>11-12 14:10 Chrome 으로 본 지금 상태</b> — Play Games 서비스 설정 맨 위 체크 목록 <b>2/6 완료</b>: ✔ Play Games 서비스 프로젝트 만들기 · ✔ 프로젝트에 테스터 추가하기 / 남은 것: Google Cloud Platform 에서 OAuth 동의 화면 만들기 · 사용자 인증 정보 만들기 · SDK 를 APK 에 추가(= 9번) · 프로젝트 게시하기. 그 아래 "Kachizombie · 프로젝트 ID 667458878000 · 1개의 앱에서 사용 중" · 속성 "임시 · Kachizombie · 저장된 게임이 사용 설정되지 않음".<br>
+      "사용자 인증 정보" 칸의 [사용자 인증 정보 추가]는 <b>회색</b>이고 그 아래 상자 "사용자 인증 정보 추가 전 OAuth 동의 화면 구성" [설정] [새로고침] — <b>[설정]을 누르면 뜨는 창 = "OAuth 동의 화면 구성"</b> 안내 6단계(Google Cloud 에서 동의 화면 → 외부 → 앱 이름 = 게임 이름 → games · games_lite · drive.appdata 범위 → 게시 → 돌아와 확인) + [취소] [구성 확인]. 창 안 "Google Cloud Platform" 링크 = Kachizombie 프로젝트(<code>kachizombie-514504</code>)의 동의 화면.<br>
+      Google Cloud 쪽은 지금 "Google 인증 플랫폼이 아직 구성되지 않음" + [시작하기]. 아래 값은 <b>불도깨비 프로젝트에 실제로 들어 있는 값</b>(Chrome 으로 읽음)을 카치건으로 바꾼 것입니다.</div>
+      <ol type="a">
+      <li>Play Console 창의 <b>Google Cloud Platform</b> 링크(새 탭) — 위쪽 프로젝트 이름이 <b>Kachizombie</b> 인지 · 오른쪽 위 계정이 kachigoogoo 인지 확인 → 가운데 <b>[시작하기]</b> → "프로젝트 구성" 4단계
+        <table style="margin:6px 0"><tr><th style="width:110px">단계</th><th style="width:170px">칸</th><th>넣을 것</th><th style="width:170px">불도깨비 값</th></tr>
+        <tr><td>1 앱 정보</td><td>앱 이름 *</td><td><code>카피바라vs좀비: 방치형 슈팅</code> (스토어 이름과 같게 — 창 안내 "이 이름은 게임 이름과 일치해야 합니다") → [다음]</td><td>불도깨비 키우기</td></tr>
+        <tr><td></td><td>사용자 지원 이메일 *</td><td>목록에서 <code>kachigoogoo@gmail.com</code> (목록에 이것만 나올 것)</td><td>zkfpf1@gmail.com (옛 계정에서 만들어서)</td></tr>
+        <tr><td>2 대상</td><td>내부 / 외부</td><td><b>외부</b> → [다음] (내부 = 회사 조직 전용 · 조직 없으면 못 고름)</td><td>외부</td></tr>
+        <tr><td>3 연락처 정보</td><td>이메일 주소</td><td><code>jjhfibe@gmail.com</code> → [다음] (구글이 이 프로젝트 알림을 보내는 곳 · 사용자에겐 안 보임)</td><td>jjhfibe@gmail.com</td></tr>
+        <tr><td>4 완료</td><td>사용자 데이터 정책 동의</td><td>체크 → [계속] → 맨 아래 <b>[만들기]</b></td><td>—</td></tr></table></li>
+      <li>왼쪽 <b>브랜딩</b> → "앱 도메인" 칸 채우고 맨 아래 <b>[저장]</b>
+        <table style="margin:6px 0"><tr><th style="width:200px">칸</th><th>넣을 것</th></tr>
+        <tr><td>앱 로고</td><td><b>비워 둠</b> — 올리면 인증 심사로 감(화면 문구: 로고를 올리면 "인증을 위해 앱을 제출해야 합니다")</td></tr>
+        <tr><td>애플리케이션 홈페이지 *</td><td><code>https://survival-ranking.jeongsan-license.workers.dev/kachigun-privacy</code> (불도깨비도 홈페이지 = 방침 주소)</td></tr>
+        <tr><td>개인정보처리방침 링크 *</td><td>같은 주소 <code>https://survival-ranking.jeongsan-license.workers.dev/kachigun-privacy</code> (지금 열림 · 200)</td></tr>
+        <tr><td>서비스 약관 링크</td><td>비워 둠 (불도깨비도 비어 있음)</td></tr>
+        <tr><td>승인된 도메인 1 *</td><td><code>jeongsan-license.workers.dev</code> — [도메인 추가] 로 칸을 만들고 넣음 (불도깨비 값 그대로)</td></tr>
+        <tr><td>개발자 연락처 이메일</td><td>jjhfibe@gmail.com (1단계에서 넣은 것)</td></tr></table>
+        오른쪽 "인증 상태 · 브랜딩 확인"은 누르지 않음(불도깨비도 안 함)</li>
+      <li>왼쪽 <b>데이터 액세스</b> → [범위 추가 또는 삭제] → 오른쪽 창 위 필터에 <code>games</code> 를 넣어 <code>.../auth/games</code> · <code>.../auth/games_lite</code> 체크, <code>drive.appdata</code> 를 넣어 <code>.../auth/drive.appdata</code> 체크 → [업데이트] → 표 "민감하지 않은 범위"에 3줄 · 민감한 범위 · 제한된 범위는 "표시할 행이 없습니다" 인지 → 맨 아래 <b>[Save]</b> (불도깨비 = 이 3줄 그대로)</li>
+      <li>왼쪽 <b>대상</b> → "게시 상태: 테스트 중" 아래 <b>[앱 게시]</b> → 확인 창 [확인] → "<b>프로덕션 단계</b> · 사용자 유형 외부" 가 되면 끝 (불도깨비 = 프로덕션 단계 · 외부). [앱 게시]가 회색이면 b 의 홈페이지 · 방침 · 승인된 도메인 중 빈 칸이 있는 것</li>
+      <li>Play Console 로 돌아와 그 상자의 <b>[새로고침]</b> (또는 [설정] 창의 [구성 확인]) → 체크 목록 3/6 · [사용자 인증 정보 추가]가 파란색이 되면 다음</li></ol></li>
+    <li><b>사용자 인증 정보</b>: 같은 화면 "사용자 인증 정보" <b>[사용자 인증 정보 추가]</b> → 유형 <b>Android</b> → 이름 아무거나(<code>Kachizombie Android</code>) · [OAuth 클라이언트 만들기] 안내를 따라 Google Cloud 로 → 애플리케이션 유형 Android · 패키지 <code>com.zkfpf.kachizombie</code> · SHA-1 = <b>앱 서명 키</b> 지문 → [만들기] → Play Console 로 돌아와 [새로고침] → 방금 만든 클라이언트 고르기 → [변경사항 저장]
+      <div class="tip gray" style="margin:6px 0"><b>SHA-1 찾는 곳</b> (11-12 Chrome 확인): Play Console 왼쪽 방패 아이콘 <b>Google Play로 보호됨 › 앱 무결성 › 앱 서명</b> → <b>"앱 서명 키 · 사용 중"</b> 칸 오른쪽 <b>[SHA-1 인증서 지문]</b> 버튼 = 복사 (값은 버튼 뒤에 숨어 있어 제가 읽지 못함 — 눌러서 복사해 붙여 넣기). 그 아래 "이전 앱 서명 키" · "업로드 키" 의 SHA-1 이 아닌 <b>맨 위 "사용 중"</b> 것. 개발용 APK 로도 로그인을 보려면 같은 순서로 <b>업로드 키</b> SHA-1 인증 정보를 하나 더 (구글 문서: 출시용 · 디버그용 두 개)</div></li>
     <li><b>저장된 게임 + 게시</b>: Play 게임즈 서비스 › 설정 › 속성 [수정] → "저장된 게임" 켜기 · 표시 이름 = 스토어 이름과 같게(<code>카피바라vs좀비: 방치형 슈팅</code>) · 설명 · 게임 카테고리 · 그래픽 이미지 1024x500(<code>스토어 등록\그래픽이미지_1024x500.png</code>) → 게시 › [검토 및 게시]</li>
     <li><b>테스터</b>: Play Games 서비스 › 설정 및 관리 › <b>테스터</b> › [테스터 추가] → <code>zkfpf1@gmail.com</code> · <code>kachigoogoo@gmail.com</code> (구글 문서: "본인을 테스터로 추가해야 함" · 넣은 뒤 2시간 안에 적용). 4번 게시 전에 내부 테스트 9번으로 로그인 · 클라우드를 시험하려면 꼭 필요</li></ol></span>
     <span class="why"><b>구글 문서의 "피해야 할 사항"에서 카치건에 해당하는 것</b>: ① OAuth 클라이언트를 Google Cloud 에서만 만들면 연결이 안 됨 → 꼭 Play Console 의 [사용자 인증 정보 추가]로 · ② App ID = 클라이언트 ID 앞 숫자 = 설정 화면 맨 위 "프로젝트 ID" · ③ 인증서 지문이 다르면 로그인 실패 → 스토어 판(앱 서명 키) 1개 + 개발용 APK(업로드 키) 1개, 둘 다 패키지 <code>com.zkfpf.kachizombie</code> · ⑥ 동의 화면을 게시해야 테스터 아닌 사람이 쓸 수 있음 · ⑦ <b>9번 프로덕션 출시 전에 Play Games 서비스 설정을 먼저 게시</b> (안 하면 일반 사용자는 로그인 오류) · 동의 화면 범위 = games · games_lite · drive.appdata (앱 인증 필요 없음)</span>
