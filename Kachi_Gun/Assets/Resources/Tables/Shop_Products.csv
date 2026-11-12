@@ -1,7 +1,7 @@
 ﻿Index,Product_Id,Category,Name,Description,Price_Type,Price_Value,Bonus_Gems,Reward_Multiplier_Or_Item,Impl_Status
 0,buff_atk,Ad_Buff,공격력 x2 (5분),광고 1편 · 연속 시청 시 시간 누적,Ad,광고,0,Atk x2 (300초),구현 완료
 1,buff_gold,Ad_Buff,금전 획득량 x2 (5분),광고 1편 · 연속 시청 시 시간 누적,Ad,광고,0,Gold x2 (300초),구현 완료
-4,remove_all_ads,IAP_Pack,모든 광고 제거,보상형 광고도 바로 보상,KRW,9900,0,NoAllAds,UI 구현 · 10-26 원화 가격
+4,remove_all_ads,IAP_Pack,모든 광고 제거,광고 없이 바로 보상 + 다이아 1000,KRW,9900,1000,NoAllAds,UI 구현 · 10-26 원화 가격 · 11-12 다이아 1000 추가
 5,auto_upgrade,IAP_Pack,자동강화 패키지,하단 강화 자동 + 다이아 500,KRW,5900,500,AutoUpgrade,UI 구현 · 10-26 원화 가격
 9,gem_pack_small,Gem_Shop,다이아 한 줌 (500),다이아 500개 즉시 획득,KRW,2900,500,Gems+500,기획 추가 · 10-26 원화 가격
 10,gem_pack_mid,Gem_Shop,"다이아 주머니 (1,800)","다이아 1,800개 즉시 획득",KRW,5900,1800,Gems+1800,기획 추가 · 10-26 원화 가격

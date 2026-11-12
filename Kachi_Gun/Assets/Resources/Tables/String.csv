@@ -366,7 +366,7 @@ D 등급 총알 획득!,Got D grade ammo!,UI/WeaponPopup.cs
 광고 1편 · 연속 시청 시 시간 누적,1 ad · time stacks when watched again,Shop_Products.Description
 금전 획득량 x2 (5분),Gold x2 (5 min),Shop_Products.Name
 모든 광고 제거,Remove All Ads,Shop_Products.Name
-보상형 광고도 바로 보상,Rewards without watching ads,Shop_Products.Description
+광고 없이 바로 보상 + 다이아 1000,"Rewards without ads + 1,000 gems",Shop_Products.Description
 자동강화 패키지,Auto Upgrade Pack,Shop_Products.Name
 하단 강화 자동 + 다이아 500,Upgrades buy themselves + 500 gems,Shop_Products.Description
 다이아 한 줌 (500),Handful of Gems (500),Shop_Products.Name

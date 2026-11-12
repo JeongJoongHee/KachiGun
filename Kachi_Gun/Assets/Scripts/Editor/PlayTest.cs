@@ -1074,10 +1074,12 @@ namespace KachiGun.EditorTools
                 double iapG0 = S.gems;
                 Iap.Buy("gem_pack_small");
                 Check(System.Math.Abs(S.gems - iapG0 - 500) < 0.01, $"결제 다이아 한 줌 +{S.gems - iapG0}");
+                double iapGA = S.gems;
                 Iap.Buy("remove_all_ads");
                 bool got = false;
                 AdService.Show("test", () => got = true);
                 Check(S.noAds && got, "모든 광고 제거 → 광고 버튼 바로 보상");
+                Check(System.Math.Abs(S.gems - iapGA - 1000) < 0.01, $"모든 광고 제거 구매 → 다이아 +{S.gems - iapGA} (11-12 사용자 요청 1000)");
                 double iapG1 = S.gems;
                 Iap.Buy("auto_upgrade");
                 Iap.Buy("auto_upgrade");   // 두 번째는 "이미 가지고 있습니다"
@@ -1193,6 +1195,13 @@ namespace KachiGun.EditorTools
                 Iap.Grant(autoRow, true, true);
                 Check(autoRow != null && autoRow.bonusGems > 0 && S.autoUpgrade && S.gems == rg0, $"자동강화 되살리기 → 가짐 · 보너스 다이아 {autoRow?.bonusGems:0} 은 다시 안 줌");
                 S.autoUpgrade = au0; S.autoOn = ao0; S.gems = rg0;
+
+                var adsRow = Tables.Shop.Find(x => x.id == "remove_all_ads");
+                bool na0 = S.noAds;
+                S.noAds = false;
+                Iap.Grant(adsRow, true, true);
+                Check(adsRow != null && adsRow.bonusGems == 1000 && S.noAds && S.gems == rg0, $"모든 광고 제거 되살리기(다시 설치) → 가짐 · 보너스 다이아 {adsRow?.bonusGems:0} 은 다시 안 줌");
+                S.noAds = na0; S.gems = rg0;
 
                 var cul = System.Globalization.CultureInfo.CurrentCulture;
                 System.Globalization.CultureInfo.CurrentCulture = new System.Globalization.CultureInfo("de-DE");
