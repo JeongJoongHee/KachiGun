@@ -128,6 +128,9 @@
 도전 {0},Challenge {0},UI/HUD.cs
 보스! {0}초,BOSS! {0}s,UI/HUD.cs
 반복 사냥 중 — 강화 후 보스 도전!,"Farming — upgrade, then fight the boss!",UI/HUD.cs
+1회 구매,One time,UI/HUD.cs
+단 1번!,Only once!,UI/HUD.cs
+{0} 총알 지급,Get {0} Ammo,UI/HUD.cs
 그림 준비 중,Art coming soon,UI/MenuPopups.cs
 다이아 {0} 으로 살까요?,Buy for {0} gems?,UI/MenuPopups.cs
 보유 효과,Owned bonus,UI/MenuPopups.cs

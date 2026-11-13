@@ -146,6 +146,12 @@ def assets():
     kit('i_bolt', 50, 60, P('M31 4 L8 35 L24 35 L18 56 L43 23 L27 23 Z', GOLD, 4))
     kit('i_trash_w', 55, 60, rr(20, 4, 15, 9, 3, CREAM, 4) + rr(5, 11, 45, 9, 4, CREAM, 4) + P('M10 21 L45 21 L41 56 L14 56 Z', CREAM, 4) + L('M21 28 L22 49 M27.5 28 L27.5 49 M34 28 L33 49', 3.5))
     kit('badge', 80, 80,button(80, 80, RED, '#c95544', 20) + rr(34, 14, 12, 32, 6, CREAM, 4) + C(40, 56, 7, CREAM, 4))
+    # 11-13 SS급 미사일탄(990원 · 1회 한정) 홈 화면 아이콘: 빨간 리본(글자는 코드로 얹음) · 빨간 별 딱지 · 금색 판
+    kit('ribbon_red', 200, 64, P('M4 20 L36 20 L36 58 L4 58 L17 39 Z', '#c95544', 5) + P('M196 20 L164 20 L164 58 L196 58 L183 39 Z', '#c95544', 5)
+        + rr(24, 6, 152, 44, 10, RED, 5) + rrf(36, 12, 128, 6, 3, '#ffffff', .35), 1.4)
+    kit('burst_red', 90, 90, burst(45, 45, 41, 12, RED, 5, k=.8, rot=-90), 1.2)
+    kit('tile_gold', 90, 100, button(90, 100, GOLD, GOLD2, 18))
+    kit('tile_flash', 90, 100, rrf(7, 7, 76, 84, 13, '#ffffff'), 0.5)   # 판 위에 잠깐 하얗게 번쩍 (선 없음)
     kit('node', 150, 155, C(75, 77, 66, CREAM, 8))
     kit('node_dark', 150, 155, C(75, 77, 66, '#b9926a', 8))
     kit('lock', 45, 65, f'<g transform="translate(0,4)">{ic_lock(45, 58, "#9fb3c8", 4)}</g>')

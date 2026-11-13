@@ -200,7 +200,9 @@ EN.update({'SS급 미사일탄': 'SS Missile', '1회 한정 · SS 미사일탄 1
            '빈 칸에 바로 장착했습니다': 'Equipped to an empty slot', '총알 인벤토리에 넣었습니다': 'Added to your ammo inventory',
            '인벤토리가 가득 차 있어 빈 칸이 생기면 들어갑니다': 'Inventory is full - it will be added when a slot opens up',
            '기다리던 총알이 인벤토리에 들어갔습니다': 'Your pending ammo was added to the inventory',
-           '이미 구매한 상품입니다 (1회 한정)': 'Already purchased (one-time offer)', '구매 완료': 'Purchased'})
+           '이미 구매한 상품입니다 (1회 한정)': 'Already purchased (one-time offer)', '구매 완료': 'Purchased',
+           # 같은 날 홈 화면 아이콘 글자
+           '단 1번!': 'Only once!', '1회 구매': 'One time', '{0} 총알 지급': 'Get {0} Ammo'})
 
 
 def code_strings():

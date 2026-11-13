@@ -1128,10 +1128,14 @@ namespace KachiGun.EditorTools
                 bool hidLocked = !GameObject.Find("Starter");
                 S.bestEver = be0; HUD.I.Refresh();
                 var stGo = GameObject.Find("Starter");
-                yield return Wait(0.2f);
+                yield return Wait(0.15f);
+                Capture("17e0a_starter_pop");   // 나타나는 순간 (튀어나오는 중)
+                yield return Wait(0.9f);
                 Capture("17e0_starter_icon");
                 Check(hidLocked && stGo != null && GM.Unlocked("shop"), $"SS 미사일탄 아이콘: 상점 잠김엔 숨김({hidLocked}) · 열리면 보임({stGo != null})");
-                if (stGo) stGo.GetComponent<Button>().onClick.Invoke(); else Iap.Buy("starter_ss_missile");
+                var stB = stGo ? stGo.GetComponentInChildren<Button>() : null;
+                Check(stB != null && stB.name == "StarterBtn", "SS 미사일탄 아이콘 안에 누르는 판(StarterBtn)");
+                if (stB) stB.onClick.Invoke(); else Iap.Buy("starter_ss_missile");
                 yield return Wait(0.2f);
                 Check(!GameObject.Find("Starter"), "아이콘을 눌러 산 뒤 아이콘 사라짐");
                 Check(S.slots[1] == ss && Squad.I.cats.Count == cats0 + 1 && S.iapOnce.Contains("starter_ss_missile") && S.weaponUnlocked && S.gems == sg0,

@@ -25,8 +25,13 @@ namespace KachiGun
         Button ecoBtn, missionBtn, quitBtn, autoBtn, bossBtn;
         Text autoState;
         GameObject missionDot;
-        Button starterBtn;                       // 11-13 SS급 미사일탄 990원 바로 사기 (미션 아래)
+        // 11-13 SS급 미사일탄 990원 바로 사기 (미션 아래) — 리본 "단 1번!" · 금색 판 + 미사일 + SS · 별 딱지 "1회 구매" · "SS 총알 지급" · 가격
+        RectTransform starterRoot, starterPulse, starterRibbon, starterBurst;
+        Button starterBtn;
         Text starterPrice;
+        Image starterGlow, starterRing, starterFlash;
+        readonly Image[] starterStars = new Image[2];
+        float starterT, starterShowT = -1;
         public const string StarterId = "starter_ss_missile";
         readonly Card[] cards = new Card[3];
         readonly Dictionary<string, SideBtn> side = new();
@@ -149,19 +154,7 @@ namespace KachiGun
 
             // 11-13 초반 정착 상품 (Shop 표 starter_ss_missile · Reward Bullet:코드): 상점이 열리면 미션 아래에 보이고,
             // 누르면 바로 구매(폰 = 구글 결제창 · 에디터 = 가짜 결제 확인 창). 사면 · 결제가 꺼진 폰이면 숨김 (RefreshStarter)
-            var stRow = Tables.Shop.Find(x => x.id == StarterId);
-            int stCode = Iap.BulletOf(stRow);
-            starterBtn = UIKit.TileBtn(root, stCode >= 0 ? WeaponPopup.TypeIcon(Tables.TypeOf(stCode)) : Art.Get("UI/icon_pistol"), new Vector2(88, 94), 0.62f, () => Iap.Buy(StarterId), "Starter");
-            ((RectTransform)starterBtn.transform).Place(0, 1, new Vector2(24, -512), new Vector2(88, 94), new Vector2(0, 1));
-            if (stCode >= 0)
-            {
-                var gt = UIKit.Label(starterBtn.transform, Tables.GradeName(Tables.GradeOf(stCode)), 26, Tables.GradeColor(Tables.GradeOf(stCode)), TextAnchor.MiddleCenter, 3);   // 등급 글자 (SS 빨강)
-                gt.rectTransform.Place(0, 1, new Vector2(4, -4), new Vector2(50, 30), new Vector2(0, 1));
-                gt.raycastTarget = false;
-            }
-            starterPrice = UIKit.Fit(UIKit.Label(starterBtn.transform, "", 28, UIKit.Gold, TextAnchor.MiddleCenter, 2), 18);
-            starterPrice.rectTransform.Place(0.5f, 0, new Vector2(0, -12), new Vector2(120, 34), new Vector2(0.5f, 0.5f));
-            starterBtn.gameObject.SetActive(false);
+            BuildStarter();
 
             // 자동강화 (오른쪽 맨 아래 = 절전모드 밑). 10-30: 안 가졌으면 구매(auto_upgrade), 가졌으면 켜기/끄기.
             // 폰에서 결제가 꺼져 있고(라이선스 키 없음·상품 없음) 안 가졌으면 숨김
@@ -504,6 +497,7 @@ namespace KachiGun
                 nodeRing.rectTransform.localScale = Vector3.one / (0.85f + 0.3f * k) * (0.95f + 0.1f * k);   // 바깥 빛보다 덜 움직임
             }
             TickUnlockFx(dt);
+            TickStarter(dt);
 
             if (paw.gameObject.activeSelf)
                 paw.anchoredPosition = new Vector2(-CardStep, CardY + 254 * CardScale + 56 + Mathf.Abs(Mathf.Sin(Time.unscaledTime * 5f)) * 22f);   // 공격력 카드 위에서 아래를 가리키며 콩콩
@@ -620,14 +614,114 @@ namespace KachiGun
             if (autoBtn.gameObject.activeSelf != show) autoBtn.gameObject.SetActive(show);
         }
 
+        /// <summary>11-13 SS급 미사일탄 아이콘 (사용자 "단 1번 · 1회 구매 · SS 총알 지급 · 노출될 때 강조를 강하게").
+        /// 글자는 그림에 굽지 않고 얹음(영어 화면). 매 프레임 움직이므로 따로 Canvas (위 화면 전체를 다시 모으지 않게)</summary>
+        void BuildStarter()
+        {
+            var row = Tables.Shop.Find(x => x.id == StarterId);
+            int code = Iap.BulletOf(row);
+            int g = code >= 0 ? Tables.GradeOf(code) : 5;
+            string gn = Tables.GradeName(g);
+            starterRoot = UIKit.Rect(root, "Starter").Place(0, 1, new Vector2(10, -503), new Vector2(150, 208), new Vector2(0, 1));
+            starterRoot.gameObject.AddComponent<Canvas>();
+            starterRoot.gameObject.AddComponent<GraphicRaycaster>();   // 따로 Canvas 라 누르기를 받으려면 필요
+            // 판 뒤 금빛 (깜빡임) — 판 가운데 (75, -92)
+            starterGlow = UIKit.Img(starterRoot, Art.Glow, new Vector2(260, 260), "Glow");
+            starterGlow.raycastTarget = false; starterGlow.preserveAspect = false;
+            starterGlow.rectTransform.Place(0, 1, new Vector2(75, -92), new Vector2(260, 260), new Vector2(0.5f, 0.5f));
+            // 통통 튀는 판 (누름 효과가 판 크기를 1 로 당겨도 이 부모 크기는 그대로)
+            starterPulse = UIKit.Rect(starterRoot, "Pulse").Place(0, 1, new Vector2(75, -92), new Vector2(104, 114), new Vector2(0.5f, 0.5f));
+            starterBtn = UIKit.KitBtn(starterPulse, "tile_gold", new Vector2(104, 114), null, 0, () => Iap.Buy(StarterId), "StarterBtn");
+            ((RectTransform)starterBtn.transform).Place(0.5f, 0.5f, Vector2.zero, new Vector2(104, 114), new Vector2(0.5f, 0.5f));
+            var ic = UIKit.Img(starterBtn.transform, code >= 0 ? WeaponPopup.TypeIcon(Tables.TypeOf(code)) : Art.Get("UI/icon_pistol"), new Vector2(70, 70), "Icon");
+            ic.rectTransform.Place(0.5f, 0.5f, new Vector2(4, 0), new Vector2(70, 70), new Vector2(0.5f, 0.5f));
+            ic.raycastTarget = false;
+            var gt = UIKit.Label(starterBtn.transform, gn, 30, Tables.GradeColor(g), TextAnchor.MiddleCenter, 4);   // 등급 글자 (SS 빨강)
+            gt.rectTransform.Place(0, 1, new Vector2(6, -12), new Vector2(56, 34), new Vector2(0, 1));   // 왼쪽 위 빈 곳 (미사일은 왼쪽 아래 → 오른쪽 위)
+            gt.raycastTarget = false;
+            // 판 번쩍 (1.6초마다 하얗게 한 번)
+            starterFlash = UIKit.Img(starterBtn.transform, Art.Kit("tile_flash"), new Vector2(104, 114), "Flash");
+            starterFlash.rectTransform.Place(0.5f, 0.5f, Vector2.zero, new Vector2(104, 114), new Vector2(0.5f, 0.5f));
+            starterFlash.raycastTarget = false; starterFlash.color = new Color(1, 1, 1, 0);
+            // 판 앞 네온 고리
+            starterRing = UIKit.Img(starterPulse, Art.Ring, new Vector2(176, 186), "Ring");
+            starterRing.raycastTarget = false; starterRing.preserveAspect = false;
+            starterRing.rectTransform.Place(0.5f, 0.5f, Vector2.zero, new Vector2(176, 186), new Vector2(0.5f, 0.5f));   // 판 테두리 바깥에
+            // 판 오른쪽 별 딱지 "1회 구매" (딱지만 천천히 돎 · 리본 아래라 가려지지 않게)
+            starterBurst = UIKit.KitImg(starterPulse, "burst_red", new Vector2(64, 64), "Burst").rectTransform;
+            starterBurst.Place(1, 0.5f, new Vector2(10, 4), new Vector2(64, 64), new Vector2(0.5f, 0.5f));
+            starterBurst.GetComponent<Image>().raycastTarget = false;
+            var bt = UIKit.Label(starterPulse, L.T("1회 구매"), 18, Color.white, TextAnchor.MiddleCenter, 2.5f);
+            bt.rectTransform.Place(1, 0.5f, new Vector2(10, 4), new Vector2(46, 46), new Vector2(0.5f, 0.5f));
+            bt.horizontalOverflow = HorizontalWrapMode.Wrap; bt.lineSpacing = 0.85f; bt.raycastTarget = false;
+            // 위 빨간 리본 "단 1번!" (살랑살랑)
+            starterRibbon = UIKit.KitImg(starterRoot, "ribbon_red", new Vector2(150, 48), "Ribbon").rectTransform;
+            starterRibbon.Place(0, 1, new Vector2(75, -20), new Vector2(150, 48), new Vector2(0.5f, 0.5f));
+            starterRibbon.GetComponent<Image>().raycastTarget = false;
+            var rtx = UIKit.Fit(UIKit.Label(starterRibbon, L.T("단 1번!"), 26, Color.white, TextAnchor.MiddleCenter, 3), 16);
+            rtx.rectTransform.Place(0.5f, 0.5f, new Vector2(0, 4), new Vector2(110, 34), new Vector2(0.5f, 0.5f));
+            rtx.raycastTarget = false;
+            // 반짝이 별 2개
+            for (int i = 0; i < 2; i++)
+            {
+                starterStars[i] = UIKit.KitImg(starterRoot, "star_s", new Vector2(30, 30), "Spark" + i);
+                starterStars[i].raycastTarget = false;
+                starterStars[i].rectTransform.Place(0, 1, i == 0 ? new Vector2(14, -70) : new Vector2(30, -150), new Vector2(30, 30), new Vector2(0.5f, 0.5f));
+            }
+            // 아래 "SS 총알 지급" · 가격
+            var cap = UIKit.Fit(UIKit.Label(starterRoot, L.F("{0} 총알 지급", gn), 24, Color.white, TextAnchor.MiddleCenter, 3), 16);
+            cap.rectTransform.Place(0, 1, new Vector2(75, -164), new Vector2(160, 30), new Vector2(0.5f, 0.5f));
+            cap.raycastTarget = false;
+            starterPrice = UIKit.Fit(UIKit.Label(starterRoot, "", 28, UIKit.Gold, TextAnchor.MiddleCenter, 3), 18);
+            starterPrice.rectTransform.Place(0, 1, new Vector2(75, -191), new Vector2(160, 32), new Vector2(0.5f, 0.5f));
+            starterPrice.raycastTarget = false;
+            starterRoot.gameObject.SetActive(false);
+        }
+
         /// <summary>SS급 미사일탄 아이콘: 스테이지 화면 + 상점 열림 + 아직 안 삼 + 살 수 있음(스토어에 상품이 있음)</summary>
         void RefreshStarter()
         {
-            if (!starterBtn) return;
+            if (!starterRoot) return;
             var row = Tables.Shop.Find(x => x.id == StarterId);
             bool show = row != null && GM.mode == GameManager.Mode.Stage && GM.Unlocked("shop") && !Iap.Owned(row) && Iap.CanSell(row);
-            if (starterBtn.gameObject.activeSelf != show) starterBtn.gameObject.SetActive(show);
+            if (starterRoot.gameObject.activeSelf != show)
+            {
+                starterRoot.gameObject.SetActive(show);
+                if (show) starterShowT = 0;   // 나타나는 순간 크게 튀어나옴
+            }
             if (show) { string pt = Iap.PriceText(row); if (starterPrice.text != pt) starterPrice.text = pt; }
+        }
+
+        /// <summary>강조 움직임: 나타날 때 크게 튀어나옴(0.6초) → 계속 통통 · 뒤 금빛 깜빡임 · 네온 고리 · 리본 살랑 · 별 딱지 돎 · 반짝이</summary>
+        void TickStarter(float dt)
+        {
+            if (!starterRoot || !starterRoot.gameObject.activeInHierarchy) return;
+            starterT += dt;
+            float k = Mathf.Abs(Mathf.Sin(starterT * 4f));
+            float pop = 1f;
+            if (starterShowT >= 0)
+            {
+                starterShowT += dt;
+                float u = Mathf.Clamp01(starterShowT / 0.6f);
+                pop = u < 1f ? Mathf.Lerp(0.2f, 1f, u) + Mathf.Sin(u * Mathf.PI) * 0.45f : 1f;   // 작게 → 크게 → 제자리
+                if (u >= 1f) starterShowT = -1;
+            }
+            starterPulse.localScale = Vector3.one * (pop * (1f + 0.09f * k));
+            starterGlow.rectTransform.localScale = Vector3.one * (pop * (0.9f + 0.35f * k));
+            starterGlow.color = new Color(1f, 0.78f, 0.22f, 0.8f + 0.2f * k);
+            starterRing.color = new Color(1f, 0.97f, 0.7f, 0.75f + 0.25f * k);
+            starterRing.rectTransform.localScale = Vector3.one * (1f + 0.1f * k);
+            starterRibbon.localRotation = Quaternion.Euler(0, 0, Mathf.Sin(starterT * 3f) * 5f);
+            starterRibbon.localScale = Vector3.one * pop;
+            starterBurst.localRotation = Quaternion.Euler(0, 0, -starterT * 40f);
+            float ft = starterT % 1.6f;
+            starterFlash.color = new Color(1, 1, 1, ft < 0.25f ? 0.7f * Mathf.Sin(ft / 0.25f * Mathf.PI) : 0f);
+            for (int i = 0; i < starterStars.Length; i++)
+            {
+                float s2 = Mathf.Max(0f, Mathf.Sin(starterT * 3.2f + i * Mathf.PI));
+                starterStars[i].rectTransform.localScale = Vector3.one * s2;
+                starterStars[i].rectTransform.localRotation = Quaternion.Euler(0, 0, starterT * 90f);
+            }
         }
 
         static string BossId(string id) => string.IsNullOrEmpty(id) || id == "-" ? "ogre" : id;
