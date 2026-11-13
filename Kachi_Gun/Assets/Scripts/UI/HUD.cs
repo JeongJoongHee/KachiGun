@@ -25,6 +25,9 @@ namespace KachiGun
         Button ecoBtn, missionBtn, quitBtn, autoBtn, bossBtn;
         Text autoState;
         GameObject missionDot;
+        Button starterBtn;                       // 11-13 SS급 미사일탄 990원 바로 사기 (미션 아래)
+        Text starterPrice;
+        public const string StarterId = "starter_ss_missile";
         readonly Card[] cards = new Card[3];
         readonly Dictionary<string, SideBtn> side = new();
         Button buffAtk, buffGold;
@@ -143,6 +146,22 @@ namespace KachiGun
             var dot = UIKit.KitImg(missionBtn.transform, "badge", new Vector2(34, 34), "Dot");
             dot.rectTransform.Place(1, 1, new Vector2(8, 8), new Vector2(34, 34), new Vector2(1, 1));
             missionDot = dot.gameObject;
+
+            // 11-13 초반 정착 상품 (Shop 표 starter_ss_missile · Reward Bullet:코드): 상점이 열리면 미션 아래에 보이고,
+            // 누르면 바로 구매(폰 = 구글 결제창 · 에디터 = 가짜 결제 확인 창). 사면 · 결제가 꺼진 폰이면 숨김 (RefreshStarter)
+            var stRow = Tables.Shop.Find(x => x.id == StarterId);
+            int stCode = Iap.BulletOf(stRow);
+            starterBtn = UIKit.TileBtn(root, stCode >= 0 ? WeaponPopup.TypeIcon(Tables.TypeOf(stCode)) : Art.Get("UI/icon_pistol"), new Vector2(88, 94), 0.62f, () => Iap.Buy(StarterId), "Starter");
+            ((RectTransform)starterBtn.transform).Place(0, 1, new Vector2(24, -512), new Vector2(88, 94), new Vector2(0, 1));
+            if (stCode >= 0)
+            {
+                var gt = UIKit.Label(starterBtn.transform, Tables.GradeName(Tables.GradeOf(stCode)), 26, Tables.GradeColor(Tables.GradeOf(stCode)), TextAnchor.MiddleCenter, 3);   // 등급 글자 (SS 빨강)
+                gt.rectTransform.Place(0, 1, new Vector2(4, -4), new Vector2(50, 30), new Vector2(0, 1));
+                gt.raycastTarget = false;
+            }
+            starterPrice = UIKit.Fit(UIKit.Label(starterBtn.transform, "", 28, UIKit.Gold, TextAnchor.MiddleCenter, 2), 18);
+            starterPrice.rectTransform.Place(0.5f, 0, new Vector2(0, -12), new Vector2(120, 34), new Vector2(0.5f, 0.5f));
+            starterBtn.gameObject.SetActive(false);
 
             // 자동강화 (오른쪽 맨 아래 = 절전모드 밑). 10-30: 안 가졌으면 구매(auto_upgrade), 가졌으면 켜기/끄기.
             // 폰에서 결제가 꺼져 있고(라이선스 키 없음·상품 없음) 안 가졌으면 숨김
@@ -544,6 +563,7 @@ namespace KachiGun
             missionBtn.gameObject.SetActive(menu);
             bool buffOpen = GM.Unlocked("buff");
             missionDot.SetActive(GM.AnyMissionReady);
+            RefreshStarter();
             ecoBtn.gameObject.SetActive(GM.Unlocked("eco") && GM.mode == GameManager.Mode.Stage);
             buffAtk.gameObject.SetActive(buffOpen);
             buffGold.gameObject.SetActive(buffOpen);
@@ -598,6 +618,16 @@ namespace KachiGun
             var row = Tables.Shop.Find(x => x.id == "auto_upgrade");
             bool show = GM.mode == GameManager.Mode.Stage && (S.autoUpgrade || Iap.CanSell(row));
             if (autoBtn.gameObject.activeSelf != show) autoBtn.gameObject.SetActive(show);
+        }
+
+        /// <summary>SS급 미사일탄 아이콘: 스테이지 화면 + 상점 열림 + 아직 안 삼 + 살 수 있음(스토어에 상품이 있음)</summary>
+        void RefreshStarter()
+        {
+            if (!starterBtn) return;
+            var row = Tables.Shop.Find(x => x.id == StarterId);
+            bool show = row != null && GM.mode == GameManager.Mode.Stage && GM.Unlocked("shop") && !Iap.Owned(row) && Iap.CanSell(row);
+            if (starterBtn.gameObject.activeSelf != show) starterBtn.gameObject.SetActive(show);
+            if (show) { string pt = Iap.PriceText(row); if (starterPrice.text != pt) starterPrice.text = pt; }
         }
 
         static string BossId(string id) => string.IsNullOrEmpty(id) || id == "-" ? "ogre" : id;

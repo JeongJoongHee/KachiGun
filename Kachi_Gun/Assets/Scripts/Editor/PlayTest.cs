@@ -1107,7 +1107,7 @@ namespace KachiGun.EditorTools
                 foreach (var t in shop.GetComponentsInChildren<Text>(true)) if (t.text.EndsWith("원") && t.text.Length > 1 && char.IsDigit(t.text[0])) krwRows++;
                 Capture("17d_shop_nostore");
                 CloseAll();
-                bool autoHidden = !GameObject.Find("AutoUpgrade");
+                bool autoHidden = !GameObject.Find("AutoUpgrade") && !GameObject.Find("Starter");   // 11-13 SS 미사일탄 아이콘도
                 Iap.SimulateNoStore = false;
                 Iap.Buy("gem_pack_small"); S.gems = iapG0;   // 창·버튼 원래대로
                 Check(krwRows == 0 && autoHidden, $"결제 꺼진 폰: 원화 줄 {krwRows}개 · 자동강화 버튼 숨김 {autoHidden}");
@@ -1123,8 +1123,17 @@ namespace KachiGun.EditorTools
                 for (int i = 0; i < S.slots.Count; i++) S.slots[i] = i == 0 ? Tables.Code(0, "single") : -1;   // 처음 하는 사람처럼 리볼버 하나
                 S.iapOnce.Clear(); S.pendingBullets.Clear(); S.weaponUnlocked = false; Squad.I.Rebuild();
                 int cats0 = Squad.I.cats.Count;
-                Iap.Buy("starter_ss_missile");
+                // 11-13 화면 아이콘: 상점이 잠겨 있으면 없음 → 열리면 보임 → 누르면 구매
+                int be0 = S.bestEver; S.bestEver = 0; HUD.I.Refresh();
+                bool hidLocked = !GameObject.Find("Starter");
+                S.bestEver = be0; HUD.I.Refresh();
+                var stGo = GameObject.Find("Starter");
                 yield return Wait(0.2f);
+                Capture("17e0_starter_icon");
+                Check(hidLocked && stGo != null && GM.Unlocked("shop"), $"SS 미사일탄 아이콘: 상점 잠김엔 숨김({hidLocked}) · 열리면 보임({stGo != null})");
+                if (stGo) stGo.GetComponent<Button>().onClick.Invoke(); else Iap.Buy("starter_ss_missile");
+                yield return Wait(0.2f);
+                Check(!GameObject.Find("Starter"), "아이콘을 눌러 산 뒤 아이콘 사라짐");
                 Check(S.slots[1] == ss && Squad.I.cats.Count == cats0 + 1 && S.iapOnce.Contains("starter_ss_missile") && S.weaponUnlocked && S.gems == sg0,
                     $"990원 SS 미사일탄 → 빈 장착 칸에 바로 (칸 {S.slots[1]} · 분대 {cats0} → {Squad.I.cats.Count} · 총알 메뉴 열림 {S.weaponUnlocked})");
                 Capture("17e_starter_missile");
