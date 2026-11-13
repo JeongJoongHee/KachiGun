@@ -6,7 +6,7 @@ Inventory_Size,15,칸,총알 인벤토리 크기 (5x3)
 Min_Fire_Interval,0.06,초,공격속도 증가 시 최소 발사 간격 하한
 Aim_Angle_Up,80,도,상향 최대 조준 각도
 Aim_Angle_Down,-45,도,하향 최대 조준 각도
-Leader_Screen_Pos,"0.13, 0.537",비율,스테이지 리더 고정 화면 좌표
-Sub1_Screen_Pos,"0.145, 0.410",비율,스테이지 동료1 고정 화면 좌표
-Sub2_Screen_Pos,"0.145, 0.665",비율,스테이지 동료2 고정 화면 좌표
+Leader_Screen_Pos,"0.13, 0.562",비율,스테이지 리더 고정 화면 좌표
+Sub1_Screen_Pos,"0.145, 0.435",비율,스테이지 동료1 고정 화면 좌표
+Sub2_Screen_Pos,"0.145, 0.690",비율,스테이지 동료2 고정 화면 좌표
 Leader_Scale_Mul,1.12,배,"리더 카피바라 크기 = Capy_Scale x 이 배율 (11-07 사용자 ""리더 조금 크게"" — 총알 관리 창 리더 카드와 같은 비율)"
