@@ -171,9 +171,7 @@ namespace KachiGun
                     act = () => { Iap.Buy(row.id); };
                 }
                 else { price = r.priceType == "Ad" ? L.T("광고") : r.priceValue; kind = r.priceType == "Ad" ? 0 : 2; act = () => Iap.Buy(row.id); }
-                string desc = L.T(r.desc);
-                if (r.priceType == "KRW" && Iap.FirstBonus(r))   // 11-14 첫 구매 2배: "첫 구매 2배! 다이아 500 → 1,000"
-                    desc = L.F("첫 구매 {0}배! 다이아 {1} → {2}", Iap.FirstMul.ToString("0.#"), GemN(r.bonusGems), GemN(r.bonusGems * Iap.FirstMul));
+                string desc = r.priceType == "KRW" ? Iap.Desc(r) : L.T(r.desc);   // 11-14 첫 구매 2배: "첫 구매 2배! 다이아 500 → 1,000" (구매 확인 창과 같은 글)
                 items.Add((r.id, L.T(r.name), desc, price, kind, act));
             }
             scroll = SkinPopup.MakeScroll(content, new Vector2(0, -10), new Vector2(900, 1430), out var inner);

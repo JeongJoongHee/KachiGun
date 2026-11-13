@@ -1108,8 +1108,17 @@ namespace KachiGun.EditorTools
                     Capture("17a_shop_first2x");
                     CloseAll();
                 }
+                var gpSmall = Tables.Shop.Find(x => x.id == "gem_pack_small");
+                string cf1 = Iap.ConfirmText(gpSmall);
+                Check(cf1.Contains(L.F("첫 구매 {0}배! 다이아 {1} → {2}", "2", "500", "1,000")) && !cf1.Contains(L.T(gpSmall.desc)), "11-14 구매 확인 창: 첫 구매 → 2배 글");
+                ConfirmPopup.Ask(cf1, () => { }, "구매"); yield return Wait(0.3f);
+                Capture("17a1_confirm_first2x"); CloseAll();
                 Iap.Buy("gem_pack_small");
                 Check(System.Math.Abs(S.gems - iapG0 - 1000) < 0.01 && S.iapOnce.Contains("first2x:gem_pack_small"), $"다이아 한 줌 첫 구매 → +{S.gems - iapG0} (2배)");
+                string cf2 = Iap.ConfirmText(gpSmall);
+                Check(cf2.Contains(L.T(gpSmall.desc)) && !cf2.Contains("첫 구매"), $"11-14 구매 확인 창: 산 뒤 → 기존 글 ({L.T(gpSmall.desc)})");
+                ConfirmPopup.Ask(cf2, () => { }, "구매"); yield return Wait(0.3f);
+                Capture("17a3_confirm_after"); CloseAll();
                 yield return Wait(0.1f);
                 Capture("17a2_first2x_toast");
                 double iapG0b = S.gems;

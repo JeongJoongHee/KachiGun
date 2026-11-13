@@ -50,6 +50,12 @@ namespace KachiGun
         static string FirstKey(ShopRow r) => "first2x:" + r.id;
         /// <summary>다음 구매가 첫 구매 2배인지 (상점 딱지 · 지급)</summary>
         public static bool FirstBonus(ShopRow r) => r != null && r.category == "Gem_Shop" && r.bonusGems > 0 && FirstMul > 1 && !S.iapOnce.Contains(FirstKey(r));
+        /// <summary>상품 설명 (상점 줄 · 구매 확인 창 같은 글): 11-14 첫 구매 2배가 남았으면 "첫 구매 2배! 다이아 500 → 1,000", 받은 뒤엔 표의 설명 그대로</summary>
+        public static string Desc(ShopRow r) => FirstBonus(r)
+            ? L.F("첫 구매 {0}배! 다이아 {1} → {2}", FirstMul.ToString("0.#"), ShopPopup.GemN(r.bonusGems), ShopPopup.GemN(r.bonusGems * FirstMul))
+            : L.T(r.desc);
+        /// <summary>구매 확인 창 글 (에디터 가짜 결제 — 폰은 [구매]를 누르면 바로 구글 결제창)</summary>
+        public static string ConfirmText(ShopRow r) => $"<size=46>{L.T(r.name)}</size>\n\n{Desc(r)}\n\n" + L.F("[테스트] 가짜 결제 {0} — 살까요?", PriceText(r));
 
         /// <summary>상점 버튼 글자: 스토어 가격(받았으면) → 표의 원화</summary>
         public static string PriceText(ShopRow r) => StorePrice(r.id) ?? ShopPopup.KrwText(r.priceValue);
@@ -106,7 +112,7 @@ namespace KachiGun
             }
 #else
             if (Application.isBatchMode) { Grant(r); return; }   // 자동 시험
-            ConfirmPopup.Ask($"<size=46>{L.T(r.name)}</size>\n\n{L.T(r.desc)}\n\n" + L.F("[테스트] 가짜 결제 {0} — 살까요?", PriceText(r)), () => Grant(r), "구매");
+            ConfirmPopup.Ask(ConfirmText(r), () => Grant(r), "구매");   // 11-14 첫 구매면 "첫 구매 2배!" 글 (Desc)
 #endif
         }
 
