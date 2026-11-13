@@ -44,6 +44,13 @@ namespace KachiGun
             r != null && r.reward != null && r.reward.StartsWith("Bullet:") && int.TryParse(r.reward.Substring(7), out int c) && Tables.Weapon(c) != null ? c : -1;
         static ShopRow Row(string id) => Tables.Shop.Find(x => x.id == id && IsCash(x));
 
+        /// <summary>11-14 사용자 "다이아는 최초 구매 시 1번 2배 지급": 다이아 상품(Category Gem_Shop)을 상품마다 처음 살 때 1번만
+        /// 다이아 x Global_Config Gem_First_Mul (2). 받은 기록 = SaveData.iapOnce 의 "first2x:상품 ID" (클라우드로 계정 단위 · 다시 설치해도 남음)</summary>
+        public static double FirstMul => Math.Max(1, Tables.C("Gem_First_Mul", 2));
+        static string FirstKey(ShopRow r) => "first2x:" + r.id;
+        /// <summary>다음 구매가 첫 구매 2배인지 (상점 딱지 · 지급)</summary>
+        public static bool FirstBonus(ShopRow r) => r != null && r.category == "Gem_Shop" && r.bonusGems > 0 && FirstMul > 1 && !S.iapOnce.Contains(FirstKey(r));
+
         /// <summary>상점 버튼 글자: 스토어 가격(받았으면) → 표의 원화</summary>
         public static string PriceText(ShopRow r) => StorePrice(r.id) ?? ShopPopup.KrwText(r.priceValue);
 
@@ -65,15 +72,18 @@ namespace KachiGun
                 if (put == 0) Squad.I?.Rebuild();
             }
             double bonus = restore ? 0 : r.bonusGems;
+            bool first = bonus > 0 && FirstBonus(r);
+            if (first) { bonus *= FirstMul; S.iapOnce.Add(FirstKey(r)); }   // 11-14 첫 구매 2배 (상품마다 1번만)
             if (bonus > 0) S.gems += bonus;
             S.Save();
-            Debug.Log($"[Iap] {(restore ? "되살림" : "지급")} {r.id} ({r.reward}, 다이아 +{bonus}{(put >= 0 ? $", 총알 {bullet} → {(put == 0 ? "장착" : put == 1 ? "인벤토리" : "기다림")}" : "")})");
+            Debug.Log($"[Iap] {(restore ? "되살림" : "지급")} {r.id} ({r.reward}, 다이아 +{bonus}{(first ? " 첫 구매 x" + FirstMul : "")}{(put >= 0 ? $", 총알 {bullet} → {(put == 0 ? "장착" : put == 1 ? "인벤토리" : "기다림")}" : "")})");
             if (!quiet)
             {
                 AudioManager.Play(AudioManager.Sfx.Coin);
                 if (bonus > 0) HUD.I?.Bump(true);
                 string msg = L.F("{0} 구매 완료!", L.T(r.name));
                 string sub = put == 0 ? "빈 칸에 바로 장착했습니다" : put == 1 ? "총알 인벤토리에 넣었습니다" : put == 2 ? "인벤토리가 가득 차 있어 빈 칸이 생기면 들어갑니다" : null;
+                if (sub == null && first) msg += "\n<size=30>" + L.F("첫 구매 {0}배! 다이아 +{1}", FirstMul.ToString("0.#"), ShopPopup.GemN(bonus)) + "</size>";   // 11-14
                 if (sub != null) msg += "\n<size=30>" + L.T(sub) + "</size>";   // 알림 판(800x100)에 두 줄이 들어가게 둘째 줄은 작게
                 HUD.I?.Toast(msg);
             }

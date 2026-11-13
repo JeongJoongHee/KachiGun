@@ -17,6 +17,7 @@
 빈 칸에 바로 장착했습니다,Equipped to an empty slot,Core/Iap.cs
 총알 인벤토리에 넣었습니다,Added to your ammo inventory,Core/Iap.cs
 인벤토리가 가득 차 있어 빈 칸이 생기면 들어갑니다,Inventory is full - it will be added when a slot opens up,Core/Iap.cs
+첫 구매 {0}배! 다이아 +{1},First purchase x{0}! Gems +{1},Core/Iap.cs
 결제는 준비 중입니다,Purchases are coming soon,Core/Iap.cs
 이미 구매한 상품입니다 (1회 한정),Already purchased (one-time offer),Core/Iap.cs
 이미 가지고 있습니다,Already owned,Core/Iap.cs
@@ -148,6 +149,8 @@
 {0} 으로 살까요?,Buy for {0}?,UI/MenuPopups.cs
 구매 완료,Purchased,UI/MenuPopups.cs
 보유 중,Owned,UI/MenuPopups.cs
+첫 구매 {0}배! 다이아 {1} → {2},First purchase x{0}! Gems {1} → {2},UI/MenuPopups.cs
+첫 구매 {0}배,First Buy x{0},UI/MenuPopups.cs
 {0}원,KRW {0},UI/MenuPopups.cs
 일반,Common,UI/MenuPopups.cs
 고급,Uncommon,UI/MenuPopups.cs
@@ -204,14 +207,17 @@
 {0}일을 다 받으면 1일차부터 다시 시작합니다,"After Day {0}, it starts again from Day 1",UI/Popup.cs
 돌아가기,Back,UI/Popup.cs
 총알 관리,Ammo,UI/WeaponPopup.cs
+※ 뽑기는 무조건 D 등급 총알만 나옵니다,※ Draws always give D grade ammo only,UI/WeaponPopup.cs
 일괄 합성,Merge All,UI/WeaponPopup.cs
 D 등급 총알 획득!,Got D grade ammo!,UI/WeaponPopup.cs
 뽑기,Draw,UI/WeaponPopup.cs
 분해할 총알을 눌러 고르세요 (여러 개 가능),Tap ammo to salvage (pick several),UI/WeaponPopup.cs
 {0}개 고름 → 다이아 +{1},{0} picked → +{1} gems,UI/WeaponPopup.cs
 분해,Salvage,UI/WeaponPopup.cs
+카드로 끌어다 놓아 장착 · 같은 등급끼리 겹쳐 합성,Drag onto a card to equip · Drop same-grade ammo together to merge,UI/WeaponPopup.cs
 카드로 끌어다 놓아 장착 · 같은 탄알끼리 겹쳐 합성,Drag onto a card to equip · Drop matching ammo together to merge,UI/WeaponPopup.cs
 장착 중인 총알은 분해할 수 없습니다,Equipped ammo can't be salvaged,UI/WeaponPopup.cs
+합성할 수 있는 같은 등급 총알이 없습니다,No same-grade ammo to merge,UI/WeaponPopup.cs
 합성할 수 있는 같은 탄알이 없습니다,No matching ammo to merge,UI/WeaponPopup.cs
 {0}번 합성!,{0} merged!,UI/WeaponPopup.cs
 분해할 총알이 없습니다,No ammo to salvage,UI/WeaponPopup.cs

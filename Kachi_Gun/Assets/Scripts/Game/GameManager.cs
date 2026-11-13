@@ -433,8 +433,13 @@ namespace KachiGun
             return null;
         }
 
-        /// <summary>인벤토리 a 칸을 b 칸에 겹치기: 같은 탄알(종류·등급 모두 같음)이면 한 단계 위 등급의 랜덤 종류로 합성.
-        /// 11-04 요청_02: 등급이 같아도 종류가 다르면 합성 안 됨 (알림만, 자리는 그대로)</summary>
+        /// <summary>11-14 사용자 "같은 무기가 아니어도 합성": Global_Config Merge_Same_Grade 1 = 같은 등급이면 종류가 달라도 합성 · 0 = 같은 탄알끼리만(11-04)</summary>
+        public static bool MergeAnyType => Tables.C("Merge_Same_Grade", 1) >= 0.5;
+        /// <summary>두 총알을 합성할 수 있는 짝인지 (등급 · 종류 규칙만 — 최고 등급은 따로)</summary>
+        public static bool CanMergePair(int ca, int cb) => ca >= 0 && cb >= 0 && (MergeAnyType ? Tables.GradeOf(ca) == Tables.GradeOf(cb) : ca == cb);
+
+        /// <summary>인벤토리 a 칸을 b 칸에 겹치기: 합성할 수 있는 짝(CanMergePair)이면 한 단계 위 등급의 랜덤 종류로 합성.
+        /// 11-04 요청_02: 등급이 같아도 종류가 다르면 합성 안 됨 → 11-14 같은 등급이면 종류가 달라도 합성 (Merge_Same_Grade)</summary>
         public string Merge(int a, int b)
         {
             if (a == b) return "";
@@ -443,7 +448,7 @@ namespace KachiGun
             if (cb < 0) { S.inv[b] = ca; S.inv[a] = -1; Notify(); return null; }   // 빈칸으로 옮기기
             int g = Tables.GradeOf(ca);
             if (g != Tables.GradeOf(cb)) { S.inv[a] = cb; S.inv[b] = ca; Notify(); return null; }  // 등급 다르면 자리 바꾸기
-            if (ca != cb) return L.T("같은 탄알끼리만 합성할 수 있습니다");
+            if (!CanMergePair(ca, cb)) return L.T("같은 탄알끼리만 합성할 수 있습니다");
             if (g >= Tables.MaxGrade) return L.T("최고 등급입니다");
             S.inv[a] = -1;
             S.inv[b] = Tables.Code(g + 1, Tables.RandomType(g + 1));   // 한 단계 위 등급, Merge_Weight 비중 (10-24: 일반탄 각 18% · 레이저/미사일 각 14%)
@@ -453,7 +458,7 @@ namespace KachiGun
             return null;
         }
 
-        /// <summary>11-05 [일괄 합성] (추가 요청/UI 수정.png "조건이 맞는 1단계씩만"): 인벤토리의 같은 탄알(종류·등급) 두 개씩 한 번만 합성.
+        /// <summary>11-05 [일괄 합성] (추가 요청/UI 수정.png "조건이 맞는 1단계씩만"): 인벤토리의 합성할 수 있는 짝(11-14: 같은 등급) 두 개씩 한 번만 합성.
         /// 이번에 새로 나온 총알은 다시 합치지 않음(한 번 누르면 한 단계) · 장착 중인 총알 · 최고 등급은 빼고. 결과는 앞 칸에. 돌려줌 = 결과가 생긴 칸들</summary>
         public List<int> MergeAll()
         {
@@ -466,7 +471,7 @@ namespace KachiGun
                 if (c < 0 || used[i] || Tables.GradeOf(c) >= Tables.MaxGrade) continue;
                 for (int j = i + 1; j < snap.Count; j++)
                 {
-                    if (used[j] || snap[j] != c) continue;
+                    if (used[j] || !CanMergePair(c, snap[j])) continue;
                     used[i] = used[j] = true;
                     int g = Tables.GradeOf(c);
                     S.inv[j] = -1;
@@ -990,7 +995,7 @@ namespace KachiGun
         }
 
         // =====================================================================
-        // 출석 (11-04): 하루 한 번(기기 날짜) 접속 창 — Attend_Gems_1·2·3 다이아를 차례로, 다 받으면 1일차부터 다시
+        // 출석 (11-04): 하루 한 번(기기 날짜) 접속 창 — Attend_Gems_1·2·3 다이아를 차례로, 다 받으면 1일차부터 다시 (11-14 7일: 100·200·300·500·700·1000·1500)
         //   빠진 날이 있어도 끊기지 않고 다음 칸 · 처음 켠 날부터 · 스테이지 화면에서만(던전 중엔 끝난 뒤)
         // =====================================================================
         public static int AttendDays => Math.Max(1, Tables.Ci("Attend_Days"));

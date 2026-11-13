@@ -297,11 +297,13 @@ namespace KachiGun
         }
     }
 
-    /// <summary>출석 보상 (11-04): 하루 한 번 접속 창 — 1·2·3일차 칸(받은 칸 = 체크, 오늘 칸 = 금색 테두리) + [받기].
-    /// 칸 수·다이아는 Global_Config Attend_Days · Attend_Gems_N. X·뒤로 가기로 닫아도 오늘 보상은 받음.</summary>
+    /// <summary>출석 보상 (11-04): 하루 한 번 접속 창 — 날마다 칸(받은 칸 = 체크, 오늘 칸 = 금색 테두리) + [받기].
+    /// 칸 수·다이아는 Global_Config Attend_Days · Attend_Gems_N. X·뒤로 가기로 닫아도 오늘 보상은 받음.
+    /// 11-14 사용자 "7일까지 100·200·300·500·700·1000·1500": 4칸이 넘으면 두 줄 (위 4칸 · 아래 3칸, 마지막 날은 남는 너비만큼 크게)</summary>
     public class AttendPopup : Popup
     {
-        protected override Vector2 Size => new(900, 730);
+        static bool TwoRows => GameManager.AttendDays > 4;
+        protected override Vector2 Size => TwoRows ? new(960, 1080) : new(900, 730);
         protected override string Title => "출석 보상";
         protected override bool CloseOnDim => false;
 
@@ -316,7 +318,7 @@ namespace KachiGun
         protected override void Build()
         {
             note = UIKit.Label(content, "", 30, UIKit.Ink, TextAnchor.MiddleCenter, 0);
-            note.rectTransform.Place(0.5f, 1, new Vector2(0, -398), new Vector2(800, 60), new Vector2(0.5f, 0.5f));
+            note.rectTransform.Place(0.5f, 1, new Vector2(0, TwoRows ? -718 : -398), new Vector2(800, 60), new Vector2(0.5f, 0.5f));
             take = UIKit.ColorBtn(content, new Color(0.45f, 0.7f, 0.3f), new Vector2(380, 110), L.T("받기"), 42, OnButton);
             ((RectTransform)take.transform).Place(0.5f, 0, new Vector2(0, 10), new Vector2(380, 110), new Vector2(0.5f, 0));
         }
@@ -325,22 +327,41 @@ namespace KachiGun
         {
             foreach (var c in cells) if (c != null) Destroy(c.rt.gameObject);
             cells = new Cell[n];
-            float step = Mathf.Min(260, 800f / n), w = step - 20;
+            // 한 줄(4칸 이하): 예전 그대로 · 두 줄: 위 per 칸 · 아래 나머지, 아래 마지막 칸은 남는 칸 수만큼 넓게 (7일 = 위 4 · 아래 2 + 넓은 7일차)
+            int per = n > 4 ? (n + 1) / 2 : n;
+            float step = n > 4 ? 214 : Mathf.Min(260, 800f / n), ch = n > 4 ? 290 : 320;
             for (int i = 0; i < n; i++)
             {
+                int row = i / per, col = i % per, inRow = row == 0 ? per : n - per;
+                float span = (row > 0 && col == inRow - 1) ? per - inRow + 1 : 1;    // 아래 줄 마지막 칸 너비(칸 수)
+                float left = -(per * step) / 2f + col * step;                         // 칸 왼쪽 끝 (줄마다 왼쪽에서부터)
+                float w = span * step - 20, cx = left + span * step / 2f;
+                float cy = n > 4 ? -158 - row * (ch + 22) : -200;
+                bool big = span > 1;
                 var c = new Cell();
-                c.rt = UIKit.Rect(content, "Day" + (i + 1)).Place(0.5f, 1, new Vector2((i - (n - 1) / 2f) * step, -200), new Vector2(w, 320), new Vector2(0.5f, 0.5f));
-                c.glow = UIKit.KitImg(c.rt, "outline", new Vector2(w + 24, 344), "Glow");
+                c.rt = UIKit.Rect(content, "Day" + (i + 1)).Place(0.5f, 1, new Vector2(cx, cy), new Vector2(w, ch), new Vector2(0.5f, 0.5f));
+                c.glow = UIKit.KitImg(c.rt, "outline", new Vector2(w + 24, ch + 24), "Glow");
                 c.glow.rectTransform.Fill(-12, -12, -12, -12);
                 c.glow.color = UIKit.Gold;
                 c.board = UIKit.Row(c.rt, "Board");
                 c.board.rectTransform.Fill();
                 c.day = UIKit.Label(c.rt, "", 36, Color.white, TextAnchor.MiddleCenter, 3);
-                c.day.rectTransform.Place(0.5f, 1, new Vector2(0, -42), new Vector2(w - 10, 50), new Vector2(0.5f, 0.5f));
-                c.gem = UIKit.Img(c.rt, Art.Get("UI/icon_gem"), new Vector2(110, 110), "Gem");
-                c.gem.rectTransform.Place(0.5f, 0.5f, new Vector2(0, 4), new Vector2(110, 110), new Vector2(0.5f, 0.5f));
-                c.amount = UIKit.Label(c.rt, "", 46, Color.white, TextAnchor.MiddleCenter, 3);
-                c.amount.rectTransform.Place(0.5f, 0, new Vector2(0, 54), new Vector2(w - 10, 60), new Vector2(0.5f, 0.5f));
+                c.day.rectTransform.Place(0.5f, 1, new Vector2(0, -40), new Vector2(w - 10, 50), new Vector2(0.5f, 0.5f));
+                float gs = big ? 130 : n > 4 ? 100 : 110;
+                c.gem = UIKit.Img(c.rt, Art.Get("UI/icon_gem"), new Vector2(gs, gs), "Gem");
+                c.gem.rectTransform.Place(0.5f, 0.5f, new Vector2(0, 4), new Vector2(gs, gs), new Vector2(0.5f, 0.5f));
+                if (big)
+                {
+                    // 마지막 날 = 다이아 더미 (가운데 큰 것 + 양옆 작은 것 2개)
+                    for (int k = -1; k <= 1; k += 2)
+                    {
+                        var side = UIKit.Img(c.rt, Art.Get("UI/icon_gem"), new Vector2(90, 90), "GemSide");
+                        side.rectTransform.Place(0.5f, 0.5f, new Vector2(k * 96, -8), new Vector2(90, 90), new Vector2(0.5f, 0.5f));
+                        side.transform.SetSiblingIndex(c.gem.transform.GetSiblingIndex());   // 가운데 큰 다이아 뒤에
+                    }
+                }
+                c.amount = UIKit.Fit(UIKit.Label(c.rt, "", 46, Color.white, TextAnchor.MiddleCenter, 3), 28);
+                c.amount.rectTransform.Place(0.5f, 0, new Vector2(0, 50), new Vector2(w - 10, 60), new Vector2(0.5f, 0.5f));
                 c.check = UIKit.KitImg(c.rt, "i_check_w", new Vector2(150, 150), "Check");   // 흰색판(tools/kit_white.py)에 녹색
                 c.check.color = new Color(0.5f, 0.88f, 0.38f);
                 c.check.rectTransform.Place(0.5f, 0.5f, new Vector2(0, 4), new Vector2(150, 150), new Vector2(0.5f, 0.5f));
@@ -367,11 +388,12 @@ namespace KachiGun
                 var c = cells[i];
                 bool got = i < index || (i == index && claimed), today = i == index && !claimed;
                 c.day.text = L.F("{0}일차", i + 1);
-                c.amount.text = Num.F(GameManager.AttendGems(i));
+                c.amount.text = ShopPopup.GemN(GameManager.AttendGems(i));   // 11-14 1,000 · 1,500 (전엔 1k — 줄임 대신 다 보이게)
                 c.check.enabled = got;
                 c.glow.enabled = today;
                 var dim = got ? new Color(0.55f, 0.55f, 0.55f) : Color.white;
-                c.board.color = dim; c.gem.color = dim;
+                c.board.color = dim;
+                foreach (var gi in c.rt.GetComponentsInChildren<Image>(true)) if (gi.name.StartsWith("Gem")) gi.color = dim;
                 c.day.color = today ? UIKit.Gold : Color.white;
                 c.rt.localScale = Vector3.one;
             }

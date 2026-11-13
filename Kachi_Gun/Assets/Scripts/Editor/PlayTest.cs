@@ -297,10 +297,16 @@ namespace KachiGun.EditorTools
             S.gems += 1000; GM.Notify();
             for (int i = 0; i < 4; i++) { var e = GM.Gacha(); if (e != null) { Log("뽑기 실패 " + e); errors++; } }
             Log($"뽑은 뒤 인벤토리: {Inv()}  다이아 {S.gems}");
-            // 11-04 요청_02: 같은 탄알(종류·등급)끼리만 합성 — 시험은 칸을 정해 두고
+            // 11-04 요청_02: 같은 탄알(종류·등급)끼리만 합성 → 11-14 사용자 "같은 무기가 아니어도 합성": 같은 등급이면 종류가 달라도 (Merge_Same_Grade 1)
             S.inv[0] = Tables.Code(0, "single"); S.inv[1] = Tables.Code(0, "shotgun");
+            long mgx = S.statMerges;
             string me0 = GM.Merge(0, 1);
-            Check(me0 != null && Tables.TypeOf(S.inv[0]) == "single" && Tables.TypeOf(S.inv[1]) == "shotgun", $"D 단발 + D 산탄 → 합성 안 됨 ({me0})");
+            Check(GameManager.MergeAnyType && me0 == null && S.inv[0] < 0 && S.inv[1] >= 0 && Tables.GradeOf(S.inv[1]) == 1 && S.statMerges == mgx + 1,
+                  $"D 단발 + D 산탄 → C 합성 (11-14 같은 등급이면 종류가 달라도) → {Tables.WeaponName(S.inv[1])}");
+            S.inv[0] = Tables.Code(0, "single"); S.inv[1] = Tables.Code(1, "single");
+            GM.Merge(0, 1);
+            Check(Tables.GradeOf(S.inv[0]) == 1 && Tables.GradeOf(S.inv[1]) == 0 && S.statMerges == mgx + 1, "D 단발 + C 단발 → 합성 안 됨(자리만 바꿈)");
+            S.inv[0] = Tables.Code(0, "single");
             S.inv[1] = Tables.Code(0, "single"); S.inv[2] = Tables.Code(0, "fast"); S.inv[3] = Tables.Code(0, "fast");
             GM.Merge(0, 1); GM.Merge(2, 3);
             Log($"합성 뒤: {Inv()}");
@@ -343,29 +349,37 @@ namespace KachiGun.EditorTools
                 for (int k = 0; k < S.inv.Count; k++) S.inv[k] = -1;
                 int dS = Tables.Code(0, "single"), dF = Tables.Code(0, "fast"), cS = Tables.Code(1, "single");
                 S.inv[0] = dS; S.inv[3] = dS; S.inv[5] = dS; S.inv[6] = dS; S.inv[7] = dS;   // D 단발 5개 → 2번 합성 + 1개 남음
-                S.inv[8] = dF;                                                          // 짝 없음
+                S.inv[8] = dF;                                                          // 11-14 D 연사 = 남은 D 단발(7)과 짝 → 1번 (종류가 달라도)
                 S.inv[9] = cS; S.inv[10] = cS;                                          // C 두 개 → 1번
+                S.inv[11] = Tables.Code(2, "single");                                   // B 하나 = 짝 없음
                 long mg0 = S.statMerges;
                 var made = GM.MergeAll();
                 Log($"일괄 합성: {made.Count}번 → {Inv()}");
-                Check(made.Count == 3 && S.statMerges == mg0 + 3, $"일괄 합성 3번 ({made.Count})");
-                Check(Tables.GradeOf(S.inv[0]) == 1 && Tables.GradeOf(S.inv[5]) == 1 && S.inv[3] < 0 && S.inv[6] < 0 && S.inv[7] == dS && S.inv[8] == dF
-                      && Tables.GradeOf(S.inv[9]) == 2 && S.inv[10] < 0, "일괄 합성: 같은 것 두 개씩 · 결과는 앞 칸 · 짝 없는 것 그대로");
-                Check(S.inv.FindAll(x => x >= 0 && Tables.GradeOf(x) >= 2).Count == 1, "일괄 합성: 새로 나온 C 는 이번엔 다시 안 합침(한 단계만)");
+                Check(made.Count == 4 && S.statMerges == mg0 + 4, $"일괄 합성 4번 ({made.Count})");
+                Check(Tables.GradeOf(S.inv[0]) == 1 && Tables.GradeOf(S.inv[5]) == 1 && Tables.GradeOf(S.inv[7]) == 1 && S.inv[3] < 0 && S.inv[6] < 0 && S.inv[8] < 0
+                      && Tables.GradeOf(S.inv[9]) == 2 && S.inv[10] < 0 && S.inv[11] == Tables.Code(2, "single"),
+                      "일괄 합성: 같은 등급 두 개씩(D 단발 + D 연사도) · 결과는 앞 칸 · 짝 없는 B 그대로");
+                Check(S.inv.FindAll(x => x >= 0 && Tables.GradeOf(x) == 1).Count == 3 && S.inv.FindAll(x => x >= 0 && Tables.GradeOf(x) >= 2).Count == 2,
+                      "일괄 합성: 새로 나온 C 3개는 이번엔 다시 안 합침(한 단계만)");
 
                 var wpu = HUD.I.Open<WeaponPopup>();
                 yield return Wait(0.3f);
                 Check(wpu.title.text == "총알 관리" && GameObject.Find("MergeAll") && GameObject.Find("Gacha") && GameObject.Find("Salvage"), "총알 관리 창: 제목 · 아래 버튼 3개");
+                {
+                    var gno = GameObject.Find("GachaNote"); var gnt = gno ? gno.GetComponent<Text>() : null;
+                    Check(gnt != null && gnt.text == L.T("※ 뽑기는 무조건 D 등급 총알만 나옵니다") && gnt.text.Contains("D"), $"11-14 총알 관리 창 뽑기 안내 ({(gnt ? gnt.text : "없음")})");
+                    Capture("04b_weapon_gacha_note");
+                }
                 GameObject.Find("Salvage").GetComponent<Button>().onClick.Invoke();
                 Check(wpu.Picking, "[분해] 누름 → 고르기");
-                var c7 = GameObject.Find("Inv7").GetComponent<WeaponCell>(); var c8 = GameObject.Find("Inv8").GetComponent<WeaponCell>();
+                var c7 = GameObject.Find("Inv7").GetComponent<WeaponCell>(); var c8 = GameObject.Find("Inv11").GetComponent<WeaponCell>();   // 11-14 일괄 합성 뒤 남은 칸 (C · B)
                 wpu.Select(c7); wpu.Select(c8); wpu.Select(GameObject.Find("Slot0").GetComponent<WeaponCell>());
                 Check(wpu.picked.Count == 2, $"분해 고르기 2개(장착 칸은 안 됨) ({wpu.picked.Count})");
                 yield return Wait(0.2f);
                 Capture("04c_salvage_pick");
-                double sg = S.gems, want = Tables.Grade(0).salvage * 2;
+                double sg = S.gems, want = Tables.Grade(1).salvage + Tables.Grade(2).salvage;
                 double got = GM.SalvageMany(new System.Collections.Generic.List<int>(wpu.picked));
-                Check(S.inv[7] < 0 && S.inv[8] < 0 && System.Math.Abs(S.gems - sg - want) < 0.01 && System.Math.Abs(got - want) < 0.01, $"여러 개 분해 → 다이아 +{got}");
+                Check(S.inv[7] < 0 && S.inv[11] < 0 && System.Math.Abs(S.gems - sg - want) < 0.01 && System.Math.Abs(got - want) < 0.01, $"여러 개 분해 → 다이아 +{got}");
                 GameObject.Find("MergeAll").GetComponent<Button>().onClick.Invoke();   // 고르기 중 = [취소]
                 Check(!wpu.Picking, "고르기 중 왼쪽 버튼 = 취소");
                 wpu.Select(GameObject.Find("Inv0").GetComponent<WeaponCell>());
@@ -721,7 +735,8 @@ namespace KachiGun.EditorTools
             {
                 CloseAll();
                 int n = GameManager.AttendDays;
-                Check(n == 3 && GameManager.AttendGems(0) == 100 && GameManager.AttendGems(1) == 200 && GameManager.AttendGems(2) == 300, $"출석 {n}일 · {GameManager.AttendGems(0)}/{GameManager.AttendGems(1)}/{GameManager.AttendGems(2)} 다이아");
+                var agems = new System.Collections.Generic.List<double>(); for (int k = 0; k < n; k++) agems.Add(GameManager.AttendGems(k));
+                Check(n == 7 && string.Join("/", agems) == "100/200/300/500/700/1000/1500", $"출석 {n}일 · {string.Join("/", agems)} 다이아 (11-14 7일)");
                 Check(!GM.CheckAttend(true), "오늘 이미 받음 → 창 없음");
                 S.attendDay = "20000101"; S.attendCount = 0;
                 double ag0 = S.gems;
@@ -743,24 +758,29 @@ namespace KachiGun.EditorTools
                 Check(ap.index == 1, "다음 날 → 2일차");
                 HUD.I.Back();
                 Check(!ap.gameObject.activeSelf && S.gems - ag0 == 200, $"뒤로 가기 → 2일차 다이아 +{S.gems - ag0}");
-                // 3일차 → 다음은 다시 1일차
-                S.attendDay = "20000103"; ag0 = S.gems;
+                // 3~7일차 (11-14 7일) → 다음은 다시 1일차
+                double[] wantG = { 300, 500, 700, 1000, 1500 };
+                for (int d = 2; d < 7; d++)
+                {
+                    S.attendDay = "2000010" + (d + 1); ag0 = S.gems;
+                    GM.CheckAttend(true); yield return Wait(0.2f);
+                    Check(ap.index == d, $"{d + 1}일차");
+                    if (d == 5) Capture("18h_attend_day6");
+                    ap.Close();
+                    Check(S.gems - ag0 == wantG[d - 2], $"{d + 1}일차 다이아 +{S.gems - ag0}");
+                }
+                S.attendDay = "20000108";
                 GM.CheckAttend(true); yield return Wait(0.2f);
-                Check(ap.index == 2, "3일차");
-                ap.Close();
-                Check(S.gems - ag0 == 300, $"3일차 다이아 +{S.gems - ag0}");
-                S.attendDay = "20000104";
-                GM.CheckAttend(true); yield return Wait(0.2f);
-                Check(ap.index == 0, "3일 다 받음 → 다시 1일차");
+                Check(ap.index == 0, "7일 다 받음 → 다시 1일차");
                 ap.Close();
                 // 다른 창이 떠 있으면 (켜 둔 채 날이 바뀜) 안 끼어듦
-                S.attendDay = "20000105";
+                S.attendDay = "20000109";
                 HUD.I.Open<SettingsPopup>(); yield return Wait(0.1f);
                 Check(!GM.CheckAttend(false), "다른 창이 떠 있음 → 출석 창 기다림");
                 CloseAll();
                 Check(GM.CheckAttend(false), "창이 닫힘 → 출석 창");
                 ap.Close();
-                S.gems -= 100 + 200 + 300 + 100 + 200;   // 뒤 시험에 영향 없게
+                S.gems -= 100 + 200 + 300 + 500 + 700 + 1000 + 1500 + 100 + 200;   // 뒤 시험에 영향 없게
                 GM.Notify();
                 CloseAll();
             }
@@ -1074,8 +1094,40 @@ namespace KachiGun.EditorTools
             // 11b) 10-30 결제·광고: 가짜 결제(배치는 바로 지급) · 영구 상품 두 번 안 줌 · 광고 제거 = 광고 없이 바로 보상 · 자동강화 켬/끔 · 결제 꺼진 폰 = 원화 줄 숨김
             {
                 double iapG0 = S.gems;
+                // 11-14 다이아 첫 구매 2배: 상품마다 처음 1번만 x Gem_First_Mul · 상점 줄 딱지(리본 + x2 별) · 설명 "500 → 1,000"
+                S.iapOnce.RemoveAll(x => x.StartsWith("first2x:"));
+                var gemRows = Tables.Shop.FindAll(x => x.category == "Gem_Shop" && Iap.IsCash(x));
+                Check(Iap.FirstMul == 2 && gemRows.Count == 3 && gemRows.TrueForAll(Iap.FirstBonus), $"다이아 상품 {gemRows.Count}개 모두 첫 구매 x{Iap.FirstMul}");
+                {
+                    var shopF = HUD.I.Open<ShopPopup>(); yield return Wait(0.3f);
+                    int ribbons = 0, bursts = 0; bool descOk = false;
+                    foreach (var im in shopF.GetComponentsInChildren<Image>(true)) { if (im.name == "FirstRibbon") ribbons++; if (im.name == "FirstBurst") bursts++; }
+                    foreach (var t in shopF.GetComponentsInChildren<Text>(true)) if (t.text == L.F("첫 구매 {0}배! 다이아 {1} → {2}", "2", "500", "1,000")) descOk = true;
+                    Check(ribbons == 3 && bursts == 3 && descOk, $"상점 첫 구매 2배 딱지 리본 {ribbons} · 별 {bursts} · 설명 500 → 1,000 {descOk}");
+                    shopF.ScrollToGems(); yield return Wait(0.2f);
+                    Capture("17a_shop_first2x");
+                    CloseAll();
+                }
                 Iap.Buy("gem_pack_small");
-                Check(System.Math.Abs(S.gems - iapG0 - 500) < 0.01, $"결제 다이아 한 줌 +{S.gems - iapG0}");
+                Check(System.Math.Abs(S.gems - iapG0 - 1000) < 0.01 && S.iapOnce.Contains("first2x:gem_pack_small"), $"다이아 한 줌 첫 구매 → +{S.gems - iapG0} (2배)");
+                yield return Wait(0.1f);
+                Capture("17a2_first2x_toast");
+                double iapG0b = S.gems;
+                Iap.Buy("gem_pack_small");
+                Check(System.Math.Abs(S.gems - iapG0b - 500) < 0.01, $"다이아 한 줌 두 번째 → +{S.gems - iapG0b} (보통)");
+                {
+                    var shopF2 = HUD.I.Open<ShopPopup>(); yield return Wait(0.3f);
+                    int ribbons2 = 0;
+                    foreach (var im in shopF2.GetComponentsInChildren<Image>(true)) if (im.name == "FirstRibbon") ribbons2++;
+                    Check(ribbons2 == 2 && !Iap.FirstBonus(Tables.Shop.Find(x => x.id == "gem_pack_small")) && Iap.FirstBonus(Tables.Shop.Find(x => x.id == "gem_pack_mid")),
+                          $"산 상품만 딱지 사라짐 (남은 리본 {ribbons2} · 주머니는 아직 2배)");
+                    CloseAll();
+                }
+                {
+                    var svF = SaveData.ParseFixed(S.ToJson());
+                    Check(svF != null && svF.iapOnce.Contains("first2x:gem_pack_small"), "첫 구매 2배 기록이 세이브(클라우드)에 남음");
+                }
+                S.gems = iapG0 + 500;   // 아래 시험은 예전처럼 +500 한 번 산 뒤로
                 double iapGA = S.gems;
                 Iap.Buy("remove_all_ads");
                 bool got = false;

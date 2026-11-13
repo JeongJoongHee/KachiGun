@@ -205,6 +205,13 @@ EN.update({'SS급 미사일탄': 'SS Missile', '1회 한정 · SS 미사일탄 1
            '단 1번!': 'Only once!', '1회 구매': 'One time', '{0} 총알 지급': 'Get {0} Ammo'})
 
 
+# 11-14 출석 7일 · 같은 등급 합성 · 뽑기 D 등급 안내 · 다이아 첫 구매 2배
+EN.update({'※ 뽑기는 무조건 D 등급 총알만 나옵니다': '※ Draws always give D grade ammo only',
+           '카드로 끌어다 놓아 장착 · 같은 등급끼리 겹쳐 합성': 'Drag onto a card to equip · Drop same-grade ammo together to merge',
+           '합성할 수 있는 같은 등급 총알이 없습니다': 'No same-grade ammo to merge',
+           '첫 구매 {0}배! 다이아 {1} → {2}': 'First purchase x{0}! Gems {1} → {2}',
+           '첫 구매 {0}배! 다이아 +{1}': 'First purchase x{0}! Gems +{1}', '첫 구매 {0}배': 'First Buy x{0}'})
+
 def code_strings():
     """(글자, 파일) — 주석·Debug 줄 제외, $"" 안 한글은 경고"""
     out, warn = [], []

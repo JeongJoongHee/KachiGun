@@ -124,7 +124,7 @@ namespace KachiGun
         }
 
         /// <summary>다이아 개수 1,900 (코스튬 목록 가격과 같은 모양)</summary>
-        static string GemN(double v) => System.Math.Floor(v + 1e-6).ToString("N0", System.Globalization.CultureInfo.InvariantCulture);
+        public static string GemN(double v) => System.Math.Floor(v + 1e-6).ToString("N0", System.Globalization.CultureInfo.InvariantCulture);
 
         /// <summary>상점을 열고 다이아 줄이 맨 위에 보이게 스크롤</summary>
         public static void OpenGems()
@@ -171,7 +171,10 @@ namespace KachiGun
                     act = () => { Iap.Buy(row.id); };
                 }
                 else { price = r.priceType == "Ad" ? L.T("광고") : r.priceValue; kind = r.priceType == "Ad" ? 0 : 2; act = () => Iap.Buy(row.id); }
-                items.Add((r.id, L.T(r.name), L.T(r.desc), price, kind, act));
+                string desc = L.T(r.desc);
+                if (r.priceType == "KRW" && Iap.FirstBonus(r))   // 11-14 첫 구매 2배: "첫 구매 2배! 다이아 500 → 1,000"
+                    desc = L.F("첫 구매 {0}배! 다이아 {1} → {2}", Iap.FirstMul.ToString("0.#"), GemN(r.bonusGems), GemN(r.bonusGems * Iap.FirstMul));
+                items.Add((r.id, L.T(r.name), desc, price, kind, act));
             }
             scroll = SkinPopup.MakeScroll(content, new Vector2(0, -10), new Vector2(900, 1430), out var inner);
             gemRowY = -1;
@@ -193,8 +196,28 @@ namespace KachiGun
                 var b = UIKit.ColorBtn(rb.transform, gem ? new Color(0.3f, 0.55f, 0.95f) : new Color(0.45f, 0.7f, 0.3f), new Vector2(220, 100), it.price, gem ? 32 : 38, it.act);
                 ((RectTransform)b.transform).Place(1, 0.5f, new Vector2(-24, 0), new Vector2(220, 100), new Vector2(1, 0.5f));
                 if (it.id == "free_gems_ad") adGemBtn = b;
+                var srow = Tables.Shop.Find(x => x.id == it.id);
+                if (it.kind == 2 && Iap.FirstBonus(srow)) FirstBadge(rb.transform, b.transform);
                 if (it.kind == 3) UIKit.SetOn(b, false);
             }
+        }
+
+        /// <summary>11-14 첫 구매 2배 딱지: 가격 버튼 위 빨간 리본 "첫 구매 2배" + 버튼 오른쪽 위 빨간 별 "x2" (홈 화면 1회 한정 상품 딱지와 같은 그림)</summary>
+        static void FirstBadge(Transform row, Transform btn)
+        {
+            var rib = UIKit.KitImg(row, "ribbon_red", new Vector2(196, 56), "FirstRibbon").rectTransform;
+            rib.Place(1, 1, new Vector2(-134, 6), new Vector2(196, 56), new Vector2(0.5f, 0.5f));
+            rib.GetComponent<Image>().raycastTarget = false;
+            var rt = UIKit.Fit(UIKit.Label(rib, L.F("첫 구매 {0}배", Iap.FirstMul.ToString("0.#")), 26, Color.white, TextAnchor.MiddleCenter, 3), 16);
+            rt.rectTransform.Place(0.5f, 0.5f, new Vector2(0, 4), new Vector2(140, 36), new Vector2(0.5f, 0.5f));
+            rt.raycastTarget = false;
+            var burst = UIKit.KitImg(btn, "burst_red", new Vector2(76, 76), "FirstBurst").rectTransform;
+            burst.Place(1, 1, new Vector2(-4, -6), new Vector2(76, 76), new Vector2(0.5f, 0.5f));
+            burst.localRotation = Quaternion.Euler(0, 0, -12);
+            burst.GetComponent<Image>().raycastTarget = false;
+            var bx = UIKit.Label(burst, "x" + Iap.FirstMul.ToString("0.#"), 30, Color.white, TextAnchor.MiddleCenter, 3);
+            bx.rectTransform.Place(0.5f, 0.5f, new Vector2(0, 2), new Vector2(64, 40), new Vector2(0.5f, 0.5f));
+            bx.raycastTarget = false;
         }
 
         /// <summary>스토어 상품 정보를 받았거나 결제로 받았을 때 줄을 다시 만듦 (10-30)</summary>

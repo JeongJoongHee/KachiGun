@@ -46,7 +46,7 @@ namespace KachiGun
         public bool autoUpgrade, autoOn = true;  // 자동강화 패키지 (auto_upgrade) 가짐 · 켜 둠
         public List<string> iapOrders = new();   // 이미 지급한 주문 번호 (같은 결제를 두 번 주지 않게)
         public List<string> coupons = new();     // 11-12 쓴 쿠폰 번호 (대문자 · 같은 쿠폰은 한 번만 — 클라우드로 계정 단위)
-        public List<string> iapOnce = new();     // 11-13 산 1회 한정 상품 ID (Shop 표 Reward 칸 Bullet:코드 — starter_ss_missile)
+        public List<string> iapOnce = new();     // 11-13 산 1회 한정 상품 ID (Shop 표 Reward 칸 Bullet:코드 — starter_ss_missile) · 11-14 "first2x:상품 ID" = 다이아 첫 구매 2배를 받음 (옛 판 앱은 모르는 ID 라 무시 → 세이브 판 그대로)
         public List<int> pendingBullets = new(); // 11-13 산 총알인데 넣을 칸이 없어 기다리는 것 (인벤토리에 빈 칸이 생기면 저절로 들어감)
         public long starterSeenAt;               // 11-13 1회 한정 상품 아이콘이 홈 화면에 처음 보인 시각 (유닉스 초, 0 = 아직) — Starter_Home_Hours 뒤엔 상점 탭에만
 
@@ -54,7 +54,7 @@ namespace KachiGun
         public long lastSeen;                    // 마지막 저장 시각 (유닉스 초, 0 = 아직 없음)
         [NonSerialized] public long loadedLastSeen;   // 켤 때 읽은 값 (켜자마자 저장해도 안 사라지게)
 
-        // 출석 (11-04): 하루 한 번 접속 창 → 1·2·3일차 다이아를 차례로, 다 받으면 1일차부터 다시 (빠진 날이 있어도 이어서)
+        // 출석 (11-04): 하루 한 번 접속 창 → 1·2·3일차 다이아를 차례로, 다 받으면 1일차부터 다시 (빠진 날이 있어도 이어서) · 11-14 7일 (Attend_Days)
         public string attendDay = "";            // 마지막으로 받은 날 (yyyyMMdd, 기기 시간)
         public int attendCount;                  // 지금까지 받은 횟수 (다음 칸 = attendCount % Attend_Days)
         /// <summary>오늘 이미 받음. 11-07: 받은 날보다 "뒤의 날짜"일 때만 다시 받음 — 전엔 날짜가 다르기만 하면 줘서

@@ -8,11 +8,11 @@ namespace KachiGun
     /// <summary>
     /// 총알 관리 창 (기획서 6장 · 11-05 추가 요청/UI 수정.png 모양): 장착 카드 3장(리더·동료1·동료2 — 등급 · +강화 · 공격력 · 연사) + 5x4 인벤토리
     /// + 아래 버튼 [일괄 합성] · [다이아 100 뽑기] · [분해].
-    /// 같은 탄알(종류·등급 같음) 두 개를 끌어다 겹치면 한 단계 위 등급의 랜덤 종류로 합성 (11-04: 종류가 다르면 안 됨). 장착 중인 총알은 해제한 뒤 합성.
+    /// 같은 등급 총알 두 개를 끌어다 겹치면 한 단계 위 등급의 랜덤 종류로 합성 (11-04: 종류가 다르면 안 됨 → 11-14 같은 등급이면 종류가 달라도 됨, Merge_Same_Grade). 장착 중인 총알은 해제한 뒤 합성.
     /// 장착 카드를 누르면 정보 창(WeaponInfoPopup: [해제]), 인벤토리 총알을 누르면 정보 창([분해]).
     /// 11-07 사용자 "장착 버튼은 제거, 드래그앤드롭으로만 착용": 인벤토리 총알을 카드(어디든)로 끌어다 놓으면 장착 — 정보 창의 [장착] 없음.
     /// 11-05 밤 사용자 "+0 숫자 제거 · 슬롯 강화 기능 제거" → 카드의 +N 없음 · 강화 없음 (Stats.SlotEnchantOn = false).
-    /// [일괄 합성] = 같은 탄알 두 개씩 한 단계만(GM.MergeAll) · [분해] = 누르면 여러 개 고르기 → 다시 누르면 고른 것 한 번에 분해(GM.SalvageMany).
+    /// [일괄 합성] = 같은 등급 두 개씩 한 단계만(GM.MergeAll) · [분해] = 누르면 여러 개 고르기 → 다시 누르면 고른 것 한 번에 분해(GM.SalvageMany).
     /// </summary>
     public class WeaponPopup : Popup
     {
@@ -101,8 +101,13 @@ namespace KachiGun
             }
 
             hint = UIKit.Label(content, "", 34, UIKit.Ink, TextAnchor.MiddleCenter, 0);
-            hint.rectTransform.Place(0.5f, 1, new Vector2(0, -1236), new Vector2(900, 60), new Vector2(0.5f, 0.5f));
+            hint.rectTransform.Place(0.5f, 1, new Vector2(0, -1214), new Vector2(900, 46), new Vector2(0.5f, 0.5f));   // 11-14 아래 뽑기 안내 줄 자리만큼 위로 (전 -1236)
             UIKit.Fit(hint, 22);
+            // 11-14 사용자 "뽑기는 무조건 D등급만 나온다는 문구를 무기 뽑기창에": 판 아래 · 뽑기 버튼 바로 위
+            var gn = UIKit.Fit(UIKit.Label(content, L.T("※ 뽑기는 무조건 D 등급 총알만 나옵니다"), 28, new Color(0.72f, 0.27f, 0.2f), TextAnchor.MiddleCenter, 0), 18);
+            gn.name = "GachaNote";
+            gn.rectTransform.Place(0.5f, 1, new Vector2(0, -1258), new Vector2(900, 36), new Vector2(0.5f, 0.5f));
+            gn.raycastTarget = false;
 
             // ---- 아래 버튼 3개 ----
             mergeBtn = UIKit.KitBtn(content, "btn_green", new Vector2(250, 128), L.T("일괄 합성"), 40, OnMergeBtn, "MergeAll");
@@ -178,7 +183,7 @@ namespace KachiGun
             }
             else
             {
-                hint.text = L.T("카드로 끌어다 놓아 장착 · 같은 탄알끼리 겹쳐 합성");
+                hint.text = L.T(GameManager.MergeAnyType ? "카드로 끌어다 놓아 장착 · 같은 등급끼리 겹쳐 합성" : "카드로 끌어다 놓아 장착 · 같은 탄알끼리 겹쳐 합성");
                 mergeLabel.text = L.T("일괄 합성");
                 mergeBtn.GetComponent<Image>().color = Color.white;
                 salvageLabel.text = L.T("분해");
@@ -203,7 +208,7 @@ namespace KachiGun
         {
             if (Picking) { Picking = false; picked.Clear(); Refresh(); return; }   // [취소]
             var made = GM.MergeAll();
-            if (made.Count == 0) { Msg(L.T("합성할 수 있는 같은 탄알이 없습니다")); return; }
+            if (made.Count == 0) { Msg(L.T(GameManager.MergeAnyType ? "합성할 수 있는 같은 등급 총알이 없습니다" : "합성할 수 있는 같은 탄알이 없습니다")); return; }
             Refresh();
             foreach (int i in made) inv[i].Pop();
             H.Toast(L.F("{0}번 합성!", made.Count));
@@ -237,7 +242,7 @@ namespace KachiGun
             string e = null;
             if (!from.isSlot && !to.isSlot)
             {
-                bool merge = to.code >= 0 && to.code == from.code;
+                bool merge = GameManager.CanMergePair(from.code, to.code);
                 e = GM.Merge(from.index, to.index);
                 if (merge && string.IsNullOrEmpty(e)) { H.Toast(L.T("합성!") + " " + Tables.WeaponName(S.inv[to.index])); to.Pop(); }
             }
