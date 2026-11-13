@@ -68,9 +68,28 @@
 <table style="margin-top:8px">
   <tr><th style="width:44px">순서</th><th>할 일</th><th style="width:80px">누가</th><th style="width:200px">끝나면</th></tr>
   <tr><td>1</td><td>Play Console › 수익 창출 › 제품 › <b>인앱 상품</b> › [상품 만들기] → <a href="#products">참고 표 6번째 줄</a>(ID · 이름 · 설명 [복사]) · 가격 <b>990원</b> · 구매 옵션 <code>buy</code> → [저장] → [활성화]. 990원이 Play 가격 범위 안인지는 확인 못 함 — 저장할 때 오류가 나면 캡처를 주세요</td><td>직접</td><td>상품 "활성" · 폰에 내려오기까지 약 2시간(지난번 경험)</td></tr>
-  <tr><td>2</td><td><b>12번 AAB (1.0.12)</b> 굽기 <span class="ok" style="display:inline">✔ 11-13 저녁 구움 — <a href="#build12">아래 12번</a></span></td><td>개발</td><td>내부 테스트 → 폰에서 990원 줄 · 시험 결제 → 프로덕션</td></tr>
+  <tr><td>2</td><td><b>12번 AAB (1.0.12)</b> 굽기 <span class="ok" style="display:inline">✔ 11-13 저녁 구움 — <a href="#build12">아래 12번</a></span></td><td>개발</td><td>내부 테스트 → 폰에서 990원 줄 · 시험 결제 → 프로덕션 <span class="ok" style="display:inline">✔ 프로덕션 통과(11-13)</span></td></tr>
+  <tr><td>3</td><td><b>13번 AAB (1.0.13)</b> — 분대 자리 아래로 <span class="ok" style="display:inline">✔ 11-13 밤 구움 — <a href="#build13">아래 13번</a></span></td><td>개발</td><td>내부 테스트 → 폰에서 아이콘 · 카피바라 겹침 확인 → 프로덕션</td></tr>
 </table>
 <p class="note" style="margin:6px 0 0">밸런스 영향(시뮬레이터, 하루 4시간 · 광고 안 봄): 1-2 에서 사면 <b>챕터 15 도달 58일 → 4.5일</b>(1~14챕터를 거의 첫날 지나감) · 챕터 23 159 → 129일 · 챕터 150 1440 → 1412일(약 2%). 광고 보는 사람은 챕터 15 12.8 → 0.8일. 조정은 맨 마지막 밸런스 때 — 지금은 숫자만 알려 드림.</p></div>
+<div class="tip blue" style="margin-bottom:10px" id="build13"><b>11-13 밤 — 13번 AAB (1.0.13) 구움</b> (12번은 프로덕션 통과 — 사용자 알림): <code>Kachi_Gun\Builds\kachizombie-1.0.13-13.aab</code> 63.8MB + 개발용 APK <code>kachizombie-1.0.13-13-debug.apk</code>(테스트 광고). 들어간 것 = <b>분대 3마리 자리 화면 높이 5% 아래로</b>(사용자 "신규 상품 아이콘이 위 카피바라 머리를 가림 → 조금 → 조금만 더") — 표 Player_Base <code>Leader/Sub1/Sub2_Screen_Pos</code> y 0.512/0.385/0.640 → 0.562/0.435/0.690 · 코드 그대로 · 세이브 판 그대로(3).
+<br>점검: aab_check 모두 통과(패키지 · AD_ID · BILLING · AdMob · Play 게임즈 APP_ID · 64비트 · 서명 · 앱 이름) · bundletool versionCode <b>13</b> · 1.0.13 · <b>권한 · 화면 목록 12번과 같음</b> · 자동 시험 errors=0 · 캡처 06_squad3(세 마리 · 위 카피바라 고리가 "990원" 아래 · 아래 카피바라 흙 띠 안).
+<table style="margin-top:8px">
+  <tr><th style="width:44px">순서</th><th>할 일</th><th style="width:80px">누가</th><th style="width:200px">끝나면</th></tr>
+  <tr><td>1</td><td>Play Console › 테스트 및 출시 › <b>내부 테스트</b> › [새 버전 만들기] → <code>kachizombie-1.0.13-13.aab</code> → 출시 노트 = 아래 [복사] 상자 → [다음] → [저장 및 출시]</td><td>직접</td><td>내부 테스터 폰에 1.0.13 · 12번을 깐 폰엔 [업데이트] 창이 뜰 수 있음</td></tr>
+  <tr><td>2</td><td>폰에서 확인: 홈 화면 "단 1번!" 아이콘이 위 카피바라 머리를 가리지 않는지 · 아래 카피바라가 아래 카드에 닿지 않는지 (폰 화면 비율이 시험 화면 1080x2340 과 다르면 조금 다르게 보일 수 있음)</td><td>보기</td><td>이상 없으면 3번 · 더 내리거나 올리려면 표 세 칸 숫자만</td></tr>
+  <tr><td>3</td><td>테스트 및 출시 › <b>프로덕션</b> › [새 버전 만들기] → [라이브러리에서 추가] → <b>13 (1.0.13)</b> → 같은 출시 노트 → 검토 → <b>[프로덕션 트랙으로 출시 시작]</b>까지 (게시 개요에 "13 (1.0.13) 전체 출시" 줄 확인)</td><td>직접</td><td>검토 몇 시간 ~ 1~3일 · 통과하면 바로 나감</td></tr>
+</table>
+<p style="margin:8px 0 2px"><b>출시 노트</b> (한국어 · 영어 둘 다 · 언어 태그 포함 통째로 붙여 넣기)</p>
+<ul class="copy-list" data-plain="한국어 55자 · 영어 100자 (각 500자 안)"><li><span class="t" style="white-space:pre-line;display:block">&lt;ko-KR&gt;
+1.0.13 업데이트
+- 상점 상품 아이콘이 카피바라 머리를 가리지 않게 분대 자리를 조금 내렸어요
+&lt;/ko-KR&gt;
+&lt;en-US&gt;
+Version 1.0.13
+- Moved the squad down a little so the shop offer icon no longer covers the capybaras
+&lt;/en-US&gt;</span></li></ul>
+<p class="note" style="margin:6px 0 0">지난 판 12번 AAB 는 Builds 에 그대로 있음.</p></div>
 <div class="tip blue" style="margin-bottom:10px" id="build12"><b>11-13 저녁 — 12번 AAB (1.0.12) 구움</b>: <code>Kachi_Gun\Builds\kachizombie-1.0.12-12.aab</code> 63.8MB + 개발용 APK <code>kachizombie-1.0.12-12-debug.apk</code>(테스트 광고). 들어간 것 = <b>SS급 미사일탄 990원</b>(1회 한정 · 상점 줄 + 홈 화면 아이콘 · 강조 5초 · 홈은 72시간).
 <br>점검: aab_check 모두 통과(패키지 · AD_ID · BILLING · AdMob · Play 게임즈 APP_ID · 64비트 · 서명 · 앱 이름) · bundletool versionCode <b>12</b> · 1.0.12 · <b>권한 · 화면 목록 11번과 같음</b> · AAB 안에 새 코드 · Config 두 줄 들어감 · 자동 시험 215줄 errors=0 · <b>세이브 판 3</b>(1회 한정 · 기다리는 총알 · 아이콘 처음 보인 시각 — 12번이 올린 클라우드 진행은 11번 앱이 받지 않고 "업데이트해 주세요"만 안내).
 <table style="margin-top:8px">
