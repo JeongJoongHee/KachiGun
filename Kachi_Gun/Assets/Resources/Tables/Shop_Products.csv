@@ -7,3 +7,4 @@
 10,gem_pack_mid,Gem_Shop,"다이아 주머니 (1,800)","다이아 1,800개 즉시 획득",KRW,5900,1800,Gems+1800,기획 추가 · 10-26 원화 가격
 11,gem_pack_large,Gem_Shop,"다이아 상자 (4,200)","다이아 4,200개 즉시 획득",KRW,11900,4200,Gems+4200,기획 추가 · 10-26 원화 가격
 2,free_gems_ad,Ad_Gems,무료 다이아,광고 1편 · 다이아 40 · 하루 3번,Ad,광고,40,Gems+40 (Global_Config AdGems_Daily·AdGems_Amount),구현 완료 (10-20)
+3,starter_ss_missile,IAP_Pack,SS급 미사일탄,1회 한정 · SS 미사일탄 1개 · 빈 칸에 바로 장착,KRW,990,0,Bullet:55,11-13 초반 정착 상품 (1회 한정 · Reward = Bullet:총알 코드)

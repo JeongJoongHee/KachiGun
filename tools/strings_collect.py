@@ -195,6 +195,12 @@ EN.update({'세이브를 읽지 못해 예비 세이브로 불러왔습니다': 
            '장착: 총알을 위 카드로 끌어다 놓으세요': 'To equip: drag the ammo onto a card above',
            # 11-12 코드 점검: 클라우드 세이브가 더 새 판의 게임에서 저장됨
            '클라우드 진행이 더 새 버전의 게임에서 저장되었습니다.\\n게임을 업데이트해 주세요': 'The cloud progress was saved by a newer version of the game.\\nPlease update the game.', '보물': 'Treasure'})
+# 11-13 초반 정착 상품 990원 SS 미사일탄 (1회 한정)
+EN.update({'SS급 미사일탄': 'SS Missile', '1회 한정 · SS 미사일탄 1개 · 빈 칸에 바로 장착': 'One-time offer · 1 SS Missile · auto-equipped',
+           '빈 칸에 바로 장착했습니다': 'Equipped to an empty slot', '총알 인벤토리에 넣었습니다': 'Added to your ammo inventory',
+           '인벤토리가 가득 차 있어 빈 칸이 생기면 들어갑니다': 'Inventory is full - it will be added when a slot opens up',
+           '기다리던 총알이 인벤토리에 들어갔습니다': 'Your pending ammo was added to the inventory',
+           '이미 구매한 상품입니다 (1회 한정)': 'Already purchased (one-time offer)', '구매 완료': 'Purchased'})
 
 
 def code_strings():

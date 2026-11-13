@@ -567,13 +567,13 @@ namespace KachiGun.EditorTools
                 double gb = S.gold, db = S.gems;
                 Check(GM.BuyShop(box) == null && S.gold > gb && S.gems == db - 100, "상점 골드 상자");
             }
-            // 10-4b) 10-26: 결제 상품 5개(원화) · 뺀 상품 없음 · 가격 글자
+            // 10-4b) 10-26: 결제 상품 5개(원화) · 뺀 상품 없음 · 가격 글자 — 11-13 SS 미사일탄 990원 더해 6개
             {
                 var cash = Tables.Shop.FindAll(x => x.priceType == "KRW");
                 string[] gone = { "remove_forced_ads", "perma_buff", "mine_ticket", "hotdeal_laser", "gold_instant_30m" };
                 var ads = Tables.Shop.Find(x => x.id == "remove_all_ads");
-                Check(cash.Count == 5 && !Tables.Shop.Exists(x => System.Array.IndexOf(gone, x.id) >= 0)
-                      && ads != null && ShopPopup.KrwText(ads.priceValue) == L.F("{0}원", "9,900"), $"상점 결제 상품 5개 원화 ({cash.Count}개)");
+                Check(cash.Count == 6 && !Tables.Shop.Exists(x => System.Array.IndexOf(gone, x.id) >= 0)
+                      && ads != null && ShopPopup.KrwText(ads.priceValue) == L.F("{0}원", "9,900"), $"상점 결제 상품 6개 원화 ({cash.Count}개)");
             }
             // 10-5) 10-20: 광고 무료 다이아 (하루 AdGems_Daily 번)
             {
@@ -1111,6 +1111,47 @@ namespace KachiGun.EditorTools
                 Iap.SimulateNoStore = false;
                 Iap.Buy("gem_pack_small"); S.gems = iapG0;   // 창·버튼 원래대로
                 Check(krwRows == 0 && autoHidden, $"결제 꺼진 폰: 원화 줄 {krwRows}개 · 자동강화 버튼 숨김 {autoHidden}");
+            }
+            // 11c) 11-13 초반 정착 상품 990원 SS 미사일탄 (1회 한정): 빈 장착 칸에 바로(동료 +1) · 두 번째는 안 줌 ·
+            //      칸이 다 차 있으면 기다렸다가 빈 칸이 생기면 들어감 · 다시 설치 되살리기 = 총알 다시 · 상점 "구매 완료"
+            {
+                var st = Tables.Shop.Find(x => x.id == "starter_ss_missile");
+                int ss = Tables.Code(5, "missile");
+                Check(st != null && Iap.IsCash(st) && Iap.Permanent(st) && Iap.BulletOf(st) == ss && st.bonusGems == 0 && ShopPopup.KrwText(st.priceValue) == L.F("{0}원", "990"),
+                    $"상점 990원 SS 미사일탄 줄 ({st?.priceValue} · {st?.reward} · {Tables.WeaponName(ss)})");
+                var sl0 = new List<int>(S.slots); var iv0 = new List<int>(S.inv); var on0 = new List<string>(S.iapOnce); double sg0 = S.gems; bool swu0 = S.weaponUnlocked;
+                for (int i = 0; i < S.slots.Count; i++) S.slots[i] = i == 0 ? Tables.Code(0, "single") : -1;   // 처음 하는 사람처럼 리볼버 하나
+                S.iapOnce.Clear(); S.pendingBullets.Clear(); S.weaponUnlocked = false; Squad.I.Rebuild();
+                int cats0 = Squad.I.cats.Count;
+                Iap.Buy("starter_ss_missile");
+                yield return Wait(0.2f);
+                Check(S.slots[1] == ss && Squad.I.cats.Count == cats0 + 1 && S.iapOnce.Contains("starter_ss_missile") && S.weaponUnlocked && S.gems == sg0,
+                    $"990원 SS 미사일탄 → 빈 장착 칸에 바로 (칸 {S.slots[1]} · 분대 {cats0} → {Squad.I.cats.Count} · 총알 메뉴 열림 {S.weaponUnlocked})");
+                Capture("17e_starter_missile");
+                Iap.Buy("starter_ss_missile");
+                int ssN = 0; foreach (var c in S.slots) if (c == ss) ssN++; foreach (var c in S.inv) if (c == ss) ssN++;
+                Check(ssN == 1 && Iap.Owned(st), $"SS 미사일탄은 한 번만 (가진 수 {ssN})");
+                var shopS = HUD.I.Open<ShopPopup>(); yield return Wait(0.3f);
+                bool doneLabel = false;
+                foreach (var t in shopS.GetComponentsInChildren<Text>(true)) if (t.text == L.T("구매 완료")) doneLabel = true;
+                Capture("17f_shop_starter_done");
+                CloseAll();
+                Check(doneLabel, "상점: 산 뒤엔 \"구매 완료\" (누를 수 없음)");
+                // 장착 3칸 · 인벤토리 20칸이 다 찬 상태에서 되살리기(다시 설치) → 기다림 → 한 칸 비우면 들어감
+                for (int i = 0; i < S.slots.Count; i++) S.slots[i] = Tables.Code(0, "single");
+                for (int i = 0; i < S.inv.Count; i++) S.inv[i] = Tables.Code(0, "shotgun");
+                S.iapOnce.Clear();
+                Iap.Grant(st, true, true);
+                bool waiting = S.pendingBullets.Count == 1 && S.pendingBullets[0] == ss && !S.inv.Contains(ss) && S.iapOnce.Contains("starter_ss_missile") && S.gems == sg0;
+                S.inv[7] = -1;
+                GM.Notify();
+                Check(waiting && S.inv[7] == ss && S.pendingBullets.Count == 0, $"칸이 다 차 있으면 기다렸다가({waiting}) 빈 칸이 생기면 들어감 (칸 {S.inv[7]}) · 되살리기도 총알 줌");
+                var sv = SaveData.ParseFixed(S.ToJson());
+                Check(sv != null && sv.iapOnce.Contains("starter_ss_missile"), "1회 한정 구매 기록이 세이브(클라우드)에 남음");
+                for (int i = 0; i < sl0.Count; i++) S.slots[i] = sl0[i];
+                for (int i = 0; i < iv0.Count; i++) S.inv[i] = iv0[i];
+                S.iapOnce.Clear(); S.iapOnce.AddRange(on0); S.pendingBullets.Clear(); S.gems = sg0; S.weaponUnlocked = swu0;
+                Squad.I.Rebuild(); GM.Notify(); S.Save();
             }
             Check(AudioManager.I != null, "사운드 매니저 생성");
             // 10-26 소리 다듬기: 배경음 40초 (8초 반복 아님) · 효과음 16개 다 재생돼도 오류 없음

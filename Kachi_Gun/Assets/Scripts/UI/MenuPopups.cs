@@ -166,7 +166,7 @@ namespace KachiGun
                     // 10-30 실제 결제: 스토어 가격(받았으면) · 폰에서 결제가 꺼져 있으면 숨김 · 영구 상품을 가졌으면 "보유 중"
                     if (!Iap.CanSell(r) && !Iap.Owned(r)) continue;
                     bool owned = Iap.Permanent(r) && Iap.Owned(r);
-                    price = owned ? L.T("보유 중") : Iap.PriceText(r);
+                    price = owned ? L.T(Iap.BulletOf(r) >= 0 ? "구매 완료" : "보유 중") : Iap.PriceText(r);   // 11-13 1회 한정 총알은 "구매 완료"
                     kind = owned ? 3 : 2;
                     act = () => { Iap.Buy(row.id); };
                 }

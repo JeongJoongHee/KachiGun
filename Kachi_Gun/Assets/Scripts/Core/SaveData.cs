@@ -46,6 +46,8 @@ namespace KachiGun
         public bool autoUpgrade, autoOn = true;  // 자동강화 패키지 (auto_upgrade) 가짐 · 켜 둠
         public List<string> iapOrders = new();   // 이미 지급한 주문 번호 (같은 결제를 두 번 주지 않게)
         public List<string> coupons = new();     // 11-12 쓴 쿠폰 번호 (대문자 · 같은 쿠폰은 한 번만 — 클라우드로 계정 단위)
+        public List<string> iapOnce = new();     // 11-13 산 1회 한정 상품 ID (Shop 표 Reward 칸 Bullet:코드 — starter_ss_missile)
+        public List<int> pendingBullets = new(); // 11-13 산 총알인데 넣을 칸이 없어 기다리는 것 (인벤토리에 빈 칸이 생기면 저절로 들어감)
 
         // 방치 보상 (11-04): 저장할 때마다 시각을 남김 → 다시 켜거나 백그라운드에서 돌아오면 비운 시간만큼 골드
         public long lastSeen;                    // 마지막 저장 시각 (유닉스 초, 0 = 아직 없음)
@@ -69,8 +71,8 @@ namespace KachiGun
 
         // 11-12 세이브 판 번호: 세이브 칸을 더하거나 뜻을 바꾸면 Version 을 +1 (PlayTest 가 칸 목록 지문 FieldSig 로 잊지 않게 잡아 줌).
         //   옛 판 앱은 모르는 칸을 읽을 때 버리므로, 클라우드에서 더 높은 판의 세이브를 만나면 받지도 올리지도 않고 업데이트 안내만 (CloudSync.TooNew)
-        public const int Version = 2;            // 2 = 11-12 쿠폰 칸(coupons)
-        public const uint FieldSig = 2593409011;   // 11-12 coupons 칸
+        public const int Version = 3;            // 2 = 11-12 쿠폰 칸(coupons) · 3 = 11-13 1회 한정 상품(iapOnce) · 기다리는 총알(pendingBullets)
+        public const uint FieldSig = 3210282614;   // 11-13 iapOnce · pendingBullets 칸 (11-12 coupons 2593409011)
         public int ver;                          // 이 세이브를 마지막으로 쓴 앱의 세이브 판 (0 = 판 번호가 없던 1.0.8 까지)
 
         // 11-12 방치 보상 창을 띄워 놓고 못 받은 시간(초) — 창이 뜬 채로 앱이 꺼져도 다음에 켤 때 이어서 줌 (받으면 0)
@@ -181,6 +183,37 @@ namespace KachiGun
             if (lang != L.Ko && lang != L.En) lang = L.Ko;
             if (string.IsNullOrEmpty(saveId)) saveId = Guid.NewGuid().ToString("N");
             coupons ??= new();
+            iapOnce ??= new(); pendingBullets ??= new();
+            if (Tables.Weapons.Count > 0) pendingBullets.RemoveAll(c => c < 0 || !ValidCode(c));
+            DeliverPending();
+        }
+
+        /// <summary>11-13 산 총알 넣기: 빈 장착 칸(분대에 동료 하나 늘어남) → 빈 인벤토리 칸 → 둘 다 없으면 기다림.
+        /// 결제는 이미 끝났으니 넣을 곳이 없어도 잃지 않게 pendingBullets 에 둠 (GameManager.Notify · 켤 때 DeliverPending).
+        /// 돌려주는 값: 0 = 장착 · 1 = 인벤토리 · 2 = 기다림</summary>
+        public int PutBullet(int code)
+        {
+            int sl = slots.IndexOf(-1);   // 장착 칸은 늘 앞으로 당겨져 있음 (Fix · CompactSlots)
+            if (sl >= 0) { slots[sl] = code; return 0; }
+            int iv = inv.IndexOf(-1);
+            if (iv >= 0) { inv[iv] = code; return 1; }
+            pendingBullets.Add(code);
+            return 2;
+        }
+
+        /// <summary>기다리는 총알을 인벤토리 빈 칸에 넣음 (넣은 게 있으면 true)</summary>
+        public bool DeliverPending()
+        {
+            bool any = false;
+            while (pendingBullets != null && pendingBullets.Count > 0)
+            {
+                int iv = inv.IndexOf(-1);
+                if (iv < 0) break;
+                inv[iv] = pendingBullets[0];
+                pendingBullets.RemoveAt(0);
+                any = true;
+            }
+            return any;
         }
 
         static float lastFlush = -999f;

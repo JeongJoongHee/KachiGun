@@ -14,7 +14,11 @@
 클라우드에서 불러왔습니다,Loaded from the cloud,Core/Cloud.cs
 클라우드에 저장된 데이터가 없습니다,No data saved in the cloud,Core/Cloud.cs
 {0} 구매 완료!,{0} purchased!,Core/Iap.cs
+빈 칸에 바로 장착했습니다,Equipped to an empty slot,Core/Iap.cs
+총알 인벤토리에 넣었습니다,Added to your ammo inventory,Core/Iap.cs
+인벤토리가 가득 차 있어 빈 칸이 생기면 들어갑니다,Inventory is full - it will be added when a slot opens up,Core/Iap.cs
 결제는 준비 중입니다,Purchases are coming soon,Core/Iap.cs
+이미 구매한 상품입니다 (1회 한정),Already purchased (one-time offer),Core/Iap.cs
 이미 가지고 있습니다,Already owned,Core/Iap.cs
 스토어에 연결하는 중입니다. 잠시 뒤 다시 눌러 주세요,Connecting to the store. Please tap again in a moment.,Core/Iap.cs
 [테스트] 가짜 결제 {0} — 살까요?,[Test] Fake purchase {0} — buy?,Core/Iap.cs
@@ -32,6 +36,7 @@
 관통,Pierce,Core/Tables.cs
 레이저,Laser,Core/Tables.cs
 미사일,Missile,Core/Tables.cs
+기다리던 총알이 인벤토리에 들어갔습니다,Your pending ammo was added to the inventory,Game/GameManager.cs
 보물,Treasure,Game/GameManager.cs
 보스 실패! 강화 후 다시 도전하세요,Boss failed! Upgrade and try again,Game/GameManager.cs
 아직 보스를 만날 때가 아닙니다,It's not time to face the boss yet,Game/GameManager.cs
@@ -138,6 +143,7 @@
 상점으로,Go to Shop,UI/MenuPopups.cs
 광고,Ad,UI/MenuPopups.cs
 {0} 으로 살까요?,Buy for {0}?,UI/MenuPopups.cs
+구매 완료,Purchased,UI/MenuPopups.cs
 보유 중,Owned,UI/MenuPopups.cs
 {0}원,KRW {0},UI/MenuPopups.cs
 일반,Common,UI/MenuPopups.cs
@@ -395,6 +401,8 @@ D 등급 총알 획득!,Got D grade ammo!,UI/WeaponPopup.cs
 "다이아 4,200개 즉시 획득","Get 4,200 gems now",Shop_Products.Description
 무료 다이아,Free Gems,Shop_Products.Name
 광고 1편 · 다이아 40 · 하루 3번,1 ad · 40 gems · 3 times a day,Shop_Products.Description
+SS급 미사일탄,SS Missile,Shop_Products.Name
+1회 한정 · SS 미사일탄 1개 · 빈 칸에 바로 장착,One-time offer · 1 SS Missile · auto-equipped,Shop_Products.Description
 폐허 숲길,Ruined Forest Trail,Chapter_Summary.Biome_Name
 오염된 해안,Polluted Coast,Chapter_Summary.Biome_Name
 사막 도로,Desert Road,Chapter_Summary.Biome_Name

@@ -14,6 +14,8 @@ namespace KachiGun
     /// 상품 = Shop 표 Price_Type KRW 줄 5개. 상품 ID = Product_Id 칸 그대로 (Play Console 인앱 상품 ID 와 똑같아야 함).
     ///  - 영구(한 번 사면 계속): Reward 칸 NoAllAds (remove_all_ads) · AutoUpgrade (auto_upgrade)
     ///  - 소모(살 때마다 다이아): gem_pack_small · gem_pack_mid · gem_pack_large (Bonus_Gems 칸)
+    ///  - 1회 한정 총알(11-13): Reward 칸 Bullet:총알 코드 (starter_ss_missile = Bullet:55 SS 미사일탄 · 990원) — 구글엔 영구 상품,
+    ///    빈 장착 칸 → 인벤토리 → 둘 다 차 있으면 빈 칸이 생길 때까지 기다림 (SaveData.PutBullet). 다시 설치해 되살리면 총알을 다시 줌
     ///
     ///  [구매] → 구글 결제창 → OnPurchasePending → 앱 안에서 구글 서명 확인 (CrossPlatformValidator, 라이선스 키)
     ///  → 지급(Grant) · 세이브 → 구글에 "지급 끝"(ConfirmPurchase).
@@ -34,9 +36,12 @@ namespace KachiGun
         static SaveData S => SaveData.Cur;
 
         public static bool IsCash(ShopRow r) => r != null && r.priceType == "KRW" && !string.IsNullOrEmpty(r.id);
-        /// <summary>한 번 사면 계속 (광고 제거 · 자동강화)</summary>
-        public static bool Permanent(ShopRow r) => r != null && (r.reward == "NoAllAds" || r.reward == "AutoUpgrade");
-        public static bool Owned(ShopRow r) => r != null && (r.reward == "NoAllAds" ? S.noAds : r.reward == "AutoUpgrade" && S.autoUpgrade);
+        /// <summary>한 번 사면 계속 (광고 제거 · 자동강화) · 1회 한정 총알</summary>
+        public static bool Permanent(ShopRow r) => r != null && (r.reward == "NoAllAds" || r.reward == "AutoUpgrade" || BulletOf(r) >= 0);
+        public static bool Owned(ShopRow r) => r != null && (r.reward == "NoAllAds" ? S.noAds : r.reward == "AutoUpgrade" ? S.autoUpgrade : BulletOf(r) >= 0 && S.iapOnce.Contains(r.id));
+        /// <summary>1회 한정 총알 상품의 총알 코드 (Reward 칸 "Bullet:55") · 아니면 -1</summary>
+        public static int BulletOf(ShopRow r) =>
+            r != null && r.reward != null && r.reward.StartsWith("Bullet:") && int.TryParse(r.reward.Substring(7), out int c) && Tables.Weapon(c) != null ? c : -1;
         static ShopRow Row(string id) => Tables.Shop.Find(x => x.id == id && IsCash(x));
 
         /// <summary>상점 버튼 글자: 스토어 가격(받았으면) → 표의 원화</summary>
@@ -50,15 +55,27 @@ namespace KachiGun
             if (Permanent(r) && Owned(r)) return;
             if (r.reward == "NoAllAds") S.noAds = true;
             else if (r.reward == "AutoUpgrade") { S.autoUpgrade = true; S.autoOn = true; }
+            int bullet = BulletOf(r), put = -1;
+            if (bullet >= 0)
+            {
+                // 11-13 1회 한정 총알: 되살릴 때(다시 설치)도 총알은 줌 — 산 물건 자체라서 (보너스 다이아와 다름)
+                S.iapOnce.Add(r.id);
+                S.weaponUnlocked = true;   // 총알 메뉴가 아직 잠겨 있어도 산 총알을 볼 수 있게
+                put = S.PutBullet(bullet);
+                if (put == 0) Squad.I?.Rebuild();
+            }
             double bonus = restore ? 0 : r.bonusGems;
             if (bonus > 0) S.gems += bonus;
             S.Save();
-            Debug.Log($"[Iap] {(restore ? "되살림" : "지급")} {r.id} ({r.reward}, 다이아 +{bonus})");
+            Debug.Log($"[Iap] {(restore ? "되살림" : "지급")} {r.id} ({r.reward}, 다이아 +{bonus}{(put >= 0 ? $", 총알 {bullet} → {(put == 0 ? "장착" : put == 1 ? "인벤토리" : "기다림")}" : "")})");
             if (!quiet)
             {
                 AudioManager.Play(AudioManager.Sfx.Coin);
                 if (bonus > 0) HUD.I?.Bump(true);
-                HUD.I?.Toast(L.F("{0} 구매 완료!", L.T(r.name)));
+                string msg = L.F("{0} 구매 완료!", L.T(r.name));
+                string sub = put == 0 ? "빈 칸에 바로 장착했습니다" : put == 1 ? "총알 인벤토리에 넣었습니다" : put == 2 ? "인벤토리가 가득 차 있어 빈 칸이 생기면 들어갑니다" : null;
+                if (sub != null) msg += "\n<size=30>" + L.T(sub) + "</size>";   // 알림 판(800x100)에 두 줄이 들어가게 둘째 줄은 작게
+                HUD.I?.Toast(msg);
             }
             GameManager.I?.Notify();
             Changed?.Invoke();
@@ -69,7 +86,7 @@ namespace KachiGun
         {
             var r = Row(id);
             if (r == null) { HUD.I?.Toast(L.T("결제는 준비 중입니다")); return; }
-            if (Permanent(r) && Owned(r)) { HUD.I?.Toast(L.T("이미 가지고 있습니다")); return; }
+            if (Permanent(r) && Owned(r)) { HUD.I?.Toast(L.T(BulletOf(r) >= 0 ? "이미 구매한 상품입니다 (1회 한정)" : "이미 가지고 있습니다")); return; }
 #if UNITY_ANDROID && !UNITY_EDITOR
             switch (Purchase(r))
             {

@@ -52,7 +52,12 @@ namespace KachiGun
             StartCoroutine(OfflineAtStart());
         }
 
-        public void Notify() => Changed?.Invoke();
+        public void Notify()
+        {
+            // 11-13 산 총알이 인벤토리가 가득 차 기다리던 중이면, 합성·분해·장착으로 빈 칸이 생기는 순간 넣음
+            if (S.pendingBullets.Count > 0 && S.DeliverPending()) { S.SaveSoon(); HUD.I?.Toast(L.T("기다리던 총알이 인벤토리에 들어갔습니다")); }
+            Changed?.Invoke();
+        }
 
         void Update()
         {
