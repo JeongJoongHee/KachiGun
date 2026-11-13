@@ -48,6 +48,7 @@ namespace KachiGun
         public List<string> coupons = new();     // 11-12 쓴 쿠폰 번호 (대문자 · 같은 쿠폰은 한 번만 — 클라우드로 계정 단위)
         public List<string> iapOnce = new();     // 11-13 산 1회 한정 상품 ID (Shop 표 Reward 칸 Bullet:코드 — starter_ss_missile)
         public List<int> pendingBullets = new(); // 11-13 산 총알인데 넣을 칸이 없어 기다리는 것 (인벤토리에 빈 칸이 생기면 저절로 들어감)
+        public long starterSeenAt;               // 11-13 1회 한정 상품 아이콘이 홈 화면에 처음 보인 시각 (유닉스 초, 0 = 아직) — Starter_Home_Hours 뒤엔 상점 탭에만
 
         // 방치 보상 (11-04): 저장할 때마다 시각을 남김 → 다시 켜거나 백그라운드에서 돌아오면 비운 시간만큼 골드
         public long lastSeen;                    // 마지막 저장 시각 (유닉스 초, 0 = 아직 없음)
@@ -72,7 +73,7 @@ namespace KachiGun
         // 11-12 세이브 판 번호: 세이브 칸을 더하거나 뜻을 바꾸면 Version 을 +1 (PlayTest 가 칸 목록 지문 FieldSig 로 잊지 않게 잡아 줌).
         //   옛 판 앱은 모르는 칸을 읽을 때 버리므로, 클라우드에서 더 높은 판의 세이브를 만나면 받지도 올리지도 않고 업데이트 안내만 (CloudSync.TooNew)
         public const int Version = 3;            // 2 = 11-12 쿠폰 칸(coupons) · 3 = 11-13 1회 한정 상품(iapOnce) · 기다리는 총알(pendingBullets)
-        public const uint FieldSig = 3210282614;   // 11-13 iapOnce · pendingBullets 칸 (11-12 coupons 2593409011)
+        public const uint FieldSig = 861651913;    // 11-13 iapOnce · pendingBullets · starterSeenAt 칸 (판 3 은 12번이 처음이라 판 번호 그대로 · 11-12 coupons 2593409011)
         public int ver;                          // 이 세이브를 마지막으로 쓴 앱의 세이브 판 (0 = 판 번호가 없던 1.0.8 까지)
 
         // 11-12 방치 보상 창을 띄워 놓고 못 받은 시간(초) — 창이 뜬 채로 앱이 꺼져도 다음에 켤 때 이어서 줌 (받으면 0)

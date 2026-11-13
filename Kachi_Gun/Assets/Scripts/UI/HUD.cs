@@ -31,7 +31,7 @@ namespace KachiGun
         Text starterPrice;
         Image starterGlow, starterRing, starterFlash;
         readonly Image[] starterStars = new Image[2];
-        float starterT, starterShowT = -1;
+        float starterT, starterShowT = -1, starterFxT;   // starterFxT = 나타난 뒤 지난 시간 (Config Starter_Fx_Time 초까지만 강조)
         public const string StarterId = "starter_ss_missile";
         readonly Card[] cards = new Card[3];
         readonly Dictionary<string, SideBtn> side = new();
@@ -678,26 +678,49 @@ namespace KachiGun
             starterRoot.gameObject.SetActive(false);
         }
 
-        /// <summary>SS급 미사일탄 아이콘: 스테이지 화면 + 상점 열림 + 아직 안 삼 + 살 수 있음(스토어에 상품이 있음)</summary>
+        /// <summary>SS급 미사일탄 아이콘: 스테이지 화면 + 상점 열림 + 아직 안 삼 + 살 수 있음(스토어에 상품이 있음)
+        /// + 11-13 홈 화면에 처음 보인 때(S.starterSeenAt)부터 Config Starter_Home_Hours(72시간) 안. 그 뒤엔 상점 탭에만 있음</summary>
         void RefreshStarter()
         {
             if (!starterRoot) return;
             var row = Tables.Shop.Find(x => x.id == StarterId);
             bool show = row != null && GM.mode == GameManager.Mode.Stage && GM.Unlocked("shop") && !Iap.Owned(row) && Iap.CanSell(row);
+            if (show && StarterHomeExpired) show = false;
+            if (show && S.starterSeenAt == 0) S.starterSeenAt = SaveData.Now;   // 처음 보인 때 (여기서부터 72시간)
             if (starterRoot.gameObject.activeSelf != show)
             {
                 starterRoot.gameObject.SetActive(show);
-                if (show) starterShowT = 0;   // 나타나는 순간 크게 튀어나옴
+                if (show) { starterShowT = 0; starterFxT = 0; starterSettled = false; }   // 나타나는 순간 크게 튀어나옴 → 강조 5초
             }
             if (show) { string pt = Iap.PriceText(row); if (starterPrice.text != pt) starterPrice.text = pt; }
         }
 
-        /// <summary>강조 움직임: 나타날 때 크게 튀어나옴(0.6초) → 계속 통통 · 뒤 금빛 깜빡임 · 네온 고리 · 리본 살랑 · 별 딱지 돎 · 반짝이</summary>
+        /// <summary>11-13 홈 화면 노출 시간이 지남 (처음 보인 때부터 Starter_Home_Hours 시간 · 0 = 계속 보임)</summary>
+        public static bool StarterHomeExpired
+        {
+            get
+            {
+                double h = Tables.C("Starter_Home_Hours", 72);
+                return h > 0 && S.starterSeenAt > 0 && SaveData.Now - S.starterSeenAt >= h * 3600;
+            }
+        }
+
+        bool starterSettled;
+
+        /// <summary>강조 움직임: 나타날 때 크게 튀어나옴(0.6초) → 통통 · 뒤 금빛 깜빡임 · 네온 고리 · 리본 살랑 · 별 딱지 돎 · 반짝이.
+        /// 11-13 사용자 "계속 나오지 말고 5초 정도만": 나타난 뒤 Starter_Fx_Time 초 동안만 움직이고 끝 0.5초에 잦아들어 멈춘 채로 보임
+        /// (다시 나타날 때 = 던전에서 돌아옴 · 다시 켬 → 또 5초)</summary>
         void TickStarter(float dt)
         {
             if (!starterRoot || !starterRoot.gameObject.activeInHierarchy) return;
+            if (StarterHomeExpired) { RefreshStarter(); return; }   // 화면을 켜 둔 채 72시간이 지나도 사라지게
+            if (starterSettled) return;   // 강조 끝 = 멈춘 그림 그대로 (매 프레임 다시 그리지 않음)
+            float fx = Mathf.Max(0f, (float)Tables.C("Starter_Fx_Time", 5));
+            starterFxT += dt;
+            float amp = Mathf.Clamp01((fx - starterFxT) / 0.5f);   // 1 → 끝 0.5초에 0
+            if (amp <= 0f && starterShowT < 0) starterSettled = true;
             starterT += dt;
-            float k = Mathf.Abs(Mathf.Sin(starterT * 4f));
+            float k = Mathf.Abs(Mathf.Sin(starterT * 4f)) * amp;
             float pop = 1f;
             if (starterShowT >= 0)
             {
@@ -711,15 +734,15 @@ namespace KachiGun
             starterGlow.color = new Color(1f, 0.78f, 0.22f, 0.8f + 0.2f * k);
             starterRing.color = new Color(1f, 0.97f, 0.7f, 0.75f + 0.25f * k);
             starterRing.rectTransform.localScale = Vector3.one * (1f + 0.1f * k);
-            starterRibbon.localRotation = Quaternion.Euler(0, 0, Mathf.Sin(starterT * 3f) * 5f);
+            starterRibbon.localRotation = Quaternion.Euler(0, 0, Mathf.Sin(starterT * 3f) * 5f * amp);
             starterRibbon.localScale = Vector3.one * pop;
             starterBurst.localRotation = Quaternion.Euler(0, 0, -starterT * 40f);
             float ft = starterT % 1.6f;
-            starterFlash.color = new Color(1, 1, 1, ft < 0.25f ? 0.7f * Mathf.Sin(ft / 0.25f * Mathf.PI) : 0f);
+            starterFlash.color = new Color(1, 1, 1, ft < 0.25f ? 0.7f * Mathf.Sin(ft / 0.25f * Mathf.PI) * amp : 0f);
             for (int i = 0; i < starterStars.Length; i++)
             {
                 float s2 = Mathf.Max(0f, Mathf.Sin(starterT * 3.2f + i * Mathf.PI));
-                starterStars[i].rectTransform.localScale = Vector3.one * s2;
+                starterStars[i].rectTransform.localScale = Vector3.one * (s2 * amp);
                 starterStars[i].rectTransform.localRotation = Quaternion.Euler(0, 0, starterT * 90f);
             }
         }

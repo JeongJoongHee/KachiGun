@@ -81,3 +81,5 @@ Unlock_Toast_Time,3.5,초,UI,Unlock.xlsx,11-11 콘텐츠가 열렸을 때 알림
 Unlock_Glow_Time,6,초,UI,Unlock.xlsx,11-11 열린 버튼 뒤에서 빛이 깜빡이며 통통 튀는 시간
 Speech_Reply_Delay,1,초,말풍선,Speech.xlsx,11-12 대사가 나온 뒤 다른 동료가 받아치기까지 (Speech_Show 보다 짧아야 두 풍선이 같이 보임)
 Speech_Reply_Chance,0.8,비율,말풍선,Speech.xlsx,11-12 답(Reply 줄)이 달린 대사가 나왔을 때 실제로 받아칠 확률 (1 = 항상 · 0 = 받아치기 끔)
+Starter_Fx_Time,5,초,상점,Shop.xlsx,11-13 홈 화면 1회 한정 상품 아이콘이 나타난 뒤 강조 효과(통통·빛·고리·번쩍)가 움직이는 시간 — 그 뒤엔 멈춘 채로 보임
+Starter_Home_Hours,72,시간,상점,Shop.xlsx,11-13 1회 한정 상품 아이콘이 홈 화면에 처음 보인 때부터 이 시간이 지나면 홈 화면에서 사라짐 (상점 탭에는 계속 있음 · 0 = 계속 보임)

@@ -1121,7 +1121,7 @@ namespace KachiGun.EditorTools
                     $"상점 990원 SS 미사일탄 줄 ({st?.priceValue} · {st?.reward} · {Tables.WeaponName(ss)})");
                 var sl0 = new List<int>(S.slots); var iv0 = new List<int>(S.inv); var on0 = new List<string>(S.iapOnce); double sg0 = S.gems; bool swu0 = S.weaponUnlocked;
                 for (int i = 0; i < S.slots.Count; i++) S.slots[i] = i == 0 ? Tables.Code(0, "single") : -1;   // 처음 하는 사람처럼 리볼버 하나
-                S.iapOnce.Clear(); S.pendingBullets.Clear(); S.weaponUnlocked = false; Squad.I.Rebuild();
+                S.iapOnce.Clear(); S.pendingBullets.Clear(); S.weaponUnlocked = false; S.starterSeenAt = 0; Squad.I.Rebuild();
                 int cats0 = Squad.I.cats.Count;
                 // 11-13 화면 아이콘: 상점이 잠겨 있으면 없음 → 열리면 보임 → 누르면 구매
                 int be0 = S.bestEver; S.bestEver = 0; HUD.I.Refresh();
@@ -1133,6 +1133,30 @@ namespace KachiGun.EditorTools
                 yield return Wait(0.9f);
                 Capture("17e0_starter_icon");
                 Check(hidLocked && stGo != null && GM.Unlocked("shop"), $"SS 미사일탄 아이콘: 상점 잠김엔 숨김({hidLocked}) · 열리면 보임({stGo != null})");
+                // 11-13 강조는 Starter_Fx_Time(5초)만 → 멈춘 채로 · 처음 보인 시각 기록 → Starter_Home_Hours(72시간) 뒤 홈에서 사라지고 상점 탭엔 남음
+                var hf = typeof(HUD).GetField("starterSettled", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+                bool moving = !(bool)hf.GetValue(HUD.I);
+                long seen = S.starterSeenAt;
+                yield return Wait((float)Tables.C("Starter_Fx_Time", 5) + 0.3f);
+                bool settled = (bool)hf.GetValue(HUD.I);
+                var pulse = stGo ? stGo.transform.Find("Pulse") : null;
+                Check(moving && settled && pulse && Mathf.Abs(pulse.localScale.x - 1f) < 0.01f && Tables.C("Starter_Fx_Time", 0) == 5,
+                    $"SS 미사일탄 강조: 처음엔 움직임({moving}) · {Tables.C("Starter_Fx_Time", 0)}초 뒤 멈춤({settled}) · 크기 {(pulse ? pulse.localScale.x : 0):0.00}");
+                Capture("17e0b_starter_settled");
+                S.starterSeenAt = SaveData.Now - (long)(Tables.C("Starter_Home_Hours", 72) * 3600) + 60; HUD.I.Refresh();
+                bool before72 = GameObject.Find("Starter") != null;
+                S.starterSeenAt = SaveData.Now - (long)(Tables.C("Starter_Home_Hours", 72) * 3600) - 1;
+                yield return null; yield return null;   // 켜 둔 채로도 TickStarter 가 숨김
+                bool after72 = GameObject.Find("Starter") == null;
+                var shop72 = HUD.I.Open<ShopPopup>(); yield return Wait(0.3f);
+                bool inShop = false;
+                foreach (var t in shop72.GetComponentsInChildren<Text>(true)) if (t.text.Contains("990") && t.text.EndsWith("원")) inShop = true;
+                Capture("17e0c_starter_72h_shop");
+                CloseAll();
+                Check(seen > 0 && System.Math.Abs(seen - SaveData.Now) < 30 && before72 && after72 && inShop && Tables.C("Starter_Home_Hours", 0) == 72,
+                    $"SS 미사일탄 홈 노출: 처음 보인 시각 기록({seen > 0}) · 72시간 1분 전 보임({before72}) · 지나면 홈에서 사라짐({after72}) · 상점 탭엔 990원 줄({inShop})");
+                S.starterSeenAt = SaveData.Now; HUD.I.Refresh();
+                stGo = GameObject.Find("Starter");
                 var stB = stGo ? stGo.GetComponentInChildren<Button>() : null;
                 Check(stB != null && stB.name == "StarterBtn", "SS 미사일탄 아이콘 안에 누르는 판(StarterBtn)");
                 if (stB) stB.onClick.Invoke(); else Iap.Buy("starter_ss_missile");
