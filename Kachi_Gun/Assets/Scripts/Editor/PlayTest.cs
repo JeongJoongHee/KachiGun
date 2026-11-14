@@ -1009,7 +1009,8 @@ namespace KachiGun.EditorTools
                     yield return Wait(0.3f);
                     string said = sp.ActiveText;
                     Capture("20a_speech_clear");
-                    Check(said == "스테이지 클리어!", $"스테이지 클리어 말풍선: {said}");
+                    bool clearLine = false; foreach (var l in Speech.Lines) if (l.trigger == "Clear" && L.T(l.text) == said) clearLine = true;   // 11-14 클리어 대사 3줄 중 하나 (전엔 1줄)
+                    Check(clearLine, $"스테이지 클리어 말풍선: {said}");
                     S.stage = st0 - 1; GM.AdvanceStage();   // 원래 스테이지로 (리더가 한 번 더 말함 → 아래에서 끔)
                     sp.Clear();
                     Speech.Say("Boss");
