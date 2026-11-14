@@ -1,0 +1,191 @@
+<!doctype html>
+<html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>말풍선 대사 추천</title><style>
+:root{--bg:#fbf7ef;--fg:#3b281c;--mut:#7a6a5c;--line:#e3d8c6;--card:#fff;--acc:#a8642f;--bub:#fffdf6;--ink:#5a3a22}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--fg);font-family:"Malgun Gothic",sans-serif;margin:0;padding:24px 16px;line-height:1.6}
+main{max-width:900px;margin:auto} h1{font-size:24px;margin:0 0 4px} h2{font-size:18px;margin:30px 0 8px;color:var(--acc)}
+.mut{color:var(--mut);font-size:14px} code{background:#f1e8d8;padding:1px 5px;border-radius:4px;font-size:13px}
+.box{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:10px 16px;margin:12px 0;font-size:14px}
+ul.todo{list-style:none;padding:0;margin:0}
+ul.todo>li{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:10px 14px;margin:8px 0}
+ul.todo>li.checked{border-color:#9cc47e;background:#f6fbef}
+.row{display:flex;align-items:flex-start;gap:10px}
+.row label{flex:1;display:flex;gap:10px;align-items:flex-start;cursor:pointer}
+.row input{width:22px;height:22px;margin-top:8px;flex:none;accent-color:#6aa84f}
+.chain{display:flex;flex-direction:column;gap:6px}
+.b{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.who{font-size:12px;color:var(--mut);min-width:86px}
+.bub{display:inline-block;background:var(--bub);border:3px solid var(--ink);border-radius:20px;padding:3px 14px;font-weight:700;font-size:17px;color:#1c120a}
+.b.r1{padding-left:22px} .b.r2{padding-left:44px}
+.n{font-size:12px;color:var(--mut)}
+.pen{border:1px solid var(--line);background:#faf5ea;border-radius:8px;font-size:13px;padding:2px 8px;cursor:pointer;color:var(--fg);flex:none}
+li.has-note .pen{background:#fde9c8}
+.notebox{display:none;margin-top:8px} li.open .notebox{display:block}
+.notebox textarea{width:100%;min-height:60px;border:1px solid var(--line);border-radius:8px;padding:6px 8px;font:inherit;font-size:14px}
+.hint{font-size:12px;color:var(--mut)}
+#bar{position:sticky;top:0;background:var(--bg);padding:8px 0;display:flex;gap:10px;align-items:center;flex-wrap:wrap;z-index:2;border-bottom:1px solid var(--line)}
+#bar button{border:1px solid var(--line);background:var(--card);border-radius:8px;padding:4px 10px;cursor:pointer;font:inherit;font-size:14px}
+</style></head><body><main>
+<h1>말풍선 대사 추천 — 귀엽고 재밌고 조금 황당하게</h1>
+<p class="mut">2026-11-14 · 지금 대사 34줄(<code>Kachi_Gun/Table/Speech.xlsx</code>) 말투에 맞춤 · 넣고 싶은 것에 체크하세요. 고치고 싶은 글은 ✎ 의견 칸에 적어 주시면 그대로 바꿔 넣습니다.</p>
+<div class="box" style="border-color:#9cc47e;background:#f6fbef"><b>11-14 적용함</b> — 체크한 19개를 <code>Speech.xlsx</code> 에 넣음 (의견 6개 반영: 귤 → 새싹 · 꾸이익 → 구구~ · "총알이 떨어지면 박치기 하자!" · "저거 먹는거야 아니야!!" · 대낮 · "...몰라..일단 지켜보자..") · 주아 글꼴에 '…' 가 없어 모두 '...' 로 · 영어도 넣음. 체크 안 한 4개(삼촌 · 등 긁기 · 꿈 · 승리의 꾸이익)는 안 넣음. 도구 <code>tools/speech_add_1111.py</code></div>
+<div class="box">
+<b>읽는 법</b> — 첫 줄이 먼저 나오는 대사이고, 들여쓴 줄이 받아치는 말입니다 (받아치기 확률 80% · <code>Speech_Reply_Chance</code>).<br>
+<b>길이</b> — 말풍선은 한 줄에 14자 정도까지 들어가서 모두 그 안으로 맞췄습니다.<br>
+<b>체크하면</b> — 표에 줄을 넣고 영어도 같이 만들어 넣습니다. 비중(Weight)은 기존 Random 대사처럼 1로 둡니다.
+</div>
+<div id="bar"><span id="stat" class="mut"></span><button type="button" id="all">모두 체크</button><button type="button" id="none">모두 풀기</button></div>
+
+<h2>싸우는 중 가끔 (Random)</h2>
+<ul class="todo">
+<li data-id="s-gyul"><label><input type="checkbox"><span><div class="chain">
+<div class="b"><span class="who">아무나</span><span class="bub">머리에 귤 올려 줄 사람?</span></div>
+<div class="b r1"><span class="who">↳ 다른 동료</span><span class="bub">지금 그게 중요해?!</span></div>
+<div class="b r2"><span class="who">↳ 처음 동료</span><span class="bub">귤은 늘 중요해.</span></div>
+</div></span></label></li>
+<li data-id="s-onsen"><label><input type="checkbox"><span><div class="chain">
+<div class="b"><span class="who">아무나</span><span class="bub">온천 가고 싶다…</span></div>
+<div class="b r1"><span class="who">↳ 다른 동료</span><span class="bub">좀비도 데려갈까?</span></div>
+<div class="b r2"><span class="who">↳ 처음 동료</span><span class="bub">걔넨 때부터 밀자.</span></div>
+</div></span></label></li>
+<li data-id="s-wink"><label><input type="checkbox"><span><div class="chain">
+<div class="b"><span class="who">아무나</span><span class="bub">좀비랑 눈 마주쳤어.</span></div>
+<div class="b r1"><span class="who">↳ 다른 동료</span><span class="bub">그래서?</span></div>
+<div class="b r2"><span class="who">↳ 처음 동료</span><span class="bub">…윙크해 줬어.</span></div>
+</div></span></label></li>
+<li data-id="s-kkui"><label><input type="checkbox"><span><div class="chain">
+<div class="b"><span class="who">아무나</span><span class="bub">꾸이익!</span><span class="n">(카피바라 울음소리)</span></div>
+<div class="b r1"><span class="who">↳ 다른 동료</span><span class="bub">그거 무슨 뜻이야?</span></div>
+<div class="b r2"><span class="who">↳ 처음 동료</span><span class="bub">나도 몰라.</span></div>
+</div></span></label></li>
+<li data-id="s-tail"><label><input type="checkbox"><span><div class="chain">
+<div class="b"><span class="who">아무나</span><span class="bub">내 꼬리 어디 갔지?</span></div>
+<div class="b r1"><span class="who">↳ 다른 동료</span><span class="bub">원래 없잖아!</span></div>
+</div></span></label></li>
+<li data-id="s-grass"><label><input type="checkbox"><span><div class="chain">
+<div class="b"><span class="who">아무나</span><span class="bub">오늘 저녁은 풀이다!</span></div>
+<div class="b r1"><span class="who">↳ 다른 동료</span><span class="bub">어제도 풀이었잖아.</span></div>
+<div class="b r2"><span class="who">↳ 처음 동료</span><span class="bub">내일도 풀이야.</span></div>
+</div></span></label></li>
+<li data-id="s-serious"><label><input type="checkbox"><span><div class="chain">
+<div class="b"><span class="who">아무나</span><span class="bub">나 지금 진지해.</span></div>
+<div class="b r1"><span class="who">↳ 다른 동료</span><span class="bub">표정이 맨날 똑같은데?</span></div>
+</div></span></label></li>
+<li data-id="s-card"><label><input type="checkbox"><span><div class="chain">
+<div class="b"><span class="who">아무나</span><span class="bub">좀비한테 명함 줬어.</span></div>
+<div class="b r1"><span class="who">↳ 다른 동료</span><span class="bub">뭐라고 적었는데?</span></div>
+<div class="b r2"><span class="who">↳ 처음 동료</span><span class="bub">카피바라. 끝.</span></div>
+</div></span></label></li>
+<li data-id="s-sleepy"><label><input type="checkbox"><span><div class="chain">
+<div class="b"><span class="who">아무나</span><span class="bub">쏘다가 졸려…</span></div>
+<div class="b r1"><span class="who">↳ 다른 동료</span><span class="bub">자면 안 돼!!</span></div>
+<div class="b r2"><span class="who">↳ 처음 동료</span><span class="bub">쿨… 탕! 쿨… 탕!</span><span class="n">(자면서 쏨)</span></div>
+</div></span></label></li>
+<li data-id="s-uncle"><label><input type="checkbox"><span><div class="chain">
+<div class="b"><span class="who">아무나</span><span class="bub">저 좀비, 삼촌 닮았어.</span></div>
+<div class="b r1"><span class="who">↳ 다른 동료</span><span class="bub">인사라도 해!</span></div>
+</div></span></label></li>
+<li data-id="s-headbutt"><label><input type="checkbox"><span><div class="chain">
+<div class="b"><span class="who">아무나</span><span class="bub">총알 떨어지면 박치기!</span></div>
+<div class="b r1"><span class="who">↳ 다른 동료</span><span class="bub">머리 단단해?</span></div>
+<div class="b r2"><span class="who">↳ 처음 동료</span><span class="bub">말랑해…</span></div>
+</div></span></label></li>
+<li data-id="s-scratch"><label><input type="checkbox"><span><div class="chain">
+<div class="b"><span class="who">아무나</span><span class="bub">등 좀 긁어 줄 사람~</span></div>
+<div class="b r1"><span class="who">↳ 다른 동료</span><span class="bub">지금 전투 중이야!</span></div>
+</div></span></label></li>
+<li data-id="s-water"><label><input type="checkbox"><span><div class="chain">
+<div class="b"><span class="who">아무나</span><span class="bub">물속이면 내가 무적인데.</span></div>
+<div class="b r1"><span class="who">↳ 다른 동료</span><span class="bub">여긴 땅이야.</span></div>
+<div class="b r2"><span class="who">↳ 처음 동료</span><span class="bub">…그럼 반쯤 무적.</span></div>
+</div></span></label></li>
+<li data-id="s-dream"><label><input type="checkbox"><span><div class="chain">
+<div class="b"><span class="who">아무나</span><span class="bub">좀비야, 넌 꿈이 뭐니?</span><span class="n">(받아치기 없음)</span></div>
+</div></span></label></li>
+</ul>
+
+<h2>보스 나올 때 (Boss · 리더)</h2>
+<ul class="todo">
+<li data-id="s-bath"><label><input type="checkbox"><span><div class="chain">
+<div class="b"><span class="who">리더</span><span class="bub">저 녀석, 백 년은 안 씻었다!</span></div>
+<div class="b r1"><span class="who">↳ 다른 동료</span><span class="bub">냄새가 여기까지 와!</span></div>
+</div></span></label></li>
+<li data-id="s-please"><label><input type="checkbox"><span><div class="chain">
+<div class="b"><span class="who">리더</span><span class="bub">보스님, 그냥 가 주세요!</span></div>
+<div class="b r1"><span class="who">↳ 다른 동료</span><span class="bub">부탁해도 소용없어!</span></div>
+</div></span></label></li>
+<li data-id="s-meal"><label><input type="checkbox"><span><div class="chain">
+<div class="b"><span class="who">리더</span><span class="bub">크다…! 몇 끼 분량이지?</span></div>
+<div class="b r1"><span class="who">↳ 다른 동료</span><span class="bub">먹을 생각 하지 마!!</span></div>
+</div></span></label></li>
+</ul>
+
+<h2>스테이지 클리어 (Clear · 리더)</h2>
+<ul class="todo">
+<li data-id="s-cute"><label><input type="checkbox"><span><div class="chain">
+<div class="b"><span class="who">리더</span><span class="bub">귀여움으로 이겼다!</span></div>
+<div class="b r1"><span class="who">↳ 다른 동료</span><span class="bub">총도 쐈거든?</span></div>
+</div></span></label></li>
+<li data-id="s-nap"><label><input type="checkbox"><span><div class="chain">
+<div class="b"><span class="who">리더</span><span class="bub">자, 낮잠 시간이다!</span></div>
+<div class="b r1"><span class="who">↳ 다른 동료</span><span class="bub">지금 한낮이야.</span></div>
+<div class="b r2"><span class="who">↳ 처음 동료</span><span class="bub">그러니까 낮잠이지.</span></div>
+</div></span></label></li>
+<li data-id="s-victory"><label><input type="checkbox"><span><div class="chain">
+<div class="b"><span class="who">리더</span><span class="bub">승리의 꾸이익!!</span><span class="n">(받아치기 없음)</span></div>
+</div></span></label></li>
+</ul>
+
+<h2>지금 있는 대사에 받아치기만 더하기</h2>
+<ul class="todo">
+<li data-id="s-x-broom"><label><input type="checkbox"><span><div class="chain">
+<div class="b"><span class="who">아무나 (지금 있음)</span><span class="bub">다 쓸어버리자!</span></div>
+<div class="b r1"><span class="who">↳ 다른 동료</span><span class="bub">빗자루 가져올게!</span></div>
+</div></span></label></li>
+<li data-id="s-x-forest"><label><input type="checkbox"><span><div class="chain">
+<div class="b"><span class="who">아무나 (지금 있음)</span><span class="bub">숲은 우리가 지킨다!</span></div>
+<div class="b r1"><span class="who">↳ 다른 동료</span><span class="bub">숲 주인이 누군데?</span></div>
+<div class="b r2"><span class="who">↳ 처음 동료</span><span class="bub">…몰라. 그냥 지켜.</span></div>
+</div></span></label></li>
+<li data-id="s-x-big"><label><input type="checkbox"><span><div class="chain">
+<div class="b"><span class="who">리더 (지금 있음)</span><span class="bub">큰 놈이 온다!</span></div>
+<div class="b r1"><span class="who">↳ 다른 동료</span><span class="bub">나보다 커?</span></div>
+<div class="b r2"><span class="who">↳ 처음 동료</span><span class="bub">너보단 다 커.</span></div>
+</div></span></label></li>
+</ul>
+<p class="mut" style="margin-top:24px">체크·의견은 이 브라우저에 저장됩니다. 다 고르면 "골랐어"라고만 말씀해 주세요 — 제가 읽어서 표에 넣습니다.</p>
+</main>
+<script>
+(function(){
+  // 저장 형식: {"c":{항목id:true}, "n":{항목id:"의견"}} — tools/todo_checks.py 말풍선_대사_추천.html 로 읽음
+  var KEY='kachigun-speech-1114', st={c:{},n:{}};
+  try{ var v=JSON.parse(localStorage.getItem(KEY)||'{}'); st.c=v.c||{}; st.n=v.n||{}; }catch(e){}
+  var items=document.querySelectorAll('ul.todo > li[data-id]');
+  function save(){ try{ localStorage.setItem(KEY,JSON.stringify(st)); }catch(e){} stat(); }
+  function stat(){ var c=0,n=0; items.forEach(function(li){ if(st.c[li.dataset.id]) c++; if((st.n[li.dataset.id]||'').trim()) n++; });
+    document.getElementById('stat').textContent='체크 '+c+' / '+items.length+' · 의견 '+n; }
+  var boxes=[];
+  items.forEach(function(li){
+    var id=li.dataset.id, label=li.querySelector('label'), cb=li.querySelector('input');
+    var row=document.createElement('div'); row.className='row'; li.insertBefore(row,label); row.appendChild(label);
+    var pen=document.createElement('button'); pen.type='button'; pen.className='pen'; pen.textContent='✎ 의견'; row.appendChild(pen);
+    var box=document.createElement('div'); box.className='notebox';
+    var ta=document.createElement('textarea'); ta.placeholder='고칠 글이 있으면 적어 주세요 (예: 둘째 줄은 "○○"로)';
+    var hint=document.createElement('div'); hint.className='hint'; hint.textContent='적는 대로 이 브라우저에 저장됩니다.';
+    box.appendChild(ta); box.appendChild(hint); li.appendChild(box);
+    cb.checked=!!st.c[id]; ta.value=st.n[id]||''; li.classList.toggle('checked',cb.checked);
+    function mark(){ li.classList.toggle('has-note',!!ta.value.trim()); pen.textContent=ta.value.trim()?'✎ 의견 있음':'✎ 의견'; }
+    mark(); if(ta.value.trim()) li.classList.add('open');
+    function set(on){ cb.checked=on; st.c[id]=on; li.classList.toggle('checked',on); }
+    cb.addEventListener('change',function(){ set(cb.checked); save(); });
+    ta.addEventListener('input',function(){ if(ta.value.trim()) st.n[id]=ta.value; else delete st.n[id]; mark(); save(); });
+    pen.addEventListener('click',function(){ li.classList.toggle('open'); if(li.classList.contains('open')) ta.focus(); });
+    boxes.push(set);
+  });
+  document.getElementById('all').addEventListener('click',function(){ boxes.forEach(function(f){ f(true); }); save(); });
+  document.getElementById('none').addEventListener('click',function(){ boxes.forEach(function(f){ f(false); }); save(); });
+  stat();
+})();
+</script>
+</body></html>

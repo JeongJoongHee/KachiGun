@@ -33,6 +33,24 @@ LINES = [
     ('rand_12', 'Random', 'Any', 1, '고되다. 고돼!', 'So tiring. So tiring!'),
     ('rand_13', 'Random', 'Any', 1, '우닫다다다닫', 'Ratatatatat!'),
     ('rand_14', 'Random', 'Any', 1, '배고프당!', "I'm hungry~!"),
+    # 11-14 말풍선_대사_추천.html 체크 19개 (사용자 의견: 귤 → 새싹 · 꾸이익 → 구구~ · 박치기 글 · 대낮 · 지켜보자)
+    #   ※ 주아 글꼴에 '…'(U+2026)가 없어 '...' 로 씀
+    ('rand_15', 'Random', 'Any', 1, '머리에 새싹 올려 줄 사람?', "Who'll put a sprout on me?"),
+    ('rand_16', 'Random', 'Any', 1, '온천 가고 싶다...', 'I want a hot spring...'),
+    ('rand_17', 'Random', 'Any', 1, '좀비랑 눈 마주쳤어.', 'I locked eyes with a zombie.'),
+    ('rand_18', 'Random', 'Any', 1, '구구~', 'Coo coo~'),
+    ('rand_19', 'Random', 'Any', 1, '내 꼬리 어디 갔지?', 'Where did my tail go?'),
+    ('rand_20', 'Random', 'Any', 1, '오늘 저녁은 풀이다!', 'Grass for dinner tonight!'),
+    ('rand_21', 'Random', 'Any', 1, '나 지금 진지해.', "I'm serious right now."),
+    ('rand_22', 'Random', 'Any', 1, '좀비한테 명함 줬어.', 'I gave a zombie my card.'),
+    ('rand_23', 'Random', 'Any', 1, '쏘다가 졸려...', 'Getting sleepy...'),
+    ('rand_24', 'Random', 'Any', 1, '총알이 떨어지면 박치기 하자!', 'Out of ammo? Headbutt!'),
+    ('rand_25', 'Random', 'Any', 1, '물속이면 내가 무적인데.', "In water, I'm unbeatable."),
+    ('boss_3', 'Boss', 'Leader', 1, '저 녀석, 백 년은 안 씻었다!', 'No bath in 100 years!'),
+    ('boss_4', 'Boss', 'Leader', 1, '보스님, 그냥 가 주세요!', 'Boss, please just go home!'),
+    ('boss_5', 'Boss', 'Leader', 1, '크다...! 몇 끼 분량이지?', 'Huge...! How many meals?'),
+    ('clear_2', 'Clear', 'Leader', 1, '귀여움으로 이겼다!', 'Cuteness wins!'),
+    ('clear_3', 'Clear', 'Leader', 1, '자, 낮잠 시간이다!', 'Okay, nap time!'),
 ]
 
 # 11-12 받아치기: Trigger=Reply 줄은 Reply_To 의 대사가 나온 뒤 Speech_Reply_Delay 초 뒤 다른 동료가 말함
@@ -61,6 +79,38 @@ REPLIES = [
     ('re_b2a', 'boss_2', 'Other', 1, '세게 한 방 먹이자!', "Let's hit it hard!"),
     ('re_c1a', 'clear_1', 'Other', 1, '수고했어!', 'Good work!'),
     ('re_c1b', 'clear_1', 'Other', 1, '다음 가자!', 'On to the next!'),
+    # 11-14 말풍선_대사_추천.html
+    ('re_15a', 'rand_15', 'Other', 1, '지금 그게 중요해?!', 'Is that important now?!'),
+    ('re_15a1', 're_15a', 'Back', 1, '새싹은 늘 중요해.', 'Sprouts always matter.'),
+    ('re_16a', 'rand_16', 'Other', 1, '좀비도 데려갈까?', 'Bring the zombies too?'),
+    ('re_16a1', 're_16a', 'Back', 1, '걔넨 때부터 밀자.', 'Scrub them first.'),
+    ('re_17a', 'rand_17', 'Other', 1, '그래서?', 'And?'),
+    ('re_17a1', 're_17a', 'Back', 1, '...윙크해 줬어.', '...I winked.'),
+    ('re_18a', 'rand_18', 'Other', 1, '그거 무슨 뜻이야?', 'What does that mean?'),
+    ('re_18a1', 're_18a', 'Back', 1, '나도 몰라.', 'No idea.'),
+    ('re_19a', 'rand_19', 'Other', 1, '원래 없잖아!', 'You never had one!'),
+    ('re_20a', 'rand_20', 'Other', 1, '어제도 풀이었잖아.', 'It was grass yesterday too.'),
+    ('re_20a1', 're_20a', 'Back', 1, '내일도 풀이야.', 'And tomorrow too.'),
+    ('re_21a', 'rand_21', 'Other', 1, '표정이 맨날 똑같은데?', 'You always look the same.'),
+    ('re_22a', 'rand_22', 'Other', 1, '뭐라고 적었는데?', 'What did it say?'),
+    ('re_22a1', 're_22a', 'Back', 1, '카피바라. 끝.', 'Capybara. The end.'),
+    ('re_23a', 'rand_23', 'Other', 1, '자면 안 돼!!', "Don't fall asleep!!"),
+    ('re_23a1', 're_23a', 'Back', 1, '쿨... 탕! 쿨... 탕!', 'Zzz... bang! Zzz... bang!'),
+    ('re_24a', 'rand_24', 'Other', 1, '머리 단단해?', 'Is your head hard?'),
+    ('re_24a1', 're_24a', 'Back', 1, '말랑해...', "It's squishy..."),
+    ('re_25a', 'rand_25', 'Other', 1, '여긴 땅이야.', 'This is land.'),
+    ('re_25a1', 're_25a', 'Back', 1, '...그럼 반쯤 무적.', '...Then half unbeatable.'),
+    ('re_b3a', 'boss_3', 'Other', 1, '냄새가 여기까지 와!', 'I can smell it from here!'),
+    ('re_b4a', 'boss_4', 'Other', 1, '부탁해도 소용없어!', "Asking won't work!"),
+    ('re_b5a', 'boss_5', 'Other', 1, '저거 먹는거야 아니야!!', "That's not food!!"),
+    ('re_c2a', 'clear_2', 'Other', 1, '총도 쐈거든?', 'We shot things too!'),
+    ('re_c3a', 'clear_3', 'Other', 1, '지금 대낮이야.', "It's broad daylight."),
+    ('re_c3a1', 're_c3a', 'Back', 1, '그러니까 낮잠이지.', "That's why it's a nap."),
+    ('re_2a', 'rand_2', 'Other', 1, '빗자루 가져올게!', "I'll get the broom!"),
+    ('re_7a', 'rand_7', 'Other', 1, '숲 주인이 누군데?', 'Whose forest is it?'),
+    ('re_7a1', 're_7a', 'Back', 1, '...몰라..일단 지켜보자..', "...Dunno.. let's just guard it.."),
+    ('re_b2b', 'boss_2', 'Other', 1, '나보다 커?', 'Bigger than me?'),
+    ('re_b2b1', 're_b2b', 'Back', 1, '너보단 다 커.', "Everything's bigger than you."),
 ]
 
 CONFIG = [
@@ -112,5 +162,8 @@ def strings():
 
 
 if __name__ == '__main__':
-    speech(); config(); strings()
+    # 11-14: config() 는 11-11 값으로 되돌리므로 '--config' 를 줄 때만 (그 뒤 사용자가 Config 값을 바꿨을 수 있음)
+    import sys
+    speech(); strings()
+    if '--config' in sys.argv: config()
     print('ok', len(LINES))

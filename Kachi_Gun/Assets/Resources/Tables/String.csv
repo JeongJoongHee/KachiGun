@@ -516,40 +516,87 @@ S 등급 레이저 건 즉시 지급,Get an S grade Laser Gun now,(지금은 안
 차원파괴 미사일,Rift Missile,(지금은 안 씀) Weapon_Master.Name
 제네시스 레이저,Genesis Laser,(지금은 안 씀) Weapon_Master.Name
 아포칼립스 미사일,Apocalypse Missile,(지금은 안 씀) Weapon_Master.Name
-스테이지 클리어!,Stage clear!,(지금은 안 씀) Speech_Lines.Text
-보스다!! 조심해!!,It's the boss!! Watch out!!,(지금은 안 씀) Speech_Lines.Text
-큰 놈이 온다!,Here comes a big one!,(지금은 안 씀) Speech_Lines.Text
-좀비가 몰려온다!,Zombies incoming!,(지금은 안 씀) Speech_Lines.Text
-다 쓸어버리자!,Let's wipe them out!,(지금은 안 씀) Speech_Lines.Text
-모두 힘내!,"Hang in there, everyone!",(지금은 안 씀) Speech_Lines.Text
-한 마리도 놓치지 마!,Don't let a single one through!,(지금은 안 씀) Speech_Lines.Text
-끝까지 버티자!,Hold the line!,(지금은 안 씀) Speech_Lines.Text
-조준 똑바로!,Aim steady!,(지금은 안 씀) Speech_Lines.Text
-숲은 우리가 지킨다!,We'll protect the forest!,(지금은 안 씀) Speech_Lines.Text
-아직 멀었어!,We're just getting started!,(지금은 안 씀) Speech_Lines.Text
-조금 더 힘을 내!,Just a little more!,(지금은 안 씀) Speech_Lines.Text
-껄껄껄!,Hahaha!,(지금은 안 씀) Speech_Lines.Text
-카피바라는 귀엽다!!,Capybaras are cute!!,(지금은 안 씀) Speech_Lines.Text
-고되다. 고돼!,So tiring. So tiring!,(지금은 안 씀) Speech_Lines.Text
-우닫다다다닫,Ratatatatat!,(지금은 안 씀) Speech_Lines.Text
-배고프당!,I'm hungry~!,(지금은 안 씀) Speech_Lines.Text
-밥이라도 먹고 할까?,Wanna grab a bite first?,(지금은 안 씀) Speech_Lines.Text
-좋아! 수박 먹자!,Yes! Watermelon time!,(지금은 안 씀) Speech_Lines.Text
-이것만 끝내고 먹자!,Let's eat after this!,(지금은 안 씀) Speech_Lines.Text
-조금만 더 버텨!,Hang in a bit longer!,(지금은 안 씀) Speech_Lines.Text
-나도 힘들어...,Me too...,(지금은 안 씀) Speech_Lines.Text
-뭐가 그렇게 웃겨?,What's so funny?,(지금은 안 씀) Speech_Lines.Text
-그냥~,Nothing~,(지금은 안 씀) Speech_Lines.Text
-당연하지!,Obviously!,(지금은 안 씀) Speech_Lines.Text
-지금 그럴 때야?!,Is this really the time?!,(지금은 안 씀) Speech_Lines.Text
-입으로 쏘는 거야?,Are you shooting with your mouth?,(지금은 안 씀) Speech_Lines.Text
-기분이야!,It's for the vibe!,(지금은 안 씀) Speech_Lines.Text
-오케이!,Okay!,(지금은 안 씀) Speech_Lines.Text
-너나 잘해~,Worry about yourself~,(지금은 안 씀) Speech_Lines.Text
-언제 끝나...,When does it end...,(지금은 안 씀) Speech_Lines.Text
-다 덤벼라!,Bring it on!,(지금은 안 씀) Speech_Lines.Text
-하고 있거든!,I am!,(지금은 안 씀) Speech_Lines.Text
-맡겨 둬!,Leave it to me!,(지금은 안 씀) Speech_Lines.Text
-세게 한 방 먹이자!,Let's hit it hard!,(지금은 안 씀) Speech_Lines.Text
-수고했어!,Good work!,(지금은 안 씀) Speech_Lines.Text
-다음 가자!,On to the next!,(지금은 안 씀) Speech_Lines.Text
+스테이지 클리어!,Stage clear!,Speech_Lines.Text
+보스다!! 조심해!!,It's the boss!! Watch out!!,Speech_Lines.Text
+큰 놈이 온다!,Here comes a big one!,Speech_Lines.Text
+좀비가 몰려온다!,Zombies incoming!,Speech_Lines.Text
+다 쓸어버리자!,Let's wipe them out!,Speech_Lines.Text
+모두 힘내!,"Hang in there, everyone!",Speech_Lines.Text
+한 마리도 놓치지 마!,Don't let a single one through!,Speech_Lines.Text
+끝까지 버티자!,Hold the line!,Speech_Lines.Text
+조준 똑바로!,Aim steady!,Speech_Lines.Text
+숲은 우리가 지킨다!,We'll protect the forest!,Speech_Lines.Text
+아직 멀었어!,We're just getting started!,Speech_Lines.Text
+조금 더 힘을 내!,Just a little more!,Speech_Lines.Text
+껄껄껄!,Hahaha!,Speech_Lines.Text
+카피바라는 귀엽다!!,Capybaras are cute!!,Speech_Lines.Text
+고되다. 고돼!,So tiring. So tiring!,Speech_Lines.Text
+우닫다다다닫,Ratatatatat!,Speech_Lines.Text
+배고프당!,I'm hungry~!,Speech_Lines.Text
+밥이라도 먹고 할까?,Wanna grab a bite first?,Speech_Lines.Text
+좋아! 수박 먹자!,Yes! Watermelon time!,Speech_Lines.Text
+이것만 끝내고 먹자!,Let's eat after this!,Speech_Lines.Text
+조금만 더 버텨!,Hang in a bit longer!,Speech_Lines.Text
+나도 힘들어...,Me too...,Speech_Lines.Text
+뭐가 그렇게 웃겨?,What's so funny?,Speech_Lines.Text
+그냥~,Nothing~,Speech_Lines.Text
+당연하지!,Obviously!,Speech_Lines.Text
+지금 그럴 때야?!,Is this really the time?!,Speech_Lines.Text
+입으로 쏘는 거야?,Are you shooting with your mouth?,Speech_Lines.Text
+기분이야!,It's for the vibe!,Speech_Lines.Text
+오케이!,Okay!,Speech_Lines.Text
+너나 잘해~,Worry about yourself~,Speech_Lines.Text
+언제 끝나...,When does it end...,Speech_Lines.Text
+다 덤벼라!,Bring it on!,Speech_Lines.Text
+하고 있거든!,I am!,Speech_Lines.Text
+맡겨 둬!,Leave it to me!,Speech_Lines.Text
+세게 한 방 먹이자!,Let's hit it hard!,Speech_Lines.Text
+수고했어!,Good work!,Speech_Lines.Text
+다음 가자!,On to the next!,Speech_Lines.Text
+머리에 새싹 올려 줄 사람?,Who'll put a sprout on me?,Speech_Lines.Text
+온천 가고 싶다...,I want a hot spring...,Speech_Lines.Text
+좀비랑 눈 마주쳤어.,I locked eyes with a zombie.,Speech_Lines.Text
+구구~,Coo coo~,Speech_Lines.Text
+내 꼬리 어디 갔지?,Where did my tail go?,Speech_Lines.Text
+오늘 저녁은 풀이다!,Grass for dinner tonight!,Speech_Lines.Text
+나 지금 진지해.,I'm serious right now.,Speech_Lines.Text
+좀비한테 명함 줬어.,I gave a zombie my card.,Speech_Lines.Text
+쏘다가 졸려...,Getting sleepy...,Speech_Lines.Text
+총알이 떨어지면 박치기 하자!,Out of ammo? Headbutt!,Speech_Lines.Text
+물속이면 내가 무적인데.,"In water, I'm unbeatable.",Speech_Lines.Text
+"저 녀석, 백 년은 안 씻었다!",No bath in 100 years!,Speech_Lines.Text
+"보스님, 그냥 가 주세요!","Boss, please just go home!",Speech_Lines.Text
+크다...! 몇 끼 분량이지?,Huge...! How many meals?,Speech_Lines.Text
+귀여움으로 이겼다!,Cuteness wins!,Speech_Lines.Text
+"자, 낮잠 시간이다!","Okay, nap time!",Speech_Lines.Text
+지금 그게 중요해?!,Is that important now?!,Speech_Lines.Text
+새싹은 늘 중요해.,Sprouts always matter.,Speech_Lines.Text
+좀비도 데려갈까?,Bring the zombies too?,Speech_Lines.Text
+걔넨 때부터 밀자.,Scrub them first.,Speech_Lines.Text
+그래서?,And?,Speech_Lines.Text
+...윙크해 줬어.,...I winked.,Speech_Lines.Text
+그거 무슨 뜻이야?,What does that mean?,Speech_Lines.Text
+나도 몰라.,No idea.,Speech_Lines.Text
+원래 없잖아!,You never had one!,Speech_Lines.Text
+어제도 풀이었잖아.,It was grass yesterday too.,Speech_Lines.Text
+내일도 풀이야.,And tomorrow too.,Speech_Lines.Text
+표정이 맨날 똑같은데?,You always look the same.,Speech_Lines.Text
+뭐라고 적었는데?,What did it say?,Speech_Lines.Text
+카피바라. 끝.,Capybara. The end.,Speech_Lines.Text
+자면 안 돼!!,Don't fall asleep!!,Speech_Lines.Text
+쿨... 탕! 쿨... 탕!,Zzz... bang! Zzz... bang!,Speech_Lines.Text
+머리 단단해?,Is your head hard?,Speech_Lines.Text
+말랑해...,It's squishy...,Speech_Lines.Text
+여긴 땅이야.,This is land.,Speech_Lines.Text
+...그럼 반쯤 무적.,...Then half unbeatable.,Speech_Lines.Text
+냄새가 여기까지 와!,I can smell it from here!,Speech_Lines.Text
+부탁해도 소용없어!,Asking won't work!,Speech_Lines.Text
+저거 먹는거야 아니야!!,That's not food!!,Speech_Lines.Text
+총도 쐈거든?,We shot things too!,Speech_Lines.Text
+지금 대낮이야.,It's broad daylight.,Speech_Lines.Text
+그러니까 낮잠이지.,That's why it's a nap.,Speech_Lines.Text
+빗자루 가져올게!,I'll get the broom!,Speech_Lines.Text
+숲 주인이 누군데?,Whose forest is it?,Speech_Lines.Text
+...몰라..일단 지켜보자..,...Dunno.. let's just guard it..,Speech_Lines.Text
+나보다 커?,Bigger than me?,Speech_Lines.Text
+너보단 다 커.,Everything's bigger than you.,Speech_Lines.Text

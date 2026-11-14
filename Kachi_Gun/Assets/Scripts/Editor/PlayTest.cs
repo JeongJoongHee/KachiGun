@@ -996,6 +996,13 @@ namespace KachiGun.EditorTools
                     int nClear = 0, nBoss = 0, nRand = 0;
                     foreach (var l in Speech.Lines) { if (l.trigger == "Clear") nClear++; else if (l.trigger == "Boss") nBoss++; else if (l.trigger == "Random") nRand++; }
                     Check(sp != null && nClear >= 1 && nBoss >= 1 && nRand >= 5, $"말풍선 대사 표: 클리어 {nClear} · 보스 {nBoss} · 가끔 {nRand}");
+                    {
+                        // 11-14 대사 19개 추가: 주아 글꼴에 없는 글자('…' 등)가 없는지 — 없으면 다른 글꼴로 섞여 보임
+                        var jua = Resources.Load<Font>("Font/Jua-Regular");
+                        var miss = new System.Collections.Generic.List<string>();
+                        foreach (var l in Speech.Lines) foreach (char ch in l.text) if (ch != ' ' && jua != null && !jua.HasCharacter(ch)) { miss.Add(l.id + ":" + ch); break; }
+                        Check(jua != null && miss.Count == 0 && nRand >= 25 && nBoss >= 5 && nClear >= 3, $"11-14 대사 추가 (가끔 {nRand} · 보스 {nBoss} · 클리어 {nClear}) · 글꼴에 없는 글자 {string.Join(", ", miss)}");
+                    }
                     sp.Clear();
                     int st0 = S.stage; S.kills = 0;
                     GM.AdvanceStage();     // 스테이지 클리어 → 리더 "스테이지 클리어!"
