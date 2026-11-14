@@ -254,6 +254,33 @@ namespace KachiGun.EditorTools
             {
                 Log($"보스: 체력 {GM.boss.hp:0}");
                 Capture("03_boss");
+                // 11-14 요청_05 ③: 미사일 폭발 그림이 보스 체력 바를 가림 → Missile_Fx_Scale(0.55) 배 · 고치기 전(1배)과 같은 장면을 나란히
+                {
+                    var cfg = (Dictionary<string, double>)typeof(Tables).GetField("config", System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.NonPublic).GetValue(null);
+                    double mfs = Tables.C("Missile_Fx_Scale", -1);
+                    yield return WaitUntil(() => GM.boss == null || GM.boss.transform.position.x < Field.I.ViewHalfW - 2.2f, 20f);   // 보스가 화면 안으로 들어온 뒤
+                    GM.boss.Hit(1, GM.boss.Pos);                 // 체력 바는 처음 맞을 때 생김 (미사일이 터지면 이미 맞은 상태)
+                    yield return null;
+                    var hb = GM.boss.GetComponentInChildren<HpBar>(true);
+                    float barY = hb ? hb.transform.position.y : 999f;
+                    float[] tops = new float[2];
+                    for (int k = 0; k < 2; k++)
+                    {
+                        cfg["Missile_Fx_Scale"] = k == 0 ? 1.0 : mfs;
+                        Fx.I.Boom(GM.boss.Center, 1.7f, 5);     // SS 미사일 (Splash 1.7) 이 보스 가운데에서 터짐
+                        yield return Wait(0.2f);
+                        float top = float.NegativeInfinity;
+                        foreach (var r in Object.FindObjectsByType<SpriteRenderer>(FindObjectsSortMode.None))
+                            if (r.enabled && r.gameObject.activeInHierarchy && r.sprite && r.sprite.name.Contains("boom_g")) top = Mathf.Max(top, r.bounds.max.y);
+                        tops[k] = top;
+                        Capture(k == 0 ? "21d_missile_boss_before" : "21e_missile_boss_after");
+                        yield return Wait(0.5f);
+                    }
+                    cfg["Missile_Fx_Scale"] = mfs;
+                    float c0 = GM.boss.Center.y;
+                    Check(hb != null && System.Math.Abs(mfs - 0.55) < 1e-6 && tops[1] < barY && tops[0] - c0 > 0 && (tops[1] - c0) < (tops[0] - c0) * 0.62f,
+                        $"11-14 미사일 폭발 그림 {mfs}배: 위 끝 (보스 가운데 기준) {tops[0] - c0:0.00} → {tops[1] - c0:0.00} · 체력 바 {barY - c0:0.00} (바 아래에서 끝남)");
+                }
                 GM.boss.Hit(GM.boss.hp + 1, GM.boss.Pos);
             }
             yield return Wait(0.3f);
@@ -1009,13 +1036,32 @@ namespace KachiGun.EditorTools
                     yield return Wait(0.3f);
                     string said = sp.ActiveText;
                     Capture("20a_speech_clear");
+                    {
+                        // 11-14 요청_05 ②: 스테이지·보스 알림이 가운데 카피바라 말풍선과 겹침 → 맨 위 카피바라 머리 + Banner_Capy_Gap 위
+                        var head = HUD.I.TopCapyHeadUi();
+                        var tp = HUD.I.ToastPos;
+                        bool over = BubbleOverlapsToast();
+                        Check(tp.y - 50f >= head.y + (float)Tables.C("Banner_Capy_Gap", 40) - 10f && !over && HUD.I.ToastText != null,   // 카피바라 숨쉬기로 머리가 몇 px 움직임
+                            $"11-14 스테이지 알림 '{(HUD.I.ToastText ?? "").Replace("\n", " ")}' 자리 y {tp.y:0} (맨 위 카피바라 머리 {head.y:0} · 판 아래 끝 {tp.y - 50:0}) · 말풍선과 겹침 {over}");
+                    }
                     bool clearLine = false; foreach (var l in Speech.Lines) if (l.trigger == "Clear" && L.T(l.text) == said) clearLine = true;   // 11-14 클리어 대사 3줄 중 하나 (전엔 1줄)
                     Check(clearLine, $"스테이지 클리어 말풍선: {said}");
                     S.stage = st0 - 1; GM.AdvanceStage();   // 원래 스테이지로 (리더가 한 번 더 말함 → 아래에서 끔)
                     sp.Clear();
                     Speech.Say("Boss");
                     string bs = sp.ActiveText;
-                    Check(bs == "보스다!! 조심해!!" || bs == "큰 놈이 온다!", $"보스 말풍선: {bs}");
+                    {
+                        HUD.I.Banner(L.T("보스 등장!"), new Color(1f, 0.4f, 0.3f));   // 보스가 나올 때와 같은 순서 (말풍선 + 알림)
+                        yield return Wait(0.3f);
+                        bool over = BubbleOverlapsToast();
+                        var tp = HUD.I.ToastPos;
+                        Capture("21b_boss_banner");
+                        HUD.I.Toast(L.T("저장했습니다 (기기 안)"));
+                        var t2 = HUD.I.ToastPos;
+                        Check(!over && tp.y > 180f && System.Math.Abs(t2.y - 180f) < 0.5f, $"11-14 보스 등장 알림 y {tp.y:0} · 말풍선과 겹침 {over} · 보통 안내 토스트는 가운데 그대로 (y {t2.y:0})");
+                    }
+                    bool bossLine = false; foreach (var l in Speech.Lines) if (l.trigger == "Boss" && L.T(l.text) == bs) bossLine = true;   // 11-14 보스 대사 5줄 중 하나 (전엔 2줄)
+                    Check(bossLine, $"보스 말풍선: {bs}");
                     sp.Clear();
                     // 가끔: 싸우는 중에 아무나 한마디 (간격을 잠깐 짧게 하려고 대사만 직접 뽑아 봄)
                     var seen = new System.Collections.Generic.HashSet<string>();
@@ -1081,6 +1127,27 @@ namespace KachiGun.EditorTools
                     Check(tt == "보스 던전이 열렸습니다!" && left > 3f && left2 > 0 && fx == 1, $"해금 알림: '{tt}' {left:0.0}초 (2.7초 뒤에도 {left2:0.0}초 남음) · 빛 {fx}개");
                     S.bestEver = best0; HUD.I.Refresh();
                     HUD.I.StopUnlockFx();
+                }
+                // 11-14 요청_05 ①: 설정 › 화면 진동 끄기 → 미사일이 터져도 화면이 안 흔들림 (기기 설정 PlayerPrefs)
+                {
+                    bool sh0 = Fx.ShakeOn;
+                    Fx.ShakeOn = true; Fx.I.Boom(new Vector2(0, 0), 1.7f, 5); float on = Fx.I.ShakeLeft;
+                    yield return Wait(0.3f);
+                    var st = HUD.I.Open<SettingsPopup>(); yield return Wait(0.2f);
+                    Button shb = null;
+                    foreach (var t in st.GetComponentsInChildren<Text>(true)) if (t.text == L.T("화면 진동")) shb = t.transform.parent.GetComponentInChildren<Button>(true);
+                    string lb0 = shb ? UIKit.LabelOf(shb).text : null;
+                    shb?.onClick.Invoke();
+                    yield return Wait(0.2f);
+                    string lb1 = shb ? UIKit.LabelOf(shb).text : null;
+                    Capture("21a_settings_shake_off");
+                    CloseAll();
+                    Fx.I.Boom(new Vector2(0, 0), 1.7f, 5); float off = Fx.I.ShakeLeft;
+                    yield return Wait(0.1f);
+                    var camP = Camera.main.transform.position;
+                    Check(shb != null && on > 0 && !Fx.ShakeOn && off <= 0 && camP == new Vector3(0, 0, -10) && lb0 == L.T("켜짐") && lb1 == L.T("꺼짐"),
+                        $"11-14 설정 [화면 진동] {lb0} → {lb1} · 미사일 흔들림 켬 {on:0.00}초 → 끔 {off:0.00}초 · 카메라 {camP}");
+                    Fx.ShakeOn = sh0;
                 }
                 // 미사일 장착 장면 캡처 (등급 색 폭발 · 네온 오오라)
                 var keep = new System.Collections.Generic.List<int>(S.slots);
@@ -2113,6 +2180,23 @@ namespace KachiGun.EditorTools
             uint h = 2166136261;
             foreach (var n in names) foreach (char c in n + ";") { h ^= c; h *= 16777619; }
             return h;
+        }
+
+        /// <summary>11-14: 떠 있는 말풍선 몸통과 알림 글(실제 글자 폭·높이)이 화면에서 겹치는지</summary>
+        static bool BubbleOverlapsToast()
+        {
+            var tr = HUD.I.ToastRect; var tt = tr.GetComponentInChildren<Text>();
+            if (!tr.gameObject.activeSelf || tt == null) return false;
+            float w = tt.preferredWidth * 0.5f, h = tt.preferredHeight * 0.5f;
+            Vector2 a = tr.TransformPoint(new Vector3(-w, -h)), b = tr.TransformPoint(new Vector3(w, h));
+            var toast = Rect.MinMaxRect(a.x, a.y, b.x, b.y);
+            foreach (var rt in Object.FindObjectsByType<RectTransform>(FindObjectsSortMode.None))
+            {
+                if (rt.name != "Body" || !rt.parent || rt.parent.name != "Speech" || !rt.gameObject.activeInHierarchy) continue;
+                var c = new Vector3[4]; rt.GetWorldCorners(c);
+                if (Rect.MinMaxRect(c[0].x, c[0].y, c[2].x, c[2].y).Overlaps(toast)) return true;
+            }
+            return false;
         }
 
         void CloseAll()

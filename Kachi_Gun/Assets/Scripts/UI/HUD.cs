@@ -780,9 +780,10 @@ namespace KachiGun
 
         public void Toast(string s) => ShowToast(s, Color.white);
 
-        void ShowToast(string s, Color c, float time = 1.8f)
+        void ShowToast(string s, Color c, float time = 1.8f, bool banner = false)
         {
             if (string.IsNullOrEmpty(s)) return;
+            toastRt.anchoredPosition = banner ? BannerPos() : new Vector2(0, 180);
             toastT.text = s;
             toastT.color = c;
             toastPop = 0.15f;
@@ -795,7 +796,26 @@ namespace KachiGun
         public void Msg(string err) { if (!string.IsNullOrEmpty(err)) Toast(err); }
 
         /// <summary>스테이지·보스·던전 알림 = 색 글자 토스트</summary>
-        public void Banner(string s, Color c) => ShowToast(s, c);
+        public void Banner(string s, Color c) => ShowToast(s, c, 1.8f, true);
+
+        /// <summary>11-14 요청_05: 스테이지·보스 알림이 가운데 카피바라 말풍선과 겹침 → 맨 위 카피바라 머리(그림 위 끝)보다
+        /// Banner_Capy_Gap 만큼 위 (알림 판 높이 100 의 아래 끝 기준). 분대가 없으면 예전 자리</summary>
+        Vector2 BannerPos()
+        {
+            float top = float.NegativeInfinity;
+            if (Squad.I) foreach (var c in Squad.I.cats) if (c && c.sr && c.gameObject.activeInHierarchy) top = Mathf.Max(top, c.sr.bounds.max.y);
+            if (float.IsNegativeInfinity(top) || Fx.I == null || Field.I == null) return new Vector2(0, 180);
+            float y = Fx.I.WorldToUi(new Vector2(0, top)).y + (float)Tables.C("Banner_Capy_Gap", 40) + 50f;
+            return new Vector2(0, Mathf.Max(180f, y));
+        }
+        public Vector2 ToastPos => toastRt.anchoredPosition;
+        public RectTransform ToastRect => toastRt;
+        public Vector2 TopCapyHeadUi()
+        {
+            float top = float.NegativeInfinity;
+            if (Squad.I) foreach (var c in Squad.I.cats) if (c && c.sr && c.gameObject.activeInHierarchy) top = Mathf.Max(top, c.sr.bounds.max.y);
+            return float.IsNegativeInfinity(top) ? Vector2.zero : Fx.I.WorldToUi(new Vector2(0, top));
+        }
 
         void Confirm(ConfirmPopup.Kind k) => ConfirmPopup.Dungeon(k);
 

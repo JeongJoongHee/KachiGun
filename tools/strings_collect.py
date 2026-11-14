@@ -24,6 +24,7 @@ TABLE_COLS = [
     ('Supply_Collection', ['Name', 'Grade']), ('Mission_Master', ['Mission_Name']),
     ('Shop_Products', ['Name', 'Description']), ('Chapter_Summary', ['Biome_Name']),
     ('Unlock_Roadmap', ['Lock_Toast_Message', 'Unlock_Banner_Message']), ('Mine_Ore_Spec', ['Name_KR']),
+    ('Speech_Lines', ['Text']),   # 11-14 말풍선 대사 (speech_add_1111.py 가 넣은 줄이 '안 씀'으로 밀리지 않게)
 ]
 # 코드에 있어도 번역하지 않는 것 (출시 전에 지울 테스트 버튼 등)
 SKIP = {'[테스트용 — 에디터에서만 보임]', '다이아 +1000', '골드 x100', '다음 스테이지', '처음부터', '세이브를 지우고 처음부터 시작할까요?',
@@ -75,7 +76,7 @@ EN = {
     '공격 +{0}% · 속도 +{1}% · 돈 +{2}% · 보스 +{3}%': 'ATK +{0}% · SPD +{1}% · Gold +{2}% · Boss +{3}%',
     '보유 효과 합계 ({0}/{1})': 'Total owned bonus ({0}/{1})', '공격력 +{0}% · 공격속도 +{1}% · 돈 +{2}% · 보스 +{3}%': 'ATK +{0}% · SPD +{1}% · Gold +{2}% · Boss +{3}%',
     '챕터 {0}': 'Ch. {0}', '보급품 구매': 'Buy Supply', '모든 단계 완료': 'All tiers complete', '완료': 'Done',
-    '배경음': 'Music', '효과음': 'Sound', '진동': 'Vibration', '던전에서는 바꿀 수 없습니다': "Can't change during a dungeon", '저장': 'Save',
+    '배경음': 'Music', '효과음': 'Sound', '진동': 'Vibration', '화면 진동': 'Screen Shake', '던전에서는 바꿀 수 없습니다': "Can't change during a dungeon", '저장': 'Save',
     '게임 종료': 'Quit Game', '게임을 종료할까요?': 'Quit the game?', '취소': 'Cancel', '종료': 'Quit',
     '방치 보상': 'Offline Reward', '자리를 비운 시간 {0}': 'Time away: {0}', '최대 {0}시간까지 쌓입니다': 'Stacks up to {0} hours',
     '스테이지 {0} 에서 계속 사냥했어요': 'Your squad kept hunting at Stage {0}', '{0}일 {1}시간': '{0}d {1}h', '{0}시간 {1}분': '{0}h {1}m', '{0}분': '{0}m',

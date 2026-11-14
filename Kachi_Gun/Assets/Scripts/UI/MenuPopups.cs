@@ -399,14 +399,14 @@ namespace KachiGun
     {
         // 출시 빌드에는 [테스트용] 버튼이 없어 창이 짧음 (10-24 출시용 정리 — 테스트 버튼은 에디터에서만)
 #if UNITY_EDITOR
-        protected override Vector2 Size => new(1000, 1650);   // 11-12 [쿠폰] 줄 +150
+        protected override Vector2 Size => new(1000, 1800);   // 11-12 [쿠폰] 줄 +150 · 11-14 [화면 진동] 줄 +150
 #else
         // 11-09 8번: Play 게임즈 App ID 가 없으면(9번 전) [클라우드 저장] 줄을 빼서 한 줄(-150) 짧게
-        protected override Vector2 Size => new(1000, CloudAuth.Configured ? 1220 : 1070);   // 11-07 진동 줄 삭제로 -150 · 11-12 [쿠폰] 줄 +150
+        protected override Vector2 Size => new(1000, CloudAuth.Configured ? 1370 : 1220);   // 11-07 진동 줄 삭제로 -150 · 11-12 [쿠폰] 줄 +150 · 11-14 [화면 진동] 줄 +150
 #endif
         protected override string Title => "설정";
-        Button bgm, sfx, lang;
-        readonly Image[] icons = new Image[3];   // 배경음·효과음·언어
+        Button bgm, sfx, lang, shake;
+        readonly Image[] icons = new Image[4];   // 배경음·효과음·언어·화면 진동
 
         protected override void Build()
         {
@@ -419,16 +419,19 @@ namespace KachiGun
                 L.Set(L.IsEn ? L.Ko : L.En);
             });
 
-            Row(L.T("저장"), 3, new Color(0.45f, 0.7f, 0.3f), () => { S.Save(); H.Toast(L.T("저장했습니다 (기기 안)")); });
+            // 11-14 요청_05: 미사일 터질 때 화면 흔들림 끄기 (기기 설정)
+            shake = Toggle(L.T("화면 진동"), 3, () => { Fx.ShakeOn = !Fx.ShakeOn; Refresh(); });
+
+            Row(L.T("저장"), 4, new Color(0.45f, 0.7f, 0.3f), () => { S.Save(); H.Toast(L.T("저장했습니다 (기기 안)")); });
             // 11-09: 클라우드는 App ID 를 넣은 빌드(9번)부터 — 그 전엔 줄을 빼고 [게임 종료]를 한 칸 올림
             bool cloud = CloudAuth.Configured;
-            if (cloud) Row(L.T("클라우드 저장"), 4, new Color(0.3f, 0.55f, 0.95f), () => H.Open<CloudPopup>());
-            Row(L.T("쿠폰"), cloud ? 5 : 4, new Color(0.45f, 0.7f, 0.3f), () => H.Open<CouponPopup>());   // 11-12
-            Row(L.T("게임 종료"), cloud ? 6 : 5, new Color(0.8f, 0.32f, 0.26f), () => H.Open<QuitPopup>());
+            if (cloud) Row(L.T("클라우드 저장"), 5, new Color(0.3f, 0.55f, 0.95f), () => H.Open<CloudPopup>());
+            Row(L.T("쿠폰"), cloud ? 6 : 5, new Color(0.45f, 0.7f, 0.3f), () => H.Open<CouponPopup>());   // 11-12
+            Row(L.T("게임 종료"), cloud ? 7 : 6, new Color(0.8f, 0.32f, 0.26f), () => H.Open<QuitPopup>());
 
 #if UNITY_EDITOR
             var t = UIKit.Label(content, "[테스트용 — 에디터에서만 보임]", 30, UIKit.Red, TextAnchor.MiddleCenter, 2);
-            t.rectTransform.Place(0.5f, 1, new Vector2(0, -1090), new Vector2(880, 40), new Vector2(0.5f, 0.5f));
+            t.rectTransform.Place(0.5f, 1, new Vector2(0, -1240), new Vector2(880, 40), new Vector2(0.5f, 0.5f));
             Small("다이아 +1000", 0, () => { S.gems += 1000; GM.Notify(); });
             Small("골드 x100", 1, () => { S.gold = System.Math.Max(S.gold, 100) * 100; GM.Notify(); });
             Small("다음 스테이지", 2, () => { if (GM.mode == GameManager.Mode.Stage) GM.AdvanceStage(); });
@@ -445,7 +448,7 @@ namespace KachiGun
             var rb = UIKit.Row(content, name);
             rb.rectTransform.Place(0.5f, 1, new Vector2(0, -10 - i * 150), new Vector2(890, 130), new Vector2(0.5f, 1));
             // 왼쪽 아이콘 (UI 팩: 음악 · 소리 · 하트)
-            string ico = i == 0 ? "music" : i == 1 ? "sound" : "i_gear_w";
+            string ico = i == 0 ? "music" : i == 1 ? "sound" : i == 3 ? "i_bolt" : "i_gear_w";
             var ic = UIKit.KitImg(rb.transform, ico, new Vector2(70, 64), "Icon");
             ic.rectTransform.Place(0, 0.5f, new Vector2(40, 4), new Vector2(70, 64), new Vector2(0, 0.5f));
             icons[i] = ic;
@@ -465,16 +468,17 @@ namespace KachiGun
         void Small(string name, int i, System.Action a)
         {
             var b = UIKit.ColorBtn(content, new Color(0.5f, 0.3f, 0.25f), new Vector2(430, 110), name, 34, a);
-            ((RectTransform)b.transform).Place(0.5f, 1, new Vector2(i % 2 == 0 ? -225 : 225, -1140 - (i / 2) * 130), new Vector2(430, 110), new Vector2(0.5f, 1));
+            ((RectTransform)b.transform).Place(0.5f, 1, new Vector2(i % 2 == 0 ? -225 : 225, -1290 - (i / 2) * 130), new Vector2(430, 110), new Vector2(0.5f, 1));
         }
 
         public override void Refresh()
         {
-            Set(bgm, S.bgm); Set(sfx, S.sfx);
+            Set(bgm, S.bgm); Set(sfx, S.sfx); Set(shake, Fx.ShakeOn);
             UIKit.LabelOf(lang).text = L.IsEn ? "English" : "한국어";
             UIKit.SetOn(lang, true);
             if (icons[0]) icons[0].sprite = Art.Kit(S.bgm ? "music" : "music_off");
             if (icons[1]) icons[1].sprite = Art.Kit(S.sfx ? "sound" : "sound_off");
+            if (icons[3]) icons[3].color = Fx.ShakeOn ? Color.white : new Color(0.55f, 0.5f, 0.45f);
         }
 
         static void Set(Button b, bool on)

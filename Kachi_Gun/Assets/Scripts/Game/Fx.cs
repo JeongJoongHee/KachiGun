@@ -53,6 +53,9 @@ namespace KachiGun
         {
             boom ??= new[] { Art.Get("Gen/boom_0", 100), Art.Get("Gen/boom_1", 100), Art.Get("Gen/boom_2", 100) };
             float sc = Mathf.Max(0.6f, radius * 0.85f);
+            // 11-14 요청_05: 미사일(등급 폭발) 그림이 커서 보스 체력 바를 가림 → 그림만 Missile_Fx_Scale 배 (피해 범위 splash 는 그대로)
+            float fxMul = grade < 0 ? 1f : Mathf.Clamp((float)Tables.C("Missile_Fx_Scale", 0.55), 0.2f, 1.5f);
+            sc *= fxMul;
             Anim a;
             if (grade < 0) { a = Spawn(boom, p, 0.45f, sc, 21000); a.fade = true; }
             else
@@ -63,7 +66,7 @@ namespace KachiGun
                 a = Spawn(boomG, p, 0.45f, sc, 21000); a.fade = true;
                 a.sr.color = Color.Lerp(c, Color.white, 0.12f);
                 glow ??= new[] { Art.Glow };
-                var g = Spawn(glow, p, 0.35f, radius * 2.6f + 0.6f, 20999);
+                var g = Spawn(glow, p, 0.35f, (radius * 2.6f + 0.6f) * fxMul, 20999);
                 g.fade = true; g.scale = -1;
                 g.sr.color = new Color(c.r, c.g, c.b, 0.85f);
             }
@@ -107,7 +110,19 @@ namespace KachiGun
         }
 
         float shake;
-        public void CamShake(float s) { shake = Mathf.Max(shake, s); }
+        /// <summary>11-14 요청_05: 설정 › 화면 진동 (미사일 터질 때 화면 흔들림). 기기 설정(PlayerPrefs) — 세이브 칸을 늘리지 않음</summary>
+        const string ShakeKey = "Kachi.Shake";
+        public static bool ShakeOn
+        {
+            get => PlayerPrefs.GetInt(ShakeKey, 1) == 1;
+            set { PlayerPrefs.SetInt(ShakeKey, value ? 1 : 0); PlayerPrefs.Save(); }
+        }
+        public float ShakeLeft => shake;
+        public void CamShake(float s)
+        {
+            if (!ShakeOn) { if (shake > 0) { shake = 0; if (Field.I) Cam.transform.position = new Vector3(0, 0, -10); } return; }
+            shake = Mathf.Max(shake, s);
+        }
 
         void Update()
         {
