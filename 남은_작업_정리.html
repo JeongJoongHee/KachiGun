@@ -72,6 +72,29 @@
   <tr><td>3</td><td><b>13번 AAB (1.0.13)</b> — 분대 자리 아래로 <span class="ok" style="display:inline">✔ 11-13 밤 구움 — <a href="#build13">아래 13번</a></span></td><td>개발</td><td>내부 테스트 → 폰에서 아이콘 · 카피바라 겹침 확인 → 프로덕션</td></tr>
 </table>
 <p class="note" style="margin:6px 0 0">밸런스 영향(시뮬레이터, 하루 4시간 · 광고 안 봄): 1-2 에서 사면 <b>챕터 15 도달 58일 → 4.5일</b>(1~14챕터를 거의 첫날 지나감) · 챕터 23 159 → 129일 · 챕터 150 1440 → 1412일(약 2%). 광고 보는 사람은 챕터 15 12.8 → 0.8일. 조정은 맨 마지막 밸런스 때 — 지금은 숫자만 알려 드림.</p></div>
+<div class="tip blue" style="margin-bottom:10px" id="build15"><b>11-14 오후 — 15번 AAB (1.0.15) 구움</b> (추가 요청/요청_05.docx 3개): <code>Kachi_Gun\Builds\kachizombie-1.0.15-15.aab</code> 63.8MB + 개발용 APK <code>kachizombie-1.0.15-15-debug.apk</code>(테스트 광고). 들어간 것 = 14번 것 전부 + <b>설정 › 화면 진동 켜짐/꺼짐</b>(미사일이 터질 때 화면 흔들림 · 폰마다 기억, 세이브와 따로) · <b>스테이지·보스 알림을 맨 위 카피바라 머리 위로</b>(말풍선과 안 겹침 · 다른 안내 글은 가운데 그대로 · Config <code>Banner_Capy_Gap</code> 40) · <b>미사일 폭발 그림 0.55배</b>(보스 체력 바 아래에서 끝남 · 피해 범위는 그대로 · Config <code>Missile_Fx_Scale</code>, 1 = 예전). 세이브 판 그대로(3).
+<br>점검: aab_check 모두 통과(패키지 · AD_ID · BILLING · AdMob · Play 게임즈 APP_ID · 64비트 · 서명 · 앱 이름) · bundletool versionCode <b>15</b> · 1.0.15 · <b>권한 · 화면 목록 14번과 같음</b> · AAB 안에 새 코드 들어감 · 자동 시험 237줄 errors=0 · 캡처 21a(설정 화면 진동 꺼짐) · 21b(보스 등장 알림 + 말풍선) · 20a(스테이지 알림) · 21d/21e(미사일 폭발 전·뒤).
+<br><b>14번을 아직 프로덕션에 안 냈으면</b> 14번은 건너뛰고 15번만 내면 됨(15번에 14번 것이 다 들어 있음). 14번이 검토 중이면 그대로 두고 통과 뒤 15번.
+<table style="margin-top:8px">
+  <tr><th style="width:44px">순서</th><th>할 일</th><th style="width:80px">누가</th><th style="width:200px">끝나면</th></tr>
+  <tr><td>1</td><td>Play Console › 테스트 및 출시 › <b>내부 테스트</b> › [새 버전 만들기] → <code>kachizombie-1.0.15-15.aab</code> → 출시 노트 = 아래 [복사] 상자 → [다음] → [저장 및 출시]</td><td>직접</td><td>내부 테스터 폰에 1.0.15</td></tr>
+  <tr><td>2</td><td>폰에서 확인: 설정 › 화면 진동 [꺼짐] → 미사일 총알이 터져도 화면이 안 흔들림 · 스테이지 넘어갈 때 / 보스 나올 때 알림이 맨 위 카피바라 위에 뜨고 말풍선과 안 겹침 · 보스에 미사일이 터질 때 체력 바가 보임 (14번을 안 냈으면 14번 확인 항목도 같이: 출석 7칸 · 합성 · 첫 구매 2배)</td><td>보기</td><td>이상 없으면 3번 · 알림 높이·폭발 크기는 Config 숫자 하나로 조절</td></tr>
+  <tr><td>3</td><td>테스트 및 출시 › <b>프로덕션</b> › [새 버전 만들기] → [라이브러리에서 추가] → <b>15 (1.0.15)</b> → 같은 출시 노트 → 검토 → <b>[프로덕션 트랙으로 출시 시작]</b>까지 (게시 개요에 "15 (1.0.15) 전체 출시" 줄 확인)</td><td>직접</td><td>검토 몇 시간 ~ 1~3일 · 통과하면 바로 나감</td></tr>
+</table>
+<p style="margin:8px 0 2px"><b>출시 노트</b> (한국어 · 영어 둘 다 · 언어 태그 포함 통째로 붙여 넣기)</p>
+<ul class="copy-list" data-plain="한국어 123자 · 영어 229자 (각 500자 안)"><li><span class="t" style="white-space:pre-line;display:block">&lt;ko-KR&gt;
+1.0.15 업데이트
+- 설정에서 화면 진동(흔들림)을 끌 수 있어요
+- 스테이지·보스 알림이 카피바라 말풍선과 겹치지 않게 위로 옮겼어요
+- 미사일 폭발 효과를 줄여 보스 체력이 잘 보여요
+&lt;/ko-KR&gt;
+&lt;en-US&gt;
+Version 1.0.15
+- Screen shake can now be turned off in Settings
+- Stage and boss alerts moved up so they no longer cover the capybaras' speech bubbles
+- Smaller missile explosions so the boss HP bar stays visible
+&lt;/en-US&gt;</span></li></ul>
+<p class="note" style="margin:6px 0 0">14번을 안 내고 15번만 낸다면 출시 노트에 14번 줄(출석 7일 · 같은 등급 합성 · 첫 구매 2배 · 새 대사)도 위 상자 앞에 합쳐 넣는 것을 추천 — 사용자가 받는 업데이트는 하나라서. 지난 판 14번 AAB 는 Builds 에 그대로 있음.</p></div>
 <div class="tip blue" style="margin-bottom:10px" id="build14"><b>11-14 — 14번 AAB (1.0.14) 구움</b>: <code>Kachi_Gun\Builds\kachizombie-1.0.14-14.aab</code> 63.8MB + 개발용 APK <code>kachizombie-1.0.14-14-debug.apk</code>(테스트 광고). 들어간 것 = 13번 것 전부 + <b>출석 7일</b>(100·200·300·500·700·1,000·1,500) · <b>같은 등급이면 종류가 달라도 합성</b> · 총알 관리 창 <b>"※ 뽑기는 무조건 D 등급 총알만 나옵니다"</b> · <b>다이아 상품 첫 구매 1번 2배</b>(상품마다 · 상점 딱지 · 구매 알림) · <b>말풍선 대사 19개</b>(표 84줄). 세이브 판 그대로(3 — 첫 구매 기록은 iapOnce 에 "first2x:상품 ID").
 <br>점검: aab_check 모두 통과(패키지 · AD_ID · BILLING · AdMob · Play 게임즈 APP_ID · 64비트 · 서명 · 앱 이름) · bundletool versionCode <b>14</b> · 1.0.14 · <b>권한 · 화면 목록 13번과 같음</b> · AAB 안에 새 코드 들어감 · 자동 시험 233줄 errors=0 · Play Console 상품 설정은 안 바꿔도 됨(2배는 게임이 줌).
 <br><b>13번을 아직 프로덕션에 안 냈으면</b> 13번은 건너뛰고 14번만 내면 됨(14번에 13번 고침이 들어 있음). 13번이 검토 중이면 그대로 두고 통과 뒤 14번.
