@@ -1,0 +1,136 @@
+<!doctype html>
+<html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>판타지 좀비 15종</title><style>
+:root{--bg:#fbf7ef;--fg:#3b281c;--mut:#7a6a5c;--line:#e3d8c6;--card:#fff;--acc:#a8642f}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--fg);font-family:"Malgun Gothic",sans-serif;margin:0;padding:24px 16px;line-height:1.6}
+main{max-width:980px;margin:auto} h1{font-size:24px;margin:0 0 4px} h2{font-size:19px;margin:30px 0 8px;color:var(--acc)}
+.mut{color:var(--mut);font-size:14px} code{background:#f1e8d8;padding:1px 5px;border-radius:4px;font-size:13px}
+.box{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:10px 16px;margin:12px 0;font-size:14.5px}
+.box.warn{background:#fff6e6;border-color:#f0cf96}
+ul.todo{list-style:none;padding:0;margin:0}
+ul.todo>li{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px 14px;margin:12px 0}
+ul.todo>li.checked{border-color:#9cc47e;background:#f6fbef}
+.row{display:flex;align-items:flex-start;gap:10px}
+.row label{flex:1;display:flex;gap:10px;align-items:flex-start;cursor:pointer}
+.row input{width:22px;height:22px;margin-top:4px;flex:none;accent-color:#6aa84f}
+.t{font-weight:700;font-size:17px} .id{font-weight:400;font-size:12px;color:var(--mut);font-family:Consolas,monospace}
+.pics{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin:8px 0}
+.pics img{max-width:100%;border-radius:10px;border:1px solid var(--line)} .pics img.walk{width:180px}
+.meta{font-size:14px;color:var(--fg)}
+.pen{border:1px solid var(--line);background:#faf5ea;border-radius:8px;font-size:13px;padding:2px 8px;cursor:pointer;color:var(--fg);flex:none}
+li.has-note .pen{background:#fde9c8}
+.notebox{display:none;margin-top:8px} li.open .notebox{display:block}
+.notebox textarea{width:100%;min-height:60px;border:1px solid var(--line);border-radius:8px;padding:6px 8px;font:inherit;font-size:14px}
+.hint{font-size:12px;color:var(--mut)}
+table{border-collapse:collapse;width:100%;font-size:13.5px;margin:6px 0}
+th,td{border:1px solid var(--line);padding:4px 8px;text-align:left} th{background:#f4ecdf}
+#bar{position:sticky;top:0;background:var(--bg);padding:8px 0;z-index:2;border-bottom:1px solid var(--line)}
+</style></head><body><main>
+<h1>판타지 몬스터 좀비 15종 (일반 12 · 보스 3)</h1>
+<div class="mut">2026-11-15 · 그림 = 게임 그림 그대로(왼쪽 큰 그림 = 원래 초록, 오른쪽 작은 셋 = 챕터 색 붉은·푸르딩딩·보라) · 움직임 = 뼈대 미리보기 · 체크 = "이대로 좋음", ✎ 의견 = 고칠 점</div>
+<div id="bar"><span id="stat" class="mut"></span></div>
+
+<div class="box warn"><b>먼저 알려 드릴 것 / 제 해석</b>
+<ol>
+<li><b>배치</b>: 11-11 에 정하신 "1~150 고르게 · 간단한 디자인은 앞 · 퀄 높은 디자인은 뒤" 규칙을 이어서, 이미 새 좀비가 들어간 챕터 6~56 다음 비어 있는 <b>챕터 60~148 에 8챕터마다 한 종</b>씩 넣었습니다. 처음 나오는 챕터에선 꼭 나오고 그 뒤 5챕터 동안 자주 나옵니다(예전 규칙 그대로). 지금 플레이어들이 초반이라 <b>당분간 직접 보기 어렵습니다</b> — 더 일찍 보이게 하려면 의견 칸에 "앞으로" 라고 적어 주세요 (예: 비어 있는 홀수 챕터 7~29).</li>
+<li><b>보스 3종</b>은 보스 순환에 넣었습니다: 오우거 → 하키 → 파라오 → 거대 설인 → 선장 → 방독면 → <b>미노타우르스(7) → 와이번(8) → 용(9)</b> → 다시 오우거. 그래서 <b>챕터 7부터 나오는 보스 순서가 바뀝니다</b>(보스 던전도 같은 순서).</li>
+<li><b>설인 좀비</b>는 이미 보스로 있어서, 새 일반 좀비를 "설인 좀비"(털 덥수룩)로 하고 원래 보스 이름을 <b>"거대 설인"</b>으로 바꿨습니다.</li>
+<li><b>⚠ 비홀더</b>: "비홀더(Beholder)"는 D&amp;D 회사가 자기 고유 몬스터로 지키는 이름·모양입니다(일반 판타지 몬스터와 달리 공개 규칙에서도 빠져 있음). 그래서 모양은 "몸 자체가 커다란 눈알 + 초록 살 눈꺼풀 + 촉수"로 따로 그렸고(눈 달린 촉수 없음), 표 이름은 말씀하신 "비홀더 좀비" 그대로 두었습니다. 스토어에 내는 게임이라 <b>"눈알 좀비" 같은 이름으로 바꾸시길 추천</b>합니다 — 의견 칸에 원하는 이름을 적어 주세요. (처음 그린 초록 둥근 몸 + 외눈 모양은 유명 애니메이션 캐릭터와 닮아서 바꿨습니다)</li>
+<li>체력·골드·빠르기·나올 비중은 <b>임시값</b>입니다 (밸런스는 마지막에).</li>
+</ol></div>
+
+<ul class="todo">
+<li data-id="z-skeleton"><label><input type="checkbox"><span class="t">해골 좀비 <span class="id">skeleton</span></span></label>
+<div class="pics"><img src="좀비_추가_1115_그림/skeleton.jpg" alt="해골 좀비 (원래 · 붉은 · 푸르딩딩 · 보라)"><img class="walk" src="좀비_추가_1115_그림/skeleton_walk.gif" alt="해골 좀비 움직임"></div>
+<div class="meta">챕터 <b>60</b>부터 (오염 구역) · 일반 · 체력 x0.8 · 골드 x0.9 · 빠르기 1.1 · 크기 1 · 움직임: 걷기</div>
+<div class="meta">뼈만 남은 몸 · 빈 눈구멍에 작은 빛 · 피부가 없어 색 변형이 안 붙음</div></li>
+<li data-id="z-dog"><label><input type="checkbox"><span class="t">개 좀비 <span class="id">dog</span></span></label>
+<div class="pics"><img src="좀비_추가_1115_그림/dog.jpg" alt="개 좀비 (원래 · 붉은 · 푸르딩딩 · 보라)"><img class="walk" src="좀비_추가_1115_그림/dog_walk.gif" alt="개 좀비 움직임"></div>
+<div class="meta">챕터 <b>68</b>부터 (오염된 해안) · 고속 · 체력 x0.7 · 골드 x0.9 · 빠르기 1.5 · 크기 0.9 · 움직임: 네발</div>
+<div class="meta">찢어진 귀 · 빨간 목걸이 · 혀 · 갈비뼈</div></li>
+<li data-id="z-vampire"><label><input type="checkbox"><span class="t">뱀파이어 좀비 <span class="id">vampire</span></span></label>
+<div class="pics"><img src="좀비_추가_1115_그림/vampire.jpg" alt="뱀파이어 좀비 (원래 · 붉은 · 푸르딩딩 · 보라)"><img class="walk" src="좀비_추가_1115_그림/vampire_walk.gif" alt="뱀파이어 좀비 움직임"></div>
+<div class="meta">챕터 <b>76</b>부터 (얼어붙은 설원) · 강습 · 체력 x1.3 · 골드 x1.3 · 빠르기 1.1 · 크기 1 · 움직임: 걷기</div>
+<div class="meta">높은 깃 망토(안 붉은색) · 넘긴 머리 · 송곳니</div></li>
+<li data-id="z-werewolf"><label><input type="checkbox"><span class="t">늑대인간 좀비 <span class="id">werewolf</span></span></label>
+<div class="pics"><img src="좀비_추가_1115_그림/werewolf.jpg" alt="늑대인간 좀비 (원래 · 붉은 · 푸르딩딩 · 보라)"><img class="walk" src="좀비_추가_1115_그림/werewolf_walk.gif" alt="늑대인간 좀비 움직임"></div>
+<div class="meta">챕터 <b>84</b>부터 (오염 구역) · 강습 · 체력 x1.5 · 골드 x1.4 · 빠르기 1.25 · 크기 1 · 움직임: 걷기</div>
+<div class="meta">늑대 머리(초록 주둥이) · 체크 셔츠 · 맨발 발톱</div></li>
+<li data-id="z-spider"><label><input type="checkbox"><span class="t">거대 거미 좀비 <span class="id">spider</span></span></label>
+<div class="pics"><img src="좀비_추가_1115_그림/spider.jpg" alt="거대 거미 좀비 (원래 · 붉은 · 푸르딩딩 · 보라)"><img class="walk" src="좀비_추가_1115_그림/spider_walk.gif" alt="거대 거미 좀비 움직임"></div>
+<div class="meta">챕터 <b>92</b>부터 (오염된 해안) · 고속 · 체력 x1.1 · 골드 x1.2 · 빠르기 1.35 · 크기 1.05 · 움직임: 떠서 다리 흔들림</div>
+<div class="meta">보라 몸에 초록 꿰맨 무늬 · 눈 여섯 · 다리 여덟</div></li>
+<li data-id="z-mimic"><label><input type="checkbox"><span class="t">미믹 좀비 <span class="id">mimic</span></span></label>
+<div class="pics"><img src="좀비_추가_1115_그림/mimic.jpg" alt="미믹 좀비 (원래 · 붉은 · 푸르딩딩 · 보라)"><img class="walk" src="좀비_추가_1115_그림/mimic_walk.gif" alt="미믹 좀비 움직임"></div>
+<div class="meta">챕터 <b>100</b>부터 (얼어붙은 설원) · 특수 · 체력 x1.4 · 골드 x2 · 빠르기 0.9 · 크기 0.9 · 움직임: 깡총</div>
+<div class="meta">보물 상자 · 이빨 · 긴 초록 혀 · 깡총깡총 · 골드 2배(임시)</div></li>
+<li data-id="z-golem"><label><input type="checkbox"><span class="t">골렘 좀비 <span class="id">golem</span></span></label>
+<div class="pics"><img src="좀비_추가_1115_그림/golem.jpg" alt="골렘 좀비 (원래 · 붉은 · 푸르딩딩 · 보라)"><img class="walk" src="좀비_추가_1115_그림/golem_walk.gif" alt="골렘 좀비 움직임"></div>
+<div class="meta">챕터 <b>105</b>부터 (사막 도로 · 이 배경에서 더 자주) · 탱커 · 체력 x2.4 · 골드 x2 · 빠르기 0.7 · 크기 1.15 · 움직임: 걷기</div>
+<div class="meta">돌덩이 몸 · 초록 이끼 · 빛나는 눈 · 체력 2.4배(임시)</div></li>
+<li data-id="z-centaur"><label><input type="checkbox"><span class="t">켄타우로스 좀비 <span class="id">centaur</span></span></label>
+<div class="pics"><img src="좀비_추가_1115_그림/centaur.jpg" alt="켄타우로스 좀비 (원래 · 붉은 · 푸르딩딩 · 보라)"><img class="walk" src="좀비_추가_1115_그림/centaur_walk.gif" alt="켄타우로스 좀비 움직임"></div>
+<div class="meta">챕터 <b>116</b>부터 (오염된 해안) · 강습 · 체력 x1.6 · 골드 x1.5 · 빠르기 1.3 · 크기 1.1 · 움직임: 네발</div>
+<div class="meta">말 몸 + 사람 몸통 · 활</div></li>
+<li data-id="z-yetiz"><label><input type="checkbox"><span class="t">설인 좀비 <span class="id">yetiz</span></span></label>
+<div class="pics"><img src="좀비_추가_1115_그림/yetiz.jpg" alt="설인 좀비 (원래 · 붉은 · 푸르딩딩 · 보라)"><img class="walk" src="좀비_추가_1115_그림/yetiz_walk.gif" alt="설인 좀비 움직임"></div>
+<div class="meta">챕터 <b>124</b>부터 (얼어붙은 설원 · 이 배경에서 더 자주) · 중갑 · 체력 x1.8 · 골드 x1.6 · 빠르기 0.85 · 크기 1 · 움직임: 걷기</div>
+<div class="meta">하늘빛 흰 털 · 고드름. 원래 보스 &quot;설인 좀비&quot;는 &quot;거대 설인&quot;으로 이름만 바꿈</div></li>
+<li data-id="z-cyclops"><label><input type="checkbox"><span class="t">사이클롭스 좀비 <span class="id">cyclops</span></span></label>
+<div class="pics"><img src="좀비_추가_1115_그림/cyclops.jpg" alt="사이클롭스 좀비 (원래 · 붉은 · 푸르딩딩 · 보라)"><img class="walk" src="좀비_추가_1115_그림/cyclops_walk.gif" alt="사이클롭스 좀비 움직임"></div>
+<div class="meta">챕터 <b>132</b>부터 (오염 구역) · 엘리트 · 체력 x2.2 · 골드 x2 · 빠르기 0.85 · 크기 1.2 · 움직임: 걷기</div>
+<div class="meta">이마에 큰 외눈 · 몽둥이 · 크기 1.2배</div></li>
+<li data-id="z-kraken"><label><input type="checkbox"><span class="t">크라켄 좀비 <span class="id">kraken</span></span></label>
+<div class="pics"><img src="좀비_추가_1115_그림/kraken.jpg" alt="크라켄 좀비 (원래 · 붉은 · 푸르딩딩 · 보라)"><img class="walk" src="좀비_추가_1115_그림/kraken_walk.gif" alt="크라켄 좀비 움직임"></div>
+<div class="meta">챕터 <b>140</b>부터 (오염된 해안 · 이 배경에서 더 자주) · 탱커 · 체력 x1.9 · 골드 x1.7 · 빠르기 0.8 · 크기 1.05 · 움직임: 떠서 다리 흔들림</div>
+<div class="meta">큰 머리 · 다리 여섯(빨판) · 앞으로 뻗은 다리</div></li>
+<li data-id="z-beholder"><label><input type="checkbox"><span class="t">비홀더 좀비 <span class="id">beholder</span></span></label>
+<div class="pics"><img src="좀비_추가_1115_그림/beholder.jpg" alt="비홀더 좀비 (원래 · 붉은 · 푸르딩딩 · 보라)"><img class="walk" src="좀비_추가_1115_그림/beholder_walk.gif" alt="비홀더 좀비 움직임"></div>
+<div class="meta">챕터 <b>148</b>부터 (얼어붙은 설원) · 특수 · 체력 x1.4 · 골드 x1.4 · 빠르기 0.9 · 크기 0.95 · 움직임: 떠서 촉수 흔들림</div>
+<div class="meta">몸 자체가 큰 눈알 + 초록 살 눈꺼풀 + 촉수. ⚠ 이름 확인 필요 (아래)</div></li>
+<li data-id="z-minotaur"><label><input type="checkbox"><span class="t">미노타우르스 좀비 <span class="id">minotaur</span></span></label>
+<div class="pics"><img src="좀비_추가_1115_그림/minotaur.jpg" alt="미노타우르스 좀비 (원래 · 붉은 · 푸르딩딩 · 보라)"><img class="walk" src="좀비_추가_1115_그림/minotaur_walk.gif" alt="미노타우르스 좀비 움직임"></div>
+<div class="meta">보스 · 챕터 7, 16, 25, 34 … (9챕터마다) · 움직임: 걷기</div>
+<div class="meta">소 머리 · 코뚜레 · 양날 도끼</div></li>
+<li data-id="z-wyvern"><label><input type="checkbox"><span class="t">와이번 좀비 <span class="id">wyvern</span></span></label>
+<div class="pics"><img src="좀비_추가_1115_그림/wyvern.jpg" alt="와이번 좀비 (원래 · 붉은 · 푸르딩딩 · 보라)"><img class="walk" src="좀비_추가_1115_그림/wyvern_walk.gif" alt="와이번 좀비 움직임"></div>
+<div class="meta">보스 · 챕터 8, 17, 26, 35 … (9챕터마다) · 움직임: 날개 퍼덕임</div>
+<div class="meta">보라 날개 · 두 다리 · 긴 꼬리 · 날개 퍼덕임</div></li>
+<li data-id="z-dragon"><label><input type="checkbox"><span class="t">용 좀비 <span class="id">dragon</span></span></label>
+<div class="pics"><img src="좀비_추가_1115_그림/dragon.jpg" alt="용 좀비 (원래 · 붉은 · 푸르딩딩 · 보라)"><img class="walk" src="좀비_추가_1115_그림/dragon_walk.gif" alt="용 좀비 움직임"></div>
+<div class="meta">보스 · 챕터 9, 18, 27, 36 … (9챕터마다) · 움직임: 날개 퍼덕임</div>
+<div class="meta">붉은 날개 · 뿔 두 쌍 · 등 가시 · 앞발 · 입가 연기</div></li>
+</ul>
+
+<h2>도구</h2>
+<div class="mut"><code>tools/doodle_zombies3.py</code> (그림, PowerShell 에서 <code>python tools/doodle_art.py znew3</code>) · <code>tools/rig_gen.py</code> (뼈대) · <code>tools/zombie_add_1115.py</code> (표: 챕터·보스 순환·이름) · <code>tools/zombie_review_1115.py</code> (이 문서)</div>
+
+<script>
+(function(){
+  // 저장 형식: {"c":{항목id:true}, "n":{항목id:"의견"}} — tools/todo_checks.py 좀비_추가_1115.html 로 읽음
+  var KEY='kachigun-zombie-1115', st={c:{},n:{}};
+  try{ var v=JSON.parse(localStorage.getItem(KEY)||'{}'); st.c=v.c||{}; st.n=v.n||{}; }catch(e){}
+  var items=document.querySelectorAll('ul.todo > li[data-id]');
+  function save(){ try{ localStorage.setItem(KEY,JSON.stringify(st)); }catch(e){} stat(); }
+  function stat(){ var c=0,n=0; items.forEach(function(li){ if(st.c[li.dataset.id]) c++; if((st.n[li.dataset.id]||'').trim()) n++; });
+    document.getElementById('stat').textContent='체크 '+c+' / '+items.length+' · 의견 '+n+'  (이 브라우저에 저장 → "체크했어" 라고 알려 주세요)'; }
+  items.forEach(function(li){
+    var id=li.dataset.id, label=li.querySelector('label'), cb=li.querySelector('input');
+    var row=document.createElement('div'); row.className='row'; li.insertBefore(row,label); row.appendChild(label);
+    var pen=document.createElement('button'); pen.type='button'; pen.className='pen'; pen.textContent='✎ 의견'; row.appendChild(pen);
+    var box=document.createElement('div'); box.className='notebox';
+    var ta=document.createElement('textarea'); ta.placeholder='고칠 점 (예: 더 무섭게 · 색 · 이름 · 더 앞 챕터에)';
+    var hint=document.createElement('div'); hint.className='hint'; hint.textContent='적는 대로 이 브라우저에 저장됩니다.';
+    box.appendChild(ta); box.appendChild(hint); li.appendChild(box);
+    cb.checked=!!st.c[id]; ta.value=st.n[id]||''; li.classList.toggle('checked',cb.checked);
+    function mark(){ li.classList.toggle('has-note',!!ta.value.trim()); pen.textContent=ta.value.trim()?'✎ 의견 있음':'✎ 의견'; }
+    mark(); if(ta.value.trim()) li.classList.add('open');
+    cb.addEventListener('change',function(){ st.c[id]=cb.checked; li.classList.toggle('checked',cb.checked); save(); });
+    ta.addEventListener('input',function(){ if(ta.value.trim()) st.n[id]=ta.value; else delete st.n[id]; mark(); save(); });
+    pen.addEventListener('click',function(){ li.classList.toggle('open'); if(li.classList.contains('open')) ta.focus(); });
+  });
+  stat();
+})();
+</script>
+</main></body></html>

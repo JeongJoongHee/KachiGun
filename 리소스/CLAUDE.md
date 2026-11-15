@@ -1,5 +1,11 @@
 # 카치건 (좀비 키우기) — 세로 방치형 분대 슈팅, Unity 6000.0.84f1 · 2D URP
 
+## ▶ 재개 메모 (2026-11-15 오후 — 판타지 몬스터 좀비 15종 추가 · **사용자 확인 대기 = `좀비_추가_1115.html` + `연출_비교.html`** · 빌드 안 함)
+- **11-15 사용자 요청 "해골·개·뱀파이어·늑대인간·미노타우르스(보스)·켄타우로스·골렘·미믹·크라켄·거대 거미·비홀더·사이클롭스·설인·와이번(보스)·용(보스) 좀비 추가해서 배치"** → 그림 · 뼈대 · 표 · 시험 errors=0 · 확인 문서 `좀비_추가_1115.html`(+ `좀비_추가_1115_그림/`, 키 kachigun-zombie-1115)
+  - 그림 tools/doodle_zombies3.py (PowerShell `python tools/doodle_art.py znew3`) · 뼈대 rig_gen.py: 걷기 7(skeleton·vampire·werewolf·golem·cyclops·yetiz·minotaur) · 네발 crawl 2(dog·centaur) · robe 4(mimic=Hop·kraken·beholder·spider — 거미는 crawl 이면 다리가 찢어져 robe) · robe+날개 2(wyvern·dragon, anim W = 퍼덕임°, Rig.cs Wings())
+  - 표 tools/zombie_add_1115.py: 일반 12종 MinChapter 60~148 (8챕터마다, 11-11 "1~150 고르게" 규칙 이음 — 지금 플레이어는 당분간 못 봄, 문서에 "앞으로" 선택지) · 보스 순환 6 → 9 (챕터 7 minotaur · 8 wyvern · 9 dragon, Tables.BossCycle = 9 — 표 끝 너머·보스 던전도) · 기존 보스 yeti 이름 "거대 설인" ↔ 새 일반 yetiz "설인 좀비" · 숫자는 임시값
+  - ⚠ "비홀더"는 D&D 고유 몬스터 이름 → 모양은 "몸 자체가 눈알 + 초록 눈꺼풀 + 촉수"로 따로 그림(처음 그린 초록 외눈 둥근 몸은 유명 애니 캐릭터와 닮아 바꿈), 표 이름은 사용자 말대로 두고 "눈알 좀비" 같은 이름으로 바꾸길 추천 — 답 대기
+  - csv: xlsx2csv 반올림 잡음 → Stage_Table · Boss_Dungeon 은 Boss_Id 칸만 바꿔 다시 씀 (Challenge·Chapter_Summary·Gold_Upgrade 되돌림)
 ## ▶ 재개 메모 (2026-11-15 — 연출 바꾸기: 카피바라 전진 · 보스만 + 보스 말풍선 · 보스 처치 뒤 다음 맵 이동 · **사용자 확인 대기 = `연출_비교.html`** · 빌드 안 함)
 - **11-15 사용자 요청 "지금과 반대로 카피바라가 전진 · 좀비떼는 뭉쳐 있게 · 보스전엔 보스만 + 보스 말풍선 · 보스를 잡으면 다음 맵으로 이동"** → 구현 · 시험 252줄 errors=0 · 고치기 전·뒤 영상 `연출_비교.html`(+ `연출_비교_그림/`, 체크·의견 키 kachigun-flow-1115 → `python tools/todo_checks.py 연출_비교.html`)
   - 전진(Config `Advance_On` 1): 카메라 그대로 · 카피바라는 제자리 걷기 · 맵 판 4장(짝수는 좌우 뒤집음, 양 끝 테두리 5px 잘라 냄)이 `Advance_Speed` 1.6 으로 흐름 (Field.Scroll — 좀비도 같이 밀림) · 어느 카피바라든 사정거리 x `Advance_Engage` 0.5(= 화난 얼굴 거리) 안에 좀비 → 멈춰 쏨

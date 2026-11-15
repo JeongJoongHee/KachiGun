@@ -71,6 +71,20 @@ ZOMBIE_RIG = {
     'yeti':     dict(neck=172, hip=298, crotch=316, knee=336, split=206, armB=([(84, 200, 130, 316)], (150, 196)), armF=([(292, 200, 346, 290), (294, 100, 392, 292)], (262, 200)), legA=11, swing=6),
     'captain':  dict(neck=172, hip=298, crotch=306, knee=334, split=206, armB=([(84, 200, 130, 316)], (150, 196)), armF=([(292, 200, 346, 286), (280, 118, 386, 384)], (262, 200)), legA=11, swing=5),
     'gasgiant': dict(neck=172, hip=298, crotch=306, knee=334, split=206, armB=([(84, 200, 130, 316)], (150, 196)), armF=([(292, 200, 352, 292)], (262, 200)), legA=12, swing=6),
+    # 11-15 판타지 몬스터 좀비 15종 (tools/doodle_zombies3.py) — 걷기 · 떠다니기(robe) · 날개(robe + wing = 앞뒤 날개가 팔 상자, 퍼덕임 W°)
+    'skeleton': dict(neck=238, hip=300, crotch=312, knee=338, split=201, armB=([(238, 232, 316, 256)], (226, 247)), armF=([(238, 256, 334, 284)], (218, 266)), legA=14, swing=6),
+    'vampire':  dict(neck=238, hip=300, crotch=312, knee=338, split=201, armB=([(238, 232, 316, 256)], (226, 247)), armF=([(238, 256, 324, 282)], (218, 266)), legA=13, swing=5),
+    'werewolf': dict(neck=238, hip=300, crotch=312, knee=338, split=201, armB=([(238, 232, 316, 256)], (226, 247)), armF=([(238, 254, 330, 284)], (218, 266)), legA=16, swing=7),
+    'golem':    dict(neck=200, hip=300, crotch=310, knee=334, split=207, armB=([(238, 222, 330, 256)], (226, 244)), armF=([(240, 256, 334, 292)], (222, 262)), legA=10, swing=4),
+    'cyclops':  dict(neck=240, hip=300, crotch=312, knee=338, split=201, armB=([(238, 232, 316, 256)], (226, 247)), armF=([(238, 256, 324, 282), (300, 112, 380, 292)], (218, 266)), legA=12, swing=5),
+    'yetiz':    dict(neck=238, hip=300, crotch=316, knee=340, split=201, armB=([(238, 230, 316, 260)], (226, 247)), armF=([(238, 252, 324, 284)], (218, 266)), legA=13, swing=6),
+    'minotaur': dict(neck=180, hip=298, crotch=306, knee=334, split=206, armB=([(84, 200, 130, 316)], (150, 196)), armF=([(292, 210, 350, 296), (296, 70, 400, 300)], (262, 214)), legA=11, swing=5),
+    'mimic':    dict(neck=232, hip=300, crotch=999, knee=340, split=210, armB=None, armF=None, legA=0, swing=0, robe=True, robeK=0.3),
+    'kraken':   dict(neck=200, hip=280, crotch=999, knee=330, split=212, armB=None, armF=([(276, 220, 372, 264)], (262, 252)), legA=0, swing=6, robe=True, robeK=1.0),
+    'beholder': dict(neck=150, hip=270, crotch=999, knee=320, split=212, armB=None, armF=None, legA=0, swing=0, robe=True, robeK=1.2),
+    'spider':   dict(neck=230, hip=296, crotch=999, knee=340, split=200, armB=None, armF=None, legA=0, swing=0, robe=True, robeK=0.7),   # 다리가 겹쳐 crawl 은 찢어짐 → 다리 전체가 같이 흔들림
+    'wyvern':   dict(neck=210, hip=290, crotch=999, knee=334, split=210, armB=([(44, 50, 186, 236)], (176, 226)), armF=([(196, 28, 294, 112), (204, 112, 272, 196)], (222, 222)), legA=0, swing=0, robe=True, robeK=0.8, wing=16),
+    'dragon':   dict(neck=200, hip=292, crotch=999, knee=336, split=205, armB=([(20, 24, 178, 236)], (168, 226)), armF=([(188, 6, 258, 112), (258, 6, 304, 78), (196, 112, 272, 186)], (214, 222)), legA=0, swing=0, robe=True, robeK=0.8, wing=12),
 }
 CRAWL_RIG = {
     # 기어 다니는 좀비: 몸이 가로 — legs(뒤로 끌리는 다리) · pelvis(엉덩이) · spine(몸) · head · armB/armF(번갈아 뻗는 팔)
@@ -79,6 +93,11 @@ CRAWL_RIG = {
                     armB=([(196, 344, 238, 380)], (202, 326)), armF=([(242, 344, 300, 380)], (240, 332))),
     'bucket':  dict(hip=(122, 330), legs_x=116, neck_x=196, arm_top=338,
                     armB=([(196, 344, 238, 380)], (202, 326)), armF=([(242, 344, 300, 380)], (240, 332))),
+    # 11-15 네발·거미: 앞다리 = 팔 상자(번갈아 뻗음) · 뒷다리 = legs · 머리(사람 몸통) = neck_x 오른쪽 · arm_top 위
+    'dog':     dict(hip=(122, 268), legs_x=132, neck_x=268, arm_top=268,
+                    armB=([(222, 276, 262, 380)], (244, 272)), armF=([(266, 280, 308, 380)], (282, 276))),
+    'centaur': dict(hip=(126, 262), legs_x=136, neck_x=236, arm_top=250,
+                    armB=([(212, 266, 248, 380)], (228, 262)), armF=([(248, 272, 288, 380)], (264, 266))),
 }
 
 
@@ -326,6 +345,8 @@ def zombie_rig(name):
     rig.anim = {'A': p.get('legA', 18), 'S': p.get('swing', 5), 'L': 60.0, 'aF': 0.0, 'aB': 0.0}
     if p.get('robeK') is not None:
         rig.anim['R'] = p['robeK']      # 11-11 robe 흔들림 세기 (스키·강시 = 다리가 붙은 채 조금만)
+    if p.get('wing'):
+        rig.anim['W'] = p['wing']       # 11-15 날개 퍼덕임 세기(°) — 팔 상자 = 날개 (Rig.cs robe)
     if legs:
         band = (ys >= bottom - 14)
         for k, sel, px in (('aB', xs < p['split'], p['split'] - 10), ('aF', xs >= p['split'], p['split'] + 10)):
@@ -390,6 +411,10 @@ def pose_angles(kind, an, phase):
         out['robe2'] = (6 * R * math.sin(f - 0.9), 0, 0)
         out['spine'] = (-3 + 1.5 * math.sin(2 * f + 0.4), 0, 0)
         out['head'] = (2 - 2.5 * math.sin(2 * f - 0.6), 0, 0)
+        W = an.get('W', 0)
+        if W:   # 11-15 날개 퍼덕임 (게임 Rig.cs 와 같은 식)
+            out['armB'] = (W * math.sin(4 * f), 0, 0)
+            out['armF'] = (-W * math.sin(4 * f + 0.4), 0, 0)
     return out
 
 

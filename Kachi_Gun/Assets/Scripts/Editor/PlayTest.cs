@@ -978,7 +978,10 @@ namespace KachiGun.EditorTools
                     var BF = System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic;
                     string[] news = { "hatchet", "chainsaw", "bucketw", "helmet", "suit", "sport", "flag", "ghost", "miner", "fisher", "jason", "pharaoh",
                         "padding", "ski", "scientist", "patient", "hazmat", "tube", "cowboy", "biker", "camper", "delivery", "jiangshi", "chef", "student",
-                        "firefighter", "money", "drum", "shield", "yeti", "captain", "gasgiant" };
+                        "firefighter", "money", "drum", "shield", "yeti", "captain", "gasgiant",
+                        // 11-15 판타지 몬스터 좀비 15종 (일반 12 · 보스 3)
+                        "skeleton", "dog", "vampire", "werewolf", "spider", "mimic", "golem", "centaur", "yetiz", "cyclops", "kraken", "beholder",
+                        "minotaur", "wyvern", "dragon" };
                     int okArt = 0;
                     foreach (var id in news)
                     {
@@ -990,14 +993,25 @@ namespace KachiGun.EditorTools
                     Check(okArt == news.Length, $"새 좀비 {okArt}/{news.Length}종 표 줄 · 그림 · 뼈대");
                     int normal = 0, bosses = 0;
                     foreach (var zr2 in Tables.Zombies) { if (zr2.weight > 0) normal++; else bosses++; }
-                    Check(normal == 38 && bosses == 6, $"일반 좀비 {normal}종 · 보스 {bosses}종 (38 · 6)");
-                    // 보스: 챕터마다 ogre → jason → pharaoh → yeti → captain → gasgiant, 표 끝(150챕터) 너머도 이어서
-                    string[] cyc = { "ogre", "jason", "pharaoh", "yeti", "captain", "gasgiant" };
-                    bool bossOk = true;
-                    for (int c = 1; c <= 7; c++) bossOk &= Tables.Stage((c - 1) * 5 + 4).bossId == cyc[(c - 1) % 6];
-                    bossOk &= Tables.Stage(150 * 5 + 4).bossId == "ogre" && Tables.Stage(152 * 5 + 4).bossId == "pharaoh";
-                    bool raidOk = Tables.BossRaid(0).bossId == "ogre" && Tables.BossRaid(1).bossId == "jason" && Tables.BossRaid(155).bossId == cyc[155 % 6];
-                    Check(bossOk && raidOk, $"보스 순환: 챕터 1~7 · 151 · 153 / 보스 던전 Lv.1·2·156 ({Tables.Stage(152 * 5 + 4).bossId} · {Tables.BossRaid(155).bossId})");
+                    Check(normal == 50 && bosses == 9, $"일반 좀비 {normal}종 · 보스 {bosses}종 (50 · 9)");
+                    // 보스: 챕터마다 ogre → jason → pharaoh → yeti → captain → gasgiant → (11-15) minotaur → wyvern → dragon, 표 끝(150챕터) 너머도 이어서
+                    string[] cyc = { "ogre", "jason", "pharaoh", "yeti", "captain", "gasgiant", "minotaur", "wyvern", "dragon" };
+                    bool bossOk = Tables.BossCycle == cyc.Length;
+                    for (int c = 1; c <= 10; c++) bossOk &= Tables.Stage((c - 1) * 5 + 4).bossId == cyc[(c - 1) % cyc.Length];
+                    bossOk &= Tables.Stage(150 * 5 + 4).bossId == cyc[150 % cyc.Length] && Tables.Stage(152 * 5 + 4).bossId == cyc[152 % cyc.Length];
+                    bool raidOk = Tables.BossRaid(0).bossId == "ogre" && Tables.BossRaid(1).bossId == "jason" && Tables.BossRaid(8).bossId == "dragon" && Tables.BossRaid(155).bossId == cyc[155 % cyc.Length];
+                    Check(bossOk && raidOk, $"보스 순환 9종: 챕터 1~10 · 151 · 153 / 보스 던전 Lv.1·2·9·156 ({Tables.Stage(150 * 5 + 4).bossId} · {Tables.Stage(152 * 5 + 4).bossId} · {Tables.BossRaid(155).bossId})");
+                    // 11-15 새 좀비: 처음 나오는 챕터(58~150 에 8챕터마다) · 설인 이름 나눔 · 날개 · 미믹 깡총
+                    {
+                        int lo = 999, hi = 0; string where = "";
+                        foreach (var nid in new[] { "skeleton", "dog", "vampire", "werewolf", "spider", "mimic", "golem", "centaur", "yetiz", "cyclops", "kraken", "beholder" })
+                        { int mc = Tables.Zombie(nid).minChapter; lo = Mathf.Min(lo, mc); hi = Mathf.Max(hi, mc); where += nid + mc + " "; }
+                        var wy = RigData.Get("z_wyvern"); var dr = RigData.Get("z_dragon");
+                        Log("11-15 새 좀비 처음 나오는 챕터: " + where);
+                        Check(lo >= 58 && hi <= 150 && Tables.Zombie("yeti").name == "거대 설인" && Tables.Zombie("yetiz").name == "설인 좀비"
+                              && wy != null && wy.A("W") > 0 && dr != null && dr.A("W") > 0 && Tables.Zombie("mimic").Hop && RigData.Get("z_spider").kind == "robe" && RigData.Get("z_dog").kind == "crawl",
+                            $"11-15 새 좀비 12종 챕터 {lo}~{hi} · 보스 설인 = 거대 설인 · 와이번·용 날개 · 미믹 깡총 · 개 네발 · 거미 떠다님");
+                    }
                     // 나올 비중: 롱패딩(28챕터 설원에 처음) = 6 x 배경 1.5 x 새 얼굴 3 · 40챕터 숲 = 6 · 원래 좀비는 새 얼굴 비중 없음
                     var pad = Tables.Zombie("padding");
                     float w28 = GameManager.ZombieWeight(pad, 28, Tables.Chapter(28).biome), w40 = GameManager.ZombieWeight(pad, 37, Tables.Chapter(37).biome);
@@ -1021,8 +1035,8 @@ namespace KachiGun.EditorTools
                     var seenSet = new System.Collections.Generic.HashSet<string>(); int money = 0;
                     for (int i = 0; i < 6000; i++) { var pz = GameManager.PickZombie(80, 397); if (pz.id == "money") money++; else seenSet.Add(pz.id); }
                     bool inKinds = true; foreach (var id in seenSet) inKinds &= k80.Exists(k => k.id == id);
-                    Check(badN == 0 && debutMiss == 0 && allSeen.Count == 37 && same && inKinds && seenSet.Count == k80.Count && money > 0 && money < 120,
-                        $"한 스테이지 좀비 {minN}~{maxN}종 (1~750 스테이지) · 첫 등장 빠짐 {debutMiss} · 전체 {allSeen.Count}/37종 · 80챕터 한 스테이지 {seenSet.Count}종({string.Join(",", seenSet)}) · 돈가방 {money}/6000");
+                    Check(badN == 0 && debutMiss == 0 && allSeen.Count == 49 && same && inKinds && seenSet.Count == k80.Count && money > 0 && money < 120,
+                        $"한 스테이지 좀비 {minN}~{maxN}종 (1~750 스테이지) · 첫 등장 빠짐 {debutMiss} · 전체 {allSeen.Count}/49종 · 80챕터 한 스테이지 {seenSet.Count}종({string.Join(",", seenSet)}) · 돈가방 {money}/6000");
                     // 색: 챕터 1 초록 · 2 붉은 · 3 푸르딩딩 · 4 보라 / 꼭짓점 색에 숨김 · 쓰러져도 그대로
                     Check(GameManager.PickTint(1, true) == 0 && GameManager.PickTint(2, true) == 1 && GameManager.PickTint(3, true) == 2 && GameManager.PickTint(4, true) == 3,
                         "챕터 색: 1 초록 · 2 붉은 · 3 푸르딩딩 · 4 보라");
@@ -1105,6 +1119,32 @@ namespace KachiGun.EditorTools
                     yield return Wait(0.6f);
                     Capture("19f_new_zombies");
                     GM.ClearTargets();
+                    // 11-15 판타지 몬스터 좀비 15종 줄 세우기 (실제 크기 · 보스는 표 크기 1.7배 대신 1.2배) + 와이번 날개 퍼덕임
+                    {
+                        string[] f3 = { "skeleton", "dog", "vampire", "werewolf", "spider", "mimic", "golem", "centaur", "yetiz", "cyclops", "kraken", "beholder", "minotaur", "wyvern", "dragon" };
+                        Zombie wyz = null;
+                        for (int i = 0; i < f3.Length; i++)
+                        {
+                            int col = i % 4, rowN = i / 4;
+                            float x = Mathf.Lerp(-Field.I.ViewHalfW + 1.6f, Field.I.ViewHalfW - 1.6f, col / 3f);
+                            float y = Field.I.PlayTop - 2.6f - rowN * 3.4f;
+                            var zr4 = Tables.Zombie(f3[i]);
+                            var nz = Zombie.Spawn(zr4, new Vector2(x, y), 1e12, 0, zr4.weight > 0 ? 1f : 1.2f, zr4.weight <= 0, i % 4);
+                            nz.standStill = true;
+                            if (f3[i] == "wyvern") wyz = nz;
+                        }
+                        float minA = 999, maxA = -999;
+                        var wrv = wyz ? typeof(Zombie).GetField("rig", BF).GetValue(wyz) as RigView : null;
+                        var wing = wrv ? wrv.Bone("armF") : null;
+                        for (int i = 0; i < 40; i++)
+                        {
+                            if (wing) { float wa = Mathf.DeltaAngle(0, wing.localEulerAngles.z); minA = Mathf.Min(minA, wa); maxA = Mathf.Max(maxA, wa); }
+                            yield return Wait(0.03f);
+                        }
+                        Capture("19f3_fantasy_zombies");
+                        Check(wing != null && maxA - minA > 10f, $"11-15 와이번 날개 퍼덕임 {maxA - minA:0}° (1.2초 동안)");
+                        GM.ClearTargets();
+                    }
                     // 배경 판 4장 (챕터 색에 맞춤): 1 기본 · 2 황폐 · 3 세모 나무 · 4 죽은 나무
                     string[] maps = { "side_map", "side_map_waste", "side_map_pine", "side_map_dead" };
                     bool mapOk = true;

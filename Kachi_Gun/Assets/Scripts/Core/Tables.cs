@@ -281,6 +281,9 @@ namespace KachiGun
         // =====================================================================
         // 스테이지 · 챕터
         // =====================================================================
+        /// <summary>보스가 돌아가는 수 (11-11 6종 → 11-15 9종: + 미노타우르스 · 와이번 · 용). 표 끝 너머 보스도 이 주기로 — tools/zombie_add_1115.py BOSS_CYCLE 과 같게</summary>
+        public const int BossCycle = 9;
+
         public static StageRow Stage(int idx)
         {
             Load();
@@ -297,8 +300,8 @@ namespace KachiGun
             double hg = Math.Pow(last.hpGrowth, n), gg = Math.Pow(last.goldGrowth, n);
             return new StageRow
             {
-                // 11-11 보스는 6챕터마다 돌아감 → 표 끝 너머도 30스테이지(6챕터)씩 앞으로 당겨 같은 자리의 보스
-                idx = idx, chapter = idx / 5 + 1, sub = sub, boss = b.boss, bossId = b.boss ? Stage(idx - 30 * ((idx - last.idx + 29) / 30)).bossId : b.bossId,
+                // 11-11 보스는 BossCycle 챕터마다 돌아감 → 표 끝 너머도 BossCycle x 5 스테이지씩 앞으로 당겨 같은 자리의 보스
+                idx = idx, chapter = idx / 5 + 1, sub = sub, boss = b.boss, bossId = b.boss ? Stage(idx - BossCycle * 5 * ((idx - last.idx + BossCycle * 5 - 1) / (BossCycle * 5))).bossId : b.bossId,
                 quota = b.quota, maxAlive = b.maxAlive, spawn = b.spawn,
                 hp = b.hp * hg, gold = b.gold * gg, hpGrowth = last.hpGrowth, goldGrowth = last.goldGrowth,
                 bossHp = b.bossHp * hg, bossGold = b.bossGold * gg, bossScale = b.bossScale, bossTime = b.bossTime
@@ -356,7 +359,7 @@ namespace KachiGun
             var prev = bossRaids.Count > 1 ? bossRaids[^2] : last;
             int n = lv - last.lv;
             double g = prev.hp > 0 ? last.hp / prev.hp : 1.1;
-            var cyc = bossRaids.Find(b => b.lv == lv - 6 * ((n + 5) / 6));     // 11-11 보스 6마리가 레벨마다 돌아감
+            var cyc = bossRaids.Find(b => b.lv == lv - BossCycle * ((n + BossCycle - 1) / BossCycle));     // 11-11 보스가 레벨마다 돌아감 (11-15 9마리)
             return new BossRaidRow { lv = lv, bossId = cyc != null ? cyc.bossId : last.bossId, hp = last.hp * Math.Pow(g, n), time = last.time, scale = last.scale, reward = last.reward + last.rewardAdd * n, rewardAdd = last.rewardAdd };
         }
 

@@ -414,6 +414,8 @@ def zombies():
     Z.update(zombies_new())
     from doodle_zombies2 import zombies_new2     # 11-11 좀비 추가 제안 20종 (일반 17 · 보스 3)
     Z.update(zombies_new2())
+    from doodle_zombies3 import zombies_new3     # 11-15 판타지 몬스터 좀비 15종 (일반 12 · 보스 3)
+    Z.update(zombies_new3())
     return Z
 
 
@@ -672,8 +674,8 @@ def ogre():
     ])
 
 
-CRAWLERS = {'crawler', 'bucket'}     # 기어 다니는 좀비 (이미 누워 있음)
-MELTS = {'ghost'}                    # 11-11 유령 = 쓰러지지 않고 아래로 납작하게 꺼짐
+CRAWLERS = {'crawler', 'bucket', 'dog', 'centaur', 'spider'}     # 기어 다니는 좀비 (이미 누워 있음) · 11-15 네발·거미
+MELTS = {'ghost', 'mimic', 'kraken', 'beholder', 'wyvern', 'dragon'}   # 11-11 유령 = 쓰러지지 않고 아래로 납작하게 꺼짐 · 11-15 떠다니는·날개 보스
 
 
 def zombie_die_cell(a, crawl=False, melt=False):
@@ -965,6 +967,10 @@ if __name__ == '__main__':
         from doodle_zombies2 import NEW_ZOMBIES2
         pick = set(sys.argv[1:]) & set(NEW_ZOMBIES2) or set(NEW_ZOMBIES2)
         make_zombies(only=pick, preview='doodle_zombies_new2.png')
+    if 'znew3' in what:     # 11-15 판타지 몬스터 좀비 15종만 (tools/doodle_zombies3.py, 이름을 붙이면 그것만)
+        from doodle_zombies3 import NEW_ZOMBIES3
+        pick = set(sys.argv[1:]) & set(NEW_ZOMBIES3) or set(NEW_ZOMBIES3)
+        make_zombies(only=pick, preview='doodle_zombies_new3.png')
     if 'zdie' in what:
         remake_zombie_die()
     if 'map' in what:

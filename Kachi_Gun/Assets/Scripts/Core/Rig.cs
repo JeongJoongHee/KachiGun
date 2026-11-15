@@ -239,6 +239,7 @@ namespace KachiGun
                 }
                     Rot("spine", -3 + 1.5f * S(2 * f + 0.4f));
                     Rot("head", 2 - 2.5f * S(2 * f - 0.6f));
+                    Wings(4 * f);
                     break;
                 case "crawl":
                 {
@@ -252,6 +253,15 @@ namespace KachiGun
                     break;
                 }
             }
+        }
+
+        /// <summary>11-15 날개 퍼덕임 (와이번·용 — 뼈대 파일 anim W = 세기°, 팔 상자 = 날개). 날개가 없으면 아무것도 안 함</summary>
+        void Wings(float ph)
+        {
+            float W = data.A("W", 0f);
+            if (W <= 0f) return;
+            AddRot("armB", W * S(ph));
+            AddRot("armF", -W * S(ph + 0.4f));
         }
 
         /// <summary>다리 하나: p 0~0.5 = 디딤(앞 → 뒤 곧게), 0.5~1 = 들고 앞으로(부드럽게 · 무릎 굽힘)</summary>
@@ -365,6 +375,7 @@ namespace KachiGun
                     Rot("armB", 3f * S(t * 2.6f + 0.5f));
                     Rot("robe1", 1.5f * S(t * 1.7f)); Rot("robe2", 2.5f * S(t * 1.7f - 0.8f));
                     Move("pelvis", 0, 1.2f * S(t * 3.4f) - 1.2f);
+                    Wings(t * 2.4f);
                     break;
             }
         }
