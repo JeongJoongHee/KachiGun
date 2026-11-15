@@ -85,12 +85,39 @@ namespace KachiGun
         public float StageProgress => bossPhase ? Mathf.Clamp01(bossTime / BossTimeMax) : S.bossFarm ? 1f : Mathf.Clamp01(S.kills / (float)Quota);
 
         // 11-08: 무리(6~10마리)를 한 프레임에 다 만들면 그 프레임이 무거움 → 줄을 세워 한 프레임에 2마리씩 (오른쪽 화면 밖이라 보이는 건 같음)
-        readonly Queue<(Vector2 p, float hm)> spawnQueue = new();
+        //   s = 줄 설 때 땅이 흘러간 거리 (11-15 전진: 나올 때까지 땅이 흐른 만큼 같이 왼쪽으로)
+        readonly Queue<(Vector2 p, float hm, float s)> spawnQueue = new();
         const int SpawnPerFrame = 2;
+
+        // =====================================================================
+        // 11-15 연출 (사용자 "카피바라가 전진하고 좀비떼가 뭉쳐 있게 · 보스전엔 보스만 + 말풍선 · 보스를 잡으면 다음 맵으로 이동")
+        //   Advance_On 1 = 앞(사정거리 x Advance_Engage) 에 좀비가 없으면 분대가 걸어 나감(땅이 왼쪽으로 Advance_Speed 칸/초 흐름),
+        //     좀비는 Horde_Pack_Min~Max 마리씩 뭉친 무리(반지름 Horde_Clump_Radius x √마릿수)로 오른쪽에 Horde_Pack_Gap 칸 간격으로 기다리며
+        //     다 같이 Horde_Approach_Speed 칸/초로 천천히 다가옴 · 0 = 예전 (분대 고정, 좀비가 걸어옴)
+        //   Boss_Only 1 = 보스전엔 졸개가 물러나고 보스만 · 보스 말풍선(Speech_Lines BossIntro·BossTaunt·BossHurt·BossDie·BossWin)
+        //   Travel_On 1 = 보스를 잡으면 Travel_Time 초 동안 분대가 달려 나가며(최고 Travel_Speed) 땅이 어두워졌다 다음 맵으로 밝아짐
+        // =====================================================================
+        public static bool AdvanceOn => Tables.C("Advance_On", 1) >= 0.5;
+        public bool AdvanceMode => AdvanceOn && mode == Mode.Stage;
+        public static bool BossOnly => Tables.C("Boss_Only", 1) >= 0.5;
+        public static bool TravelOn => Tables.C("Travel_On", 1) >= 0.5;
+        public static float AdvanceSpeed => Mathf.Max(0.1f, (float)Tables.C("Advance_Speed", 1.6));
+        public bool advancing;          // 분대가 걷는 중 (땅이 흐름)
+        public bool traveling;          // 보스 처치 뒤 다음 맵으로 이동 중
+        float travelT, travelSpeed;
+        bool travelSwapped;
+        string travelBanner;
+        /// <summary>지금 분대가 걷는 빠르기 (걷기 그림 빠르기용)</summary>
+        public float WalkSpeedNow => traveling ? travelSpeed : AdvanceSpeed;
+        bool bossIntroDone, bossHurtSaid;
+        float bossTalkT;
+        readonly List<int> bandBag = new();
 
         void StageTick(float dt)
         {
-            for (int i = 0; i < SpawnPerFrame && spawnQueue.Count > 0; i++) { var q = spawnQueue.Dequeue(); SpawnZombie(q.p, q.hm); }
+            if (traveling) { TravelTick(dt); return; }
+            float sc = Field.I.ScrollTotal;
+            for (int i = 0; i < SpawnPerFrame && spawnQueue.Count > 0; i++) { var q = spawnQueue.Dequeue(); SpawnZombie(q.p - new Vector2(sc - q.s, 0), q.hm); }
             int alive = spawnQueue.Count;   // 줄 선 좀비도 있는 셈
             foreach (var t in Target.All) if (t is Zombie z && z.Alive && !z.isBoss) alive++;
 
@@ -101,10 +128,13 @@ namespace KachiGun
                 else { AdvanceStage(); return; }
             }
 
-            // 보스 제한 시간: 못 잡으면 보스가 물러나고 반복 사냥
+            if (AdvanceMode) AdvanceTick(dt); else advancing = false;
+
+            // 보스 제한 시간: 못 잡으면 보스가 물러나고 반복 사냥 (11-15 전진 중 = 아직 보스에게 다가가는 중이면 시간이 안 감)
             if (bossPhase)
             {
-                bossTime -= dt;
+                BossTalkTick(dt);
+                if (!(AdvanceMode && advancing)) bossTime -= dt;
                 if (bossTime <= 0) { BossFail(); return; }
             }
 
@@ -112,6 +142,7 @@ namespace KachiGun
             if (spawnT > 0 || Demo) return;
             if (bossPhase)
             {
+                if (BossOnly) return;   // 11-15 보스전엔 보스만
                 if (alive < st.maxAlive) { spawnT = st.spawn * Random.Range(0.7f, 1.3f); SpawnZombie(Field.I.SpawnPoint(), 1f); }
                 return;
             }
@@ -122,8 +153,85 @@ namespace KachiGun
             int need = Mathf.Min(pMin, left);       // 자리가 무리 하나만큼 빌 때까지 기다림 (한 마리씩 흘러나오지 않게)
             if (need <= 0 || room < need) return;
             int n = Mathf.Min(Random.Range(pMin, pMax + 1), Mathf.Min(room, left));
+            if (AdvanceMode)
+            {
+                // 11-15 뭉친 무리: 앞 무리 뒤 Horde_Pack_Gap 칸에 놓을 자리가 있을 때만 (분대가 걸어가면 땅과 같이 다가옴)
+                if (SpawnClump(n, hm)) spawnT = 0.3f;
+                return;
+            }
             SpawnPack(n, hm);
             spawnT = st.spawn / hm * n * Random.Range(0.8f, 1.2f);   // 평균 나오는 속도 = 표 속도 x Horde_Mul
+        }
+
+        /// <summary>11-15 분대 앞 사정거리 x Advance_Engage 안에 좀비가 있으면 멈춰 쏘고, 없으면 걸어 나감 (땅이 왼쪽으로 흐름)</summary>
+        void AdvanceTick(float dt)
+        {
+            advancing = !Engaged();
+            if (advancing && !Demo) Field.I.Scroll(AdvanceSpeed * dt);
+            // 혹시 분대 뒤로 지나간 좀비(위·아래 끝에서 사정거리 밖)는 치움 — 보상 없음
+            float back = -Field.I.ViewHalfW - 2f;
+            foreach (var t in Target.All.ToArray())
+                if (t is Zombie z && z.Alive && !z.isBoss && z.Pos.x < back) Destroy(z.gameObject);
+        }
+
+        /// <summary>싸울 거리에 좀비가 있나: 어느 카피바라든 (사정거리 x Advance_Engage) 안 · 또는 맨 앞 카피바라와 가로 1칸 안 (위·아래 끝 좀비)</summary>
+        public bool Engaged()
+        {
+            var cats = Squad.I ? Squad.I.cats : null;
+            if (cats == null || cats.Count == 0) return true;
+            float k = Mathf.Clamp((float)Tables.C("Advance_Engage", 0.5), 0.1f, 1f);
+            float front = float.MinValue;
+            foreach (var c in cats) front = Mathf.Max(front, c.transform.position.x);
+            float edge = Field.I.ViewHalfW - 0.3f;
+            foreach (var t in Target.All)
+            {
+                if (!(t is Zombie z) || !z.Alive) continue;
+                Vector2 zp = z.Pos;
+                if (zp.x > edge) continue;              // 아직 화면 밖
+                if (zp.x - front <= 1f) return true;
+                foreach (var c in cats)
+                {
+                    if (c.weapon == null) continue;
+                    float r = c.weapon.range * k;
+                    if ((zp - (Vector2)c.transform.position).sqrMagnitude <= r * r) return true;
+                }
+            }
+            return false;
+        }
+
+        /// <summary>11-15 뭉친 무리 하나: 앞 무리(가장 오른쪽 좀비)보다 Horde_Pack_Gap 칸 뒤, 높이는 흙 띠 세 칸(위·가운데·아래)을 돌아가며.
+        /// 무리 안은 타원(가로 R · 세로 0.8R, R = Horde_Clump_Radius x √n)에 서로 0.6칸 이상 떨어지게. false = 아직 놓을 때가 아님</summary>
+        bool SpawnClump(int n, float hm)
+        {
+            float far = float.MinValue, sc = Field.I.ScrollTotal;
+            foreach (var t in Target.All) if (t is Zombie z && z.Alive && !z.isBoss) far = Mathf.Max(far, z.Pos.x);
+            foreach (var q in spawnQueue) far = Mathf.Max(far, q.p.x - (sc - q.s));
+            float R = Mathf.Max(0.3f, (float)Tables.C("Horde_Clump_Radius", 0.5)) * Mathf.Sqrt(n);
+            float gap = Mathf.Max(0f, (float)Tables.C("Horde_Pack_Gap", 3.5));
+            float vw = Field.I.ViewHalfW;
+            float x = Mathf.Max(vw + 1.2f + R, far + gap + R);
+            if (x > vw + 8.5f) return false;       // 앞에 무리가 충분히 기다리는 중
+            if (bandBag.Count == 0) { bandBag.Add(0); bandBag.Add(1); bandBag.Add(2); for (int i = 2; i > 0; i--) { int j = Random.Range(0, i + 1); (bandBag[i], bandBag[j]) = (bandBag[j], bandBag[i]); } }
+            int band = bandBag[bandBag.Count - 1]; bandBag.RemoveAt(bandBag.Count - 1);
+            float y0 = Field.I.RoadBottom, y1 = Field.I.RoadTop;
+            float cy = Mathf.Lerp(y0 + R * 0.6f, y1 - R * 0.6f, (band + Random.Range(0.2f, 0.8f)) / 3f);
+            var pts = new List<Vector2>(n);
+            for (int i = 0; i < n; i++)
+            {
+                Vector2 best = new(x, cy); float bestD = -1f;
+                for (int k = 0; k < 14; k++)
+                {
+                    var u = Random.insideUnitCircle;
+                    var p = new Vector2(x + u.x * R, Mathf.Clamp(cy + u.y * R * 0.8f, y0, y1));
+                    float d = float.MaxValue; foreach (var q in pts) d = Mathf.Min(d, (q - p).magnitude);
+                    if (d > bestD) { bestD = d; best = p; }
+                    if (d >= 0.6f) break;
+                }
+                pts.Add(best);
+            }
+            pts.Sort((a, b) => a.x.CompareTo(b.x));
+            foreach (var p in pts) spawnQueue.Enqueue((p, hm, sc));
+            return true;
         }
 
         /// <summary>무리 (11-05 2차): 흙 띠 높이를 n 칸으로 나눠 칸마다 한 마리씩(칸 안에서 조금 흔듦) → 한곳에 쏠리지 않고 위아래 고르게.
@@ -140,7 +248,7 @@ namespace KachiGun
             {
                 float y = y0 + h * (lanes[i] + 0.5f + Random.Range(-0.4f, 0.4f));
                 var p = Field.I.SpawnPoint(y) + new Vector2(Random.Range(0f, depth), 0);
-                spawnQueue.Enqueue((p, hm));
+                spawnQueue.Enqueue((p, hm, Field.I.ScrollTotal));
             }
         }
 
@@ -235,7 +343,7 @@ namespace KachiGun
         {
             if (!bossPhase) return;
             bossPhase = false;
-            if (boss) boss.Retreat();
+            if (boss) { Speech.SayBoss("BossWin", boss); boss.Retreat(); }
             boss = null;
             S.bossFarm = true;
             upgradeHint = true;
@@ -260,19 +368,98 @@ namespace KachiGun
         {
             bossPhase = true;
             bossTime = BossTimeMax;
+            bossIntroDone = bossHurtSaid = false;
+            bossTalkT = BossTalkGap();
+            if (BossOnly)
+            {
+                // 11-15 보스만: 남은 졸개는 오른쪽으로 물러남(보상 없음) · 줄 선 좀비도 안 나옴
+                spawnQueue.Clear();
+                foreach (var t in Target.All.ToArray()) if (t is Zombie z && z.Alive && !z.isBoss) z.Retreat();
+            }
             var st = Tables.Stage(S.stage);
             var r = Tables.Zombie(string.IsNullOrEmpty(st.bossId) || st.bossId == "-" ? "ogre" : st.bossId);
             var p = Field.I.SpawnPoint();
+            if (AdvanceMode) p = new Vector2(Field.I.ViewHalfW + 1.8f, Mathf.Clamp(Field.I.Home.y, Field.I.RoadBottom, Field.I.RoadTop));   // 분대 가운데 높이에서 기다림
             double hp = st.bossHp > 0 ? st.bossHp : st.hp * Tables.C("BossHpMul");
             double gold = st.bossGold > 0 ? st.bossGold : st.gold * Tables.C("BossGoldMul");
             boss = Zombie.Spawn(r, p, hp, gold, st.bossScale > 0 ? st.bossScale : Tables.Cf("BossScale"), true, PickTint(S.Chapter, true));
             AudioManager.Play(AudioManager.Sfx.BossAppear);
             HUD.I?.Banner(L.T("보스 등장!"), new Color(1f, 0.4f, 0.3f));
-            Speech.Say("Boss");
+            // 11-15 카피바라 "보스다!" 는 보스가 화면에 들어와 한마디 한 뒤 받아침 (BossTalkTick → Speech.BossIntro)
             StageChanged?.Invoke();
         }
 
-        public void AdvanceStage()
+        static float BossTalkGap() => Random.Range((float)Tables.C("Boss_Speech_Min", 6), Mathf.Max((float)Tables.C("Boss_Speech_Min", 6), (float)Tables.C("Boss_Speech_Max", 9)));
+
+        /// <summary>11-15 보스 말풍선: 화면에 들어오면 BossIntro(→ 카피바라가 받아침) · 싸우는 동안 Boss_Speech_Min~Max 초마다 BossTaunt · 체력 절반 아래 BossHurt 한 번</summary>
+        void BossTalkTick(float dt)
+        {
+            if (boss == null || !boss.Alive) return;
+            if (!bossIntroDone)
+            {
+                if (boss.Pos.x < Field.I.ViewHalfW - 1.4f) { bossIntroDone = true; Speech.BossIntro(boss); }
+                return;
+            }
+            if (!bossHurtSaid && boss.hp < boss.maxHp * 0.5)
+            {
+                bossHurtSaid = true;
+                Speech.SayBoss("BossHurt", boss);
+                bossTalkT = BossTalkGap();
+                return;
+            }
+            if (AdvanceMode && advancing) return;
+            bossTalkT -= dt;
+            if (bossTalkT > 0) return;
+            bossTalkT = BossTalkGap();
+            Speech.SayBoss("BossTaunt", boss, false);
+        }
+
+        /// <summary>11-15 보스 처치 뒤 다음 맵으로: 잠깐 서 있다(Travel_Time 의 35%, 최대 1.3초 — 보스가 쓰러지며 한마디) → 분대가 점점 빨리 달려 나감(최고 Travel_Speed)
+        /// → 땅이 어두워짐 → 다 덮이면 쓰러진 좀비를 치우고 새 맵·스테이지 알림 → 밝아지며 천천히 걷기로</summary>
+        void TravelTick(float dt)
+        {
+            travelT += dt;
+            float T = Mathf.Max(1.5f, (float)Tables.C("Travel_Time", 3.2));
+            float wait = Mathf.Min(1.3f, T * 0.35f);
+            float u = (travelT - wait) / (T - wait);
+            if (u < 0f) { advancing = false; return; }
+            if (!advancing)
+            {
+                // 달리기 시작: 보스 마지막 말풍선을 거두고 리더가 "스테이지 클리어!" (같이 띄우면 서로 겹침)
+                Speech.I?.Clear();
+                Speech.Say("Clear");
+            }
+            advancing = true;
+            float v0 = AdvanceSpeed, v1 = Mathf.Max(v0, (float)Tables.C("Travel_Speed", 7));
+            float ramp = Mathf.SmoothStep(0f, 1f, Mathf.Clamp01(u / 0.35f)) * (1f - Mathf.SmoothStep(0f, 1f, Mathf.Clamp01((u - 0.75f) / 0.25f)));
+            travelSpeed = Mathf.Lerp(v0, v1, ramp);
+            Field.I.Scroll(travelSpeed * dt);
+            float a = u < 0.4f ? 0f : u < 0.58f ? (u - 0.4f) / 0.18f : u < 0.64f ? 1f : Mathf.Clamp01(1f - (u - 0.64f) / 0.22f);
+            Field.I.SetFade(a);
+            if (!travelSwapped && u >= 0.6f)
+            {
+                travelSwapped = true;
+                ClearTargets();        // 쓰러진 좀비·보스는 어두울 때 치움
+                ApplyTint();
+                HUD.I?.Banner(travelBanner, Color.white);
+            }
+            if (u >= 1f) EndTravel();
+        }
+
+        /// <summary>이동 연출 끝 (던전에 들어가면 바로 끝냄 — 아직 안 바꾼 맵은 그 자리에서 바꿈)</summary>
+        void EndTravel()
+        {
+            if (!traveling) return;
+            traveling = false;
+            if (!travelSwapped) { travelSwapped = true; ApplyTint(); }
+            Field.I.SetFade(0);
+            spawnT = 0;
+        }
+
+        public void AdvanceStage() => AdvanceStage(false);
+
+        /// <summary>fromBoss = 보스를 잡고 넘어감 (11-15 Travel_On 이면 다음 맵 이동 연출)</summary>
+        public void AdvanceStage(bool fromBoss)
         {
             int before = S.stage;
             S.stage++;
@@ -284,10 +471,20 @@ namespace KachiGun
             S.statStages++;
             S.bestEver = Math.Max(S.bestEver, S.stage);
             bool newChapter = S.stage / 5 != before / 5;
-            if (newChapter) ApplyTint();
             string biome = L.T(Tables.Chapter(S.Chapter).biome);
-            HUD.I?.Banner("Stage " + SaveData.StageName(S.stage) + (newChapter && biome.Length > 0 ? "\n<size=34>" + biome + "</size>" : ""), Color.white);
-            Speech.Say("Clear");      // 11-11 요청_04 "스테이지 클리어!" 말풍선
+            string banner = "Stage " + SaveData.StageName(S.stage) + (newChapter && biome.Length > 0 ? "\n<size=34>" + biome + "</size>" : "");
+            if (fromBoss && AdvanceMode && TravelOn)
+            {
+                // 11-15 다음 맵 이동: 맵 바꾸기·알림은 땅이 어두워졌을 때 (TravelTick)
+                traveling = true; travelT = 0; travelSwapped = false; travelBanner = banner; advancing = false;
+                spawnQueue.Clear();
+            }
+            else
+            {
+                if (newChapter) ApplyTint();
+                HUD.I?.Banner(banner, Color.white);
+                Speech.Say("Clear");      // 11-11 요청_04 "스테이지 클리어!" 말풍선 (11-15 이동 연출이면 달리기 시작할 때)
+            }
             S.Save();
             StageChanged?.Invoke();
             Notify();
@@ -328,7 +525,7 @@ namespace KachiGun
                 {
                     double g = z.gold * Stats.GoldMul;
                     Fx.I?.Money(z.Center, g, z.isBoss ? 5 : 2);
-                    if (z.isBoss) { S.statBossKills++; AdvanceStage(); return; }
+                    if (z.isBoss) { Speech.SayBoss("BossDie", z); S.statBossKills++; AdvanceStage(true); return; }
                     if (!bossPhase && !S.bossFarm) S.kills++;   // 반복 사냥 중엔 골드만
                     // 11-07: 처치마다 StageChanged(화면 전체 다시 그림)를 부르지 않음 — 진행 막대는 HUD 가 0.1초마다 갱신
                 }
@@ -864,6 +1061,8 @@ namespace KachiGun
 
         void BeginDungeon(Mode m, float time)
         {
+            EndTravel();
+            advancing = false;
             Fx.I?.FlushMoney();
             ClearTargets();
             mode = m;

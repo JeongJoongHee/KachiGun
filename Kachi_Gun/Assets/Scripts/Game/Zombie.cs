@@ -30,6 +30,9 @@ namespace KachiGun
         static readonly System.Collections.Generic.List<Target> blastBuf = new();
 
         const float HitTime = 0.16f, FlashTime = 0.09f;
+        static float ApproachSpeed => Mathf.Max(0f, (float)Tables.C("Horde_Approach_Speed", 0.4));
+        /// <summary>쓰러진 뒤 사라지기까지 (11-15 보스는 마지막 말풍선이 보이게 더 오래)</summary>
+        float DieLife => isBoss ? 2.4f : 1.15f;
         public static bool Treadmill, TreadmillStop;   // 시험 촬영: 제자리 걷기 · 그 자리에서 멈춤
 
         public static Zombie Spawn(ZombieRow r, Vector2 pos, double hp, double gold, float scaleMul = 1f, bool boss = false, int tint = 0)
@@ -109,9 +112,14 @@ namespace KachiGun
                 // 11-04: 멈출 자리 0.6칸 앞부터 천천히 · 맞으면 그 자리 정지 대신 비틀거리며 느리게(35%)
                 float front = float.MinValue;
                 foreach (var c in sq.cats) front = Mathf.Max(front, c.transform.position.x);
-                float left = Pos.x - (front + stopDist);
+                // 11-15 전진: 보스는 분대에서 Boss_Stop_Dist 칸 앞에서 멈춤 (바로 앞까지 오면 말풍선이 겹치고 답답해 보임)
+                bool adv = GameManager.I != null && GameManager.I.AdvanceMode;
+                float stop = adv && isBoss ? Mathf.Max(stopDist, (float)Tables.C("Boss_Stop_Dist", 4.0)) : stopDist;
+                float left = Pos.x - (front + stop);
+                // 11-15 전진(Advance_On): 무리는 다 같이 Horde_Approach_Speed 로 천천히 (빠른 좀비만 튀어나와 무리가 풀리지 않게)
+                float sp = adv ? Mathf.Min(speed, ApproachSpeed) : speed;
                 if (Treadmill) want = TreadmillStop ? 0f : speed;
-                else if (left > 0f) want = speed * Mathf.Clamp01(left / 0.6f + 0.15f);
+                else if (left > 0f) want = sp * Mathf.Clamp01(left / 0.6f + 0.15f);
                 if (hitT > 0) want *= 0.35f;
             }
             curSpeed = Mathf.MoveTowards(curSpeed, want, speed * 5f * dt);
@@ -295,14 +303,15 @@ namespace KachiGun
             if (shaderFlash) UpdateFlash(dt);     // 쓰러지는 순간 한 번 하얗게
             else flash.color = new Color(1, 1, 1, 0);
 
-            if (dieT > 0.75f)
+            float blink = DieLife - 0.4f;
+            if (dieT > blink)
             {
-                bool on = ((int)((dieT - 0.75f) / 0.07f)) % 2 == 0;     // 깜빡깜빡
-                float a = Mathf.Clamp01(1 - (dieT - 0.75f) / 0.4f);
+                bool on = ((int)((dieT - blink) / 0.07f)) % 2 == 0;     // 깜빡깜빡
+                float a = Mathf.Clamp01(1 - (dieT - blink) / 0.4f);
                 sr.color = Art.TintColor(tint, on ? a : a * 0.25f);
             }
             if (blastPending && dieT >= 0.1f) { blastPending = false; Blast(); }
-            if (dieT > 1.15f) Destroy(gameObject);
+            if (dieT > DieLife) Destroy(gameObject);
         }
 
         /// <summary>11-11 강시(Move=Hop): 두 발 모아 깡총깡총 — 두 걸음마다 한 번 뛰고, 내려앉을 때 살짝 찌그러짐</summary>

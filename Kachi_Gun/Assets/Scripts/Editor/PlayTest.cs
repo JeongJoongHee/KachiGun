@@ -90,7 +90,15 @@ namespace KachiGun.EditorTools
             Run();
         }
         public static bool PerfOnly => SessionState.GetBool(Key + ".perf", false);
-        public static bool Main => !AnimOnly && !RigOnly && !EnOnly && !StoreOnly && !ZombieOnly && !FontOnly && !AdOnly && !PerfOnly;
+
+        /// <summary>11-15 연출 촬영: 평소 전투 · 보스전 · 보스 처치 뒤를 초당 15장 → Logs/PlayTest/flow/&lt;KACHI_FLOW_LABEL&gt;/장면/ (PlayTestFlow.cs)</summary>
+        public static void RunFlow()
+        {
+            SessionState.SetBool(Key + ".flow", true);
+            Run();
+        }
+        public static bool FlowOnly => SessionState.GetBool(Key + ".flow", false);
+        public static bool Main => !AnimOnly && !RigOnly && !EnOnly && !StoreOnly && !ZombieOnly && !FontOnly && !AdOnly && !PerfOnly && !FlowOnly;
 
         public static void Run()
         {
@@ -136,6 +144,7 @@ namespace KachiGun.EditorTools
             SessionState.SetBool(Key + ".font", false);
             SessionState.SetBool(Key + ".ad", false);
             SessionState.SetBool(Key + ".perf", false);
+            SessionState.SetBool(Key + ".flow", false);
             GameManager.HoldFire = false;   // 11-07 스토어 촬영 사격 멈춤 풀기
             EditorApplication.Exit(errors == 0 ? 0 : 3);
         }
@@ -172,6 +181,7 @@ namespace KachiGun.EditorTools
             if (PlayTest.FontOnly) { yield return FontTour(); yield break; }
             if (PlayTest.AdOnly) { yield return AdTour(); yield break; }
             if (PlayTest.PerfOnly) { yield return PerfTour(); yield break; }
+            if (PlayTest.FlowOnly) { yield return FlowTour(); yield break; }
 
             // 출석 창이 시험 중간(10초마다 날짜 확인)에 끼어들지 않게 — 출석은 11f 에서 따로
             // 11-04 밤: 처음 켜자마자 출석 창(1일차) → 받기 → 다이아 +100 (뒤 시험에 영향 없게 다이아는 되돌림)
@@ -197,6 +207,39 @@ namespace KachiGun.EditorTools
             Log($"시작: Stage {SaveData.StageName(S.stage)}, 고양이 {Squad.I.cats.Count}, 총 {Tables.WeaponName(S.slots[0])}");
             Check(Squad.I.cats.Count == 1, "처음 분대 1마리");
             Check(!Squad.I.cats[0].Angry, "처음엔 평소 얼굴 (좀비가 멀리)");
+            // 11-15 연출: 앞에 좀비가 없으면 분대가 걸어 나감(땅이 흐름) · 좀비는 뭉친 무리로 기다림 · 가까워지면 멈춰서 쏨
+            {
+                float sc0 = Field.I.ScrollTotal;
+                yield return WaitUntil(() => GM.advancing && Squad.I.cats[0].moving, 5f);
+                Check(GameManager.AdvanceOn && GM.advancing && Squad.I.cats[0].moving, "11-15 앞에 좀비가 없으면 분대가 걸어 나감 (걷는 그림)");
+                int pMin = Tables.Ci("Horde_Pack_Min");
+                yield return WaitUntil(() => { int c = 0; foreach (var t in Target.All) if (t is Zombie z && z.Alive) c++; return c >= pMin; }, 5f);
+                yield return Wait(0.3f);
+                var zs0 = new List<Vector2>();
+                foreach (var t in Target.All) if (t is Zombie z && z.Alive) zs0.Add(z.Pos);
+                zs0.Sort((a, b) => a.x.CompareTo(b.x));
+                // x 가 1.2칸 넘게 벌어지면 다른 무리
+                int best = 0; float bw = 0, bh = 0;
+                for (int i = 0; i < zs0.Count;)
+                {
+                    int j = i + 1;
+                    while (j < zs0.Count && zs0[j].x - zs0[j - 1].x <= 1.2f) j++;
+                    float minY = float.MaxValue, maxY = float.MinValue;
+                    for (int k = i; k < j; k++) { minY = Mathf.Min(minY, zs0[k].y); maxY = Mathf.Max(maxY, zs0[k].y); }
+                    if (j - i > best) { best = j - i; bw = zs0[j - 1].x - zs0[i].x; bh = maxY - minY; }
+                    i = j;
+                }
+                float R = (float)Tables.C("Horde_Clump_Radius", 0.5) * Mathf.Sqrt(Tables.Ci("Horde_Pack_Max"));
+                Log($"뭉친 무리: {best}마리 · 가로 {bw:0.0} · 세로 {bh:0.0} (반지름 {R:0.0})");
+                Check(best >= pMin && bw <= 2f * R + 0.4f && bh <= 1.6f * R + 0.4f, $"11-15 좀비가 뭉친 무리로 나옴 ({best}마리 · {bw:0.0}x{bh:0.0}칸)");
+                Capture("01d_advance");
+                yield return WaitUntil(() => !GM.advancing && !Squad.I.cats[0].moving, 20f);   // 걷는 그림은 다음 프레임에 멈춤
+                Check(!GM.advancing && !Squad.I.cats[0].moving && GM.Engaged(), "11-15 좀비가 사정거리 안에 오면 멈춰서 쏨");
+                Check(Squad.I.cats[0].Angry || GM.advancing, "11-15 멈출 때(사정거리 절반) 화난 얼굴");
+                Check(Field.I.ScrollTotal - sc0 > 2f, $"11-15 땅이 흘러감 ({Field.I.ScrollTotal - sc0:0.0}칸)");
+                yield return Wait(0.6f);
+                Capture("01e_clump");
+            }
             yield return WaitUntil(() => S.kills >= 3, 40f);
             Log($"처치 {S.kills}, 골드 {S.gold:0}, 좀비 {Target.All.Count}");
             Check(S.kills >= 3, "좀비를 잡음");
@@ -228,6 +271,13 @@ namespace KachiGun.EditorTools
                 if (mk >= 0) Check(GM.MissionTarget(mk) == (long)System.Math.Round(Tables.MissionTarget(mk, S.missionTier[mk]) * (double)hm), $"처치 미션 목표 x{hm} ({GM.MissionTarget(mk)})");
                 if (!File.Exists($"{OutDir}/01b_horde.png")) Capture("01b_horde");
                 // 11-05 2차: 위아래 고르게 — 지금까지 나온 좀비 높이를 흙 띠 세 칸(위·가운데·아래)으로 나눠 셈
+                // 11-15 전진: 무리 하나가 한 칸(위·가운데·아래)을 돌아가며 차지 → 무리 여러 개를 볼 때까지(45마리, 최대 20초) 더 셈
+                if (GameManager.AdvanceOn)
+                    for (float t = 0; t < 20f && spawnYs.Count < 45; t += 0.1f)
+                    {
+                        foreach (var tg in Target.All) if (tg is Zombie z && z.Alive && !z.isBoss && seen.Add(z)) spawnYs.Add(z.transform.position.y);
+                        yield return Wait(0.1f);
+                    }
                 {
                     float y0 = Field.I.SpawnPoint(-999f).y, y1 = Field.I.SpawnPoint(999f).y;
                     var cnt = new int[3]; int tot = 0;
@@ -254,6 +304,30 @@ namespace KachiGun.EditorTools
             {
                 Log($"보스: 체력 {GM.boss.hp:0}");
                 Capture("03_boss");
+                // 11-15 보스전엔 보스만 · 보스가 화면에 들어오면 한마디 → 카피바라가 받아침
+                {
+                    yield return Wait(0.5f);
+                    int mn = 0; foreach (var t in Target.All) if (t is Zombie z && z.Alive && !z.isBoss) mn++;
+                    Check(GameManager.BossOnly && mn == 0, $"11-15 보스전엔 보스만 (졸개 {mn})");
+                    var bz = GM.boss;
+                    yield return WaitUntil(() => bz == null || Speech.I.TextOf(bz) != null, 15f);
+                    string bt = bz ? Speech.I.TextOf(bz) : null;
+                    Check(SpeechIs("BossIntro", bt), $"11-15 보스가 화면에 들어오면 말풍선 ({bt})");
+                    Capture("03c_boss_talk");
+                    yield return WaitUntil(() => { foreach (var c in Squad.I.cats) if (Speech.I.TextOf(c) != null) return true; return false; }, 4f);
+                    string ct = null; foreach (var c in Squad.I.cats) ct ??= Speech.I.TextOf(c);
+                    Check(ct != null, $"11-15 카피바라가 보스에게 받아침 ({ct})");
+                    Capture("03d_boss_reply");
+                    yield return WaitUntil(() => bz == null || !GM.advancing, 15f);
+                    Check(GM.bossTime > GM.BossTimeMax - 6f, $"11-15 다가가는 동안 보스 시간이 안 감 (남은 {GM.bossTime:0.0}초 / {GM.BossTimeMax:0})");
+                    Speech.I.Clear();
+                    if (bz) { bz.hp = bz.maxHp * 0.4; bz.Hit(1, bz.Pos); }
+                    yield return Wait(0.3f);
+                    string ht = bz ? Speech.I.TextOf(bz) : null;
+                    Check(SpeechIs("BossHurt", ht), $"11-15 보스 체력 절반 아래 → 말풍선 ({ht})");
+                    Capture("03e_boss_hurt");
+                    yield return Wait(1.0f);
+                }
                 // 11-14 요청_05 ③: 미사일 폭발 그림이 보스 체력 바를 가림 → Missile_Fx_Scale(0.55) 배 · 고치기 전(1배)과 같은 장면을 나란히
                 {
                     var cfg = (Dictionary<string, double>)typeof(Tables).GetField("config", System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.NonPublic).GetValue(null);
@@ -281,19 +355,54 @@ namespace KachiGun.EditorTools
                     Check(hb != null && System.Math.Abs(mfs - 0.55) < 1e-6 && tops[1] < barY && tops[0] - c0 > 0 && (tops[1] - c0) < (tops[0] - c0) * 0.62f,
                         $"11-14 미사일 폭발 그림 {mfs}배: 위 끝 (보스 가운데 기준) {tops[0] - c0:0.00} → {tops[1] - c0:0.00} · 체력 바 {barY - c0:0.00} (바 아래에서 끝남)");
                 }
+                Speech.I.Clear();
+                deadBoss = GM.boss;
                 GM.boss.Hit(GM.boss.hp + 1, GM.boss.Pos);
             }
             yield return Wait(0.3f);
             Log($"보스 뒤: Stage {SaveData.StageName(S.stage)}");
             Check(S.stage == 5, "보스 잡고 2-1");
+            // 11-15 보스 처치 → 쓰러지며 한마디 → 분대가 달려 나가고 땅이 어두워졌다 다음 맵으로 밝아짐
+            {
+                string dt = deadBoss ? Speech.I.TextOf(deadBoss) : null;
+                Check(SpeechIs("BossDie", dt), $"11-15 보스가 쓰러지며 말풍선 ({dt})");
+                Capture("03f_boss_die");
+                Check(GM.traveling, "11-15 보스 처치 → 다음 맵으로 이동 시작");
+                float peak = 0, topSpeed = 0, sc1 = Field.I.ScrollTotal; bool shotRun = false, shotDark = false;
+                for (float t = 0; t < 8f && GM.traveling; t += 0.05f)
+                {
+                    peak = Mathf.Max(peak, Field.I.FadeAlpha);
+                    topSpeed = Mathf.Max(topSpeed, GM.advancing ? GM.WalkSpeedNow : 0);
+                    if (!shotRun && GM.WalkSpeedNow > 5f) { shotRun = true; Capture("03g_travel_run"); }
+                    if (!shotDark && Field.I.FadeAlpha > 0.5f && Field.I.FadeAlpha < 0.9f) { shotDark = true; Capture("03h_travel_dark"); }
+                    yield return Wait(0.05f);
+                }
+                yield return Wait(0.2f);
+                Capture("03i_travel_new");
+                var want = Field.ChapterTint(S.Chapter);
+                var got = Field.I.map.color;
+                bool tintOk = Mathf.Abs(want.r - got.r) + Mathf.Abs(want.g - got.g) + Mathf.Abs(want.b - got.b) < 0.02f;
+                Log($"이동: 최고 빠르기 {topSpeed:0.0} · 가장 어두울 때 {peak:0.00} · 흐른 거리 {Field.I.ScrollTotal - sc1:0.0}칸");
+                Check(!GM.traveling && peak > 0.95f && Field.I.FadeAlpha == 0f && topSpeed > 4f && tintOk && Field.I.map.sprite.name == "Map/" + (string.IsNullOrEmpty(Tables.Chapter(S.Chapter).mapSprite) ? "side_map" : Tables.Chapter(S.Chapter).mapSprite),
+                    "11-15 달려 나가며 어두워졌다 새 챕터 맵으로 밝아짐");
+                int left0 = 0; foreach (var t in Target.All) if (t && t.dead) left0++;   // 이동이 끝나면 새 무리가 바로 나오므로 쓰러진 것만 셈
+                Check(deadBoss == null && left0 == 0, $"11-15 이동 뒤 쓰러진 보스·좀비 치움 (남은 쓰러진 대상 {left0})");
+            }
 
             // 3-0) 보스 실패 → 반복 사냥 → [보스 도전] → 처치
             S.stage = 9; S.kills = GM.Quota; GM.Notify();
             yield return WaitUntil(() => GM.boss != null, 10f);
             var oldBoss = GM.boss;
+            yield return WaitUntil(() => GM.boss == null || !GM.advancing, 15f);   // 11-15 다가가는 동안엔 보스 시간이 안 감
+            Speech.I.Clear();
             GM.bossTime = 0.01f;
             yield return Wait(0.5f);
             Check(!GM.bossPhase && GM.BossFarm && GM.boss == null && (oldBoss == null || !oldBoss.Alive), "보스 실패 → 반복 사냥");
+            {
+                string wt = oldBoss ? Speech.I.TextOf(oldBoss) : null;
+                Check(SpeechIs("BossWin", wt), $"11-15 보스 실패 → 보스가 물러나며 말풍선 ({wt})");
+                Capture("03b0_boss_win");
+            }
             int k0 = S.kills; double g1 = S.gold;
             yield return Wait(3f);
             int zs = 0; foreach (var t in Target.All) if (t.Alive) zs++;
@@ -1077,7 +1186,7 @@ namespace KachiGun.EditorTools
                         foreach (var rpL in Speech.Lines) rpIds.Add(rpL.id);
                         int rpNRep = 0, rpOrphan = 0, rpWith = 0;
                         foreach (var rpL in Speech.Lines) if (rpL.trigger == "Reply") { rpNRep++; if (!rpIds.Contains(rpL.replyTo)) rpOrphan++; }
-                        foreach (var rpL in Speech.Lines) if (rpL.trigger != "Reply" && Speech.PickReply(rpL.id) != null) rpWith++;
+                        foreach (var rpL in Speech.Lines) if ((rpL.trigger == "Random" || rpL.trigger == "Clear" || rpL.trigger == "Boss") && Speech.PickReply(rpL.id) != null) rpWith++;   // 11-15 보스가 말하는 줄(BossIntro 등)은 빼고 셈
                         Check(rpNRep >= 5 && rpOrphan == 0 && rpWith > 0 && rpWith < nRand + nClear + nBoss, $"받아치기 표: 답 {rpNRep}줄 · 답 달린 대사 {rpWith}개(일부만) · 가리키는 대사 없음 {rpOrphan}");
                         Speech.Line rpLaugh = null; foreach (var rpL in Speech.Lines) if (rpL.id == "rand_10") rpLaugh = rpL;
                         int rpNCat = Squad.I.cats.Count;
@@ -2211,6 +2320,14 @@ namespace KachiGun.EditorTools
         }
 
         static void Log(string s) => Debug.Log("[TEST] " + s);
+        Zombie deadBoss;
+        /// <summary>11-15 그 글이 그 상황(Trigger) 대사 중 하나인지</summary>
+        static bool SpeechIs(string trigger, string text)
+        {
+            if (string.IsNullOrEmpty(text)) return false;
+            foreach (var l in Speech.Lines) if (l.trigger == trigger && L.T(l.text) == text) return true;
+            return false;
+        }
 
         static IEnumerator Wait(float s)
         {

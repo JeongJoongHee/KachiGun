@@ -38,15 +38,81 @@ namespace KachiGun
 
         void Awake() { I = this; }
 
+        // 11-15 카피바라 전진: 맵 판을 가로로 4장 이어 붙여(짝수 번째는 좌우 뒤집어 이음새가 맞게) 왼쪽으로 흘려보냄.
+        //   map = 원래 자리(가운데) 판 · tiles = 4장 모두 · scroll = 지금까지 흘러간 거리(2판마다 처음으로)
+        readonly System.Collections.Generic.List<SpriteRenderer> tiles = new();
+        float scroll, tileW = MapW;
+        // 맵 그림 왼쪽·오른쪽 끝 4px 은 짙은 테두리 → 이어 붙이면 세로 줄이 보여서 양 끝 Crop px 를 잘라 쓴 그림으로 붙임
+        const int Crop = 5;
+        static readonly System.Collections.Generic.Dictionary<string, Sprite> cropCache = new();
+        static Sprite Cropped(string name)
+        {
+            if (cropCache.TryGetValue(name, out var sp) && sp) return sp;
+            var tex = Resources.Load<Texture2D>("Art/Map/" + name);
+            if (!tex) return null;
+            sp = Sprite.Create(tex, new Rect(Crop, 0, tex.width - 2 * Crop, tex.height), new Vector2(0.5f, 0.5f), 100f, 0, SpriteMeshType.FullRect);
+            sp.name = "Map/" + name;
+            cropCache[name] = sp;
+            return sp;
+        }
+        /// <summary>지금까지 흘러간 땅 거리 (계속 늘어남 — 무리 생성 줄 위치 보정용)</summary>
+        public float ScrollTotal { get; private set; }
+        SpriteRenderer fade;
+
         public void Build()
         {
-            var go = new GameObject("Map");
-            go.transform.SetParent(transform, false);
-            map = go.AddComponent<SpriteRenderer>();
-            map.sprite = Art.Get("Map/side_map", 100f);
-            map.sortingOrder = -30000;
+            for (int i = 0; i < 4; i++)
+            {
+                var go = new GameObject(i == 1 ? "Map" : "Map" + i);
+                go.transform.SetParent(transform, false);
+                var r = go.AddComponent<SpriteRenderer>();
+                r.sprite = Cropped("side_map") ?? Art.Get("Map/side_map", 100f);
+                r.sortingOrder = -30000;
+                r.flipX = i % 2 == 0;
+                tiles.Add(r);
+            }
+            map = tiles[1];
+            if (map.sprite) tileW = map.sprite.rect.width / 100f;
+            PlaceTiles();
             Fit();
         }
+
+        void PlaceTiles()
+        {
+            for (int i = 0; i < tiles.Count; i++)
+                if (tiles[i]) tiles[i].transform.localPosition = new Vector3((i - 1) * tileW - scroll, 0, 0);
+        }
+
+        /// <summary>11-15 땅을 왼쪽으로 dx 만큼 흘림 (맵 판 + 좀비·쓰러진 좀비). 분대는 제자리에서 걷는 그림</summary>
+        public void Scroll(float dx)
+        {
+            if (dx <= 0) return;
+            ScrollTotal += dx;
+            scroll = (scroll + dx) % (tileW * 2f);
+            PlaceTiles();
+            foreach (var t in Target.All) if (t) t.transform.position += new Vector3(-dx, 0, 0);
+        }
+
+        /// <summary>11-15 다음 맵 이동 연출: 싸우는 땅을 어둡게 덮기 (0 = 끔 ~ 1 = 다 덮음, 위 UI 는 그대로 보임)</summary>
+        public void SetFade(float a)
+        {
+            if (!fade)
+            {
+                if (a <= 0) return;
+                var go = new GameObject("Fade");
+                go.transform.SetParent(transform, false);
+                fade = go.AddComponent<SpriteRenderer>();
+                var tex = Texture2D.whiteTexture;
+                fade.sprite = Sprite.Create(tex, new Rect(0, 0, tex.width, tex.height), new Vector2(0.5f, 0.5f), tex.width);
+                fade.sortingOrder = 32000;
+            }
+            fade.enabled = a > 0.001f;
+            if (!fade.enabled) return;
+            fade.transform.position = new Vector3(cam.transform.position.x, cam.transform.position.y, 0);
+            fade.transform.localScale = new Vector3(ViewHalfW * 2f + 1f, cam.orthographicSize * 2f + 1f, 1);
+            fade.color = new Color(0.16f, 0.11f, 0.07f, Mathf.Clamp01(a));
+        }
+        public float FadeAlpha => fade && fade.enabled ? fade.color.a : 0f;
 
         public void Fit()
         {
@@ -64,8 +130,8 @@ namespace KachiGun
         public float PlayBottom => ViewBottom + cam.orthographicSize * 2 * BottomUi;
         float Top => Mathf.Min(FieldTop, PlayTop);
         float Bottom => Mathf.Max(FieldBottom, PlayBottom);
-        /// <summary>오른쪽 화면 밖(좀비가 나오는 곳)까지 허용</summary>
-        float RightLimit => ViewHalfW + 1.6f;
+        /// <summary>오른쪽 화면 밖(좀비가 나오는 곳)까지 허용 — 11-15 전진할 땐 앞에 기다리는 무리 자리까지</summary>
+        float RightLimit => ViewHalfW + (GameManager.I != null && GameManager.I.AdvanceMode ? 12f : 1.6f);
 
         /// <summary>흙 띠 안인지</summary>
         public bool OnRoad(Vector2 p, float margin = 0.3f) =>
@@ -92,8 +158,11 @@ namespace KachiGun
         public Vector2 SpawnPoint() => new(ViewHalfW + 0.9f, Random.Range(Bottom + 0.4f, Top - 0.8f));
         /// <summary>정한 높이를 흙 띠 안으로 당긴 나오는 자리 (무리 생성용)</summary>
         public Vector2 SpawnPoint(float y) => new(ViewHalfW + 0.9f, Mathf.Clamp(y, Bottom + 0.4f, Top - 0.8f));
+        /// <summary>11-15 흙 띠 위·아래 끝 (좀비 발이 설 수 있는 높이)</summary>
+        public float RoadTop => Top - 0.8f;
+        public float RoadBottom => Bottom + 0.4f;
 
-        public void Tint(Color c) { if (map) map.color = c; }
+        public void Tint(Color c) { foreach (var t in tiles) if (t) t.color = c; }
 
         /// <summary>11-11 배경 판 바꾸기 (Art/Map/&lt;이름&gt;, 흙길은 판마다 같은 자리) — 없으면 기본 side_map</summary>
         public void SetMap(string name)
@@ -102,7 +171,8 @@ namespace KachiGun
             if (string.IsNullOrEmpty(name)) name = "side_map";
             if (map.sprite && map.sprite.name == "Map/" + name) return;
             if (Resources.Load<Texture2D>("Art/Map/" + name) == null) name = "side_map";
-            map.sprite = Art.Get("Map/" + name, 100f);
+            var sp = Cropped(name) ?? Art.Get("Map/" + name, 100f);
+            foreach (var t in tiles) if (t) t.sprite = sp;
         }
 
         /// <summary>챕터 맵 색 = Chapter_Summary 의 Map_Tint_Hex</summary>

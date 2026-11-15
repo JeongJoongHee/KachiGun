@@ -10,6 +10,9 @@ namespace KachiGun
     ///   11-12 받아치기: Reply 줄(Reply_To = 받아칠 대사 Id)이 있으면 Speech_Reply_Delay 초 뒤 다른 동료가 답함
     ///     (Who Other = 방금 말한 동료 말고 · Back = 처음 말한 동료) · 답에도 답 가능 · 동료가 1마리면 답 없음.
     /// 피해 숫자와 같은 층(Fx.uiLayer, 따로 판)에 그려서 매 프레임 따라가도 위 화면 전체를 다시 모으지 않음.
+    /// 11-15 보스도 말함 (Who Boss): BossIntro = 화면에 들어옴(카피바라가 받아침 · 답 줄이 없으면 Boss 줄) · BossTaunt = 싸우는 중 가끔 ·
+    ///   BossHurt = 체력 절반 · BossDie = 쓰러짐 · BossWin = 시간 초과로 물러남. 보스 말풍선은 머리(체력 바) 위 왼쪽으로, 꼬리는 좌우 뒤집음.
+    ///   보스 대사에 받아치는 카피바라는 1마리여도 됨 (Who Any = 아무나 · Leader = 리더) · 카피바라 대사에 보스가 받아칠 수도 (Who Boss).
     /// </summary>
     public class Speech : MonoBehaviour
     {
@@ -21,13 +24,13 @@ namespace KachiGun
         class Bubble
         {
             public RectTransform rt, body, tail; public Text t; public CanvasGroup cg;
-            public Capy who; public float time, life;
+            public Component who; public float time, life;
         }
         readonly List<Bubble> pool = new();
         float nextRandom = -1;
 
         // 11-12 받아치기 예약 (한 번에 대화 하나)
-        Line replyLine; Capy replyFirst, replyPrev; float replyWait; bool replyAlways;
+        Line replyLine; Component replyFirst, replyPrev; float replyWait; bool replyAlways;
 
         static GameManager GM => GameManager.I;
 
@@ -83,15 +86,40 @@ namespace KachiGun
         public static void SayLine(Line l, bool always = false)
         {
             if (I == null || l == null || Squad.I == null) return;
-            Capy c = Squad.I.Leader;
+            Component c = Squad.I.Leader;
             if (l.who == "Any" && Squad.I.cats.Count > 0) c = Squad.I.cats[Random.Range(0, Squad.I.cats.Count)];
+            if (l.who == "Boss") c = GM != null && GM.boss != null ? GM.boss : null;
             if (!c) return;
             I.Show(c, L.T(l.text));
             I.replyLine = null;
             I.QueueReply(l, c, c, always);
         }
 
-        void QueueReply(Line said, Capy first, Capy prev, bool always)
+        /// <summary>11-15 보스 대사 (BossIntro · BossTaunt · BossHurt · BossDie · BossWin). force = false 면 다른 말풍선·대화 중엔 쉼</summary>
+        public static void SayBoss(string trigger, Zombie boss, bool force = true)
+        {
+            if (I == null || !boss || GM == null || GM.eco) return;
+            if (!force && (I.ActiveCount > 0 || I.replyLine != null)) return;
+            var l = Pick(trigger);
+            if (l == null) return;
+            I.Show(boss, L.T(l.text));
+            I.replyLine = null;
+            I.QueueReply(l, boss, boss, false);
+        }
+
+        /// <summary>11-15 보스가 화면에 들어옴: 보스 한마디 → 카피바라가 받아침 (그 대사에 답 줄이 없거나 확률로 빠지면 리더가 Boss 줄)</summary>
+        public static void BossIntro(Zombie boss)
+        {
+            if (I == null || !boss) return;
+            SayBoss("BossIntro", boss);
+            if (I.replyLine != null) return;
+            var cl = Pick("Boss");
+            if (cl == null) return;
+            I.replyLine = cl; I.replyFirst = boss; I.replyPrev = boss; I.replyAlways = false;
+            I.replyWait = Mathf.Max(0.2f, (float)Tables.C("Speech_Reply_Delay", 1.0));
+        }
+
+        void QueueReply(Line said, Component first, Component prev, bool always)
         {
             var r = PickReply(said.id);
             if (r == null) return;
@@ -100,12 +128,17 @@ namespace KachiGun
             replyWait = Mathf.Max(0.2f, (float)Tables.C("Speech_Reply_Delay", 1.0));
         }
 
-        /// <summary>받아칠 동료: Back = 처음 말한 동료 · Other = 방금 말한 동료 말고 아무나 (없으면 null = 답 안 함)</summary>
-        static Capy ReplyWho(Line r, Capy first, Capy prev)
+        /// <summary>받아칠 동료: Back = 처음 말한 동료 · Other = 방금 말한 동료 말고 아무나 (없으면 null = 답 안 함)
+        /// 11-15 Boss = 보스(살아 있을 때) · 보스 말에 받아치기 = 카피바라 아무나(Leader 면 리더, 1마리여도)</summary>
+        static Component ReplyWho(Line r, Component first, Component prev)
         {
+            if (r.who == "Boss") { var bz = GM != null ? GM.boss : null; return bz != null && bz.Alive ? bz : null; }
             var cats = Squad.I != null ? Squad.I.cats : null;
-            if (cats == null || cats.Count < 2) return null;            // 동료가 없으면 답 없음
-            if (r.who == "Back" && first && first != prev && cats.Contains(first)) return first;
+            if (cats == null || cats.Count == 0) return null;
+            if (r.who == "Leader") return Squad.I.Leader;
+            if (prev is Zombie) return cats[Random.Range(0, cats.Count)];
+            if (cats.Count < 2) return null;            // 동료가 없으면 답 없음
+            if (r.who == "Back" && first is Capy fc && fc && fc != prev && cats.Contains(fc)) return fc;
             int n = 0;
             foreach (var k in cats) if (k && k != prev) n++;
             if (n == 0) return null;
@@ -130,11 +163,11 @@ namespace KachiGun
         /// <summary>받아치기가 예약돼 있나 (시험용)</summary>
         public bool ReplyPending => replyLine != null;
 
-        Bubble Current(Capy c) { foreach (var b in pool) if (b.who == c && b.rt.gameObject.activeSelf) return b; return null; }
+        Bubble Current(Component c) { foreach (var b in pool) if (b.who == c && b.rt.gameObject.activeSelf) return b; return null; }
         public bool Showing(string text) { foreach (var b in pool) if (b.rt.gameObject.activeSelf && b.t.text == text) return true; return false; }
 
-        /// <summary>그 카피바라 머리 위에 말풍선 (이미 말하는 중이면 그 풍선을 바꿈)</summary>
-        public void Show(Capy c, string text)
+        /// <summary>그 카피바라(11-15 또는 보스) 머리 위에 말풍선 (이미 말하는 중이면 그 풍선을 바꿈)</summary>
+        public void Show(Component c, string text)
         {
             var layer = Fx.I != null ? Fx.I.uiLayer : null;
             if (!layer || !c) return;
@@ -185,15 +218,18 @@ namespace KachiGun
         void Place(Bubble b)
         {
             // 머리 오른쪽 위를 가리키고 몸통은 오른쪽으로 (카피바라는 왼쪽에 서 있고, 바로 위에 띄우면 위 동료를 가림)
-            var c = b.who;
+            // 11-15 보스: 머리(체력 바) 위를 가리키고 몸통은 왼쪽(분대 쪽)으로 · 꼬리 좌우 뒤집음
             Vector2 head;
-            if (c.sr) { var bd = c.sr.bounds; head = new Vector2(bd.center.x + bd.extents.x * 0.55f, bd.max.y - bd.extents.y * 0.62f); }   // 얼굴 오른쪽 (주둥이 옆)
-            else head = (Vector2)c.transform.position + new Vector2(0.3f, 1.2f);
+            bool left = false;
+            if (b.who is Zombie z) { head = z.Pos + new Vector2(-0.15f, z.height + 0.45f); left = true; }
+            else if (b.who is Capy c && c.sr) { var bd = c.sr.bounds; head = new Vector2(bd.center.x + bd.extents.x * 0.55f, bd.max.y - bd.extents.y * 0.62f); }   // 얼굴 오른쪽 (주둥이 옆)
+            else head = (Vector2)b.who.transform.position + new Vector2(0.3f, 1.2f);
             var p = Fx.I.WorldToUi(head);
             b.rt.anchoredPosition = p;
+            b.tail.localScale = new Vector3(left ? -1f : 1f, 1f, 1f);
             float half = ((RectTransform)b.rt.parent).rect.width * 0.5f - 12f;
             float w = b.body.sizeDelta.x;
-            float x = Mathf.Clamp(w * 0.5f - 46f, -half + w * 0.5f - p.x, half - w * 0.5f - p.x);
+            float x = Mathf.Clamp(left ? -(w * 0.5f - 46f) : w * 0.5f - 46f, -half + w * 0.5f - p.x, half - w * 0.5f - p.x);
             x = Mathf.Clamp(x, -w * 0.5f + 40, w * 0.5f - 40);   // 꼬리가 몸통 끝 밖으로 안 나가게
             b.body.anchoredPosition = new Vector2(x, 29);   // 꼬리(높이 37) 윗부분 8 이 몸통 아래 선 위로 겹침
         }
@@ -231,9 +267,9 @@ namespace KachiGun
         public void Clear() { replyLine = null; foreach (var b in pool) b.rt.gameObject.SetActive(false); }
         public int ActiveCount { get { int n = 0; foreach (var b in pool) if (b.rt.gameObject.activeSelf) n++; return n; } }
         /// <summary>그 카피바라가 지금 말하는 글 (없으면 null)</summary>
-        public string TextOf(Capy c) { var b = Current(c); return b != null ? b.t.text : null; }
-        /// <summary>그 글을 말하는 카피바라 (없으면 null)</summary>
-        public Capy WhoSays(string text) { foreach (var b in pool) if (b.rt.gameObject.activeSelf && b.t.text == text) return b.who; return null; }
+        public string TextOf(Component c) { var b = Current(c); return b != null ? b.t.text : null; }
+        /// <summary>그 글을 말하는 카피바라·보스 (없으면 null)</summary>
+        public Component WhoSays(string text) { foreach (var b in pool) if (b.rt.gameObject.activeSelf && b.t.text == text) return b.who; return null; }
         public string ActiveText { get { foreach (var b in pool) if (b.rt.gameObject.activeSelf) return b.t.text; return null; } }
     }
 }

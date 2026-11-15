@@ -55,20 +55,23 @@ namespace KachiGun
             float dt = Time.deltaTime;
             var gm = GameManager.I;
 
-            // 스테이지: 자리 고정
+            // 스테이지: 자리 고정 (11-15 전진 중엔 그 자리에서 걷는 그림 — 땅이 흐름)
             if (gm.mode == GameManager.Mode.Stage)
             {
                 Manual = false; blocked = false;
+                float rate = Mathf.Clamp(gm.WalkSpeedNow / GameManager.AdvanceSpeed, 1f, 2.2f);
                 for (int i = 0; i < cats.Count; i++)
                 {
                     cats[i].transform.position = Field.I.Home + Offset(i);
-                    cats[i].moving = false;
+                    cats[i].moving = gm.advancing;
+                    cats[i].walkRate = rate;
                 }
                 if (marker) marker.gameObject.SetActive(false);
                 return;
             }
 
             ReadInput();
+            foreach (var c in cats) c.walkRate = 1f;
             var leader = Leader;
             Vector2 lp = leader.transform.position;
             Vector2 goal = lp;

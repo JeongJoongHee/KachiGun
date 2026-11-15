@@ -19,6 +19,7 @@ namespace KachiGun
         Vector2[] gunPos;
         float fireT, animT, shootAnimT, walkPhase;
         public bool moving;
+        public float walkRate = 1f;   // 11-15 걷기 빠르기 배율 (다음 맵으로 달려갈 때 빠르게)
         Transform body, gun, flash;
         RigView rig;
         Vector2 gunLocal;      // 뼈대일 때: 몸통 뼈 기준 총 자리
@@ -179,7 +180,7 @@ namespace KachiGun
             {
                 // 뼈대: 숨쉬기 · 조준 각도만큼 젖힘 · 반동 · 걷기
                 rig.Flip = Facing < 0;
-                if (moving) walk01 = (walk01 + dt * 2.2f) % 1f; else walk01 = 0;
+                if (moving) walk01 = (walk01 + dt * 2.2f * walkRate) % 1f; else walk01 = 0;
                 float kk = recoilT > 0 ? Mathf.Clamp01(recoilT / RecoilTime) : 0f;
                 rig.Capy(animT, target != null || aimT > 0 ? gunAngle : 0f, kk, moving ? walk01 : -1f);
             }
@@ -192,7 +193,7 @@ namespace KachiGun
             float by = 0, rot = 0;
             if (moving)
             {
-                walkPhase += dt * 13f;
+                walkPhase += dt * 13f * walkRate;
                 by = Mathf.Abs(Mathf.Sin(walkPhase)) * 0.07f;
                 rot = -Facing * (4f + Mathf.Sin(walkPhase) * 2f);
             }
