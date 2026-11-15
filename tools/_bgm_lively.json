@@ -1,0 +1,42 @@
+{
+ "v1": {
+  "name": "햇살",
+  "bpm": 138,
+  "gain": 0.661,
+  "loop_sec": 34.8,
+  "loud_db": -42.5,
+  "phone": 53,
+  "peak_db": -21.1,
+  "seam": 0.0023
+ },
+ "v2": {
+  "name": "통통",
+  "bpm": 144,
+  "gain": 0.759,
+  "loop_sec": 33.3,
+  "loud_db": -42.5,
+  "phone": 45,
+  "peak_db": -19.9,
+  "seam": 0.0032
+ },
+ "v3": {
+  "name": "산들",
+  "bpm": 132,
+  "gain": 0.912,
+  "loop_sec": 36.4,
+  "loud_db": -42.5,
+  "phone": 36,
+  "peak_db": -19.9,
+  "seam": 0.0034
+ },
+ "v4": {
+  "name": "신나",
+  "bpm": 150,
+  "gain": 0.525,
+  "loop_sec": 32.0,
+  "loud_db": -42.5,
+  "phone": 58,
+  "peak_db": -22.4,
+  "seam": 0.0023
+ }
+}

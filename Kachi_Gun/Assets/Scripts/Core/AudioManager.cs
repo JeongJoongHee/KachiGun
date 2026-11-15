@@ -112,7 +112,7 @@ namespace KachiGun
         }
 
         /// <summary>시험용: 일반 배경음 길이(초)</summary>
-        public static float StageBgmSeconds => I != null && I.stageBgm != null ? I.stageBgm.length : 0f;
+        public static float StageBgmSeconds => I == null ? 0f : StageStyle == 4 ? I.StageClip().length : I.stageBgm != null ? I.stageBgm.length : 0f;   // 11-15 스타일 4 = 지금 스테이지 변주
 
         void Awake()
         {
@@ -198,7 +198,7 @@ namespace KachiGun
 
             var gm = GameManager.I;
             bool intense = gm != null && (gm.bossPhase || gm.mode != GameManager.Mode.Stage);
-            AudioClip target = intense ? (bossBgm ??= TakeBossBgm()) : (stageBgm ??= GenerateStageBgm());
+            AudioClip target = intense ? (bossBgm ??= TakeBossBgm()) : StageClip();   // 11-15 스타일 4 = 스테이지마다 변주
 
             var cur = bgmPlayers[bgmCur];
             if (cur.isPlaying && cur.clip == target) return;
@@ -515,14 +515,17 @@ namespace KachiGun
         // 11-15 사용자 "배경음악을 조금 더 힐링되고 귀여운 음악으로" — 평소 배경음 SoftSong (tools/bgm_cute.py 와 같은 식)
         //   Config Bgm_Stage_Style: 0 = 예전 곡(120 BPM A단조) · 1 = A "봄 산책"(C장조 92 BPM) · 2 = B "낮잠"(F장조 84 BPM)
         //     · 3 = C "낮잠 경쾌"(11-15 사용자가 B 를 골라 "조금 더 경쾌하게 · 속도 1.5배": F장조 126 BPM · 통통 베이스 · 1·3 킥 2·4 틱 · 20마디)
+        //     · 4 = 스테이지마다 변주 (11-15 사용자 "스테이지마다 조금씩 다르게 · 더 활발하고 경쾌하게 · 멜로디는 맘에 듦"):
+        //           C 멜로디·화음 그대로, 편곡만 다른 4곡이 스테이지 번호 % 4 로 돌아감 (LivelyData, tools/bgm_lively.py 와 같은 식)
         //   악기: 오르골(사인 + 2·3배음, 길게 울림) · 화음 패드 · 통통 베이스(1·3박 근음/5음) · 마림바 분산화음(엇박) · 아주 약한 킥/쉐이커/틱
         // =====================================================================
-        public static int StageStyle => Mathf.Clamp(Tables.Ci("Bgm_Stage_Style"), 0, 3);
+        public static int StageStyle => Mathf.Clamp(Tables.Ci("Bgm_Stage_Style"), 0, 4);
         System.Threading.Tasks.Task<float[]> stageTask;
         int stageTaskStyle = -1;
         void PrepareStageBgm()
         {
             int st = StageStyle;   // 표는 메인 스레드에서 읽고 일꾼에게 넘김
+            if (st == 4) { int v = StageVariant; StartVariant(v); StartVariant((v + 1) % LivelyCount); return; }
             if (st == 0 || stageTask != null) return;
             stageTaskStyle = st;
             try { stageTask = System.Threading.Tasks.Task.Run(() => SoftSongData(st)); } catch { stageTask = null; }
@@ -695,10 +698,158 @@ namespace KachiGun
             return data;
         }
 
-        /// <summary>평소 배경음: Bgm_Stage_Style 0 = 예전 곡 · 1·2 = SoftSong (미리 계산해 둔 값)</summary>
+        // ---------- 11-15 스타일 4: 스테이지마다 변주 ----------
+        public const int LivelyCount = 4;
+        /// <summary>지금 스테이지의 변주 번호 (0~3) — 스테이지가 하나 넘어갈 때마다 다음 변주</summary>
+        public static int StageVariant => (SaveData.Cur != null ? SaveData.Cur.stage : 0) % LivelyCount;
+        readonly Dictionary<int, AudioClip> varClips = new();
+        readonly Dictionary<int, System.Threading.Tasks.Task<float[]>> varTasks = new();
+
+        void StartVariant(int v)
+        {
+            if (varClips.ContainsKey(v) || varTasks.ContainsKey(v)) return;
+            try { varTasks[v] = System.Threading.Tasks.Task.Run(() => LivelyData(v)); } catch { }
+        }
+
+        /// <summary>평소 배경음 고르기: 스타일 4 = 지금 스테이지 변주 (없으면 바로 계산) + 다음 변주를 미리 · 지금·다음 말고는 버림(메모리)</summary>
+        AudioClip StageClip()
+        {
+            if (StageStyle != 4) return stageBgm ??= GenerateStageBgm();
+            int v = StageVariant, nx = (v + 1) % LivelyCount;
+            if (!varClips.TryGetValue(v, out var c) || c == null)
+            {
+                float[] d = null;
+                if (varTasks.TryGetValue(v, out var tk)) { try { d = tk.Result; } catch { d = null; } varTasks.Remove(v); }
+                c = MakeSongClip("Stage_BGM_" + (v + 1), d ?? LivelyData(v));
+                varClips[v] = c;
+            }
+            StartVariant(nx);
+            foreach (var k in new List<int>(varClips.Keys))
+            {
+                if (k == v || k == nx) continue;
+                var old = varClips[k];
+                bool playing = false; foreach (var p in bgmPlayers) if (p != null && p.clip == old) playing = true;
+                if (playing) continue;     // 겹쳐 넘어가는 중이면 다음에 버림
+                varClips.Remove(k);
+                if (old != null) Destroy(old);
+            }
+            stageBgm = c;
+            return c;
+        }
+
+        /// <summary>다음 변주를 미리 계산 중이거나 다 됐는지 (시험용)</summary>
+        public bool VariantReady(int v) => varClips.ContainsKey(v) || varTasks.ContainsKey(v);
+
+        static float[] Lead(int kind, float f, float gain, float decay)
+        {
+            float sec = Mathf.Min(1.2f, 6f / decay);
+            int n = (int)(SAMPLE_RATE * sec); var d = new float[n];
+            for (int i = 0; i < n; i++)
+            {
+                float t = (float)i / SAMPLE_RATE, w = 2f * Mathf.PI * f * t, v;
+                if (kind == 0) v = Mathf.Sin(w) + 0.35f * Mathf.Sin(2f * w) * Mathf.Exp(-2f * t) + 0.12f * Mathf.Sin(3f * w) * Mathf.Exp(-6f * t);        // 오르골
+                else if (kind == 1) v = Mathf.Sin(w) + 0.5f * Mathf.Sin(2f * w) * Mathf.Exp(-8f * t) + 0.25f * Mathf.Sin(3f * w) * Mathf.Exp(-12f * t); // 뜯는 소리
+                else if (kind == 2) v = Mathf.Sin(w) + 0.33f * Mathf.Sin(3f * w) + 0.2f * Mathf.Sin(5f * w);                                         // 부드러운 8비트
+                else v = Mathf.Sin(w) + 0.25f * Mathf.Sin(4f * w) * Mathf.Exp(-30f * t);                                                             // 마림바
+                d[i] = v * Mathf.Min(1f, t / 0.003f) * Mathf.Exp(-decay * t) * gain;
+            }
+            return d;
+        }
+
+        static float[] Glock(float f, float gain)
+        {
+            int n = (int)(SAMPLE_RATE * 0.8f); var d = new float[n];
+            for (int i = 0; i < n; i++) { float t = (float)i / SAMPLE_RATE; d[i] = Mathf.Sin(2f * Mathf.PI * f * t) * Mathf.Min(1f, t / 0.002f) * Mathf.Exp(-6f * t) * gain; }
+            return d;
+        }
+
+        static float[] Clap(float gain = 0.06f, int seed = 79)
+        {
+            int n = (int)(SAMPLE_RATE * 0.11f); var d = new float[n]; var rng = new System.Random(seed); float prev = 0f;
+            for (int i = 0; i < n; i++)
+            {
+                float x = (float)(rng.NextDouble() * 2 - 1), hp = x - prev; prev = x;
+                float t = (float)i / SAMPLE_RATE;
+                float fl = t < 0.024f ? 0.6f + 0.4f * Mathf.Cos(2f * Mathf.PI * t / 0.008f) : 1f;
+                d[i] = (hp * 0.7f + x * 0.3f) * Mathf.Exp(-28f * t) * fl * gain;
+            }
+            return d;
+        }
+
+        // 변주: 올림(반음) · BPM · 멜로디 소리(0 오르골 · 1 뜯는 · 2 8비트 · 3 마림바) · 줄어듦 · 높은 종 세기 · 드럼 · 베이스 8분? · 마림바 8분? · 킥 세기 · 크기 배율(bgm_lively.py 가 잰 값)
+        static readonly int[] LvTr = { 0, 2, -3, 4 }, LvBpm = { 138, 144, 132, 150 }, LvLead = { 0, 1, 3, 2 };
+        static readonly float[] LvDecay = { 5f, 7f, 6f, 4f }, LvOct = { 0.30f, 0f, 0.35f, 0.25f }, LvKick = { 0.24f, 0.24f, 0.22f, 0.26f }, LvGain = { 0.661f, 0.759f, 0.912f, 0.525f };
+        static readonly string[] LvDrum = { "khchkhch", "kkchkhch", "khthkhch", "khKhkhKh" };
+        static readonly bool[] LvBass8 = { true, true, false, true }, LvArp8 = { false, true, false, true };
+        static readonly float[][] Bass8 = { new[] { 0f, 0f, 1f, .20f }, new[] { 1f, 2f, 1f, .10f }, new[] { 2f, 0f, 1f, .18f }, new[] { 3f, 2f, 1f, .10f },
+                                            new[] { 4f, 1f, 1f, .18f }, new[] { 5f, 2f, 1f, .10f }, new[] { 6f, 1f, 1f, .16f }, new[] { 7f, 2f, 1f, .10f } };
+
+        /// <summary>스테이지 변주 소리 값 (v 0~3) — C "낮잠 경쾌" 멜로디·화음 그대로 · 처음부터 드럼 · 구간 끝 손뼉 채우기. 어느 스레드에서도 됨</summary>
+        static float[] LivelyData(int v)
+        {
+            int[] F = { 53, 57, 60 }, Dm = { 50, 53, 57 }, Bb = { 58, 62, 65 }, Ch = { 48, 52, 55 }, Amh = { 57, 60, 64 };
+            int[] m1 = { 72, 0, 74, 69, 72, 0, 77, 0, 74, 0, 76, 72, 69, 0, 72, 0, 70, 0, 74, 0, 77, 0, 74, 72, 72, 0, 67, 69, 67, 0, 0, 0 };
+            int[] m3 = { 74, 0, 72, 0, 70, 0, 72, 74, 72, 0, 74, 0, 76, 0, 79, 0, 76, 0, 72, 0, 69, 0, 72, 0, 74, 0, 72, 0, 69, 0, 0, 0 };
+            int[] m4 = { 70, 0, 74, 0, 77, 0, 74, 0, 79, 0, 76, 0, 72, 0, 74, 76, 77, 0, 72, 0, 69, 0, 72, 0, 77, 0, 0, 0, 0, 0, 0, 0 };
+            int[] m0 = Sparse(m1, i => i % 4 == 0);
+            var chords = new[] { new[] { F, Dm, Bb, Ch }, new[] { F, Dm, Bb, Ch }, new[] { Bb, Ch, Amh, Dm }, new[] { F, Dm, Bb, Ch }, new[] { Bb, Ch, F, F } };
+            var mels = new[] { m0, m1, m3, m1, m4 };
+            bool[] fills = { false, false, false, true, true };
+            const string Fill = "khchcccc", Intro = "kh.hkh.h";
+            int tr = LvTr[v];
+            int m = Mathf.CeilToInt(SAMPLE_RATE * (60f / LvBpm[v] / 2f));
+            int steps = 0; foreach (var ml in mels) steps += ml.Length;
+            var data = new float[m * steps];
+            var kick = SoftKick(LvKick[v]); var clap = Clap(); var shaker = SoftNoise(0.05f, 7f, 0.04f, 71, 0f); var tick = SoftNoise(0.03f, 12f, 0.05f, 73, 1800f);
+            var bassPat = LvBass8[v] ? Bass8 : BassBounce;
+            int st = 0;
+            for (int si = 0; si < mels.Length; si++)
+            {
+                for (int b = 0; b < chords[si].Length; b++)
+                {
+                    var c0 = chords[si][b];
+                    int[] ch = { c0[0] + tr, c0[1] + tr, c0[2] + tr };
+                    int o = (st + b * 8) * m;
+                    AddWrap(data, Pad(ch, 8f * m / SAMPLE_RATE, 0.03f), o);
+                    foreach (var bp in bassPat)
+                    {
+                        int w = (int)bp[1];
+                        int n = w == 0 ? ch[0] - 12 : w == 1 ? ch[2] - 24 : ch[0];
+                        AddWrap(data, SoftBass(Hz(n), bp[2] * m / SAMPLE_RATE, bp[3]), o + (int)bp[0] * m);
+                    }
+                    int[] ar = { ch[0] + 12, ch[1] + 12, ch[2] + 12, ch[1] + 12 };
+                    int cnt = LvArp8[v] ? 8 : 4;
+                    for (int j = 0; j < cnt; j++) AddWrap(data, Marimba(Hz(ar[j % 4])), o + (LvArp8[v] ? j : 1 + 2 * j) * m);
+                }
+                var mel = mels[si];
+                for (int k = 0; k < mel.Length; k++)
+                {
+                    int at = (st + k) * m;
+                    if (mel[k] > 0)
+                    {
+                        AddWrap(data, Lead(LvLead[v], Hz(mel[k] + tr), 0.16f, LvDecay[v]), at);
+                        if (LvOct[v] > 0f) AddWrap(data, Glock(Hz(mel[k] + tr + 12), 0.16f * LvOct[v]), at);
+                    }
+                    bool last = k >= mel.Length - 8;
+                    string pat = si == 0 ? Intro : (fills[si] && last ? Fill : LvDrum[v]);
+                    char d = pat[k % 8];
+                    if (d == 'k' || d == 'K') AddWrap(data, kick, at);
+                    if (d == 'c' || d == 'K') AddWrap(data, clap, at);
+                    if (d == 'h') AddWrap(data, shaker, at);
+                    if (d == 't') AddWrap(data, tick, at);
+                }
+                st += mel.Length;
+            }
+            float g = LvGain[v];
+            for (int i = 0; i < data.Length; i++) data[i] = Mathf.Clamp(data[i] * g, -1f, 1f);
+            return data;
+        }
+
+        /// <summary>평소 배경음: Bgm_Stage_Style 0 = 예전 곡 · 1~3 = SoftSong (미리 계산해 둔 값) · 4 = StageClip</summary>
         AudioClip GenerateStageBgm()
         {
             int st = StageStyle;
+            if (st == 4) return StageClip();
             if (st > 0)
             {
                 float[] d = null;

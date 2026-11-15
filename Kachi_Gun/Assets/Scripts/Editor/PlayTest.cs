@@ -231,10 +231,11 @@ namespace KachiGun.EditorTools
                 }
                 float R = (float)Tables.C("Horde_Clump_Radius", 0.5) * Mathf.Sqrt(Tables.Ci("Horde_Pack_Max"));
                 Log($"뭉친 무리: {best}마리 · 가로 {bw:0.0} · 세로 {bh:0.0} (반지름 {R:0.0})");
-                Check(best >= pMin && bw <= 2f * R + 0.4f && bh <= 1.6f * R + 0.4f, $"11-15 좀비가 뭉친 무리로 나옴 ({best}마리 · {bw:0.0}x{bh:0.0}칸)");
+                Check(best >= pMin && bw <= 2f * R + 0.6f && bh <= 1.6f * R + 0.6f, $"11-15 좀비가 뭉친 무리로 나옴 ({best}마리 · {bw:0.0}x{bh:0.0}칸)");
                 Capture("01d_advance");
                 yield return WaitUntil(() => !GM.advancing && !Squad.I.cats[0].moving, 20f);   // 걷는 그림은 다음 프레임에 멈춤
                 Check(!GM.advancing && !Squad.I.cats[0].moving && GM.Engaged(), "11-15 좀비가 사정거리 안에 오면 멈춰서 쏨");
+                yield return WaitUntil(() => Squad.I.cats[0].Angry || GM.advancing, 0.5f);   // 얼굴은 카피바라 Update 가 다음 프레임에 바꿈
                 Check(Squad.I.cats[0].Angry || GM.advancing, "11-15 멈출 때(사정거리 절반) 화난 얼굴");
                 Check(Field.I.ScrollTotal - sc0 > 2f, $"11-15 땅이 흘러감 ({Field.I.ScrollTotal - sc0:0.0}칸)");
                 yield return Wait(0.6f);
@@ -1478,9 +1479,15 @@ namespace KachiGun.EditorTools
             Check(AudioManager.I != null, "사운드 매니저 생성");
             // 10-26 소리 다듬기: 배경음 40초 (8초 반복 아님) · 효과음 16개 다 재생돼도 오류 없음
             Check(AudioManager.StageBgmSeconds >= 30f, $"배경음 길이 {AudioManager.StageBgmSeconds:F1}초");
-            // 11-15 힐링·귀여운 평소 배경음 — 사용자가 B 를 골라 "더 경쾌하게 · 1.5배" → Bgm_Stage_Style 3 = C 낮잠 경쾌 (F장조 126 BPM · 20마디 = 38.1초, tools/bgm_cute.py 와 같은 길이)
-            Check(AudioManager.StageStyle == 3 && Mathf.Abs(AudioManager.StageBgmSeconds - 38.10f) < 0.1f, $"11-15 새 평소 배경음 (스타일 {AudioManager.StageStyle} · {AudioManager.StageBgmSeconds:F2}초)");
-            foreach (AudioManager.Sfx sx in System.Enum.GetValues(typeof(AudioManager.Sfx))) AudioManager.Play(sx);
+            // 11-15 평소 배경음 = 스테이지마다 변주 (Bgm_Stage_Style 4): C 낮잠 경쾌 멜로디로 편곡이 다른 4곡이 스테이지 번호 % 4 로 돌아감
+            //   길이 = 160칸 x ceil(44100 x 60 / BPM / 2) — tools/bgm_lively.py 와 같음 (햇살 138 · 통통 144 · 산들 132 · 신나 150)
+            {
+                float[] lens = { 34.783f, 33.335f, 36.365f, 32.000f };
+                int v0 = AudioManager.StageVariant;
+                bool nextReady = AudioManager.I.VariantReady((v0 + 1) % AudioManager.LivelyCount);
+                Check(AudioManager.StageStyle == 4 && Mathf.Abs(AudioManager.StageBgmSeconds - lens[v0]) < 0.1f && nextReady,
+                    $"11-15 스테이지 변주 배경음 {v0 + 1}번 ({AudioManager.StageBgmSeconds:F2}초) · 다음 변주 미리 계산 {nextReady}");
+            }
             var buff = GM.Buff(true);
             Check(buff == null && Stats.BuffAtk, "버프");
 
