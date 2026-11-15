@@ -147,7 +147,9 @@ namespace KachiGun
                 return;
             }
             float hm = HordeMul;
-            int room = Mathf.RoundToInt(st.maxAlive * hm) - alive;
+            // 11-15 우르르(Horde_Form 1): 화면에 더 많이 — 동시 최대 x Horde_Screen_Mul (처치 목표·한 마리 체력은 그대로)
+            float fill = AdvanceMode && WideHorde ? Mathf.Max(1f, (float)Tables.C("Horde_Screen_Mul", 1.6)) : 1f;
+            int room = Mathf.RoundToInt(st.maxAlive * hm * fill) - alive;
             int left = S.bossFarm ? int.MaxValue : Quota - S.kills - alive;
             int pMin = Mathf.Max(1, Tables.Ci("Horde_Pack_Min")), pMax = Mathf.Max(pMin, Tables.Ci("Horde_Pack_Max"));
             int need = Mathf.Min(pMin, left);       // 자리가 무리 하나만큼 빌 때까지 기다림 (한 마리씩 흘러나오지 않게)
@@ -156,7 +158,7 @@ namespace KachiGun
             if (AdvanceMode)
             {
                 // 11-15 뭉친 무리: 앞 무리 뒤 Horde_Pack_Gap 칸에 놓을 자리가 있을 때만 (분대가 걸어가면 땅과 같이 다가옴)
-                if (SpawnClump(n, hm)) spawnT = 0.3f;
+                if (WideHorde ? SpawnWide(n, hm) : SpawnClump(n, hm)) spawnT = WideHorde ? 0.12f : 0.3f;
                 return;
             }
             SpawnPack(n, hm);
@@ -201,6 +203,32 @@ namespace KachiGun
 
         /// <summary>11-15 뭉친 무리 하나: 앞 무리(가장 오른쪽 좀비)보다 Horde_Pack_Gap 칸 뒤, 높이는 흙 띠 세 칸(위·가운데·아래)을 돌아가며.
         /// 무리 안은 타원(가로 R · 세로 0.8R, R = Horde_Clump_Radius x √n)에 서로 0.5칸 이상 떨어지게. false = 아직 놓을 때가 아님</summary>
+        /// <summary>11-15 사용자 "좀비가 우르르 · 한 무리씩 말고 넓게 퍼져서 꽉 찬 느낌" — Horde_Form 1 = 우르르 · 0 = 뭉친 무리(SpawnClump)</summary>
+        public static bool WideHorde => Tables.C("Horde_Form", 1) >= 0.5;
+
+        /// <summary>11-15 우르르: 흙 띠 위아래 전체를 n 칸으로 나눠 칸마다 한 마리(칸 안에서 흔듦) · 앞뒤는 Horde_Wide_Depth 칸 안에 흩음.
+        /// 다음 줄은 맨 뒤 좀비보다 Horde_Wide_Gap 칸 뒤(음수 = 겹침)에서 시작 → 끊김 없는 한 덩어리. 화면 오른쪽 끝 + Horde_Wide_Ahead 칸까지만 미리 깔아 둠</summary>
+        bool SpawnWide(int n, float hm)
+        {
+            float far = float.MinValue, sc = Field.I.ScrollTotal;
+            foreach (var t in Target.All) if (t is Zombie z && z.Alive && !z.isBoss) far = Mathf.Max(far, z.Pos.x);
+            foreach (var q in spawnQueue) far = Mathf.Max(far, q.p.x - (sc - q.s));
+            float vw = Field.I.ViewHalfW;
+            float depth = Mathf.Max(0.5f, (float)Tables.C("Horde_Wide_Depth", 2.4));
+            float x0 = Mathf.Max(vw + 0.6f, far + (float)Tables.C("Horde_Wide_Gap", -0.8));
+            if (x0 > vw + (float)Tables.C("Horde_Wide_Ahead", 3.0)) return false;
+            float y0 = Field.I.RoadBottom, y1 = Field.I.RoadTop, h = (y1 - y0) / n;
+            var lanes = new List<int>();
+            for (int i = 0; i < n; i++) lanes.Add(i);
+            for (int i = n - 1; i > 0; i--) { int j = Random.Range(0, i + 1); (lanes[i], lanes[j]) = (lanes[j], lanes[i]); }
+            var pts = new List<Vector2>(n);
+            for (int i = 0; i < n; i++)
+                pts.Add(new Vector2(x0 + Random.Range(0f, depth), Mathf.Clamp(y0 + h * (lanes[i] + 0.5f + Random.Range(-0.45f, 0.45f)), y0, y1)));
+            pts.Sort((a, b) => a.x.CompareTo(b.x));
+            foreach (var p in pts) spawnQueue.Enqueue((p, hm, sc));
+            return true;
+        }
+
         bool SpawnClump(int n, float hm)
         {
             float far = float.MinValue, sc = Field.I.ScrollTotal;

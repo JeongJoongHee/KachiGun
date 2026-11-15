@@ -213,7 +213,7 @@ namespace KachiGun.EditorTools
                 yield return WaitUntil(() => GM.advancing && Squad.I.cats[0].moving, 5f);
                 Check(GameManager.AdvanceOn && GM.advancing && Squad.I.cats[0].moving, "11-15 앞에 좀비가 없으면 분대가 걸어 나감 (걷는 그림)");
                 int pMin = Tables.Ci("Horde_Pack_Min");
-                yield return WaitUntil(() => { int c = 0; foreach (var t in Target.All) if (t is Zombie z && z.Alive) c++; return c >= pMin; }, 5f);
+                yield return WaitUntil(() => { int c = 0; foreach (var t in Target.All) if (t is Zombie z && z.Alive) c++; return c >= (GameManager.WideHorde ? 20 : pMin); }, 8f);   // 우르르는 줄이 몇 개 깔린 뒤
                 yield return Wait(0.3f);
                 var zs0 = new List<Vector2>();
                 foreach (var t in Target.All) if (t is Zombie z && z.Alive) zs0.Add(z.Pos);
@@ -231,6 +231,13 @@ namespace KachiGun.EditorTools
                 }
                 float R = (float)Tables.C("Horde_Clump_Radius", 0.5) * Mathf.Sqrt(Tables.Ci("Horde_Pack_Max"));
                 Log($"뭉친 무리: {best}마리 · 가로 {bw:0.0} · 세로 {bh:0.0} (반지름 {R:0.0})");
+                if (GameManager.WideHorde)
+                {
+                    // 11-15 우르르: 무리 사이가 끊기지 않고(x 1.2칸 넘게 벌어지지 않음) 흙 띠 높이의 60% 넘게 위아래로 퍼짐
+                    float road = Field.I.RoadTop - Field.I.RoadBottom;
+                    Check(best >= 12 && bh >= road * 0.6f, $"11-15 좀비가 우르르 넓게 (끊김 없는 덩어리 {best}마리 · 위아래 {bh:0.0}/{road:0.0}칸)");
+                }
+                else
                 Check(best >= pMin && bw <= 2f * R + 0.6f && bh <= 1.6f * R + 0.6f, $"11-15 좀비가 뭉친 무리로 나옴 ({best}마리 · {bw:0.0}x{bh:0.0}칸)");
                 Capture("01d_advance");
                 yield return WaitUntil(() => !GM.advancing && !Squad.I.cats[0].moving, 20f);   // 걷는 그림은 다음 프레임에 멈춤
@@ -810,6 +817,7 @@ namespace KachiGun.EditorTools
                 Log($"방치 초당 골드 {gps:0.##} (스테이지 {SaveData.StageName(S.stage)} · 분대 초당 피해 {Stats.SquadDps():0} · 좀비 체력 {Stats.ZombieHp(S.stage):0} · 좀비 골드 {Stats.ZombieGold(S.stage):0})");
                 Check(gps > 0, "방치 초당 골드 > 0");
                 S.loadedLastSeen = 0; S.lastSeen = SaveData.Now - 3600;
+                GameManager.HoldFire = true;   // 11-15 우르르로 스테이지가 빨리 넘어가 초당 방치 골드가 바뀌지 않게 (이 검사 동안만)
                 bool shown = GM.CheckOffline(); yield return Wait(0.3f);
                 var op = HUD.I.Get<OfflinePopup>();
                 Check(shown && op != null && op.gameObject.activeSelf && System.Math.Abs(op.sec - 3600) < 5, $"1시간 비움 → 방치 보상 창 ({op?.sec:0}초)");
@@ -834,6 +842,7 @@ namespace KachiGun.EditorTools
                 Check(System.Math.Abs(op.sec - GameManager.OfflineMaxSec) < 1 && System.Math.Abs(op.gold - goldMax) < goldMax * 0.001 + 1 && offTime().EndsWith(maxHm),
                     $"안 받고 또 비움 → 시간·골드 최대 그대로 ({offTime()} · {Num.F(op.gold)})");
                 Capture("18e_offline_max");
+                GameManager.HoldFire = false;
                 double og1 = S.gold, want1 = op.gold;
                 if (adb != null) adb.onClick.Invoke();   // 에디터 = 광고 없이 바로 보상
                 Check(System.Math.Abs(S.gold - og1 - want1 * Tables.C("Offline_AdMul", 2)) < want1 * 0.001 + 1, "[광고 보고] → x2");
@@ -1267,6 +1276,7 @@ namespace KachiGun.EditorTools
                     Check(pt != null && pt.fontSize >= 50 && pt.color.r > 0.9f && pt.color.g < 0.4f, $"눌러서 강화 글자 {pt?.fontSize} · 색 {pt?.color}");
                     // 해금: 44 → 45 (보스 던전) — 알림 글 오래 + 보스 버튼 빛
                     int best0 = S.bestEver;
+                    GameManager.HoldFire = true;   // 11-15 우르르로 스테이지가 빨리 넘어가 "Stage …" 알림이 해금 알림을 덮지 않게 (이 검사 동안만)
                     S.bestEver = 44; HUD.I.Refresh();
                     S.bestEver = 45; HUD.I.Refresh();
                     float left = HUD.I.ToastLeft; string tt = HUD.I.ToastText; int fx = HUD.I.UnlockFxCount;
@@ -1276,6 +1286,7 @@ namespace KachiGun.EditorTools
                     float left2 = HUD.I.ToastLeft;
                     Check(tt == "보스 던전이 열렸습니다!" && left > 3f && left2 > 0 && fx == 1, $"해금 알림: '{tt}' {left:0.0}초 (2.7초 뒤에도 {left2:0.0}초 남음) · 빛 {fx}개");
                     S.bestEver = best0; HUD.I.Refresh();
+                    GameManager.HoldFire = false;
                     HUD.I.StopUnlockFx();
                 }
                 // 11-14 요청_05 ①: 설정 › 화면 진동 끄기 → 미사일이 터져도 화면이 안 흔들림 (기기 설정 PlayerPrefs)
