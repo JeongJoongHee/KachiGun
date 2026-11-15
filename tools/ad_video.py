@@ -62,14 +62,15 @@ def upgrade_taps(start, dur):
     return out
 
 
-HOOK = seg('a_horde', 0.0, 3.0, '좀비 떼가 몰려온다!', '카피바라 분대, 발사!',
+HOOK = seg('a_horde', 0.0, 3.0, '좀비 떼가 우르르!', '카피바라 분대, 발사!',
            [(0.0, 'Boom', 0.9), (0.05, 'Laser', 0.7), (0.35, 'Missile', 0.6), (0.6, 'Boom', 0.7), (1.2, 'Boom', 0.6), (1.9, 'Boom', 0.6)], gun=1.0)
 HOOK['hook'] = True   # 첫 장면(썸네일)부터 문구가 또렷하게
 UPG = seg('b_upgrade', 0.0, 2.8, '톡톡 눌러서 강화', '공격력, 공격속도, 금전', [], gun=0.35, taps=upgrade_taps(0.0, 2.8))
 MERGE = seg('c_merge', 0.0, 3.6, '같은 탄알을 겹치면', '한 단계 위로 합성!',
             [(0.5, 'Merge', 1.0), (1.5, 'Merge', 1.0), (2.5, 'Merge', 1.0), (3.2, 'Merge', 1.0), (3.25, 'Coin', 0.6)])
-BOSS = seg('d_boss', 0.2, 3.8, '챕터마다 보스 등장!', '쓰러뜨리고 다음 챕터로',
-           [(0.0, 'BossAppear', 1.0), (0.4, 'Boom', 0.7), (1.4, 'Boom', 0.7), (3.0, 'BossDead', 1.0), (3.05, 'Victory', 0.8)], gun=0.9, bgm='boss')
+# 11-15 새 연출: 용(티라노)이 말을 걸고 카피바라가 받아침 → 3.2초에 쓰러뜨림 → 달려서 다음 맵 (장면 0~4.6초)
+BOSS = seg('d_boss', 0.0, 4.6, '말을 거는 보스 등장!', '쓰러뜨리고 다음 맵으로',
+           [(0.0, 'BossAppear', 1.0), (0.4, 'Boom', 0.7), (1.4, 'Boom', 0.7), (3.2, 'BossDead', 1.0), (3.25, 'Victory', 0.8)], gun=0.9, bgm='boss')
 HIGH = seg('e_high', 0.0, 2.2, 'D부터 SSU까지 13등급', '레이저와 미사일의 화끈한 화력',
            [(0.0, 'Laser', 0.8), (0.1, 'Boom', 0.8), (0.5, 'Missile', 0.7), (0.8, 'Boom', 0.7)], gun=1.0)
 MINE = seg('f_mine', 0.0, 2.0, '비밀던전에서', '다이아를 캐자!', [(0.2 + 0.11 * i, 'MineHit', 0.5) for i in range(14)], gun=0.5)
@@ -77,11 +78,11 @@ SKIN = seg('g_skin', 0.0, 2.0, '18가지 카피바라 코스튬', '모을수록 
 OFFLINE = dict(still='18d_offline.png', dur=2.6, l1='꺼 둬도 쌓이는', l2='방치 보상', sfx=[(0.3, 'Coin', 0.8), (0.45, 'Coin', 0.8)], gun=0, bgm='stage', taps=[])
 END = dict(end=True, dur=2.5, l1='', l2='', sfx=[(0.0, 'Victory', 0.9)], gun=0, bgm='stage', taps=[])
 
+UPG_S = seg('b_upgrade', 0.0, 2.2, '톡톡 눌러서 강화', '공격력, 공격속도, 금전', [], gun=0.35, taps=upgrade_taps(0.0, 2.2))
 EDITS = {
-    '15초': [HOOK, UPG, MERGE, BOSS, END],                                   # 3 + 2.8 + 3.6 + 3.8 + 2.5 = 15.7
-    '25초': [HOOK, UPG, MERGE, HIGH, BOSS, MINE, SKIN, OFFLINE, dict(END, dur=3.0)],   # 3+2.8+3.6+2.2+3.8+2+2+2.6+3 = 25.0
+    '15초': [HOOK, UPG_S, MERGE, BOSS, dict(END, dur=1.6)],                  # 3 + 2.2 + 3.6 + 4.6 + 1.6 = 15.0
+    '25초': [HOOK, UPG, MERGE, HIGH, BOSS, MINE, SKIN, OFFLINE, dict(END, dur=2.2)],   # 3+2.8+3.6+2.2+4.6+2+2+2.6+2.2 = 25.0
 }
-EDITS['15초'][4] = dict(END, dur=1.8)                                         # 15초 맞춤 (3+2.8+3.6+3.8+1.8 = 15.0)
 
 
 # ---------------------------------------------------------------- 그림
@@ -299,6 +300,23 @@ def load_wav(name):
     return _wav[name]
 
 
+# 11-15 게임 음량에 맞춤: 평소 곡 = 새 "스테이지 변주 1 햇살"(tools/bgm_lively.py) x 배경음 0.44 · 보스 곡 = 예전 wav(0.22) x 0.44 x 0.63 / 0.22 · 효과음 x 0.43 / 0.48
+SFX_K = 0.43 / 0.48
+_bgm = {}
+
+
+def load_bgm(kind):
+    if kind not in _bgm:
+        if kind == 'boss':
+            _bgm[kind] = load_wav('Boss_BGM_x4') * (0.44 * 0.63 / 0.22)
+        else:
+            import json
+            import bgm_lively
+            g = json.load(open(os.path.join(ROOT, 'tools', '_bgm_lively.json'), encoding='utf-8'))['v1']['gain']
+            _bgm[kind] = (np.clip(bgm_lively.lively(0) * g, -1, 1) * 0.44).astype(np.float32)
+    return _bgm[kind]
+
+
 def mix_audio(segs, total, path):
     n = int(total * SR) + SR
     out = np.zeros(n, np.float32)
@@ -307,7 +325,7 @@ def mix_audio(segs, total, path):
     for s in segs:
         a, b = int(t0 * SR), int((t0 + s['dur']) * SR)
         # 배경음 (장면 길이만큼, 시작·끝 0.08초 이어 붙이기)
-        bg = load_wav('Boss_BGM_x4' if s['bgm'] == 'boss' else 'Stage_BGM_x4')
+        bg = load_bgm(s['bgm'])
         off = int(t0 * SR) % len(bg)
         seg_bg = np.resize(np.roll(bg, -off), b - a) * 0.42
         out[a:b] += seg_bg
@@ -316,18 +334,18 @@ def mix_audio(segs, total, path):
             tt = 0.0
             while tt < s['dur']:
                 nm = rng.choice(['Laser', 'Shot', 'Shotgun', 'Laser'])
-                w = load_wav(nm) * 0.22 * s['gun'] * rng.uniform(0.6, 1.0)
+                w = load_wav(nm) * 0.22 * SFX_K * s['gun'] * rng.uniform(0.6, 1.0)
                 i = a + int(tt * SR)
                 out[i:i + len(w)] += w[:max(0, n - i)]
                 if rng.random() < 0.35:
                     c = load_wav('Coin') * 0.18 * s['gun']; j = i + int(0.03 * SR); out[j:j + len(c)] += c[:max(0, n - j)]
                 tt += rng.uniform(0.07, 0.13)
         for (st, nm, g) in s['sfx']:
-            w = load_wav(nm) * g * 0.8
+            w = load_wav(nm) * g * 0.8 * SFX_K
             i = a + int(st * SR)
             out[i:i + len(w)] += w[:max(0, n - i)]
         for (st, x, y) in s['taps']:
-            w = load_wav('Upgrade') * 0.55
+            w = load_wav('Upgrade') * 0.55 * SFX_K
             i = a + int(st * SR)
             out[i:i + len(w)] += w[:max(0, n - i)]
         t0 += s['dur']

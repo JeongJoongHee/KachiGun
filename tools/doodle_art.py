@@ -674,11 +674,12 @@ def ogre():
     ])
 
 
-CRAWLERS = {'crawler', 'bucket', 'dog', 'centaur', 'spider', 'dragon'}     # 기어 다니는 좀비 (이미 누워 있음) · 11-15 네발·거미·티라노 용
-MELTS = {'ghost', 'mimic', 'kraken', 'eyeball', 'wyvern'}   # 11-11 유령 = 쓰러지지 않고 아래로 납작하게 꺼짐 · 11-15 떠다니는·날개 보스
+CRAWLERS = {'crawler', 'bucket', 'dog', 'centaur', 'spider'}     # 기어 다니는 좀비 (이미 누워 있음) · 11-15 네발·거미 (티라노 용은 서 있어서 뒤로 넘어지게 = 여기 안 넣음)
+MELTS = {'ghost', 'mimic', 'kraken', 'eyeball', 'wyvern'}
+FLIPS = {'dragon'}                   # 11-15 가로로 긴 티라노 용 = 위아래로 뒤집혀 발이 하늘로 (90도 돌리면 꼬리로 선 모양이 됨)   # 11-11 유령 = 쓰러지지 않고 아래로 납작하게 꺼짐 · 11-15 떠다니는·날개 보스
 
 
-def zombie_die_cell(a, crawl=False, melt=False):
+def zombie_die_cell(a, crawl=False, melt=False, flip=False):
     """죽기 칸(400x380): 바닥(y=376)에 붙인 쓰러진 그림.
     서 있는 좀비 = 뒤로 벌러덩(머리 오른쪽 · 얼굴·팔은 하늘). 11-08 전엔 시계 방향으로 돌려 얼굴·팔이 땅에 박혔음.
     기어 다니는 좀비 = 돌리지 않고 그 자리에 납작 엎어짐(머리 오른쪽 그대로). 11-08 전엔 90도 돌려 물구나무가 됐음.
@@ -691,7 +692,9 @@ def zombie_die_cell(a, crawl=False, melt=False):
         cell = Image.new('RGBA', (400, 380), (0, 0, 0, 0))
         cell.alpha_composite(ly, ((400 - ly.width) // 2, 376 - ly.height))
         return cell
-    if crawl:
+    if flip:
+        ly = a.transpose(Image.FLIP_TOP_BOTTOM).rotate(4, resample=Image.BICUBIC, expand=True)
+    elif crawl:
         ly = a.rotate(-3, resample=Image.BICUBIC, center=(200, 376))      # 머리 쪽이 살짝 땅으로
     else:
         ly = a.rotate(90, resample=Image.BICUBIC, expand=True).transpose(Image.FLIP_LEFT_RIGHT)
@@ -717,7 +720,7 @@ def remake_zombie_die():
         sheet = Image.open(p).convert('RGBA')
         a = sheet.crop((0, 0, 400, 380))
         sheet.paste((0, 0, 0, 0), (2000, 0, 2400, 380))
-        sheet.alpha_composite(zombie_die_cell(a, name in CRAWLERS, name in MELTS), (2000, 0))
+        sheet.alpha_composite(zombie_die_cell(a, name in CRAWLERS, name in MELTS, name in FLIPS), (2000, 0))
         sheet.save(p)
         print('zombie die', name)
 
@@ -732,7 +735,7 @@ def make_zombie(name, svg):
     hit = a.rotate(6, resample=Image.BICUBIC, center=(200, 376))
     sheet.alpha_composite(hit, (1600, 0))
     # 5 죽기
-    sheet.alpha_composite(zombie_die_cell(a, name in CRAWLERS, name in MELTS), (2000, 0))
+    sheet.alpha_composite(zombie_die_cell(a, name in CRAWLERS, name in MELTS, name in FLIPS), (2000, 0))
     # 6 = 흰 실루엣
     al = im[..., 3]
     wh = np.zeros_like(im); wh[..., :3] = 255; wh[..., 3] = al

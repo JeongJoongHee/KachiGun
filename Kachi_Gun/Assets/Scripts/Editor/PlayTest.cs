@@ -2019,17 +2019,18 @@ namespace KachiGun.EditorTools
             Log($"01 전투: 가운데까지 온 좀비 {Near(0.3f)} · 전체 {Target.All.Count}");
             Capture("store/01_battle");
 
-            // 보스 (챕터 마지막 스테이지 11-5 = 54)
-            Dress(17);   // 11챕터 보스 = 닻 선장 ↔ 해적 선장 카피바라
-            // 11-11: 예전엔 보스가 오른쪽 끝에서 맞고 있어 화면에 안 보였음 → 사격을 멈추고 보스가 화면 안쪽까지 걸어오면 쏘기 시작
-            S.stage = 54; S.kills = GM.Quota; GM.Notify();
+            // 보스 — 11-15 새 연출: 용(티라노 · 9챕터 보스 = 스테이지 9-5 = 44)이 말을 걸고 카피바라가 받아침
+            Dress(17);
+            Speech.I.Clear();
+            GM.ClearTargets();   // 도망가는 졸개가 화면에 남아 "보스만" 으로 안 보여서 (촬영만)
+            S.stage = 44; S.kills = GM.Quota; GM.Notify();
             GameManager.HoldFire = true;
-            yield return WaitUntil(() => GM.boss != null && GM.boss.Pos.x < Field.I.ViewHalfW * 0.4f, 45f);
-            GameManager.HoldFire = false;
-            Say("보스다!! 조심해!!");
-            yield return Wait(0.4f);
+            yield return WaitUntil(() => GM.boss != null && GM.boss.Pos.x < Field.I.ViewHalfW * 0.4f && Speech.I.TextOf(GM.boss) != null, 45f);
+            yield return WaitUntil(() => { foreach (var c in Squad.I.cats) if (Speech.I.TextOf(c) != null) return true; return false; }, 3f);   // 카피바라가 받아칠 때까지
+            yield return Wait(0.2f);   // 쏘기 전에 찍음 (레이저·번쩍임이 용을 가리지 않게) — 아래 Capture 뒤에 사격을 풂
             Log($"보스: {(GM.boss != null ? "있음 y=" + GM.boss.transform.position.y.ToString("0.0") : "없음")}");
             Capture("store/02_boss");
+            GameManager.HoldFire = false;
             if (GM.boss != null) GM.boss.Hit(GM.boss.hp + 1, GM.boss.Pos);
             yield return Wait(1.0f);
 
@@ -2044,7 +2045,7 @@ namespace KachiGun.EditorTools
             GameManager.HoldFire = true;
             yield return WaitUntil(() => Near(0.3f) >= 10, 25f);
             GameManager.HoldFire = false;
-            yield return Wait(0.35f);
+            yield return Wait(0.15f);   // 11-15 우르르라 금방 숫자·동전이 화면을 덮음 → 조금 일찍
             Log($"04 상위 총알: 가운데까지 온 좀비 {Near(0.3f)} · 전체 {Target.All.Count}");
             Speech.I.Clear();
             Capture("store/04_high");
@@ -2059,12 +2060,26 @@ namespace KachiGun.EditorTools
             if (GM.StartMine() == null) { yield return Wait(2.2f); Capture("store/07_mine"); GM.dungeonTime = 0.05f; yield return Wait(0.5f); HUD.I.Get<ResultPopup>()?.Close(); yield return Wait(0.4f); }
             else Log("광산 못 들어감");
 
-            // 도전
-            // 11-07: 3초면 이미 다 잡아 결과 창이 찍혔음 → 싸우는 중에 (알림 글자가 흐려질 때쯤)
+            // 11-15 판타지 좀비 떼 (도전 던전 대신): 121챕터 배경에 새 좀비 12종을 흙길 위아래로 꽉 채움 → 다가오면 쏘기
             Dress(17); Speech.I.Clear();
-            GameManager.HoldFire = true;   // 도전 좀비는 제자리에 서 있음 → 알림 글자가 사라질 때까지 쏘지 않고 기다렸다가 잠깐 쏨
-            if (GM.StartChallenge() == null) { yield return Wait(1.9f); GameManager.HoldFire = false; yield return Wait(0.12f); Log($"08 도전: 남은 좀비 {GM.DungeonLeft}"); Capture("store/08_challenge"); HUD.I.Get<ResultPopup>()?.Close(); GM.ExitDungeon(); }
-            else Log("도전 못 들어감");
+            S.stage = 600; S.kills = 0; S.bossFarm = false; GM.Notify(); GM.ApplyTint();
+            GM.ClearTargets();
+            GameManager.HoldFire = true;
+            {
+                string[] f3 = { "skeleton", "dog", "vampire", "werewolf", "spider", "mimic", "golem", "centaur", "yetiz", "cyclops", "kraken", "eyeball" };
+                float y0 = Field.I.RoadBottom, y1 = Field.I.RoadTop;
+                for (int i = 0; i < 26; i++)
+                {
+                    var zr = Tables.Zombie(f3[i % f3.Length]);
+                    var pz = new Vector2(Random.Range(-0.5f, Field.I.ViewHalfW + 1.5f), Mathf.Lerp(y0, y1, (i % 7 + Random.Range(0.1f, 0.9f)) / 7f));
+                    Zombie.Spawn(zr, pz, Stats.ZombieHp(S.stage) * zr.hpMul / GameManager.HordeMul, 0, tint: GameManager.PickTint(S.Chapter, false));
+                }
+            }
+            yield return Wait(1.6f);
+            GameManager.HoldFire = false;
+            yield return Wait(0.25f);
+            Log($"08 판타지 좀비 떼: {Target.All.Count}");
+            Capture("store/08_fantasy");
             Log($"DONE errors={errors}");
             PlayTest.Finish(errors);
         }
@@ -2264,15 +2279,18 @@ namespace KachiGun.EditorTools
             });
             CloseAll();
 
-            // D. 보스 — 걸어 들어오면 쏘기 시작 · 3.2초에 쓰러뜨림 → 다음 스테이지
+            // D. 보스 — 11-15 새 연출: 용(티라노)이 다가오며 말을 걸고 카피바라가 받아침 → 쏘기 → 3.2초에 쓰러뜨림 → 달려서 다음 맵
             Dress(17);
-            S.stage = 54; S.kills = GM.Quota; GM.Notify();
+            Speech.I.Clear();
+            GM.ClearTargets();   // 도망가는 졸개가 화면에 남아 "보스만" 으로 안 보여서 (촬영만)
+            S.stage = 44; S.kills = GM.Quota; GM.Notify();
             GameManager.HoldFire = true;
-            yield return WaitUntil(() => GM.boss != null && GM.boss.Pos.x < Field.I.ViewHalfW * 0.45f, 40f);
+            yield return WaitUntil(() => GM.boss != null && GM.boss.Pos.x < Field.I.ViewHalfW * 0.45f && Speech.I.TextOf(GM.boss) != null, 40f);
             GameManager.HoldFire = false;
-            bool killed = false;
-            yield return Rec("d_boss", 5.0f, t =>
+            bool killed = false, hpBig = false;
+            yield return Rec("d_boss", 7.0f, t =>
             {
+                if (!hpBig && GM.boss != null) { hpBig = true; GM.boss.hp = GM.boss.maxHp = 1e15; }   // 11-15 분대가 세서 3.2초 전에 죽지 않게 (영상의 효과음 시점과 맞춤)
                 if (!killed && t >= 3.2f && GM.boss != null && GM.boss.Alive) { killed = true; GM.boss.Hit(GM.boss.hp + 1, GM.boss.Pos); }
             });
 

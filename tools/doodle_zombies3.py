@@ -15,7 +15,7 @@ from doodle_art import (P, L, C, E, F, limb, zig, walker, shade, zface, zhead, f
 
 NEW_ZOMBIES3 = ['skeleton', 'dog', 'vampire', 'werewolf', 'centaur', 'golem', 'mimic', 'kraken', 'spider', 'eyeball',
                 'cyclops', 'yetiz', 'minotaur', 'wyvern', 'dragon']
-CRAWL3 = {'dog', 'centaur', 'spider', 'dragon'}          # 죽을 때 돌리지 않고 납작
+CRAWL3 = {'dog', 'centaur', 'spider'}          # 용(티라노)은 뼈대만 crawl, 죽을 땐 서 있는 좀비처럼 뒤로 넘어짐          # 죽을 때 돌리지 않고 납작
 MELT3 = {'mimic', 'kraken', 'eyeball', 'wyvern'}   # 죽을 때 아래로 꺼짐
 TEAL = '#5fc2b4'
 GOLD = '#e8c05a'
