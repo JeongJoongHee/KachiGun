@@ -51,6 +51,7 @@ LINES = [
     ('boss_5', 'Boss', 'Leader', 1, '크다...! 몇 끼 분량이지?', 'Huge...! How many meals?'),
     ('clear_2', 'Clear', 'Leader', 1, '귀여움으로 이겼다!', 'Cuteness wins!'),
     ('clear_3', 'Clear', 'Leader', 1, '자, 낮잠 시간이다!', 'Okay, nap time!'),
+    # 11-15 연출_비교.html 의견: 도발 4 · 아픔 1 · 쓰러짐 1 · 이김 1 지움, 3줄 고침 (보스 이김 → 카피바라 답 'ㅇㅋ 기달!')
     # 11-15 보스 말풍선 (Who Boss = 보스가 말함): BossIntro 화면에 들어옴 · BossTaunt 싸우는 중 Boss_Speech_Min~Max 초마다 ·
     #   BossHurt 체력 절반 아래 한 번 · BossDie 쓰러짐 · BossWin 시간 초과로 물러남
     ('bin_1', 'BossIntro', 'Boss', 1, '여긴 내 구역이다!', 'This is my turf!'),
@@ -60,18 +61,11 @@ LINES = [
     ('bin_5', 'BossIntro', 'Boss', 1, '배고프다... 아주 배고프다!', 'Hungry... so hungry!'),
     ('btn_1', 'BossTaunt', 'Boss', 1, '그게 다냐?', 'Is that all?'),
     ('btn_2', 'BossTaunt', 'Boss', 1, '간지럽다, 간지러워!', 'That tickles!'),
-    ('btn_3', 'BossTaunt', 'Boss', 1, '더 세게 쏴 봐라!', 'Shoot harder!'),
-    ('btn_4', 'BossTaunt', 'Boss', 1, '크아아아!', 'Graaaah!'),
-    ('btn_5', 'BossTaunt', 'Boss', 1, '도망치려면 지금이다!', 'Run while you can!'),
-    ('btn_6', 'BossTaunt', 'Boss', 1, '카피바라 수프 끓여야지!', 'Capybara soup tonight!'),
     ('bht_1', 'BossHurt', 'Boss', 1, '으윽... 제법인데?', 'Ugh... not bad?'),
     ('bht_2', 'BossHurt', 'Boss', 1, '아야! 그건 아프다!', 'Ow! That hurts!'),
-    ('bht_3', 'BossHurt', 'Boss', 1, '이, 이럴 리가 없어!', "Th-this can't be!"),
-    ('bdi_1', 'BossDie', 'Boss', 1, '내가... 지다니...', 'I... lost...'),
-    ('bdi_2', 'BossDie', 'Boss', 1, '기억해 두겠다...!', "I'll remember this...!"),
+    ('bdi_2', 'BossDie', 'Boss', 1, '이따 또 만나!', 'See you later!'),
     ('bdi_3', 'BossDie', 'Boss', 1, '엄마... 보고 싶어...', 'I miss my mom...'),
     ('bwn_1', 'BossWin', 'Boss', 1, '크하하! 더 강해져서 와라!', 'Haha! Come back stronger!'),
-    ('bwn_2', 'BossWin', 'Boss', 1, '시시하군. 다음에 보자!', 'Boring. See you later!'),
 ]
 
 # 11-12 받아치기: Trigger=Reply 줄은 Reply_To 의 대사가 나온 뒤 Speech_Reply_Delay 초 뒤 다른 동료가 말함
@@ -137,15 +131,14 @@ REPLIES = [
     ('re_bin1a', 'bin_1', 'Any', 1, '여긴 우리 산책로야!', 'This is our walking path!'),
     ('re_bin2a', 'bin_2', 'Any', 1, '그거 우리 샴푸 냄새야!', "That's our shampoo!"),
     ('re_bin2a1', 're_bin2a', 'Boss', 1, '...무슨 샴푸 쓰냐?', '...Which shampoo?'),
-    ('re_bin3a', 'bin_3', 'Any', 1, '걸어서 왔는데?', 'We walked here.'),
+    ('re_bin3a', 'bin_3', 'Any', 1, '아니 저기까지 왔는데?', 'We came all the way!'),
     ('re_bin4a', 'bin_4', 'Any', 1, '털뭉치 아니고 카피바라!', 'Not furballs, capybaras!'),
     ('re_bin5a', 'bin_5', 'Any', 1, '풀 좀 나눠 줄까?', 'Want some grass?'),
     ('re_bin5a1', 're_bin5a', 'Boss', 1, '...풀은 됐다.', "...I'll pass on grass."),
     ('re_btn1a', 'btn_1', 'Any', 1, '아직 몸풀기야!', 'Just warming up!'),
     ('re_btn2a', 'btn_2', 'Any', 1, '곧 안 간지러울걸!', "Won't tickle for long!"),
-    ('re_btn6a', 'btn_6', 'Any', 1, '우린 맛없어!!', 'We taste bad!!'),
     ('re_bht1a', 'bht_1', 'Any', 1, '이제 알았어?', 'Took you long enough?'),
-    ('re_bwn1a', 'bwn_1', 'Any', 1, '강화하고 다시 온다!', "We'll power up and return!"),
+    ('re_bwn1a', 'bwn_1', 'Any', 1, 'ㅇㅋ 기달!', 'OK, wait for us!'),
 ]
 
 CONFIG = [

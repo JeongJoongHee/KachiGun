@@ -1,4 +1,4 @@
-src Zombie/z_beholder
+src Zombie/z_eyeball
 rect 400 0 400 380
 cell 400 380
 pivot 200 4

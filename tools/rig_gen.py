@@ -81,10 +81,9 @@ ZOMBIE_RIG = {
     'minotaur': dict(neck=180, hip=298, crotch=306, knee=334, split=206, armB=([(84, 200, 130, 316)], (150, 196)), armF=([(292, 210, 350, 296), (296, 70, 400, 300)], (262, 214)), legA=11, swing=5),
     'mimic':    dict(neck=232, hip=300, crotch=999, knee=340, split=210, armB=None, armF=None, legA=0, swing=0, robe=True, robeK=0.3),
     'kraken':   dict(neck=200, hip=280, crotch=999, knee=330, split=212, armB=None, armF=([(276, 220, 372, 264)], (262, 252)), legA=0, swing=6, robe=True, robeK=1.0),
-    'beholder': dict(neck=150, hip=270, crotch=999, knee=320, split=212, armB=None, armF=None, legA=0, swing=0, robe=True, robeK=1.2),
+    'eyeball':  dict(neck=150, hip=270, crotch=999, knee=320, split=212, armB=None, armF=None, legA=0, swing=0, robe=True, robeK=1.2),
     'spider':   dict(neck=230, hip=296, crotch=999, knee=340, split=200, armB=None, armF=None, legA=0, swing=0, robe=True, robeK=0.7),   # 다리가 겹쳐 crawl 은 찢어짐 → 다리 전체가 같이 흔들림
     'wyvern':   dict(neck=210, hip=290, crotch=999, knee=334, split=210, armB=([(44, 50, 186, 236)], (176, 226)), armF=([(196, 28, 294, 112), (204, 112, 272, 196)], (222, 222)), legA=0, swing=0, robe=True, robeK=0.8, wing=16),
-    'dragon':   dict(neck=200, hip=292, crotch=999, knee=336, split=205, armB=([(20, 24, 178, 236)], (168, 226)), armF=([(188, 6, 258, 112), (258, 6, 304, 78), (196, 112, 272, 186)], (214, 222)), legA=0, swing=0, robe=True, robeK=0.8, wing=12),
 }
 CRAWL_RIG = {
     # 기어 다니는 좀비: 몸이 가로 — legs(뒤로 끌리는 다리) · pelvis(엉덩이) · spine(몸) · head · armB/armF(번갈아 뻗는 팔)
@@ -98,6 +97,9 @@ CRAWL_RIG = {
                     armB=([(222, 276, 262, 380)], (244, 272)), armF=([(266, 280, 308, 380)], (282, 276))),
     'centaur': dict(hip=(126, 262), legs_x=136, neck_x=236, arm_top=250,
                     armB=([(212, 266, 248, 380)], (228, 262)), armF=([(248, 272, 288, 380)], (264, 266))),
+    # 11-15 용(보스)을 티라노처럼 두 발로: 두 다리 = 팔 상자(번갈아 내딛음) · 꼬리 = legs · 큰 머리 = neck_x 오른쪽
+    'dragon':  dict(hip=(200, 262), legs_x=140, neck_x=262, arm_top=206,
+                    armB=([(146, 300, 208, 380)], (178, 296)), armF=([(210, 300, 276, 380)], (236, 296))),
 }
 
 

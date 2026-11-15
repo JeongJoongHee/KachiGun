@@ -1,5 +1,9 @@
 # 카치건 (좀비 키우기) — 세로 방치형 분대 슈팅, Unity 6000.0.84f1 · 2D URP
 
+## ▶ 재개 메모 (2026-11-15 저녁 — 연출 의견·용·눈알 좀비·새 배경음 반영 · **사용자 확인 대기 = `배경음_후보.html` · `좀비_추가_1115.html`** · 빌드 안 함)
+- **연출_비교.html 체크·의견 반영 → 완료 문서/ 로 옮김**: 무리 더 떼로(Horde_Pack_Min/Max 8/14 · Horde_Clump_Radius 0.38 · 무리 안 간격 0.5칸) · 보스 대사(re_bin3a "아니 저기까지 왔는데?" · bdi_2 "이따 또 만나!" · 지움 btn_3~6 · re_btn6a · bht_3 · bdi_1 · bwn_2) · **해석: "크하하! 더 강해져서 와라! → ㅇㅋ 기달!" = 보스 말은 그대로, 카피바라 답(re_bwn1a)을 "ㅇㅋ 기달!" 로** (주아 글꼴에 ㅇ·ㅋ 있음) · 시간 늘어난 것 사용자 "괜찮음, 더 몰두"
+- **배경음 "더 힐링되고 귀엽게"**: AudioManager.SoftSongData (오르골·패드·통통 베이스·마림바·약한 쉐이커) · Config `Bgm_Stage_Style` 1 = A 봄 산책(C장조 92 BPM 41.7초, 게임에 넣음) · 2 = B 낮잠(F장조 84 BPM) · 0 = 예전 · 일꾼 스레드로 미리 계산(PrepareStageBgm) · 예전보다 체감 2dB 작게 · 폰 스피커 비율 29% → 43% · 보스·던전 곡 그대로 · 듣기 문서 `배경음_후보.html`(키 kachigun-bgm-1115, 소리 = 사운드_검토_wav/bgm_*.m4a, tools/bgm_cute.py)
+- **용 = 티라노처럼 두 발**(날개 없음, crawl 뼈대: 두 다리 = 팔 상자 · 꼬리 = legs) · **비홀더 → 눈알 좀비**(id beholder → eyeball, 그림·뼈대 파일 이름도)
 ## ▶ 재개 메모 (2026-11-15 오후 — 판타지 몬스터 좀비 15종 추가 · **사용자 확인 대기 = `좀비_추가_1115.html` + `연출_비교.html`** · 빌드 안 함)
 - **11-15 사용자 요청 "해골·개·뱀파이어·늑대인간·미노타우르스(보스)·켄타우로스·골렘·미믹·크라켄·거대 거미·비홀더·사이클롭스·설인·와이번(보스)·용(보스) 좀비 추가해서 배치"** → 그림 · 뼈대 · 표 · 시험 errors=0 · 확인 문서 `좀비_추가_1115.html`(+ `좀비_추가_1115_그림/`, 키 kachigun-zombie-1115)
   - 그림 tools/doodle_zombies3.py (PowerShell `python tools/doodle_art.py znew3`) · 뼈대 rig_gen.py: 걷기 7(skeleton·vampire·werewolf·golem·cyclops·yetiz·minotaur) · 네발 crawl 2(dog·centaur) · robe 4(mimic=Hop·kraken·beholder·spider — 거미는 crawl 이면 다리가 찢어져 robe) · robe+날개 2(wyvern·dragon, anim W = 퍼덕임°, Rig.cs Wings())

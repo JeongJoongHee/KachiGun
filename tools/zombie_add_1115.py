@@ -9,6 +9,7 @@
     (전엔 6종 — 챕터 7부터 보스 순서가 바뀜) · 보스 던전도 레벨마다 같은 순서
   · '설인 좀비'는 이미 보스(yeti)에 있어서 → 새 일반 좀비 id yetiz = '설인 좀비', 원래 보스 yeti 이름 = '거대 설인'
   · 숫자(체력·속도·비중)는 임시값 — 밸런스는 마지막에
+  · 11-15 사용자 확인: 비홀더 → '눈알 좀비'(id eyeball) · 용 = 날지 않는 티라노 모양(그림·뼈대만, 표는 그대로)
 사용: PYTHONUTF8=1 python tools/zombie_add_1115.py  →  python tools/xlsx2csv.py (바뀐 csv 만 남기기)
 """
 import os
@@ -30,11 +31,13 @@ NEW = [
     ('yetiz', '설인 좀비', 'Yeti Zombie', '중갑', 1.8, 1.6, 0.85, 6, 1.0, '얼어붙은 설원', '', '', 1.1),
     ('cyclops', '사이클롭스 좀비', 'Cyclops Zombie', '엘리트', 2.2, 2.0, 0.85, 5, 1.2, '', '', '', 1.2),
     ('kraken', '크라켄 좀비', 'Kraken Zombie', '탱커', 1.9, 1.7, 0.8, 5, 1.05, '오염된 해안', '', '', 1.5),
-    ('beholder', '비홀더 좀비', 'Floating Eye Zombie', '특수', 1.4, 1.4, 0.9, 5, 0.95, '', '', '', 1.2),
+    ('eyeball', '눈알 좀비', 'Eyeball Zombie', '특수', 1.4, 1.4, 0.9, 5, 0.95, '', '', '', 1.2),   # 11-15 사용자: '비홀더 좀비' → '눈알 좀비' (id beholder → eyeball)
 ]
 BOSSES = [('minotaur', '미노타우르스 좀비', 'Minotaur Zombie', 1.0), ('wyvern', '와이번 좀비', 'Wyvern Zombie', 1.6),
           ('dragon', '용 좀비', 'Dragon Zombie', 1.7)]
 RENAME = {'yeti': ('거대 설인', 'Giant Yeti')}      # 원래 보스 '설인 좀비' — 새 일반 설인과 이름이 겹쳐서
+OLD_IDS = {'beholder': 'eyeball'}                 # 11-15 바뀐 id (표 줄을 새로 만들지 않고 그 줄의 Id 를 바꿈)
+OLD_NAMES = ['비홀더 좀비']                      # String 표에서 지울 옛 이름
 
 
 def schedule():
@@ -55,6 +58,10 @@ def zombies():
     p = os.path.join(ROOT, 'Zombie.xlsx')
     wb = openpyxl.load_workbook(p); ws = wb['Zombie_Master']
     h = header(ws)
+    for r in range(2, ws.max_row + 1):
+        old = ws.cell(row=r, column=1).value
+        if old in OLD_IDS:
+            ws.cell(row=r, column=1, value=OLD_IDS[old])
     rows = {ws.cell(row=r, column=1).value: r for r in range(2, ws.max_row + 1)}
     sch = schedule()
 
@@ -104,6 +111,10 @@ def boss_dungeon():
 def strings():
     p = os.path.join(ROOT, 'String.xlsx')
     wb = openpyxl.load_workbook(p); ws = wb.active
+    rows = {ws.cell(row=r, column=1).value: r for r in range(2, ws.max_row + 1)}
+    for r in range(ws.max_row, 1, -1):
+        if ws.cell(row=r, column=1).value in OLD_NAMES:
+            ws.delete_rows(r)
     rows = {ws.cell(row=r, column=1).value: r for r in range(2, ws.max_row + 1)}
     names = [(z[1], z[2]) for z in NEW] + [(b[1], b[2]) for b in BOSSES] + list(RENAME.values())
     for ko, en in names:

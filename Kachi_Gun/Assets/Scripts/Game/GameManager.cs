@@ -200,7 +200,7 @@ namespace KachiGun
         }
 
         /// <summary>11-15 뭉친 무리 하나: 앞 무리(가장 오른쪽 좀비)보다 Horde_Pack_Gap 칸 뒤, 높이는 흙 띠 세 칸(위·가운데·아래)을 돌아가며.
-        /// 무리 안은 타원(가로 R · 세로 0.8R, R = Horde_Clump_Radius x √n)에 서로 0.6칸 이상 떨어지게. false = 아직 놓을 때가 아님</summary>
+        /// 무리 안은 타원(가로 R · 세로 0.8R, R = Horde_Clump_Radius x √n)에 서로 0.5칸 이상 떨어지게. false = 아직 놓을 때가 아님</summary>
         bool SpawnClump(int n, float hm)
         {
             float far = float.MinValue, sc = Field.I.ScrollTotal;
@@ -225,7 +225,7 @@ namespace KachiGun
                     var p = new Vector2(x + u.x * R, Mathf.Clamp(cy + u.y * R * 0.8f, y0, y1));
                     float d = float.MaxValue; foreach (var q in pts) d = Mathf.Min(d, (q - p).magnitude);
                     if (d > bestD) { bestD = d; best = p; }
-                    if (d >= 0.6f) break;
+                    if (d >= 0.5f) break;   // 11-15 "더 떼로 뭉쳐 있게" 0.6 → 0.5칸
                 }
                 pts.Add(best);
             }

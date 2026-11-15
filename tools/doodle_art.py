@@ -674,8 +674,8 @@ def ogre():
     ])
 
 
-CRAWLERS = {'crawler', 'bucket', 'dog', 'centaur', 'spider'}     # 기어 다니는 좀비 (이미 누워 있음) · 11-15 네발·거미
-MELTS = {'ghost', 'mimic', 'kraken', 'beholder', 'wyvern', 'dragon'}   # 11-11 유령 = 쓰러지지 않고 아래로 납작하게 꺼짐 · 11-15 떠다니는·날개 보스
+CRAWLERS = {'crawler', 'bucket', 'dog', 'centaur', 'spider', 'dragon'}     # 기어 다니는 좀비 (이미 누워 있음) · 11-15 네발·거미·티라노 용
+MELTS = {'ghost', 'mimic', 'kraken', 'eyeball', 'wyvern'}   # 11-11 유령 = 쓰러지지 않고 아래로 납작하게 꺼짐 · 11-15 떠다니는·날개 보스
 
 
 def zombie_die_cell(a, crawl=False, melt=False):

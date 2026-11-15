@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>배경음 후보</title><style>
+:root{--bg:#fbf7ef;--fg:#3b281c;--mut:#7a6a5c;--line:#e3d8c6;--card:#fff;--acc:#a8642f;--bub:#fffdf6;--ink:#5a3a22}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--fg);font-family:"Malgun Gothic",sans-serif;margin:0;padding:24px 16px;line-height:1.6}
+main{max-width:980px;margin:auto} h1{font-size:24px;margin:0 0 4px} h2{font-size:19px;margin:30px 0 8px;color:var(--acc)}
+.mut{color:var(--mut);font-size:14px} code{background:#f1e8d8;padding:1px 5px;border-radius:4px;font-size:13px}
+.box{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:10px 16px;margin:12px 0;font-size:14.5px}
+.box.warn{background:#fff6e6;border-color:#f0cf96}
+ul.todo{list-style:none;padding:0;margin:0}
+ul.todo>li{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px 14px;margin:12px 0}
+ul.todo>li.checked{border-color:#9cc47e;background:#f6fbef}
+.row{display:flex;align-items:flex-start;gap:10px}
+.row label{flex:1;display:flex;gap:10px;align-items:flex-start;cursor:pointer}
+.row input{width:22px;height:22px;margin-top:4px;flex:none;accent-color:#6aa84f}
+.t{font-weight:700;font-size:16.5px}
+.pen{border:1px solid var(--line);background:#faf5ea;border-radius:8px;font-size:13px;padding:2px 8px;cursor:pointer;color:var(--fg);flex:none}
+li.has-note .pen{background:#fde9c8}
+.notebox{display:none;margin-top:8px} li.open .notebox{display:block}
+.notebox textarea{width:100%;min-height:60px;border:1px solid var(--line);border-radius:8px;padding:6px 8px;font:inherit;font-size:14px}
+.hint{font-size:12px;color:var(--mut)}
+.gif{margin:10px 0 4px;text-align:center} .gif video{max-width:100%;border-radius:10px;border:1px solid var(--line)}
+ol.steps{margin:6px 0 6px 0;padding-left:22px;font-size:14.5px} ol.steps li{margin:2px 0}
+table{border-collapse:collapse;width:100%;font-size:13.5px;margin:6px 0}
+th,td{border:1px solid var(--line);padding:4px 8px;text-align:left;vertical-align:top} th{background:#f4ecdf}
+td.k{white-space:nowrap;font-family:Consolas,monospace;font-size:12.5px}
+.bubs{display:flex;flex-direction:column;gap:6px;margin:6px 0}
+.b{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.who{font-size:12px;color:var(--mut);min-width:96px}
+.bub{display:inline-block;background:var(--bub);border:3px solid var(--ink);border-radius:20px;padding:2px 13px;font-weight:700;font-size:16px;color:#1c120a}
+.bub.boss{border-color:#7a2c1c;background:#fff3ee}
+.b.r1{padding-left:22px} .b.r2{padding-left:44px}
+#bar{position:sticky;top:0;background:var(--bg);padding:8px 0;display:flex;gap:10px;align-items:center;flex-wrap:wrap;z-index:2;border-bottom:1px solid var(--line)}
+.num{font-weight:700;color:#7a2c1c}
+@media (max-width:600px){ .who{min-width:70px} }
+</style></head><body><main>
+<h1>평소 배경음 — 힐링 · 귀여운 후보</h1>
+<div class="mut">2026-11-15 · 사용자 의견 "배경음악을 조금 더 힐링되고 귀여운 음악으로" · 게임과 같은 식으로 코드 합성한 소리(두 번 반복 재생 — 이음새도 들어 보세요) · 마음에 드는 곡에 체크, 고칠 점은 ✎ 의견</div>
+<div id="bar"><span id="stat" class="mut"></span></div>
+<div class="box warn"><b>지금 게임에 들어간 것 = A "봄 산책"</b> (Config <code>Bgm_Stage_Style</code> 1). B 로 하려면 2, 예전 곡은 0 — 값 하나만 바꾸면 됩니다.<br>
+보스전·던전 음악은 긴박한 느낌이 맞아 <b>그대로</b> 두었습니다 (바꾸고 싶으면 의견에).</div>
+<ul class="todo">
+<li data-id="b-a"><label><input type="checkbox"><span class="t">A "봄 산책" — C장조 · 92 BPM (지금 게임)</span></label>
+<div class="gif"><audio controls preload="none" src="사운드_검토_wav/bgm_a.m4a"></audio></div>
+<ol class="steps"><li>오르골 멜로디 + 부드러운 화음 + 통통 튀는 베이스 + 엇박 마림바 + 아주 약한 쉐이커</li>
+<li>처음 10초는 드럼 없이 조용히 → 본 멜로디 → 새 진행 → 마무리 (16마디)</li></ol></li>
+<li data-id="b-b"><label><input type="checkbox"><span class="t">B "낮잠" — F장조 · 84 BPM (더 느리고 낮게)</span></label>
+<div class="gif"><audio controls preload="none" src="사운드_검토_wav/bgm_b.m4a"></audio></div>
+<ol class="steps"><li>같은 악기, 멜로디 음이 적고 길게 쉼 · 드럼은 첫 박과 셋째 박만</li></ol></li>
+<li data-id="b-old"><label><input type="checkbox"><span class="t">예전 곡 — A단조 · 120 BPM (비교용)</span></label>
+<div class="gif"><audio controls preload="none" src="사운드_검토_wav/bgm_0_old.m4a"></audio></div></li>
+</ul>
+<h2>잰 값</h2>
+<table><tr><th>곡</th><th>한 바퀴</th><th>체감 크기</th><th>폰 스피커로 들리는 소리 비율 (400Hz 위)</th></tr>
+<tr><td>예전</td><td>40.0초</td><td>-41.9 dB</td><td>29%</td></tr><tr><td>A 봄 산책</td><td>41.7초</td><td>-43.9 dB</td><td>43%</td></tr><tr><td>B 낮잠</td><td>45.7초</td><td>-43.9 dB</td><td>32%</td></tr></table>
+<div class="mut">새 곡은 예전보다 체감 2dB 작게 맞춤(효과음이 더 잘 들리게) · 반복 이음새 없음 · 도구 <code>tools/bgm_cute.py</code> (게임 코드 AudioManager.SoftSongData 와 같은 식)</div>
+<script>
+(function(){
+  // 저장 형식: {"c":{항목id:true}, "n":{항목id:"의견"}} — tools/todo_checks.py 배경음_후보.html 로 읽음
+  var KEY='kachigun-bgm-1115', st={c:{},n:{}};
+  try{ var v=JSON.parse(localStorage.getItem(KEY)||'{}'); st.c=v.c||{}; st.n=v.n||{}; }catch(e){}
+  var items=document.querySelectorAll('ul.todo > li[data-id]');
+  function save(){ try{ localStorage.setItem(KEY,JSON.stringify(st)); }catch(e){} stat(); }
+  function stat(){ var c=0,n=0; items.forEach(function(li){ if(st.c[li.dataset.id]) c++; if((st.n[li.dataset.id]||'').trim()) n++; });
+    document.getElementById('stat').textContent='체크 '+c+' / '+items.length+' · 의견 '+n+'  (체크·의견은 이 브라우저에 저장 → "체크했어" 라고 알려 주세요)'; }
+  items.forEach(function(li){
+    var id=li.dataset.id, label=li.querySelector('label'), cb=li.querySelector('input');
+    var row=document.createElement('div'); row.className='row'; li.insertBefore(row,label); row.appendChild(label);
+    var pen=document.createElement('button'); pen.type='button'; pen.className='pen'; pen.textContent='✎ 의견'; row.appendChild(pen);
+    var box=document.createElement('div'); box.className='notebox';
+    var ta=document.createElement('textarea'); ta.placeholder='고칠 점을 적어 주세요 (예: 더 느리게 · 오르골 소리를 작게 · 북소리 빼기)';
+    var hint=document.createElement('div'); hint.className='hint'; hint.textContent='적는 대로 이 브라우저에 저장됩니다.';
+    box.appendChild(ta); box.appendChild(hint); li.appendChild(box);
+    cb.checked=!!st.c[id]; ta.value=st.n[id]||''; li.classList.toggle('checked',cb.checked);
+    function mark(){ li.classList.toggle('has-note',!!ta.value.trim()); pen.textContent=ta.value.trim()?'✎ 의견 있음':'✎ 의견'; }
+    mark(); if(ta.value.trim()) li.classList.add('open');
+    cb.addEventListener('change',function(){ st.c[id]=cb.checked; li.classList.toggle('checked',cb.checked); save(); });
+    ta.addEventListener('input',function(){ if(ta.value.trim()) st.n[id]=ta.value; else delete st.n[id]; mark(); save(); });
+    pen.addEventListener('click',function(){ li.classList.toggle('open'); if(li.classList.contains('open')) ta.focus(); });
+  });
+  stat();
+})();
+</script>
+</main></body></html>

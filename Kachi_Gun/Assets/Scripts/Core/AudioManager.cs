@@ -162,6 +162,7 @@ namespace KachiGun
             }
 
             GenerateAllProceduralSounds();
+            PrepareStageBgm();   // 11-15 새 평소 배경음은 계산이 길어서 따로 일꾼이 먼저 (ApplySettings 가 곧바로 씀)
             ApplySettings();
             PrepareBossBgm();
         }
@@ -510,8 +511,181 @@ namespace KachiGun
 
         const string DrumLight = ".h.h.h.h", DrumFull = "khshkhsh", DrumHalf = "k...h...", DrumDrive = "khshkkhs";
 
-        /// <summary>메인 스테이지 40초 루프 (120 BPM, A단조 · 5구간: 처음 → 드럼 → 새 진행 → 높은 변주 → 쉬어 가기)</summary>
+        // =====================================================================
+        // 11-15 사용자 "배경음악을 조금 더 힐링되고 귀여운 음악으로" — 평소 배경음 SoftSong (tools/bgm_cute.py 와 같은 식)
+        //   Config Bgm_Stage_Style: 0 = 예전 곡(120 BPM A단조) · 1 = A "봄 산책"(C장조 92 BPM) · 2 = B "낮잠"(F장조 84 BPM)
+        //   악기: 오르골(사인 + 2·3배음, 길게 울림) · 화음 패드 · 통통 베이스(1·3박 근음/5음) · 마림바 분산화음(엇박) · 아주 약한 킥/쉐이커/틱
+        // =====================================================================
+        public static int StageStyle => Mathf.Clamp(Tables.Ci("Bgm_Stage_Style"), 0, 2);
+        System.Threading.Tasks.Task<float[]> stageTask;
+        int stageTaskStyle = -1;
+        void PrepareStageBgm()
+        {
+            int st = StageStyle;   // 표는 메인 스레드에서 읽고 일꾼에게 넘김
+            if (st == 0 || stageTask != null) return;
+            stageTaskStyle = st;
+            try { stageTask = System.Threading.Tasks.Task.Run(() => SoftSongData(st)); } catch { stageTask = null; }
+        }
+
+        static float Hz(int m) => 440f * Mathf.Pow(2f, (m - 69) / 12f);
+
+        static float[] Bell(float f, float sec = 1.3f, float gain = 0.17f)
+        {
+            int n = (int)(SAMPLE_RATE * sec); var d = new float[n];
+            for (int i = 0; i < n; i++)
+            {
+                float t = (float)i / SAMPLE_RATE, w = 2f * Mathf.PI * f * t;
+                float v = Mathf.Sin(w) + 0.35f * Mathf.Sin(2f * w) * Mathf.Exp(-2f * t) + 0.12f * Mathf.Sin(3f * w) * Mathf.Exp(-6f * t);
+                d[i] = v * Mathf.Min(1f, t / 0.004f) * Mathf.Exp(-3.2f * t) * gain;
+            }
+            return d;
+        }
+
+        static float[] Marimba(float f, float sec = 0.45f, float gain = 0.05f)
+        {
+            int n = (int)(SAMPLE_RATE * sec); var d = new float[n];
+            for (int i = 0; i < n; i++)
+            {
+                float t = (float)i / SAMPLE_RATE, w = 2f * Mathf.PI * f * t;
+                d[i] = (Mathf.Sin(w) + 0.25f * Mathf.Sin(4f * w) * Mathf.Exp(-30f * t)) * Mathf.Min(1f, t / 0.003f) * Mathf.Exp(-9f * t) * gain;
+            }
+            return d;
+        }
+
+        static float[] SoftBass(float f, float sec, float gain = 0.20f)
+        {
+            int n = (int)(SAMPLE_RATE * sec); var d = new float[n];
+            for (int i = 0; i < n; i++)
+            {
+                float t = (float)i / SAMPLE_RATE, w = 2f * Mathf.PI * f * t;
+                float rel = Mathf.Min(1f, (sec - t) / 0.03f);
+                d[i] = (Mathf.Sin(w) + 0.35f * Mathf.Sin(2f * w)) * Mathf.Min(1f, t / 0.005f) * Mathf.Exp(-3f * t / sec) * rel * gain;
+            }
+            return d;
+        }
+
+        static float[] Pad(int[] chord, float sec, float gain = 0.035f)
+        {
+            int n = (int)(SAMPLE_RATE * sec); var d = new float[n];
+            for (int i = 0; i < n; i++)
+            {
+                float t = (float)i / SAMPLE_RATE, v = 0f;
+                foreach (int m in chord) v += Mathf.Sin(2f * Mathf.PI * Hz(m) * t);
+                d[i] = v * Mathf.Min(1f, t / 0.25f) * Mathf.Min(1f, (sec - t) / 0.2f) * gain;
+            }
+            return d;
+        }
+
+        static float[] SoftKick(float gain = 0.18f)
+        {
+            int n = (int)(SAMPLE_RATE * 0.12f); var d = new float[n]; float ph = 0f;
+            for (int i = 0; i < n; i++) { float t = (float)i / n; ph += (110f + (50f - 110f) * t) / SAMPLE_RATE; d[i] = Mathf.Sin(2f * Mathf.PI * ph) * Mathf.Exp(-5f * t) * gain; }
+            return d;
+        }
+
+        /// <summary>쉐이커(tone 0) · 틱(tone 1800Hz 섞음): 높은 소리만 남긴 잡음</summary>
+        static float[] SoftNoise(float dur, float decay, float gain, int seed, float tone)
+        {
+            int n = (int)(SAMPLE_RATE * dur); var d = new float[n]; var rng = new System.Random(seed); float prev = 0f;
+            for (int i = 0; i < n; i++)
+            {
+                float x = (float)(rng.NextDouble() * 2 - 1), hp = x - prev; prev = x;
+                float t = (float)i / n;
+                float v = tone > 0 ? hp * 0.6f + Mathf.Sin(2f * Mathf.PI * tone * i / SAMPLE_RATE) : hp;
+                d[i] = v * Mathf.Exp(-decay * t) * gain;
+            }
+            return d;
+        }
+
+        class SoftSec { public int[][] chords; public int[] mel; public string drums; public bool arp = true; }
+
+        static int[] Sparse(int[] m, System.Func<int, bool> keep) { var r = new int[m.Length]; for (int i = 0; i < m.Length; i++) r[i] = keep(i) ? m[i] : 0; return r; }
+
+        /// <summary>새 평소 배경음 소리 값 (style 1 = A 봄 산책 · 2 = B 낮잠) — 어느 스레드에서도 됨</summary>
+        static float[] SoftSongData(int style)
+        {
+            int[] C = { 60, 64, 67 }, Am = { 57, 60, 64 }, F = { 53, 57, 60 }, G = { 55, 59, 62 }, Em = { 52, 55, 59 }, Dm = { 50, 53, 57 }, Bb = { 58, 62, 65 };
+            float bpm, gain;
+            SoftSec[] secs;
+            if (style == 2)
+            {
+                int[] Ch = { 48, 52, 55 }, Amh = { 57, 60, 64 };
+                int[] m1 = { 72, 0, 0, 69, 72, 0, 77, 0, 74, 0, 0, 72, 69, 0, 0, 0, 70, 0, 74, 0, 77, 0, 74, 0, 72, 0, 0, 0, 67, 0, 0, 0 };
+                int[] m3 = { 74, 0, 72, 0, 70, 0, 0, 0, 72, 0, 74, 0, 76, 0, 0, 0, 76, 0, 72, 0, 69, 0, 0, 0, 74, 0, 72, 0, 69, 0, 0, 0 };
+                int[] m4 = { 70, 0, 74, 0, 77, 0, 74, 0, 79, 0, 76, 0, 72, 0, 0, 0, 77, 0, 72, 0, 69, 0, 72, 0, 77, 0, 0, 0, 0, 0, 0, 0 };
+                bpm = 84f; gain = 0.716f;
+                secs = new[]
+                {
+                    new SoftSec { chords = new[] { F, Dm, Bb, Ch }, mel = Sparse(m1, i => i % 8 == 0 || i % 8 == 4), drums = "........", arp = false },
+                    new SoftSec { chords = new[] { F, Dm, Bb, Ch }, mel = m1, drums = "k...t..." },
+                    new SoftSec { chords = new[] { Bb, Ch, Amh, Dm }, mel = m3, drums = "k.s.t.s." },
+                    new SoftSec { chords = new[] { Bb, Ch, F, F }, mel = m4, drums = "k...t..." },
+                };
+            }
+            else
+            {
+                int[] m1 = { 76, 0, 79, 0, 84, 0, 79, 0, 81, 0, 79, 76, 0, 0, 72, 0, 77, 0, 81, 0, 84, 0, 81, 79, 79, 0, 74, 0, 76, 74, 0, 0 };
+                int[] m3 = { 84, 0, 81, 0, 77, 0, 81, 0, 83, 0, 79, 0, 74, 0, 79, 0, 79, 0, 76, 0, 71, 0, 76, 79, 81, 0, 0, 0, 76, 0, 72, 0 };
+                int[] m4 = { 81, 79, 77, 0, 81, 0, 84, 0, 83, 81, 79, 0, 86, 0, 83, 0, 84, 0, 79, 0, 76, 0, 79, 0, 84, 0, 0, 0, 0, 0, 0, 0 };
+                bpm = 92f; gain = 0.525f;
+                secs = new[]
+                {
+                    new SoftSec { chords = new[] { C, Am, F, G }, mel = Sparse(m1, i => i % 4 == 0), drums = "........", arp = false },
+                    new SoftSec { chords = new[] { C, Am, F, G }, mel = m1, drums = "k.s.t.s." },
+                    new SoftSec { chords = new[] { F, G, Em, Am }, mel = m3, drums = "k.s.tss." },
+                    new SoftSec { chords = new[] { F, G, C, C }, mel = m4, drums = "k.s.t.s." },
+                };
+            }
+            int m = Mathf.CeilToInt(SAMPLE_RATE * (60f / bpm / 2f));
+            int steps = 0; foreach (var sc in secs) steps += sc.mel.Length;
+            var data = new float[m * steps];
+            var kick = SoftKick(); var shaker = SoftNoise(0.05f, 7f, 0.035f, 71, 0f); var tick = SoftNoise(0.03f, 12f, 0.05f, 73, 1800f);
+            int st = 0;
+            foreach (var sc in secs)
+            {
+                for (int b = 0; b < sc.chords.Length; b++)
+                {
+                    var ch = sc.chords[b];
+                    int o = (st + b * 8) * m;
+                    AddWrap(data, Pad(ch, 8f * m / SAMPLE_RATE), o);
+                    AddWrap(data, SoftBass(Hz(ch[0] - 12), 4f * m / SAMPLE_RATE), o);
+                    AddWrap(data, SoftBass(Hz(ch[2] - 24), 4f * m / SAMPLE_RATE, 0.16f), o + 4 * m);
+                    if (sc.arp)
+                    {
+                        int[] ar = { ch[0] + 12, ch[1] + 12, ch[2] + 12, ch[1] + 12 };
+                        for (int j = 0; j < 4; j++) AddWrap(data, Marimba(Hz(ar[j])), o + (1 + 2 * j) * m);
+                    }
+                }
+                for (int k = 0; k < sc.mel.Length; k++)
+                {
+                    if (sc.mel[k] > 0) AddWrap(data, Bell(Hz(sc.mel[k])), (st + k) * m);
+                    char d = sc.drums[k % sc.drums.Length];
+                    if (d == 'k') AddWrap(data, kick, (st + k) * m);
+                    else if (d == 's') AddWrap(data, shaker, (st + k) * m);
+                    else if (d == 't') AddWrap(data, tick, (st + k) * m);
+                }
+                st += sc.mel.Length;
+            }
+            for (int i = 0; i < data.Length; i++) data[i] = Mathf.Clamp(data[i] * gain, -1f, 1f);   // gain = 예전 곡보다 체감 2dB 작게 (bgm_cute.py 가 잰 값)
+            return data;
+        }
+
+        /// <summary>평소 배경음: Bgm_Stage_Style 0 = 예전 곡 · 1·2 = SoftSong (미리 계산해 둔 값)</summary>
         AudioClip GenerateStageBgm()
+        {
+            int st = StageStyle;
+            if (st > 0)
+            {
+                float[] d = null;
+                try { if (stageTask != null && stageTaskStyle == st) d = stageTask.Result; } catch { d = null; }
+                stageTask = null;
+                return MakeSongClip("Stage_BGM", d ?? SoftSongData(st));
+            }
+            return OldStageBgm();
+        }
+
+        /// <summary>예전 메인 스테이지 40초 루프 (120 BPM, A단조 · 5구간: 처음 → 드럼 → 새 진행 → 높은 변주 → 쉬어 가기) — Bgm_Stage_Style 0</summary>
+        AudioClip OldStageBgm()
         {
             float[] bassA = Cat(R(110f, 8), R(87.31f, 8), R(130.81f, 8), R(98f, 4), R(82.41f, 4));             // Am F C G-E
             float[] leadA = {

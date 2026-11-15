@@ -980,7 +980,7 @@ namespace KachiGun.EditorTools
                         "padding", "ski", "scientist", "patient", "hazmat", "tube", "cowboy", "biker", "camper", "delivery", "jiangshi", "chef", "student",
                         "firefighter", "money", "drum", "shield", "yeti", "captain", "gasgiant",
                         // 11-15 판타지 몬스터 좀비 15종 (일반 12 · 보스 3)
-                        "skeleton", "dog", "vampire", "werewolf", "spider", "mimic", "golem", "centaur", "yetiz", "cyclops", "kraken", "beholder",
+                        "skeleton", "dog", "vampire", "werewolf", "spider", "mimic", "golem", "centaur", "yetiz", "cyclops", "kraken", "eyeball",
                         "minotaur", "wyvern", "dragon" };
                     int okArt = 0;
                     foreach (var id in news)
@@ -1004,13 +1004,13 @@ namespace KachiGun.EditorTools
                     // 11-15 새 좀비: 처음 나오는 챕터(58~150 에 8챕터마다) · 설인 이름 나눔 · 날개 · 미믹 깡총
                     {
                         int lo = 999, hi = 0; string where = "";
-                        foreach (var nid in new[] { "skeleton", "dog", "vampire", "werewolf", "spider", "mimic", "golem", "centaur", "yetiz", "cyclops", "kraken", "beholder" })
+                        foreach (var nid in new[] { "skeleton", "dog", "vampire", "werewolf", "spider", "mimic", "golem", "centaur", "yetiz", "cyclops", "kraken", "eyeball" })
                         { int mc = Tables.Zombie(nid).minChapter; lo = Mathf.Min(lo, mc); hi = Mathf.Max(hi, mc); where += nid + mc + " "; }
                         var wy = RigData.Get("z_wyvern"); var dr = RigData.Get("z_dragon");
                         Log("11-15 새 좀비 처음 나오는 챕터: " + where);
                         Check(lo >= 58 && hi <= 150 && Tables.Zombie("yeti").name == "거대 설인" && Tables.Zombie("yetiz").name == "설인 좀비"
-                              && wy != null && wy.A("W") > 0 && dr != null && dr.A("W") > 0 && Tables.Zombie("mimic").Hop && RigData.Get("z_spider").kind == "robe" && RigData.Get("z_dog").kind == "crawl",
-                            $"11-15 새 좀비 12종 챕터 {lo}~{hi} · 보스 설인 = 거대 설인 · 와이번·용 날개 · 미믹 깡총 · 개 네발 · 거미 떠다님");
+                              && wy != null && wy.A("W") > 0 && dr != null && dr.kind == "crawl" && dr.A("W") == 0 && Tables.Zombie("mimic").Hop && Tables.Zombie("eyeball").name == "눈알 좀비" && RigData.Get("z_spider").kind == "robe" && RigData.Get("z_dog").kind == "crawl",
+                            $"11-15 새 좀비 12종 챕터 {lo}~{hi} · 보스 설인 = 거대 설인 · 와이번 날개 · 용 = 두 발 티라노(날개 없음) · 눈알 좀비 · 미믹 깡총 · 개 네발 · 거미 떠다님");
                     }
                     // 나올 비중: 롱패딩(28챕터 설원에 처음) = 6 x 배경 1.5 x 새 얼굴 3 · 40챕터 숲 = 6 · 원래 좀비는 새 얼굴 비중 없음
                     var pad = Tables.Zombie("padding");
@@ -1121,7 +1121,7 @@ namespace KachiGun.EditorTools
                     GM.ClearTargets();
                     // 11-15 판타지 몬스터 좀비 15종 줄 세우기 (실제 크기 · 보스는 표 크기 1.7배 대신 1.2배) + 와이번 날개 퍼덕임
                     {
-                        string[] f3 = { "skeleton", "dog", "vampire", "werewolf", "spider", "mimic", "golem", "centaur", "yetiz", "cyclops", "kraken", "beholder", "minotaur", "wyvern", "dragon" };
+                        string[] f3 = { "skeleton", "dog", "vampire", "werewolf", "spider", "mimic", "golem", "centaur", "yetiz", "cyclops", "kraken", "eyeball", "minotaur", "wyvern", "dragon" };
                         Zombie wyz = null;
                         for (int i = 0; i < f3.Length; i++)
                         {
@@ -1478,6 +1478,8 @@ namespace KachiGun.EditorTools
             Check(AudioManager.I != null, "사운드 매니저 생성");
             // 10-26 소리 다듬기: 배경음 40초 (8초 반복 아님) · 효과음 16개 다 재생돼도 오류 없음
             Check(AudioManager.StageBgmSeconds >= 30f, $"배경음 길이 {AudioManager.StageBgmSeconds:F1}초");
+            // 11-15 힐링·귀여운 평소 배경음 (Bgm_Stage_Style 1 = A 봄 산책 C장조 92 BPM · 16마디 = 41.7초, tools/bgm_cute.py 와 같은 길이)
+            Check(AudioManager.StageStyle == 1 && Mathf.Abs(AudioManager.StageBgmSeconds - 41.74f) < 0.1f, $"11-15 새 평소 배경음 (스타일 {AudioManager.StageStyle} · {AudioManager.StageBgmSeconds:F2}초)");
             foreach (AudioManager.Sfx sx in System.Enum.GetValues(typeof(AudioManager.Sfx))) AudioManager.Play(sx);
             var buff = GM.Buff(true);
             Check(buff == null && Stats.BuffAtk, "버프");

@@ -642,8 +642,11 @@ S 등급 레이저 건 즉시 지급,Get an S grade Laser Gun now,(지금은 안
 켄타우로스 좀비,Centaur Zombie,Zombie_Master.Name
 사이클롭스 좀비,Cyclops Zombie,Zombie_Master.Name
 크라켄 좀비,Kraken Zombie,Zombie_Master.Name
-비홀더 좀비,Floating Eye Zombie,Zombie_Master.Name
 미노타우르스 좀비,Minotaur Zombie,Zombie_Master.Name
 와이번 좀비,Wyvern Zombie,Zombie_Master.Name
 용 좀비,Dragon Zombie,Zombie_Master.Name
 거대 설인,Giant Yeti,Zombie_Master.Name
+이따 또 만나!,See you later!,Speech_Lines.Text
+아니 저기까지 왔는데?,We came all the way!,Speech_Lines.Text
+ㅇㅋ 기달!,"OK, wait for us!",Speech_Lines.Text
+눈알 좀비,Eyeball Zombie,Zombie_Master.Name
