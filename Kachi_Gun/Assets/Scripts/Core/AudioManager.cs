@@ -514,9 +514,10 @@ namespace KachiGun
         // =====================================================================
         // 11-15 사용자 "배경음악을 조금 더 힐링되고 귀여운 음악으로" — 평소 배경음 SoftSong (tools/bgm_cute.py 와 같은 식)
         //   Config Bgm_Stage_Style: 0 = 예전 곡(120 BPM A단조) · 1 = A "봄 산책"(C장조 92 BPM) · 2 = B "낮잠"(F장조 84 BPM)
+        //     · 3 = C "낮잠 경쾌"(11-15 사용자가 B 를 골라 "조금 더 경쾌하게 · 속도 1.5배": F장조 126 BPM · 통통 베이스 · 1·3 킥 2·4 틱 · 20마디)
         //   악기: 오르골(사인 + 2·3배음, 길게 울림) · 화음 패드 · 통통 베이스(1·3박 근음/5음) · 마림바 분산화음(엇박) · 아주 약한 킥/쉐이커/틱
         // =====================================================================
-        public static int StageStyle => Mathf.Clamp(Tables.Ci("Bgm_Stage_Style"), 0, 2);
+        public static int StageStyle => Mathf.Clamp(Tables.Ci("Bgm_Stage_Style"), 0, 3);
         System.Threading.Tasks.Task<float[]> stageTask;
         int stageTaskStyle = -1;
         void PrepareStageBgm()
@@ -597,17 +598,37 @@ namespace KachiGun
             return d;
         }
 
-        class SoftSec { public int[][] chords; public int[] mel; public string drums; public bool arp = true; }
+        class SoftSec { public int[][] chords; public int[] mel; public string drums; public bool arp = true; public float[][] bass = BassSlow; }
+        // 베이스 무늬: {칸, 음 0 = 근음 · 1 = 낮은 5음 · 2 = 한 옥타브 위 근음, 길이 칸, 세기}
+        static readonly float[][] BassSlow = { new[] { 0f, 0f, 4f, 0.20f }, new[] { 4f, 1f, 4f, 0.16f } };
+        static readonly float[][] BassBounce = { new[] { 0f, 0f, 2f, 0.20f }, new[] { 3f, 2f, 1f, 0.10f }, new[] { 4f, 1f, 2f, 0.16f }, new[] { 6f, 2f, 1f, 0.10f } };
 
         static int[] Sparse(int[] m, System.Func<int, bool> keep) { var r = new int[m.Length]; for (int i = 0; i < m.Length; i++) r[i] = keep(i) ? m[i] : 0; return r; }
 
-        /// <summary>새 평소 배경음 소리 값 (style 1 = A 봄 산책 · 2 = B 낮잠) — 어느 스레드에서도 됨</summary>
+        /// <summary>새 평소 배경음 소리 값 (style 1 = A 봄 산책 · 2 = B 낮잠 · 3 = C 낮잠 경쾌) — 어느 스레드에서도 됨</summary>
         static float[] SoftSongData(int style)
         {
             int[] C = { 60, 64, 67 }, Am = { 57, 60, 64 }, F = { 53, 57, 60 }, G = { 55, 59, 62 }, Em = { 52, 55, 59 }, Dm = { 50, 53, 57 }, Bb = { 58, 62, 65 };
             float bpm, gain;
             SoftSec[] secs;
-            if (style == 2)
+            if (style == 3)
+            {
+                int[] Ch = { 48, 52, 55 }, Amh = { 57, 60, 64 };
+                int[] m1 = { 72, 0, 74, 69, 72, 0, 77, 0, 74, 0, 76, 72, 69, 0, 72, 0, 70, 0, 74, 0, 77, 0, 74, 72, 72, 0, 67, 69, 67, 0, 0, 0 };
+                int[] m3 = { 74, 0, 72, 0, 70, 0, 72, 74, 72, 0, 74, 0, 76, 0, 79, 0, 76, 0, 72, 0, 69, 0, 72, 0, 74, 0, 72, 0, 69, 0, 0, 0 };
+                int[] m4 = { 70, 0, 74, 0, 77, 0, 74, 0, 79, 0, 76, 0, 72, 0, 74, 76, 77, 0, 72, 0, 69, 0, 72, 0, 77, 0, 0, 0, 0, 0, 0, 0 };
+                const string D = "kstsksts";
+                bpm = 126f; gain = 0.531f;
+                secs = new[]
+                {
+                    new SoftSec { chords = new[] { F, Dm, Bb, Ch }, mel = Sparse(m1, i => i % 4 == 0), drums = "k...t...", arp = false },
+                    new SoftSec { chords = new[] { F, Dm, Bb, Ch }, mel = m1, drums = D, bass = BassBounce },
+                    new SoftSec { chords = new[] { Bb, Ch, Amh, Dm }, mel = m3, drums = D, bass = BassBounce },
+                    new SoftSec { chords = new[] { F, Dm, Bb, Ch }, mel = m1, drums = "kstskstt", bass = BassBounce },
+                    new SoftSec { chords = new[] { Bb, Ch, F, F }, mel = m4, drums = D, bass = BassBounce },
+                };
+            }
+            else if (style == 2)
             {
                 int[] Ch = { 48, 52, 55 }, Amh = { 57, 60, 64 };
                 int[] m1 = { 72, 0, 0, 69, 72, 0, 77, 0, 74, 0, 0, 72, 69, 0, 0, 0, 70, 0, 74, 0, 77, 0, 74, 0, 72, 0, 0, 0, 67, 0, 0, 0 };
@@ -648,8 +669,12 @@ namespace KachiGun
                     var ch = sc.chords[b];
                     int o = (st + b * 8) * m;
                     AddWrap(data, Pad(ch, 8f * m / SAMPLE_RATE), o);
-                    AddWrap(data, SoftBass(Hz(ch[0] - 12), 4f * m / SAMPLE_RATE), o);
-                    AddWrap(data, SoftBass(Hz(ch[2] - 24), 4f * m / SAMPLE_RATE, 0.16f), o + 4 * m);
+                    foreach (var bp in sc.bass)
+                    {
+                        int w = (int)bp[1];
+                        int n = w == 0 ? ch[0] - 12 : w == 1 ? ch[2] - 24 : ch[0];
+                        AddWrap(data, SoftBass(Hz(n), bp[2] * m / SAMPLE_RATE, bp[3]), o + (int)bp[0] * m);
+                    }
                     if (sc.arp)
                     {
                         int[] ar = { ch[0] + 12, ch[1] + 12, ch[2] + 12, ch[1] + 12 };

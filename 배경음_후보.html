@@ -38,10 +38,15 @@ td.k{white-space:nowrap;font-family:Consolas,monospace;font-size:12.5px}
 <h1>평소 배경음 — 힐링 · 귀여운 후보</h1>
 <div class="mut">2026-11-15 · 사용자 의견 "배경음악을 조금 더 힐링되고 귀여운 음악으로" · 게임과 같은 식으로 코드 합성한 소리(두 번 반복 재생 — 이음새도 들어 보세요) · 마음에 드는 곡에 체크, 고칠 점은 ✎ 의견</div>
 <div id="bar"><span id="stat" class="mut"></span></div>
-<div class="box warn"><b>지금 게임에 들어간 것 = A "봄 산책"</b> (Config <code>Bgm_Stage_Style</code> 1). B 로 하려면 2, 예전 곡은 0 — 값 하나만 바꾸면 됩니다.<br>
+<div class="box warn"><b>11-15 고르신 것: B "낮잠" + 의견 "조금 더 경쾌하게 · 속도 1.5배쯤"</b> → <b>C "낮잠 경쾌"</b>를 만들어 지금 게임에 넣었습니다 (Config <code>Bgm_Stage_Style</code> 3). A = 1 · B = 2 · 예전 곡 = 0 — 값 하나만 바꾸면 됩니다.<br>
 보스전·던전 음악은 긴박한 느낌이 맞아 <b>그대로</b> 두었습니다 (바꾸고 싶으면 의견에).</div>
 <ul class="todo">
-<li data-id="b-a"><label><input type="checkbox"><span class="t">A "봄 산책" — C장조 · 92 BPM (지금 게임)</span></label>
+<li data-id="b-c"><label><input type="checkbox"><span class="t">C "낮잠 경쾌" — F장조 · 126 BPM (B 의 1.5배 · 지금 게임)</span></label>
+<div class="gif"><audio controls preload="none" src="사운드_검토_wav/bgm_c.m4a"></audio></div>
+<ol class="steps"><li>B 와 같은 화음 진행 · 같은 악기(오르골 · 패드 · 마림바) · 빠르기 84 → 126 BPM</li>
+<li>경쾌하게: 드럼 1·3박 킥 + 2·4박 틱 + 엇박 쉐이커 · 베이스가 엇박에 한 옥타브 위로 통통 · 멜로디 빈 곳을 채움</li>
+<li>빨라져 한 바퀴가 짧아지지 않게 본 멜로디 구간을 한 번 더 → 20마디 38초 (처음 조용히 → 본 → 새 진행 → 본 → 마무리)</li></ol></li>
+<li data-id="b-a"><label><input type="checkbox"><span class="t">A "봄 산책" — C장조 · 92 BPM</span></label>
 <div class="gif"><audio controls preload="none" src="사운드_검토_wav/bgm_a.m4a"></audio></div>
 <ol class="steps"><li>오르골 멜로디 + 부드러운 화음 + 통통 튀는 베이스 + 엇박 마림바 + 아주 약한 쉐이커</li>
 <li>처음 10초는 드럼 없이 조용히 → 본 멜로디 → 새 진행 → 마무리 (16마디)</li></ol></li>
@@ -53,12 +58,12 @@ td.k{white-space:nowrap;font-family:Consolas,monospace;font-size:12.5px}
 </ul>
 <h2>잰 값</h2>
 <table><tr><th>곡</th><th>한 바퀴</th><th>체감 크기</th><th>폰 스피커로 들리는 소리 비율 (400Hz 위)</th></tr>
-<tr><td>예전</td><td>40.0초</td><td>-41.9 dB</td><td>29%</td></tr><tr><td>A 봄 산책</td><td>41.7초</td><td>-43.9 dB</td><td>43%</td></tr><tr><td>B 낮잠</td><td>45.7초</td><td>-43.9 dB</td><td>32%</td></tr></table>
+<tr><td>예전</td><td>40.0초</td><td>-41.9 dB</td><td>29%</td></tr><tr><td>A 봄 산책</td><td>41.7초</td><td>-43.9 dB</td><td>43%</td></tr><tr><td>C 낮잠 경쾌</td><td>38.1초</td><td>-43.9 dB</td><td>57%</td></tr><tr><td>B 낮잠</td><td>45.7초</td><td>-43.9 dB</td><td>32%</td></tr></table>
 <div class="mut">새 곡은 예전보다 체감 2dB 작게 맞춤(효과음이 더 잘 들리게) · 반복 이음새 없음 · 도구 <code>tools/bgm_cute.py</code> (게임 코드 AudioManager.SoftSongData 와 같은 식)</div>
 <script>
 (function(){
   // 저장 형식: {"c":{항목id:true}, "n":{항목id:"의견"}} — tools/todo_checks.py 배경음_후보.html 로 읽음
-  var KEY='kachigun-bgm-1115', st={c:{},n:{}};
+  var KEY='kachigun-bgm-1115b', st={c:{},n:{}};
   try{ var v=JSON.parse(localStorage.getItem(KEY)||'{}'); st.c=v.c||{}; st.n=v.n||{}; }catch(e){}
   var items=document.querySelectorAll('ul.todo > li[data-id]');
   function save(){ try{ localStorage.setItem(KEY,JSON.stringify(st)); }catch(e){} stat(); }

@@ -3,7 +3,7 @@
 AudioManager.cs 의 SoftSong(새 엔진)과 같은 식 — 숫자를 바꾸면 둘 다 바꿀 것.
   악기: 오르골(사인 + 2·3배음, 길게 울림) · 화음 패드(사인 셋, 천천히 켜짐) · 통통 베이스(사인 + 2배음, 1·3박 근음/5음)
         · 마림바 분산화음(엇박) · 아주 약한 킥/쉐이커/틱
-  곡: A "봄 산책" C장조 92 BPM · B "낮잠" F장조 84 BPM — 4구간(처음 조용히 → 본 멜로디 → 새 진행 → 마무리), 반복 이음새 없음
+  곡: A "봄 산책" C장조 92 BPM · B "낮잠" F장조 84 BPM · C "낮잠 경쾌" F장조 126 BPM (11-15 사용자가 B + "경쾌하게 · 1.5배") — 4구간(처음 조용히 → 본 멜로디 → 새 진행 → 마무리), 반복 이음새 없음
 사용: PYTHONUTF8=1 python tools/bgm_cute.py  → 사운드_검토_wav/bgm_*.wav + 배경음_후보.html (들어 보기 · 체크·의견)
 """
 import json
@@ -88,9 +88,10 @@ def soft_song(bpm, sections, target_loud):
             fs = [hz(x) for x in ch]
             if s.get('pad', True):
                 ring_add(data, pad(fs, 8 * m / SR), o)
-            if s.get('bass', True):
-                ring_add(data, bass(hz(ch[0] - 12), 4 * m / SR), o)
-                ring_add(data, bass(hz(ch[2] - 24), 4 * m / SR, 0.16), o + 4 * m)
+            # 베이스 무늬: (칸, 음 0 = 근음 · 1 = 낮은 5음 · 2 = 한 옥타브 위 근음, 길이 칸, 세기)
+            for k, w, ln, g in s.get('bass', BASS_SLOW):
+                n = ch[0] - 12 if w == 0 else ch[2] - 24 if w == 1 else ch[0]
+                ring_add(data, bass(hz(n), ln * m / SR, g), o + k * m)
             if s.get('arp', True):
                 ar = [ch[0] + 12, ch[1] + 12, ch[2] + 12, ch[1] + 12]
                 for j, k in enumerate((1, 3, 5, 7)):
@@ -125,6 +126,27 @@ def song_a():
     return 92, secs
 
 
+BASS_SLOW = [(0, 0, 4, 0.20), (4, 1, 4, 0.16)]                                    # A·B: 1·3박
+BASS_BOUNCE = [(0, 0, 2, 0.20), (3, 2, 1, 0.10), (4, 1, 2, 0.16), (6, 2, 1, 0.10)]   # C: 통통 (엇박에 옥타브 위)
+
+
+def song_c():
+    """C 낮잠 경쾌 (11-15 사용자: B 를 골라 "조금 더 경쾌하게 · 속도 1.5배"): F장조 126 BPM · B 진행 그대로 + 구간 하나 더(20마디 38초)
+    드럼 1·3박 킥 + 2·4박 틱 + 엇박 쉐이커 · 베이스 통통 · 멜로디 빈 곳을 채움"""
+    Fh, Ch, Amh = [53, 57, 60], [48, 52, 55], [57, 60, 64]
+    m1 = [72, 0, 74, 69, 72, 0, 77, 0, 74, 0, 76, 72, 69, 0, 72, 0, 70, 0, 74, 0, 77, 0, 74, 72, 72, 0, 67, 69, 67, 0, 0, 0]
+    m0 = [x if i % 4 == 0 else 0 for i, x in enumerate(m1)]
+    m3 = [74, 0, 72, 0, 70, 0, 72, 74, 72, 0, 74, 0, 76, 0, 79, 0, 76, 0, 72, 0, 69, 0, 72, 0, 74, 0, 72, 0, 69, 0, 0, 0]
+    m4 = [70, 0, 74, 0, 77, 0, 74, 0, 79, 0, 76, 0, 72, 0, 74, 76, 77, 0, 72, 0, 69, 0, 72, 0, 77, 0, 0, 0, 0, 0, 0, 0]
+    D = 'kstsksts'
+    secs = [dict(chords=[Fh, Dm, Bb, Ch], mel=m0, drums='k...t...', arp=False, bass=BASS_SLOW),
+            dict(chords=[Fh, Dm, Bb, Ch], mel=m1, drums=D, bass=BASS_BOUNCE),
+            dict(chords=[Bb, Ch, Amh, Dm], mel=m3, drums=D, bass=BASS_BOUNCE),
+            dict(chords=[Fh, Dm, Bb, Ch], mel=m1, drums='kstskstt', bass=BASS_BOUNCE),
+            dict(chords=[Bb, Ch, Fh, Fh], mel=m4, drums=D, bass=BASS_BOUNCE)]
+    return 126, secs
+
+
 def song_b():
     """B 낮잠: F장조 84 BPM · F-Dm-Bb-C / Bb-C-Am-Dm / Bb-C-F-F (더 느리고 낮게)"""
     Fh, Ch, Amh = [53, 57, 60], [48, 52, 55], [57, 60, 64]
@@ -145,7 +167,7 @@ def main():
     ref = measure(old, BGM_VOL)
     res = {'old': dict(ref, loop_sec=round(len(old) / SR, 1))}
     write_wav(os.path.join(OUT, 'bgm_0_old.wav'), np.tile(old, 2) * BGM_VOL)
-    for key, fn in (('a', song_a), ('b', song_b)):
+    for key, fn in (('a', song_a), ('b', song_b), ('c', song_c)):
         bpm, secs = fn()
         d = soft_song(bpm, secs, None)
         # 예전 곡보다 체감 크기 2dB 작게 (힐링 · 효과음이 더 잘 들리게) → 배율을 정해 C# 에 그대로 적음
@@ -161,7 +183,7 @@ def main():
     # 듣기 문서(배경음_후보.html)용: wav(7MB) → m4a(1.3MB)
     import subprocess, imageio_ffmpeg
     ff = imageio_ffmpeg.get_ffmpeg_exe()
-    for k in ('0_old', 'a', 'b'):
+    for k in ('0_old', 'a', 'b', 'c'):
         w = os.path.join(OUT, f'bgm_{k}.wav')
         subprocess.run([ff, '-y', '-loglevel', 'error', '-i', w, '-c:a', 'aac', '-b:a', '128k', w[:-4] + '.m4a'], check=True)
         os.remove(w)

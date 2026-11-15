@@ -1478,8 +1478,8 @@ namespace KachiGun.EditorTools
             Check(AudioManager.I != null, "사운드 매니저 생성");
             // 10-26 소리 다듬기: 배경음 40초 (8초 반복 아님) · 효과음 16개 다 재생돼도 오류 없음
             Check(AudioManager.StageBgmSeconds >= 30f, $"배경음 길이 {AudioManager.StageBgmSeconds:F1}초");
-            // 11-15 힐링·귀여운 평소 배경음 (Bgm_Stage_Style 1 = A 봄 산책 C장조 92 BPM · 16마디 = 41.7초, tools/bgm_cute.py 와 같은 길이)
-            Check(AudioManager.StageStyle == 1 && Mathf.Abs(AudioManager.StageBgmSeconds - 41.74f) < 0.1f, $"11-15 새 평소 배경음 (스타일 {AudioManager.StageStyle} · {AudioManager.StageBgmSeconds:F2}초)");
+            // 11-15 힐링·귀여운 평소 배경음 — 사용자가 B 를 골라 "더 경쾌하게 · 1.5배" → Bgm_Stage_Style 3 = C 낮잠 경쾌 (F장조 126 BPM · 20마디 = 38.1초, tools/bgm_cute.py 와 같은 길이)
+            Check(AudioManager.StageStyle == 3 && Mathf.Abs(AudioManager.StageBgmSeconds - 38.10f) < 0.1f, $"11-15 새 평소 배경음 (스타일 {AudioManager.StageStyle} · {AudioManager.StageBgmSeconds:F2}초)");
             foreach (AudioManager.Sfx sx in System.Enum.GetValues(typeof(AudioManager.Sfx))) AudioManager.Play(sx);
             var buff = GM.Buff(true);
             Check(buff == null && Stats.BuffAtk, "버프");
