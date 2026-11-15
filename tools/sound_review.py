@@ -11,7 +11,7 @@ import numpy as np
 ROOT = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..')
 OUT = os.path.join(ROOT, '사운드_검토_wav')
 SR = 44100
-BGM_VOL, SFX_VOL, CHANNELS = 0.22, 0.48, 16
+BGM_VOL, SFX_VOL, CHANNELS = 0.22, 0.48, 16   # 11-08 기준 값 (bgm_cute·bgm_lively 의 곡 배율이 이 값으로 잼 — 바꾸지 말 것). 11-15 게임은 Config Bgm_Volume 0.44 · Bgm_Boss_Mul 0.63 · Sfx_Volume 0.43
 
 
 # ---------------- 합성 (AudioManager.cs 와 같은 식) ----------------

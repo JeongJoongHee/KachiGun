@@ -37,6 +37,9 @@ namespace KachiGun
 
         [Range(0f, 1f)] public float bgmVolume = 0.22f;
         [Range(0f, 1f)] public float sfxVolume = 0.48f;
+        float bossMul = 1f;
+        /// <summary>11-15 곡마다 음량 배율 — 보스·던전 곡은 원래 커서 배경음 음량을 올린 만큼 덜 올림</summary>
+        float ClipVol(AudioClip c) => bgmVolume * (c != null && c == bossBgm ? bossMul : 1f);
         public int channels = 16;
         /// <summary>전투 소리(총·맞음·죽음·돈·광산)가 쓸 수 있는 채널 수. 나머지는 보스·승리·합성·버튼 같은 중요한 소리 몫</summary>
         public int combatChannels = 10;
@@ -133,6 +136,11 @@ namespace KachiGun
 
         void Init()
         {
+            // 11-15 사용자 "배경음이 효과음에 비해 작다 — 기본 음량을 맞춰 줘" (tools/sound_review.py 로 잰 값):
+            //   평소 배경음 0.22 → 0.44 (+6dB, 초반 전투 효과음보다 약 2dB 아래) · 보스·던전 곡은 x Bgm_Boss_Mul (+2dB) · 효과음 0.48 → 0.43 (-1dB)
+            bgmVolume = Mathf.Clamp01((float)Tables.C("Bgm_Volume", 0.44));
+            sfxVolume = Mathf.Clamp01((float)Tables.C("Sfx_Volume", 0.43));
+            bossMul = Mathf.Max(0f, (float)Tables.C("Bgm_Boss_Mul", 0.63));
             if (FindFirstObjectByType<AudioListener>() == null)
                 gameObject.AddComponent<AudioListener>();
 
@@ -207,7 +215,7 @@ namespace KachiGun
             {
                 // 처음 켤 때: 바로 시작
                 cur.clip = target;
-                cur.volume = bgmVolume;
+                cur.volume = ClipVol(target);
                 cur.Play();
                 bgmFadeT = 1f;
                 return;
@@ -316,8 +324,8 @@ namespace KachiGun
                 bgmFadeT = Mathf.Min(1f, bgmFadeT + Time.unscaledDeltaTime / BgmFadeSec);
                 var next = bgmPlayers[bgmCur];
                 var prev = bgmPlayers[1 - bgmCur];
-                next.volume = bgmVolume * bgmFadeT;
-                prev.volume = bgmVolume * (1f - bgmFadeT);
+                next.volume = ClipVol(next.clip) * bgmFadeT;
+                prev.volume = ClipVol(prev.clip) * (1f - bgmFadeT);
                 if (bgmFadeT >= 1f) { prev.Stop(); prev.clip = null; }
             }
         }

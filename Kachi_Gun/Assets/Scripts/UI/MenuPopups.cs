@@ -67,7 +67,8 @@ namespace KachiGun
         {
             var r = Tables.Skins.Find(x => x.id == id);
             if (S.skins.Contains(id)) { Msg(GM.BuySkin(id)); Refresh(); return; }
-            if (S.gems < r.price) { ShopPopup.GemShort(r.price); return; }   // 11-12 다이아 부족 → [상점으로]
+            // 11-12 다이아 부족 → [상점으로] · 11-15 사용자: 부족해도 코스튬 능력치(보유 효과)는 보이게
+            if (S.gems < r.price) { ShopPopup.GemShort(r.price, $"<size=46>{L.T(r.name)}</size>\n\n" + L.T("보유 효과") + "\n" + L.F("공격력 +{0}% · 공격속도 +{1}% · 금전 +{2}%", r.atk, r.spd, r.gold)); return; }
             ConfirmPopup.Ask($"<size=46>{L.T(r.name)}</size>\n\n" + L.F("다이아 {0} 으로 살까요?", Comma(r.price)) + "\n\n" + L.T("보유 효과") + "\n" + L.F("공격력 +{0}% · 공격속도 +{1}% · 금전 +{2}%", r.atk, r.spd, r.gold),
                 () => { Msg(GM.BuySkin(id)); H.Open<SkinPopup>(); }, "코스튬 구매");
         }
@@ -117,10 +118,14 @@ namespace KachiGun
         public float GemRowY => gemRowY;
 
         /// <summary>11-12 다이아가 모자랄 때 (코스튬 · 보급품): 필요 · 보유를 보여 주고 [상점으로] → 상점의 다이아 줄</summary>
-        public static void GemShort(double need)
+        /// <param name="head">11-15 위에 먼저 보여 줄 글 (코스튬·보급품 이름과 보유 효과) — 있으면 "상점에서…" 줄은 빼서 창 안에 들어가게</param>
+        public static void GemShort(double need, string head = null)
         {
-            ConfirmPopup.Ask(L.T("다이아가 부족합니다") + "\n\n" + L.F("필요 {0} · 보유 {1}", GemN(need), GemN(SaveData.Cur.gems)) + "\n\n" + L.T("상점에서 다이아를 얻을 수 있어요."),
-                OpenGems, "다이아 부족", "상점으로");
+            string need2 = L.F("필요 {0} · 보유 {1}", GemN(need), GemN(SaveData.Cur.gems));
+            string text = string.IsNullOrEmpty(head)
+                ? L.T("다이아가 부족합니다") + "\n\n" + need2 + "\n\n" + L.T("상점에서 다이아를 얻을 수 있어요.")
+                : head + "\n\n<color=#c95544>" + L.T("다이아가 부족합니다") + "</color>\n" + need2;
+            ConfirmPopup.Ask(text, OpenGems, "다이아 부족", "상점으로");
         }
 
         /// <summary>다이아 개수 1,900 (코스튬 목록 가격과 같은 모양)</summary>
@@ -307,7 +312,7 @@ namespace KachiGun
             if (r == null) return;
             if (S.supplies.Contains(id)) { H.Toast(L.T("이미 가진 보급품입니다")); return; }
             if (GM.BestChapter < r.unlockChapter) { H.Toast(L.F("챕터 {0} 에서 열립니다", r.unlockChapter)); return; }
-            if (S.gems < r.cost) { ShopPopup.GemShort(r.cost); return; }   // 11-12 다이아 부족 → [상점으로]
+            if (S.gems < r.cost) { ShopPopup.GemShort(r.cost, $"<size=46>{L.T(r.name)}</size>\n\n" + L.T("보유 효과") + $"\n{Effect(r)}"); return; }   // 11-12 다이아 부족 → [상점으로] · 11-15 효과도 보이게 (코스튬과 같게)
             ConfirmPopup.Ask($"<size=46>{L.T(r.name)}</size>\n<color=#{ColorUtility.ToHtmlStringRGB(GradeColor(r.grade) * 0.75f)}>{L.T(r.grade)}</color>\n\n" + L.F("다이아 {0} 으로 살까요?", r.cost.ToString("0")) + "\n\n" + L.T("보유 효과") + $"\n{Effect(r)}",
                 () => { Msg(GM.BuySupply(id)); Refresh(); }, "보급품 구매");
         }

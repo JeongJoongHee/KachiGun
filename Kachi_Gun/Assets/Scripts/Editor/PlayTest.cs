@@ -1498,6 +1498,11 @@ namespace KachiGun.EditorTools
                 bool nextReady = AudioManager.I.VariantReady((v0 + 1) % AudioManager.LivelyCount);
                 Check(AudioManager.StageStyle == 4 && Mathf.Abs(AudioManager.StageBgmSeconds - lens[v0]) < 0.1f && nextReady,
                     $"11-15 스테이지 변주 배경음 {v0 + 1}번 ({AudioManager.StageBgmSeconds:F2}초) · 다음 변주 미리 계산 {nextReady}");
+                // 11-15 "배경음이 효과음에 비해 작다" → 배경음 0.44 · 효과음 0.43 (Config) · 지금 재생 중인 평소 곡 음량
+                var bgmP = typeof(AudioManager).GetField("bgmPlayers", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance).GetValue(AudioManager.I) as AudioSource[];
+                float playVol = 0; if (bgmP != null) foreach (var bp in bgmP) if (bp && bp.isPlaying) playVol = Mathf.Max(playVol, bp.volume);
+                Check(Mathf.Abs(AudioManager.I.bgmVolume - 0.44f) < 0.001f && Mathf.Abs(AudioManager.I.sfxVolume - 0.43f) < 0.001f && (GM.bossPhase || GM.mode != GameManager.Mode.Stage || Mathf.Abs(playVol - 0.44f) < 0.01f || !S.bgm),
+                    $"11-15 음량: 배경음 {AudioManager.I.bgmVolume} (재생 중 {playVol:0.00}) · 효과음 {AudioManager.I.sfxVolume}");
             }
             var buff = GM.Buff(true);
             Check(buff == null && Stats.BuffAtk, "버프");
@@ -1879,6 +1884,14 @@ namespace KachiGun.EditorTools
             var cp = HUD.I.Get<ConfirmPopup>();
             Check(skin != null && cp && cp.gameObject.activeSelf && cp.title.text == L.T("다이아 부족") && BtnOf(cp, L.T("상점으로")) != null && !S.skins.Contains(skin.id),
                   "코스튬 다이아 부족 → '다이아 부족' 창 + [상점으로] (사지 않음)");
+            {
+                // 11-15 사용자: 다이아가 부족해도 코스튬 능력치가 보이게 — 이름 · 보유 효과 · 부족 글이 창 안에 다 들어감
+                var body = cp ? (Text)typeof(ConfirmPopup).GetField("body", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance).GetValue(cp) : null;
+                string want = skin != null ? L.F("공격력 +{0}% · 공격속도 +{1}% · 금전 +{2}%", skin.atk, skin.spd, skin.gold) : "?";
+                bool fits = body != null && body.preferredHeight <= body.rectTransform.rect.height + 1;
+                Check(body != null && skin != null && body.text.Contains(L.T(skin.name)) && body.text.Contains(want) && body.text.Contains(L.T("다이아가 부족합니다")) && fits,
+                      $"11-15 다이아 부족 창에도 코스튬 능력치 ({want}) · 글 높이 {body?.preferredHeight:0}/{body?.rectTransform.rect.height:0}");
+            }
             Capture("19e_gem_short");
             BtnOf(cp, L.T("상점으로"))?.onClick.Invoke();
             yield return Wait(0.4f);
