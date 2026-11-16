@@ -1419,6 +1419,7 @@ namespace KachiGun.EditorTools
                 Check(bombs.Count == 3 && Iap.BombLimit == 3 && bm != null && bm.bonusGems == 8000 && ShopPopup.KrwText(bm.priceValue) == L.F("{0}원", "9,900")
                       && !Iap.FirstBonus(bm) && bombs.TrueForAll(b => Iap.BombLeft(b) == 3),
                     $"다이아 폭탄 {bombs.Count}단 · 한 달 {Iap.BombLimit}번 · 9,900원 → {bm?.bonusGems} · 첫 구매 2배 없음");
+                Check(Tables.Shop.Count > 3 && Iap.IsBomb(Tables.Shop[0]) && Iap.IsBomb(Tables.Shop[1]) && Iap.IsBomb(Tables.Shop[2]), $"폭탄 3줄이 상점 맨 위 (첫 줄 {Tables.Shop[0].id})");   // 상점은 Index 순서
                 string ms = string.Join(" · ", bombs.ConvertAll(Iap.BombMulText));
                 Check(ms == "1.8 · 2 · 2.3", $"폭탄 = 평소의 {ms}배 (다이아 상자 4,600 기준)");
                 var packs = Tables.Shop.FindAll(x => x.category == "Gem_Shop").ConvertAll(x => (int)x.bonusGems);

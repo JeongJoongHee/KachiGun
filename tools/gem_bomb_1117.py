@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """11-17 다이아 폭탄 (다이아_폭탄_추천.html 체크·의견 반영) — 표 고치기. 여러 번 돌려도 같은 결과.
 사용: python tools/gem_bomb_1117.py   (그 뒤 python tools/strings_collect.py 로 영어 글자 + csv)
- - Shop.xlsx: 맨 위에 Gem_Bomb 3줄 (gem_bomb_s/m/l — Play Console 인앱 상품 ID 와 같아야 함)
+ - Shop.xlsx: 맨 위에 Gem_Bomb 3줄 (Index -3·-2·-1 = 상점 맨 위 — 상점은 Index 순서) (gem_bomb_s/m/l — Play Console 인앱 상품 ID 와 같아야 함)
               기존 다이아 상품 소폭 올림 (사용자 의견 "기존 상품의 다이아 개수를 소폭 상승"): 500→550 · 1,800→2,000 · 4,200→4,600 (약 +10%)
  - Config.xlsx: Gem_Bomb_Limit 3 (상품마다 한 달에 N번 · 매월 1일 0시(한국 시간)에 다시 · 0 = 폭탄 안 팖)
 """
@@ -12,9 +12,9 @@ ROOT = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'Kachi_Gun
 
 NOTE = '11-17 다이아 폭탄 · 상품마다 한 달 Gem_Bomb_Limit 번 · 매월 1일 갱신 · 첫 구매 2배 안 붙음'
 BOMBS = [
-    [13, 'gem_bomb_s', 'Gem_Bomb', '작은 다이아 폭탄 (3,500)', '다이아 3,500개 · 한 달에 3번', 'KRW', 4900, 3500, 'Gems+3500', NOTE],
-    [14, 'gem_bomb_m', 'Gem_Bomb', '다이아 폭탄 (8,000)', '다이아 8,000개 · 한 달에 3번', 'KRW', 9900, 8000, 'Gems+8000', NOTE],
-    [15, 'gem_bomb_l', 'Gem_Bomb', '초대형 다이아 폭탄 (27,000)', '다이아 27,000개 · 한 달에 3번', 'KRW', 29900, 27000, 'Gems+27000', NOTE],
+    [-3, 'gem_bomb_s', 'Gem_Bomb', '작은 다이아 폭탄 (3,500)', '다이아 3,500개 · 한 달에 3번', 'KRW', 4900, 3500, 'Gems+3500', NOTE],
+    [-2, 'gem_bomb_m', 'Gem_Bomb', '다이아 폭탄 (8,000)', '다이아 8,000개 · 한 달에 3번', 'KRW', 9900, 8000, 'Gems+8000', NOTE],
+    [-1, 'gem_bomb_l', 'Gem_Bomb', '초대형 다이아 폭탄 (27,000)', '다이아 27,000개 · 한 달에 3번', 'KRW', 29900, 27000, 'Gems+27000', NOTE],
 ]
 # 기존 다이아 상품: id → (새 개수, 이름, 설명)
 PACKS = {

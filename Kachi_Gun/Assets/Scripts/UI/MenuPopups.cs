@@ -185,12 +185,13 @@ namespace KachiGun
             int gi = items.FindIndex(x => x.id.StartsWith("gem_pack") || x.id.StartsWith("gem_bomb"));   // 11-17 폭탄이 맨 위면 폭탄부터
             if (gi < 0) gi = items.FindIndex(x => x.id == "free_gems_ad");
             if (gi >= 0) gemRowY = gi * 170;
-            inner.sizeDelta = new Vector2(0, items.Count * 170 + 10);
+            float top = items.Count > 0 && Iap.IsBomb(Tables.Shop.Find(x => x.id == items[0].id)) ? 40 : 10;   // 11-17 첫 줄 리본("월 3회")이 목록 위 끝에 안 잘리게
+            inner.sizeDelta = new Vector2(0, items.Count * 170 + top);
             for (int i = 0; i < items.Count; i++)
             {
                 var it = items[i];
                 var rb = UIKit.Row(inner, "Item" + i);
-                rb.rectTransform.Place(0.5f, 1, new Vector2(0, -10 - i * 170), new Vector2(880, 155), new Vector2(0.5f, 1));
+                rb.rectTransform.Place(0.5f, 1, new Vector2(0, -top - i * 170), new Vector2(880, 155), new Vector2(0.5f, 1));
                 var nm = UIKit.Fit(UIKit.Label(rb.transform, it.name, 38, Color.white, TextAnchor.MiddleLeft, 3), 24);
                 nm.rectTransform.Place(0, 0.5f, new Vector2(30, 26), new Vector2(560, 50), new Vector2(0, 0.5f));
                 var ds = UIKit.Fit(UIKit.Label(rb.transform, it.desc, 28, UIKit.Cream, TextAnchor.MiddleLeft, 2), 18);
@@ -222,13 +223,14 @@ namespace KachiGun
             var rt = UIKit.Fit(UIKit.Label(rib, ribbon, 26, Color.white, TextAnchor.MiddleCenter, 3), 16);
             rt.rectTransform.Place(0.5f, 0.5f, new Vector2(0, 4), new Vector2(140, 36), new Vector2(0.5f, 0.5f));
             rt.raycastTarget = false;
-            var burst = UIKit.KitImg(btn, "burst_red", new Vector2(76, 76), tag + "Burst").rectTransform;
-            burst.Place(1, 1, new Vector2(-4, -6), new Vector2(76, 76), new Vector2(0.5f, 0.5f));
+            float bs = star.Length > 2 ? 88 : 76;   // 11-17 "2.3배" 처럼 긴 글자는 별을 조금 크게
+            var burst = UIKit.KitImg(btn, "burst_red", new Vector2(bs, bs), tag + "Burst").rectTransform;
+            burst.Place(1, 1, new Vector2(-4, -6), new Vector2(bs, bs), new Vector2(0.5f, 0.5f));
             burst.localRotation = Quaternion.Euler(0, 0, -12);
             burst.GetComponent<Image>().raycastTarget = false;
             burst.GetComponent<Image>().color = tint;
-            var bx = UIKit.Fit(UIKit.Label(burst, star, 30, Color.white, TextAnchor.MiddleCenter, 3), 18);
-            bx.rectTransform.Place(0.5f, 0.5f, new Vector2(0, 2), new Vector2(64, 40), new Vector2(0.5f, 0.5f));
+            var bx = UIKit.Fit(UIKit.Label(burst, star, star.Length > 2 ? 24 : 30, Color.white, TextAnchor.MiddleCenter, 3), 14);
+            bx.rectTransform.Place(0.5f, 0.5f, new Vector2(0, 2), new Vector2(bs * 0.66f, 40), new Vector2(0.5f, 0.5f));
             bx.raycastTarget = false;
         }
 
