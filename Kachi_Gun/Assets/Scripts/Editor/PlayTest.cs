@@ -1539,9 +1539,7 @@ namespace KachiGun.EditorTools
                         why = $"순서 {order} · 같은 줄 {sameRow} · 도전/보스 도전 버튼과 안 겹침 {clear} (폭탄 오른쪽 끝 {rb.xMax:0} · 도전 왼쪽 {rc.xMin:0} · 보스 도전 왼쪽 {rx.xMin:0})";
                     }
                     Check(sideOk, "990원 미사일 · 폭탄 아이콘이 상점 버튼 오른쪽 한 줄: " + why);
-                    bossB.gameObject.SetActive(true); yield return null;
-                    Capture("17e0d_side_icons_boss_btn");   // 보스 도전 버튼이 보일 때도 안 가리는지 눈으로
-                    bossB.gameObject.SetActive(false);
+                    // 보스 도전 버튼이 보일 때 모습 = 03b_boss_farm 캡처 (여기서 켜도 HUD 가 다음 프레임에 끔)
                 }
                 Check(hidLocked && stGo != null && GM.Unlocked("shop"), $"SS 미사일탄 아이콘: 상점 잠김엔 숨김({hidLocked}) · 열리면 보임({stGo != null})");
                 // 11-13 강조는 Starter_Fx_Time(5초)만 → 멈춘 채로 · 처음 보인 시각 기록 → Starter_Home_Hours(72시간) 뒤 홈에서 사라지고 상점 탭엔 남음
@@ -1762,7 +1760,8 @@ namespace KachiGun.EditorTools
                 S.bestEver = 1; S.noAds = false; S.autoUpgrade = false; S.iapOrders = new System.Collections.Generic.List<string>();
                 Check(CloudSync.IsFresh(S), "(준비) 이 기기 = 갓 시작한 진행");
                 CloudSync.AutoStart();
-                yield return Wait(2.2f);
+                // 고정 2.2초는 배치가 느릴 때 가끔 모자람 (11-17 한 번 실패, 다시 돌리면 통과) → 받기가 끝날 때까지 최대 6초 기다림
+                for (float tw0 = 0; tw0 < 6f && !(CloudSync.Synced && S.saveId == "old-phone" && GameManager.I != null && HUD.I != null); tw0 += 0.2f) yield return Wait(0.2f);
                 SetupCapture();
                 yield return Wait(0.5f);
                 Check(CloudAuth.Linked && CloudSync.Synced && S.saveId == "old-phone" && System.Math.Abs(S.gems - 99999) < 0.5 && GameManager.I != null && HUD.I != null,

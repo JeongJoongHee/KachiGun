@@ -217,13 +217,15 @@ namespace KachiGun
                 int t = tabs[k];
                 bool sel = t == tab;
                 var tr = Tables.Shop.Find(x => x.tab == t && !string.IsNullOrEmpty(x.tabName));
-                // 차분한 색 (사용자: 쨍한 색 싫음) — 고른 탭 = 진한 갈색 + 흰 글자 · 나머지 = 연한 베이지 + 갈색 글자
-                var tb = UIKit.ColorBtn(content, sel ? new Color(0.55f, 0.36f, 0.22f) : new Color(0.86f, 0.78f, 0.64f), new Vector2(tw, 96), L.T(tr != null ? tr.tabName : "상품"), 40, () => ShowTab(t));
+                // 나무 버튼 하나로 (ColorBtn 은 주황·갈색·베이지를 다 같은 나무 그림으로 고름 → 색으로는 구별 안 됨)
+                // 고른 탭 = 원래 나무색 · 높이 96 / 나머지 = 흐리게(어둡게 덮음) · 높이 82 · 글자 반투명 — 차분한 색 (사용자: 쨍한 색 싫음)
+                float th = sel ? 96 : 82;
+                var tb = UIKit.ColorBtn(content, new Color(0.55f, 0.36f, 0.22f), new Vector2(tw, th), L.T(tr != null ? tr.tabName : "상품"), sel ? 40 : 36, () => ShowTab(t));
                 tb.name = "Tab" + t;
                 float x = (k - (tabs.Count - 1) * 0.5f) * (tw + 12);
-                ((RectTransform)tb.transform).Place(0.5f, 1, new Vector2(x, -8), new Vector2(tw, 96), new Vector2(0.5f, 1));
+                ((RectTransform)tb.transform).Place(0.5f, 1, new Vector2(x, sel ? -8 : -22), new Vector2(tw, th), new Vector2(0.5f, 1));
                 var tl = UIKit.LabelOf(tb);
-                if (tl && !sel) tl.color = UIKit.Ink;
+                if (!sel) { tb.GetComponent<Image>().color = new Color(0.7f, 0.66f, 0.6f); if (tl) tl.color = new Color(1, 1, 1, 0.8f); }
                 if (Tables.Shop.Exists(x => x.tab == t && x.id == "free_gems_ad"))
                 {
                     var dot = UIKit.KitImg(tb.transform, "badge", new Vector2(34, 34), "Dot");
