@@ -114,6 +114,12 @@ namespace KachiGun
         protected override string Title => "상점";
         Button adGemBtn;
         ScrollRect scroll;
+        // 11-17 사용자 "상점에 탭을 추가해서 상품을 배치": Shop 표 Tab(순서 번호) · Tab_Name(탭 글자) 칸 — 고른 탭의 줄만 보임
+        int tab;                                          // 고른 탭 번호 (0 = 맨 앞 탭)
+        readonly List<int> tabs = new();                  // 보이는 줄이 있는 탭 번호 (순서대로)
+        readonly Dictionary<int, GameObject> tabDots = new();   // 탭 오른쪽 위 빨간 점 (무료 다이아 광고가 남았을 때)
+        public int CurTab => tab;
+        public IReadOnlyList<int> Tabs => tabs;
         float gemRowY = -1;   // 다이아를 얻는 첫 줄(다이아 상품 · 없으면 무료 다이아)의 위치 — 다이아 부족에서 열 때 여기로
         public float GemRowY => gemRowY;
 
@@ -131,11 +137,30 @@ namespace KachiGun
         /// <summary>다이아 개수 1,900 (코스튬 목록 가격과 같은 모양)</summary>
         public static string GemN(double v) => System.Math.Floor(v + 1e-6).ToString("N0", System.Globalization.CultureInfo.InvariantCulture);
 
-        /// <summary>상점을 열고 다이아 줄이 맨 위에 보이게 스크롤</summary>
+        /// <summary>상점을 열고 다이아 탭 · 다이아 줄이 맨 위에 보이게 스크롤 (11-17 다이아 폭탄 아이콘 · 다이아 부족 [상점으로])</summary>
         public static void OpenGems()
         {
             var p = HUD.I.Open<ShopPopup>();
+            var g = Tables.Shop.Find(x => Iap.IsBomb(x) && Iap.CanSell(x) && Iap.BombLimit > 0) ?? Tables.Shop.Find(x => x.id.StartsWith("gem_pack") && Iap.CanSell(x))
+                    ?? Tables.Shop.Find(x => x.id == "free_gems_ad");
+            if (g != null) p.ShowTab(g.tab);
             p.ScrollToGems();
+        }
+
+        /// <summary>상점을 그 상품이 있는 탭으로 열기</summary>
+        public static ShopPopup OpenFor(string id)
+        {
+            var p = HUD.I.Open<ShopPopup>();
+            var r = Tables.Shop.Find(x => x.id == id);
+            if (r != null) p.ShowTab(r.tab);
+            return p;
+        }
+
+        public void ShowTab(int t)
+        {
+            if (t == tab && tabs.Contains(t)) return;
+            tab = t;
+            Rebuild();
         }
 
         public void ScrollToGems()
@@ -150,7 +175,7 @@ namespace KachiGun
         protected override void Build()
         {
             Iap.Changed -= Rebuild; Iap.Changed += Rebuild;
-            var items = new List<(string id, string name, string desc, string price, int kind, System.Action act)>();   // kind 0 = 광고 · 1 = 다이아 · 2 = 결제 · 3 = 결제(보유 중)
+            var all = new List<(string id, string name, string desc, string price, int kind, System.Action act, int tab)>();   // kind 0 = 광고 · 1 = 다이아 · 2 = 결제 · 3 = 결제(보유 중)
             foreach (var r in Tables.Shop)
             {
                 var row = r;
@@ -178,9 +203,36 @@ namespace KachiGun
                 }
                 else { price = r.priceType == "Ad" ? L.T("광고") : r.priceValue; kind = r.priceType == "Ad" ? 0 : 2; act = () => Iap.Buy(row.id); }
                 string desc = r.priceType == "KRW" ? Iap.Desc(r) : L.T(r.desc);   // 11-14 첫 구매 2배: "첫 구매 2배! 다이아 500 → 1,000" (구매 확인 창과 같은 글)
-                items.Add((r.id, L.T(r.name), desc, price, kind, act));
+                all.Add((r.id, L.T(r.name), desc, price, kind, act, r.tab));
             }
-            scroll = SkinPopup.MakeScroll(content, new Vector2(0, -10), new Vector2(900, 1430), out var inner);
+            // 11-17 탭: 보이는 줄이 있는 탭만 (결제가 꺼진 폰 = 무료 탭만) · 고른 탭이 없으면 맨 앞 탭
+            tabs.Clear(); tabDots.Clear();
+            foreach (var a in all) if (!tabs.Contains(a.tab)) tabs.Add(a.tab);
+            tabs.Sort();
+            if (!tabs.Contains(tab)) tab = tabs.Count > 0 ? tabs[0] : 0;
+            var items = all.FindAll(a => a.tab == tab);
+            float tw = tabs.Count > 0 ? Mathf.Min(280, 880f / tabs.Count - 12) : 280;
+            for (int k = 0; k < tabs.Count; k++)
+            {
+                int t = tabs[k];
+                bool sel = t == tab;
+                var tr = Tables.Shop.Find(x => x.tab == t && !string.IsNullOrEmpty(x.tabName));
+                // 차분한 색 (사용자: 쨍한 색 싫음) — 고른 탭 = 진한 갈색 + 흰 글자 · 나머지 = 연한 베이지 + 갈색 글자
+                var tb = UIKit.ColorBtn(content, sel ? new Color(0.55f, 0.36f, 0.22f) : new Color(0.86f, 0.78f, 0.64f), new Vector2(tw, 96), L.T(tr != null ? tr.tabName : "상품"), 40, () => ShowTab(t));
+                tb.name = "Tab" + t;
+                float x = (k - (tabs.Count - 1) * 0.5f) * (tw + 12);
+                ((RectTransform)tb.transform).Place(0.5f, 1, new Vector2(x, -8), new Vector2(tw, 96), new Vector2(0.5f, 1));
+                var tl = UIKit.LabelOf(tb);
+                if (tl && !sel) tl.color = UIKit.Ink;
+                if (Tables.Shop.Exists(x => x.tab == t && x.id == "free_gems_ad"))
+                {
+                    var dot = UIKit.KitImg(tb.transform, "badge", new Vector2(34, 34), "Dot");
+                    dot.rectTransform.Place(1, 1, new Vector2(8, 8), new Vector2(34, 34), new Vector2(1, 1));
+                    dot.raycastTarget = false;
+                    tabDots[t] = dot.gameObject;
+                }
+            }
+            scroll = SkinPopup.MakeScroll(content, new Vector2(0, -118), new Vector2(900, 1322), out var inner);
             gemRowY = -1;
             int gi = items.FindIndex(x => x.id.StartsWith("gem_pack") || x.id.StartsWith("gem_bomb"));   // 11-17 폭탄이 맨 위면 폭탄부터
             if (gi < 0) gi = items.FindIndex(x => x.id == "free_gems_ad");
@@ -249,6 +301,7 @@ namespace KachiGun
         /// <summary>광고 무료 다이아: 남은 횟수 "광고 2/3"</summary>
         public override void Refresh()
         {
+            foreach (var kv in tabDots) if (kv.Value) kv.Value.SetActive(GM.Unlocked("shop") && GM.AdGemsLeft > 0);   // 11-17 무료 탭 빨간 점
             if (!adGemBtn) return;
             int left = GM.AdGemsLeft;
             UIKit.LabelOf(adGemBtn).text = $"{L.T("광고")} {left}/{(int)Tables.C("AdGems_Daily", 3)}";

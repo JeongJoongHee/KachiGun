@@ -33,7 +33,9 @@ namespace KachiGun
         readonly Image[] starterStars = new Image[2];
         float starterT, starterShowT = -1, starterFxT;   // starterFxT = 나타난 뒤 지난 시간 (Config Starter_Fx_Time 초까지만 강조)
         public const string StarterId = "starter_ss_missile";
-        RectTransform bombRoot;   // 11-17 다이아 폭탄 아이콘 (왼쪽 줄, 1회 한정 상품 아래 · 그게 없으면 그 자리)
+        RectTransform bombRoot;   // 11-17 다이아 폭탄 아이콘 (상점 버튼 오른쪽 · 1회 한정 상품이 보이면 그 오른쪽)
+        // 11-17 상점 버튼(x 24~112 · 판 가운데 y -279) 오른쪽 아이콘 줄: 첫 칸 x · 칸 간격 · 크기 배율
+        const float ShopMidY = -279f, SideX0 = 116f, SideStep = 130f, SideScale = 0.85f;
         Text bombCap;
         readonly Card[] cards = new Card[3];
         readonly Dictionary<string, SideBtn> side = new();
@@ -626,7 +628,9 @@ namespace KachiGun
             int code = Iap.BulletOf(row);
             int g = code >= 0 ? Tables.GradeOf(code) : 5;
             string gn = Tables.GradeName(g);
-            starterRoot = UIKit.Rect(root, "Starter").Place(0, 1, new Vector2(10, -503), new Vector2(150, 208), new Vector2(0, 1));
+            // 11-17 사용자 "990원 미사일 · 폭탄 아이콘을 상점 아이콘 오른쪽에": 상점 판 가운데 높이에 맞춰 오른쪽 첫 칸 (0.85배 — 도전 · 보스 도전 버튼과 안 겹치게)
+            starterRoot = UIKit.Rect(root, "Starter").Place(0, 1, new Vector2(SideX0, ShopMidY + 92 * SideScale), new Vector2(150, 208), new Vector2(0, 1));
+            starterRoot.localScale = Vector3.one * SideScale;
             starterRoot.gameObject.AddComponent<Canvas>();
             starterRoot.gameObject.AddComponent<GraphicRaycaster>();   // 따로 Canvas 라 누르기를 받으려면 필요
             // 판 뒤 금빛 (깜빡임) — 판 가운데 (75, -92)
@@ -682,12 +686,13 @@ namespace KachiGun
             starterRoot.gameObject.SetActive(false);
         }
 
-        /// <summary>11-17 다이아 폭탄 아이콘 (사용자 의견 "기존 화면에 가리지 않게"): 왼쪽 버튼 줄(설정 · 상점 · 미션 · 1회 한정 상품) 바로 아래
-        /// 빈 흙 위 — 오른쪽(좀비가 오는 쪽)·가운데·아래 카드는 안 가림. 1회 한정 상품이 안 보이면 그 자리로 올라감.
+        /// <summary>11-17 다이아 폭탄 아이콘: 상점 버튼 오른쪽 (사용자 "상점 아이콘 기준 우측") — 1회 한정 상품이 보이면 그 오른쪽 칸, 없으면 첫 칸.
+        /// 도전 · 보스 도전 버튼 · Stage 글자와 안 겹치게 0.85배 (PlayTest 가 겹침을 잼).
         /// 움직이지 않는 그림이라 따로 Canvas 없음. 누르면 상점의 폭탄 줄(맨 위)</summary>
         void BuildBomb()
         {
-            bombRoot = UIKit.Rect(root, "GemBomb").Place(0, 1, new Vector2(10, -503), new Vector2(150, 196), new Vector2(0, 1));
+            bombRoot = UIKit.Rect(root, "GemBomb").Place(0, 1, new Vector2(SideX0, ShopMidY + 88 * SideScale), new Vector2(150, 196), new Vector2(0, 1));
+            bombRoot.localScale = Vector3.one * SideScale;
             var glow = UIKit.Img(bombRoot, Art.Glow, new Vector2(210, 210), "Glow");
             glow.raycastTarget = false; glow.preserveAspect = false;
             glow.color = new Color(0.55f, 0.85f, 1f, 0.75f);   // 다이아 빛 (하늘색)
@@ -723,8 +728,8 @@ namespace KachiGun
             bool show = GM.mode == GameManager.Mode.Stage && GM.Unlocked("shop") && Iap.AnyBombOnSale();
             if (bombRoot.gameObject.activeSelf != show) bombRoot.gameObject.SetActive(show);
             if (!show) return;
-            float y = starterRoot && starterRoot.gameObject.activeSelf ? -503 - 208 - 6 : -503;
-            if (bombRoot.anchoredPosition.y != y) bombRoot.anchoredPosition = new Vector2(10, y);
+            float bx = starterRoot && starterRoot.gameObject.activeSelf ? SideX0 + SideStep : SideX0;
+            if (bombRoot.anchoredPosition.x != bx) bombRoot.anchoredPosition = new Vector2(bx, bombRoot.anchoredPosition.y);
             double best = 0;
             foreach (var x in Tables.Shop) if (Iap.IsBomb(x) && Iap.BombLeft(x) > 0) best = System.Math.Max(best, Iap.BombMul(x));
             string cap = L.F("최대 {0}배!", (System.Math.Floor(best * 10 + 1e-9) / 10).ToString("0.#", System.Globalization.CultureInfo.InvariantCulture));

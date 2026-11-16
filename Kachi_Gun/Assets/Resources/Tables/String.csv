@@ -156,6 +156,7 @@
 다음 달,Next month,UI/MenuPopups.cs
 구매 완료,Purchased,UI/MenuPopups.cs
 보유 중,Owned,UI/MenuPopups.cs
+상품,Items,UI/MenuPopups.cs
 배,x,UI/MenuPopups.cs
 첫 구매 {0}배,First Buy x{0},UI/MenuPopups.cs
 {0}원,KRW {0},UI/MenuPopups.cs
@@ -426,9 +427,11 @@ D 등급 총알 획득!,Got D grade ammo!,UI/WeaponPopup.cs
 "다이아 27,000개 · 한 달에 3번","27,000 gems · 3 times a month",Shop_Products.Description
 공격력 x2 (5분),Attack x2 (5 min),Shop_Products.Name
 광고 1편 · 연속 시청 시 시간 누적,1 ad · time stacks when watched again,Shop_Products.Description
+무료,Free,Shop_Products.Tab_Name
 금전 획득량 x2 (5분),Gold x2 (5 min),Shop_Products.Name
 모든 광고 제거,Remove All Ads,Shop_Products.Name
 광고 없이 바로 보상 + 다이아 1000,"Rewards without ads + 1,000 gems",Shop_Products.Description
+패키지,Packs,Shop_Products.Tab_Name
 자동강화 패키지,Auto Upgrade Pack,Shop_Products.Name
 하단 강화 자동 + 다이아 500,Upgrades buy themselves + 500 gems,Shop_Products.Description
 다이아 한 줌 (550),Handful of Gems (550),Shop_Products.Name

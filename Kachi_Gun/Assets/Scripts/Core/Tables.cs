@@ -46,7 +46,7 @@ namespace KachiGun
     public class OreRow { public string kind, name, sprite; public double hp, reward; public int count; public float scale, radius, near, far; }
     public class MineTierRow { public int tier, chapter; public double mul; }
     public class BuffRow { public string id, name; public double mul, duration, maxStack, cooldown; }
-    public class ShopRow { public int index; public string id, category, name, desc, priceType, priceValue, reward; public double bonusGems; }
+    public class ShopRow { public int index, tab; public string id, category, name, desc, priceType, priceValue, reward, tabName; public double bonusGems; }   // 11-17 tab · tabName = 상점 탭 (Tab · Tab_Name 칸)
     public class UnlockRow { public string id, name, type, lockMsg, bannerMsg; public int stageIdx; public double value; }
     public class SupplyRow { public int id, unlockChapter; public string grade, name, icon; public double cost, atk, spd, gold, boss; }   // icon = Supply 표 Icon 칸 (Art/Supply/ 의 그림 이름, 10-24)
     public class EnchantRow { public int lv; public double gems, gold, atk, spd, boss, rate; }
@@ -220,7 +220,8 @@ namespace KachiGun
                 Shop.Add(new ShopRow
                 {
                     index = r.I("Index"), id = r.S("Product_Id"), category = r.S("Category"), name = r.S("Name"), desc = r.S("Description"),
-                    priceType = r.S("Price_Type"), priceValue = r.S("Price_Value"), bonusGems = r.D("Bonus_Gems"), reward = r.S("Reward_Multiplier_Or_Item")
+                    priceType = r.S("Price_Type"), priceValue = r.S("Price_Value"), bonusGems = r.D("Bonus_Gems"), reward = r.S("Reward_Multiplier_Or_Item"),
+                    tab = r.I("Tab"), tabName = r.S("Tab_Name")
                 });
             Shop.Sort((a, b) => a.index.CompareTo(b.index));
             foreach (var r in Read("Unlock_Roadmap"))

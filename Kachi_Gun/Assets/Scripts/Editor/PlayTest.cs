@@ -779,6 +779,46 @@ namespace KachiGun.EditorTools
             // 11) 창들
             HUD.I.Open<MissionPopup>(); yield return Wait(0.3f); Capture("16_mission"); CloseAll();
             HUD.I.Open<ShopPopup>(); yield return Wait(0.3f); Capture("17_shop"); CloseAll();
+            // 11-17 상점 탭 (사용자 "탭을 추가해서 상품을 배치"): 다이아 · 패키지 · 무료 (표 Tab · Tab_Name) · 고른 탭의 줄만 · 무료 탭 빨간 점 · 다이아 부족/폭탄 아이콘 = 다이아 탭
+            {
+                var sp = ShopPopup.OpenFor("gem_bomb_s"); yield return Wait(0.3f);
+                var tabNames = new List<string>();
+                foreach (int t in sp.Tabs) tabNames.Add(Tables.Shop.Find(x => x.tab == t).tabName);
+                System.Func<ShopPopup, List<string>> rowNames = p =>
+                {
+                    var l = new List<string>(); var srT = p.GetComponentInChildren<ScrollRect>();
+                    if (srT) foreach (Transform c in srT.content) { var tx = c.GetComponentInChildren<Text>(); if (tx) l.Add(tx.text); }
+                    return l;
+                };
+                var gemNames = rowNames(sp);
+                Check(string.Join(",", tabNames) == "다이아,패키지,무료" && sp.CurTab == 1 && gemNames.Count == 6 && gemNames[0] == L.T(Tables.Shop.Find(x => x.id == "gem_bomb_s").name)
+                      && gemNames.Contains(L.T(Tables.Shop.Find(x => x.id == "gem_pack_large").name)),
+                    $"상점 탭 {string.Join(" · ", tabNames)} · 다이아 탭 {gemNames.Count}줄 (첫 줄 {(gemNames.Count > 0 ? gemNames[0] : "-")})");
+                var tab2 = GameObject.Find("Tab2"); var tab3 = GameObject.Find("Tab3");
+                tab2?.GetComponent<Button>().onClick.Invoke(); yield return Wait(0.2f);
+                var packNames = rowNames(sp);
+                Capture("17h_shop_tab_pack");
+                Check(sp.CurTab == 2 && packNames.Count == 3 && packNames.Contains(L.T("SS급 미사일탄")) && packNames.Contains(L.T("모든 광고 제거")) && packNames.Contains(L.T("자동강화 패키지")),
+                    $"[패키지] 탭 누름 → {packNames.Count}줄 ({string.Join(" · ", packNames)})");
+                int used0 = S.adGemUsed;
+                S.adGemUsed = 0;
+                tab3 = GameObject.Find("Tab3");
+                tab3?.GetComponent<Button>().onClick.Invoke(); yield return Wait(0.2f);
+                sp.Refresh();
+                var freeNames = rowNames(sp);
+                var dot = GameObject.Find("Tab3") ? GameObject.Find("Tab3").transform.Find("Dot") : null;
+                bool dotOn = dot && dot.gameObject.activeSelf;
+                Capture("17h_shop_tab_free");
+                S.adGemUsed = (int)Tables.C("AdGems_Daily", 3); sp.Refresh();
+                bool dotOff = dot && !dot.gameObject.activeSelf;
+                S.adGemUsed = used0; sp.Refresh();
+                Check(sp.CurTab == 3 && freeNames.Count == 3 && freeNames.Contains(L.T("무료 다이아")) && dotOn && dotOff,
+                    $"[무료] 탭 → {freeNames.Count}줄 · 광고 다이아가 남으면 빨간 점({dotOn}) · 다 보면 꺼짐({dotOff})");
+                CloseAll();
+                ShopPopup.OpenGems(); yield return Wait(0.2f);
+                Check(HUD.I.Get<ShopPopup>().CurTab == 1, "다이아 폭탄 아이콘 · [상점으로] → 다이아 탭으로 열림");
+                CloseAll();
+            }
             HUD.I.Open<SettingsPopup>(); yield return Wait(0.3f); Capture("18_settings"); CloseAll();
 
             // 11c) 11-04 게임 종료: 뒤로 가기(창 없음) → 종료 창 · 뒤로 가기는 맨 위 창부터 닫음 · 설정 [게임 종료] · [종료] = 저장 후 종료
@@ -1335,7 +1375,7 @@ namespace KachiGun.EditorTools
                 var gemRows = Tables.Shop.FindAll(x => x.category == "Gem_Shop" && Iap.IsCash(x));
                 Check(Iap.FirstMul == 2 && gemRows.Count == 3 && gemRows.TrueForAll(Iap.FirstBonus), $"다이아 상품 {gemRows.Count}개 모두 첫 구매 x{Iap.FirstMul}");
                 {
-                    var shopF = HUD.I.Open<ShopPopup>(); yield return Wait(0.3f);
+                    var shopF = ShopPopup.OpenFor("gem_pack_small"); yield return Wait(0.3f);
                     int ribbons = 0, bursts = 0; bool descOk = false;
                     foreach (var im in shopF.GetComponentsInChildren<Image>(true)) { if (im.name == "FirstRibbon") ribbons++; if (im.name == "FirstBurst") bursts++; }
                     foreach (var t in shopF.GetComponentsInChildren<Text>(true)) if (t.text == L.F("첫 구매 {0}배! 다이아 {1} → {2}", "2", "550", "1,100")) descOk = true;
@@ -1361,7 +1401,7 @@ namespace KachiGun.EditorTools
                 Iap.Buy("gem_pack_small");
                 Check(System.Math.Abs(S.gems - iapG0b - 550) < 0.01, $"다이아 한 줌 두 번째 → +{S.gems - iapG0b} (보통)");
                 {
-                    var shopF2 = HUD.I.Open<ShopPopup>(); yield return Wait(0.3f);
+                    var shopF2 = ShopPopup.OpenFor("gem_pack_small"); yield return Wait(0.3f);
                     int ribbons2 = 0;
                     foreach (var im in shopF2.GetComponentsInChildren<Image>(true)) if (im.name == "FirstRibbon") ribbons2++;
                     Check(ribbons2 == 2 && !Iap.FirstBonus(Tables.Shop.Find(x => x.id == "gem_pack_small")) && Iap.FirstBonus(Tables.Shop.Find(x => x.id == "gem_pack_mid")),
@@ -1383,7 +1423,7 @@ namespace KachiGun.EditorTools
                 Iap.Buy("auto_upgrade");
                 Iap.Buy("auto_upgrade");   // 두 번째는 "이미 가지고 있습니다"
                 Check(S.autoUpgrade && S.autoOn && System.Math.Abs(S.gems - iapG1 - 500) < 0.01, $"자동강화 패키지 (다이아 +{S.gems - iapG1}, 한 번만)");
-                HUD.I.Open<ShopPopup>(); yield return Wait(0.3f); Capture("17b_shop_owned"); CloseAll();
+                ShopPopup.OpenFor("remove_all_ads"); yield return Wait(0.3f); Capture("17b_shop_owned"); CloseAll();
                 int autoLv0 = S.lvAtk + S.lvSpd + S.lvGold;
                 double iapGold0 = S.gold;
                 S.gold += Stats.Cost(S.lvAtk) * 20;
@@ -1426,7 +1466,7 @@ namespace KachiGun.EditorTools
                 Check(string.Join(",", packs) == "550,2000,4600", $"기존 다이아 상품 +10% ({string.Join(" · ", packs)})");
                 HUD.I.Refresh(); yield return null;
                 bool homeOn = GameObject.Find("GemBomb") != null;
-                var shopB = HUD.I.Open<ShopPopup>(); yield return Wait(0.3f);
+                var shopB = ShopPopup.OpenFor("gem_bomb_m"); yield return Wait(0.3f);
                 int bRib = 0; bool bDesc = false;
                 foreach (var im in shopB.GetComponentsInChildren<Image>(true)) if (im.name == "BombRibbon") bRib++;
                 foreach (var t in shopB.GetComponentsInChildren<Text>(true)) if (t.text == L.F("다이아 {0} · 평소의 {1}배 · 이번 달 {2}번 남음", "8,000", "2", 3)) bDesc = true;
@@ -1436,7 +1476,7 @@ namespace KachiGun.EditorTools
                 double gb = S.gems;
                 for (int i = 0; i < 4; i++) Iap.Buy("gem_bomb_m");   // 4번째는 막힘
                 Check(System.Math.Abs(S.gems - gb - 24000) < 0.01 && Iap.BombLeft(bm) == 0 && Iap.BombLeft(bombs[0]) == 3, $"다이아 폭탄 한 달 3번만 (+{S.gems - gb} · 남은 {Iap.BombLeft(bm)})");
-                var shopB2 = HUD.I.Open<ShopPopup>(); yield return Wait(0.3f);
+                var shopB2 = ShopPopup.OpenFor("gem_bomb_m"); yield return Wait(0.3f);
                 bool nextLbl = false;
                 foreach (var t in shopB2.GetComponentsInChildren<Text>(true)) if (t.text == L.T("다음 달")) nextLbl = true;
                 Capture("17g1_shop_bomb_soldout");
@@ -1477,16 +1517,31 @@ namespace KachiGun.EditorTools
                 Capture("17e0a_starter_pop");   // 나타나는 순간 (튀어나오는 중)
                 yield return Wait(0.9f);
                 Capture("17e0_starter_icon");
-                {   // 11-17 폭탄 아이콘은 1회 상품 바로 아래 (안 겹침) — 사용자 "기존 화면에 가리지 않게"
+                {   // 11-17 사용자 "990원 미사일 · 폭탄 아이콘을 상점 아이콘 기준 우측": 상점 → 미사일 → 폭탄 순서로 한 줄 · 서로 · 도전 · 보스 도전 버튼과 안 겹침
                     var bombGo = GameObject.Find("GemBomb");
-                    bool below = false;
-                    if (bombGo && stGo)
+                    var shopGo = GameObject.Find("Top_shop");
+                    var chGo = GameObject.Find("Challenge");
+                    var bossB = (Button)typeof(HUD).GetField("bossBtn", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance).GetValue(HUD.I);
+                    System.Func<Transform, Rect> wr = t =>
                     {
-                        var ca = new Vector3[4]; var cb = new Vector3[4];
-                        ((RectTransform)stGo.transform).GetWorldCorners(ca); ((RectTransform)bombGo.transform).GetWorldCorners(cb);
-                        below = cb[1].y <= ca[0].y + 0.01f;
+                        var c = new Vector3[4]; ((RectTransform)t).GetWorldCorners(c);
+                        return Rect.MinMaxRect(c[0].x, c[0].y, c[2].x, c[2].y);
+                    };
+                    bool sideOk = bombGo && stGo && shopGo && chGo && bossB;
+                    string why = sideOk ? "" : "못 찾음";
+                    if (sideOk)
+                    {
+                        Rect rs = wr(shopGo.transform), rm = wr(stGo.transform), rb = wr(bombGo.transform), rc = wr(chGo.transform), rx = wr(bossB.transform);
+                        bool order = rm.xMin >= rs.xMax - 0.5f && rb.xMin >= rm.xMax - 0.5f;
+                        bool sameRow = Mathf.Abs(rm.center.y - rs.center.y) < rs.height && Mathf.Abs(rb.center.y - rs.center.y) < rs.height;
+                        bool clear = !rm.Overlaps(rc) && !rb.Overlaps(rc) && !rm.Overlaps(rx) && !rb.Overlaps(rx);
+                        sideOk = order && sameRow && clear;
+                        why = $"순서 {order} · 같은 줄 {sameRow} · 도전/보스 도전 버튼과 안 겹침 {clear} (폭탄 오른쪽 끝 {rb.xMax:0} · 도전 왼쪽 {rc.xMin:0} · 보스 도전 왼쪽 {rx.xMin:0})";
                     }
-                    Check(bombGo != null && below, $"폭탄 아이콘은 1회 상품 아래 (안 겹침 {below})");
+                    Check(sideOk, "990원 미사일 · 폭탄 아이콘이 상점 버튼 오른쪽 한 줄: " + why);
+                    bossB.gameObject.SetActive(true); yield return null;
+                    Capture("17e0d_side_icons_boss_btn");   // 보스 도전 버튼이 보일 때도 안 가리는지 눈으로
+                    bossB.gameObject.SetActive(false);
                 }
                 Check(hidLocked && stGo != null && GM.Unlocked("shop"), $"SS 미사일탄 아이콘: 상점 잠김엔 숨김({hidLocked}) · 열리면 보임({stGo != null})");
                 // 11-13 강조는 Starter_Fx_Time(5초)만 → 멈춘 채로 · 처음 보인 시각 기록 → Starter_Home_Hours(72시간) 뒤 홈에서 사라지고 상점 탭엔 남음
@@ -1504,7 +1559,7 @@ namespace KachiGun.EditorTools
                 S.starterSeenAt = SaveData.Now - (long)(Tables.C("Starter_Home_Hours", 72) * 3600) - 1;
                 yield return null; yield return null;   // 켜 둔 채로도 TickStarter 가 숨김
                 bool after72 = GameObject.Find("Starter") == null;
-                var shop72 = HUD.I.Open<ShopPopup>(); yield return Wait(0.3f);
+                var shop72 = ShopPopup.OpenFor("starter_ss_missile"); yield return Wait(0.3f);
                 bool inShop = false;
                 foreach (var t in shop72.GetComponentsInChildren<Text>(true)) if (t.text.Contains("990") && t.text.EndsWith("원")) inShop = true;
                 Capture("17e0c_starter_72h_shop");
@@ -1524,7 +1579,7 @@ namespace KachiGun.EditorTools
                 Iap.Buy("starter_ss_missile");
                 int ssN = 0; foreach (var c in S.slots) if (c == ss) ssN++; foreach (var c in S.inv) if (c == ss) ssN++;
                 Check(ssN == 1 && Iap.Owned(st), $"SS 미사일탄은 한 번만 (가진 수 {ssN})");
-                var shopS = HUD.I.Open<ShopPopup>(); yield return Wait(0.3f);
+                var shopS = ShopPopup.OpenFor("starter_ss_missile"); yield return Wait(0.3f);
                 bool doneLabel = false;
                 foreach (var t in shopS.GetComponentsInChildren<Text>(true)) if (t.text == L.T("구매 완료")) doneLabel = true;
                 Capture("17f_shop_starter_done");

@@ -22,7 +22,7 @@ KO = re.compile('[가-힣]')
 TABLE_COLS = [
     ('Skin_Table', ['Name']), ('Weapon_Master', ['Name']), ('Zombie_Master', ['Name']),
     ('Supply_Collection', ['Name', 'Grade']), ('Mission_Master', ['Mission_Name']),
-    ('Shop_Products', ['Name', 'Description']), ('Chapter_Summary', ['Biome_Name']),
+    ('Shop_Products', ['Name', 'Description', 'Tab_Name']), ('Chapter_Summary', ['Biome_Name']),
     ('Unlock_Roadmap', ['Lock_Toast_Message', 'Unlock_Banner_Message']), ('Mine_Ore_Spec', ['Name_KR']),
     ('Speech_Lines', ['Text']),   # 11-14 말풍선 대사 (speech_add_1111.py 가 넣은 줄이 '안 씀'으로 밀리지 않게)
 ]
@@ -224,6 +224,8 @@ EN.update({'작은 다이아 폭탄 (3,500)': 'Small Gem Bomb (3,500)', '다이�
            '다이아 {0} · 평소의 {1}배 · 이번 달 {2}번 남음': '{0} gems · {1}x the usual · {2} left this month',
            '이번 달 구매 끝 · 매월 1일에 다시 열려요': 'Sold out this month · Back on the 1st',
            '다음 달': 'Next month', '월 {0}회': '{0}/month', '배': 'x', '다이아 폭탄': 'Gem Bomb', '최대 {0}배!': 'Up to {0}x!'})
+# 11-17 상점 탭
+EN.update({'패키지': 'Packs', '무료': 'Free', '상품': 'Items'})
 
 def code_strings():
     """(글자, 파일) — 주석·Debug 줄 제외, $"" 안 한글은 경고"""

@@ -1,13 +1,13 @@
-﻿Index,Product_Id,Category,Name,Description,Price_Type,Price_Value,Bonus_Gems,Reward_Multiplier_Or_Item,Impl_Status
--3,gem_bomb_s,Gem_Bomb,"작은 다이아 폭탄 (3,500)","다이아 3,500개 · 한 달에 3번",KRW,4900,3500,Gems+3500,11-17 다이아 폭탄 · 상품마다 한 달 Gem_Bomb_Limit 번 · 매월 1일 갱신 · 첫 구매 2배 안 붙음
--2,gem_bomb_m,Gem_Bomb,"다이아 폭탄 (8,000)","다이아 8,000개 · 한 달에 3번",KRW,9900,8000,Gems+8000,11-17 다이아 폭탄 · 상품마다 한 달 Gem_Bomb_Limit 번 · 매월 1일 갱신 · 첫 구매 2배 안 붙음
--1,gem_bomb_l,Gem_Bomb,"초대형 다이아 폭탄 (27,000)","다이아 27,000개 · 한 달에 3번",KRW,29900,27000,Gems+27000,11-17 다이아 폭탄 · 상품마다 한 달 Gem_Bomb_Limit 번 · 매월 1일 갱신 · 첫 구매 2배 안 붙음
-0,buff_atk,Ad_Buff,공격력 x2 (5분),광고 1편 · 연속 시청 시 시간 누적,Ad,광고,0,Atk x2 (300초),구현 완료
-1,buff_gold,Ad_Buff,금전 획득량 x2 (5분),광고 1편 · 연속 시청 시 시간 누적,Ad,광고,0,Gold x2 (300초),구현 완료
-4,remove_all_ads,IAP_Pack,모든 광고 제거,광고 없이 바로 보상 + 다이아 1000,KRW,9900,1000,NoAllAds,UI 구현 · 10-26 원화 가격 · 11-12 다이아 1000 추가
-5,auto_upgrade,IAP_Pack,자동강화 패키지,하단 강화 자동 + 다이아 500,KRW,5900,500,AutoUpgrade,UI 구현 · 10-26 원화 가격
-9,gem_pack_small,Gem_Shop,다이아 한 줌 (550),다이아 550개 즉시 획득,KRW,2900,550,Gems+550,기획 추가 · 10-26 원화 가격 · 11-17 500 → 550
-10,gem_pack_mid,Gem_Shop,"다이아 주머니 (2,000)","다이아 2,000개 즉시 획득",KRW,5900,2000,Gems+2000,"기획 추가 · 10-26 원화 가격 · 11-17 1,800 → 2,000"
-11,gem_pack_large,Gem_Shop,"다이아 상자 (4,600)","다이아 4,600개 즉시 획득",KRW,11900,4600,Gems+4600,"기획 추가 · 10-26 원화 가격 · 11-17 4,200 → 4,600"
-2,free_gems_ad,Ad_Gems,무료 다이아,광고 1편 · 다이아 40 · 하루 3번,Ad,광고,40,Gems+40 (Global_Config AdGems_Daily·AdGems_Amount),구현 완료 (10-20)
-3,starter_ss_missile,IAP_Pack,SS급 미사일탄,1회 한정 · SS 미사일탄 1개 · 빈 칸에 바로 장착,KRW,990,0,Bullet:55,11-13 초반 정착 상품 (1회 한정 · Reward = Bullet:총알 코드)
+﻿Index,Product_Id,Category,Name,Description,Price_Type,Price_Value,Bonus_Gems,Reward_Multiplier_Or_Item,Impl_Status,Tab,Tab_Name
+-3,gem_bomb_s,Gem_Bomb,"작은 다이아 폭탄 (3,500)","다이아 3,500개 · 한 달에 3번",KRW,4900,3500,Gems+3500,11-17 다이아 폭탄 · 상품마다 한 달 Gem_Bomb_Limit 번 · 매월 1일 갱신 · 첫 구매 2배 안 붙음,1,다이아
+-2,gem_bomb_m,Gem_Bomb,"다이아 폭탄 (8,000)","다이아 8,000개 · 한 달에 3번",KRW,9900,8000,Gems+8000,11-17 다이아 폭탄 · 상품마다 한 달 Gem_Bomb_Limit 번 · 매월 1일 갱신 · 첫 구매 2배 안 붙음,1,다이아
+-1,gem_bomb_l,Gem_Bomb,"초대형 다이아 폭탄 (27,000)","다이아 27,000개 · 한 달에 3번",KRW,29900,27000,Gems+27000,11-17 다이아 폭탄 · 상품마다 한 달 Gem_Bomb_Limit 번 · 매월 1일 갱신 · 첫 구매 2배 안 붙음,1,다이아
+0,buff_atk,Ad_Buff,공격력 x2 (5분),광고 1편 · 연속 시청 시 시간 누적,Ad,광고,0,Atk x2 (300초),구현 완료,3,무료
+1,buff_gold,Ad_Buff,금전 획득량 x2 (5분),광고 1편 · 연속 시청 시 시간 누적,Ad,광고,0,Gold x2 (300초),구현 완료,3,무료
+4,remove_all_ads,IAP_Pack,모든 광고 제거,광고 없이 바로 보상 + 다이아 1000,KRW,9900,1000,NoAllAds,UI 구현 · 10-26 원화 가격 · 11-12 다이아 1000 추가,2,패키지
+5,auto_upgrade,IAP_Pack,자동강화 패키지,하단 강화 자동 + 다이아 500,KRW,5900,500,AutoUpgrade,UI 구현 · 10-26 원화 가격,2,패키지
+9,gem_pack_small,Gem_Shop,다이아 한 줌 (550),다이아 550개 즉시 획득,KRW,2900,550,Gems+550,기획 추가 · 10-26 원화 가격 · 11-17 500 → 550,1,다이아
+10,gem_pack_mid,Gem_Shop,"다이아 주머니 (2,000)","다이아 2,000개 즉시 획득",KRW,5900,2000,Gems+2000,"기획 추가 · 10-26 원화 가격 · 11-17 1,800 → 2,000",1,다이아
+11,gem_pack_large,Gem_Shop,"다이아 상자 (4,600)","다이아 4,600개 즉시 획득",KRW,11900,4600,Gems+4600,"기획 추가 · 10-26 원화 가격 · 11-17 4,200 → 4,600",1,다이아
+2,free_gems_ad,Ad_Gems,무료 다이아,광고 1편 · 다이아 40 · 하루 3번,Ad,광고,40,Gems+40 (Global_Config AdGems_Daily·AdGems_Amount),구현 완료 (10-20),3,무료
+3,starter_ss_missile,IAP_Pack,SS급 미사일탄,1회 한정 · SS 미사일탄 1개 · 빈 칸에 바로 장착,KRW,990,0,Bullet:55,11-13 초반 정착 상품 (1회 한정 · Reward = Bullet:총알 코드),2,패키지
