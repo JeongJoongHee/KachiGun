@@ -213,6 +213,18 @@ EN.update({'※ 뽑기는 무조건 D 등급 총알만 나옵니다': '※ Draws
            '첫 구매 {0}배! 다이아 {1} → {2}': 'First purchase x{0}! Gems {1} → {2}',
            '첫 구매 {0}배! 다이아 +{1}': 'First purchase x{0}! Gems +{1}', '첫 구매 {0}배': 'First Buy x{0}'})
 
+# 11-17 다이아 폭탄 (월 3회 · 매월 1일 갱신) + 기존 다이아 상품 +10%
+EN.update({'작은 다이아 폭탄 (3,500)': 'Small Gem Bomb (3,500)', '다이아 폭탄 (8,000)': 'Gem Bomb (8,000)',
+           '초대형 다이아 폭탄 (27,000)': 'Mega Gem Bomb (27,000)',
+           '다이아 3,500개 · 한 달에 3번': '3,500 gems · 3 times a month', '다이아 8,000개 · 한 달에 3번': '8,000 gems · 3 times a month',
+           '다이아 27,000개 · 한 달에 3번': '27,000 gems · 3 times a month',
+           '다이아 한 줌 (550)': 'Handful of Gems (550)', '다이아 550개 즉시 획득': 'Get 550 gems now',
+           '다이아 주머니 (2,000)': 'Pouch of Gems (2,000)', '다이아 2,000개 즉시 획득': 'Get 2,000 gems now',
+           '다이아 상자 (4,600)': 'Chest of Gems (4,600)', '다이아 4,600개 즉시 획득': 'Get 4,600 gems now',
+           '다이아 {0} · 평소의 {1}배 · 이번 달 {2}번 남음': '{0} gems · {1}x the usual · {2} left this month',
+           '이번 달 구매 끝 · 매월 1일에 다시 열려요': 'Sold out this month · Back on the 1st',
+           '다음 달': 'Next month', '월 {0}회': '{0}/month', '배': 'x', '다이아 폭탄': 'Gem Bomb', '최대 {0}배!': 'Up to {0}x!'})
+
 def code_strings():
     """(글자, 파일) — 주석·Debug 줄 제외, $"" 안 한글은 경고"""
     out, warn = [], []

@@ -730,8 +730,8 @@ namespace KachiGun.EditorTools
                 var cash = Tables.Shop.FindAll(x => x.priceType == "KRW");
                 string[] gone = { "remove_forced_ads", "perma_buff", "mine_ticket", "hotdeal_laser", "gold_instant_30m" };
                 var ads = Tables.Shop.Find(x => x.id == "remove_all_ads");
-                Check(cash.Count == 6 && !Tables.Shop.Exists(x => System.Array.IndexOf(gone, x.id) >= 0)
-                      && ads != null && ShopPopup.KrwText(ads.priceValue) == L.F("{0}원", "9,900"), $"상점 결제 상품 6개 원화 ({cash.Count}개)");
+                Check(cash.Count == 9 && !Tables.Shop.Exists(x => System.Array.IndexOf(gone, x.id) >= 0)
+                      && ads != null && ShopPopup.KrwText(ads.priceValue) == L.F("{0}원", "9,900"), $"상점 결제 상품 9개 원화 ({cash.Count}개 · 11-17 폭탄 3단 더함)");
             }
             // 10-5) 10-20: 광고 무료 다이아 (하루 AdGems_Daily 번)
             {
@@ -1338,19 +1338,19 @@ namespace KachiGun.EditorTools
                     var shopF = HUD.I.Open<ShopPopup>(); yield return Wait(0.3f);
                     int ribbons = 0, bursts = 0; bool descOk = false;
                     foreach (var im in shopF.GetComponentsInChildren<Image>(true)) { if (im.name == "FirstRibbon") ribbons++; if (im.name == "FirstBurst") bursts++; }
-                    foreach (var t in shopF.GetComponentsInChildren<Text>(true)) if (t.text == L.F("첫 구매 {0}배! 다이아 {1} → {2}", "2", "500", "1,000")) descOk = true;
-                    Check(ribbons == 3 && bursts == 3 && descOk, $"상점 첫 구매 2배 딱지 리본 {ribbons} · 별 {bursts} · 설명 500 → 1,000 {descOk}");
+                    foreach (var t in shopF.GetComponentsInChildren<Text>(true)) if (t.text == L.F("첫 구매 {0}배! 다이아 {1} → {2}", "2", "550", "1,100")) descOk = true;
+                    Check(ribbons == 3 && bursts == 3 && descOk, $"상점 첫 구매 2배 딱지 리본 {ribbons} · 별 {bursts} · 설명 550 → 1,100 {descOk}");
                     shopF.ScrollToGems(); yield return Wait(0.2f);
                     Capture("17a_shop_first2x");
                     CloseAll();
                 }
                 var gpSmall = Tables.Shop.Find(x => x.id == "gem_pack_small");
                 string cf1 = Iap.ConfirmText(gpSmall);
-                Check(cf1.Contains(L.F("첫 구매 {0}배! 다이아 {1} → {2}", "2", "500", "1,000")) && !cf1.Contains(L.T(gpSmall.desc)), "11-14 구매 확인 창: 첫 구매 → 2배 글");
+                Check(cf1.Contains(L.F("첫 구매 {0}배! 다이아 {1} → {2}", "2", "550", "1,100")) && !cf1.Contains(L.T(gpSmall.desc)), "11-14 구매 확인 창: 첫 구매 → 2배 글");
                 ConfirmPopup.Ask(cf1, () => { }, "구매"); yield return Wait(0.3f);
                 Capture("17a1_confirm_first2x"); CloseAll();
                 Iap.Buy("gem_pack_small");
-                Check(System.Math.Abs(S.gems - iapG0 - 1000) < 0.01 && S.iapOnce.Contains("first2x:gem_pack_small"), $"다이아 한 줌 첫 구매 → +{S.gems - iapG0} (2배)");
+                Check(System.Math.Abs(S.gems - iapG0 - 1100) < 0.01 && S.iapOnce.Contains("first2x:gem_pack_small"), $"다이아 한 줌 첫 구매 → +{S.gems - iapG0} (2배)");
                 string cf2 = Iap.ConfirmText(gpSmall);
                 Check(cf2.Contains(L.T(gpSmall.desc)) && !cf2.Contains("첫 구매"), $"11-14 구매 확인 창: 산 뒤 → 기존 글 ({L.T(gpSmall.desc)})");
                 ConfirmPopup.Ask(cf2, () => { }, "구매"); yield return Wait(0.3f);
@@ -1359,7 +1359,7 @@ namespace KachiGun.EditorTools
                 Capture("17a2_first2x_toast");
                 double iapG0b = S.gems;
                 Iap.Buy("gem_pack_small");
-                Check(System.Math.Abs(S.gems - iapG0b - 500) < 0.01, $"다이아 한 줌 두 번째 → +{S.gems - iapG0b} (보통)");
+                Check(System.Math.Abs(S.gems - iapG0b - 550) < 0.01, $"다이아 한 줌 두 번째 → +{S.gems - iapG0b} (보통)");
                 {
                     var shopF2 = HUD.I.Open<ShopPopup>(); yield return Wait(0.3f);
                     int ribbons2 = 0;
@@ -1407,7 +1407,54 @@ namespace KachiGun.EditorTools
                 bool autoHidden = !GameObject.Find("AutoUpgrade") && !GameObject.Find("Starter");   // 11-13 SS 미사일탄 아이콘도
                 Iap.SimulateNoStore = false;
                 Iap.Buy("gem_pack_small"); S.gems = iapG0;   // 창·버튼 원래대로
-                Check(krwRows == 0 && autoHidden, $"결제 꺼진 폰: 원화 줄 {krwRows}개 · 자동강화 버튼 숨김 {autoHidden}");
+                Check(krwRows == 0 && autoHidden && !GameObject.Find("GemBomb"), $"결제 꺼진 폰: 원화 줄 {krwRows}개 · 자동강화 버튼 숨김 {autoHidden} · 폭탄 아이콘 숨김");
+            }
+            // 11d) 11-17 다이아 폭탄 (다이아_폭탄_추천.html): 3단 · 평소의 몇 배 · 첫 구매 2배 안 붙음 · 상품마다 한 달 3번(4번째 막힘)
+            //      · 지난달 기록은 안 셈(매월 1일 갱신) · 다 사면 상점 "다음 달" + 홈 아이콘 숨김 · 기존 다이아 상품 +10%
+            {
+                var onB = new List<string>(S.iapOnce); double gB0 = S.gems;
+                var bombs = Tables.Shop.FindAll(x => Iap.IsBomb(x) && Iap.IsCash(x));
+                var bm = Tables.Shop.Find(x => x.id == "gem_bomb_m");
+                S.iapOnce.RemoveAll(x => x.StartsWith("bomb:"));
+                Check(bombs.Count == 3 && Iap.BombLimit == 3 && bm != null && bm.bonusGems == 8000 && ShopPopup.KrwText(bm.priceValue) == L.F("{0}원", "9,900")
+                      && !Iap.FirstBonus(bm) && bombs.TrueForAll(b => Iap.BombLeft(b) == 3),
+                    $"다이아 폭탄 {bombs.Count}단 · 한 달 {Iap.BombLimit}번 · 9,900원 → {bm?.bonusGems} · 첫 구매 2배 없음");
+                string ms = string.Join(" · ", bombs.ConvertAll(Iap.BombMulText));
+                Check(ms == "1.8 · 2 · 2.3", $"폭탄 = 평소의 {ms}배 (다이아 상자 4,600 기준)");
+                var packs = Tables.Shop.FindAll(x => x.category == "Gem_Shop").ConvertAll(x => (int)x.bonusGems);
+                Check(string.Join(",", packs) == "550,2000,4600", $"기존 다이아 상품 +10% ({string.Join(" · ", packs)})");
+                HUD.I.Refresh(); yield return null;
+                bool homeOn = GameObject.Find("GemBomb") != null;
+                var shopB = HUD.I.Open<ShopPopup>(); yield return Wait(0.3f);
+                int bRib = 0; bool bDesc = false;
+                foreach (var im in shopB.GetComponentsInChildren<Image>(true)) if (im.name == "BombRibbon") bRib++;
+                foreach (var t in shopB.GetComponentsInChildren<Text>(true)) if (t.text == L.F("다이아 {0} · 평소의 {1}배 · 이번 달 {2}번 남음", "8,000", "2", 3)) bDesc = true;
+                Capture("17g_shop_bomb");
+                CloseAll();
+                Check(homeOn && bRib == 3 && bDesc, $"폭탄: 홈 아이콘 {homeOn} · 상점 딱지 {bRib} · 설명 \"8,000 · 2배 · 3번 남음\" {bDesc}");
+                double gb = S.gems;
+                for (int i = 0; i < 4; i++) Iap.Buy("gem_bomb_m");   // 4번째는 막힘
+                Check(System.Math.Abs(S.gems - gb - 24000) < 0.01 && Iap.BombLeft(bm) == 0 && Iap.BombLeft(bombs[0]) == 3, $"다이아 폭탄 한 달 3번만 (+{S.gems - gb} · 남은 {Iap.BombLeft(bm)})");
+                var shopB2 = HUD.I.Open<ShopPopup>(); yield return Wait(0.3f);
+                bool nextLbl = false;
+                foreach (var t in shopB2.GetComponentsInChildren<Text>(true)) if (t.text == L.T("다음 달")) nextLbl = true;
+                Capture("17g1_shop_bomb_soldout");
+                CloseAll();
+                Check(nextLbl, "다 산 폭탄은 \"다음 달\" (누를 수 없음)");
+                // 매월 1일 갱신: 지난달 기록은 안 셈 · 다음에 살 때 지난달 줄은 지움
+                string last = "bomb:" + Iap.BombMonth(SaveData.Now - 40L * 86400) + ":gem_bomb_m";
+                S.iapOnce.RemoveAll(x => x.StartsWith("bomb:"));
+                for (int i = 0; i < 3; i++) S.iapOnce.Add(last);
+                bool fresh = Iap.BombLeft(bm) == 3;
+                Iap.Buy("gem_bomb_m");
+                Check(fresh && !S.iapOnce.Contains(last) && Iap.BombLeft(bm) == 2, $"매월 1일 갱신: 지난달 3번 산 기록은 안 셈({fresh}) · 살 때 지난달 줄 지움 · 남은 {Iap.BombLeft(bm)}");
+                Check(Iap.BombMonth(1796050800) == "202612" && Iap.BombMonth(1796050799) == "202611", "달 경계 = 한국 시간 1일 0시");
+                foreach (var b in bombs) while (Iap.BombLeft(b) > 0) Iap.Grant(b, true);
+                HUD.I.Refresh(); yield return null;
+                Check(GameObject.Find("GemBomb") == null, "폭탄을 다 사면 홈 아이콘 숨김 (다음 달 1일에 다시)");
+                var svB = SaveData.ParseFixed(S.ToJson());
+                Check(svB != null && svB.iapOnce.FindAll(x => x.StartsWith("bomb:")).Count == 9, "폭탄 산 기록이 세이브(클라우드)에 남음");
+                S.iapOnce.Clear(); S.iapOnce.AddRange(onB); S.gems = gB0; HUD.I.Refresh(); S.Save();
             }
             // 11c) 11-13 초반 정착 상품 990원 SS 미사일탄 (1회 한정): 빈 장착 칸에 바로(동료 +1) · 두 번째는 안 줌 ·
             //      칸이 다 차 있으면 기다렸다가 빈 칸이 생기면 들어감 · 다시 설치 되살리기 = 총알 다시 · 상점 "구매 완료"
@@ -1429,6 +1476,17 @@ namespace KachiGun.EditorTools
                 Capture("17e0a_starter_pop");   // 나타나는 순간 (튀어나오는 중)
                 yield return Wait(0.9f);
                 Capture("17e0_starter_icon");
+                {   // 11-17 폭탄 아이콘은 1회 상품 바로 아래 (안 겹침) — 사용자 "기존 화면에 가리지 않게"
+                    var bombGo = GameObject.Find("GemBomb");
+                    bool below = false;
+                    if (bombGo && stGo)
+                    {
+                        var ca = new Vector3[4]; var cb = new Vector3[4];
+                        ((RectTransform)stGo.transform).GetWorldCorners(ca); ((RectTransform)bombGo.transform).GetWorldCorners(cb);
+                        below = cb[1].y <= ca[0].y + 0.01f;
+                    }
+                    Check(bombGo != null && below, $"폭탄 아이콘은 1회 상품 아래 (안 겹침 {below})");
+                }
                 Check(hidLocked && stGo != null && GM.Unlocked("shop"), $"SS 미사일탄 아이콘: 상점 잠김엔 숨김({hidLocked}) · 열리면 보임({stGo != null})");
                 // 11-13 강조는 Starter_Fx_Time(5초)만 → 멈춘 채로 · 처음 보인 시각 기록 → Starter_Home_Hours(72시간) 뒤 홈에서 사라지고 상점 탭엔 남음
                 var hf = typeof(HUD).GetField("starterSettled", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);

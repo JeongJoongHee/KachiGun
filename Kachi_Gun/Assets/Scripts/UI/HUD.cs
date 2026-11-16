@@ -33,6 +33,8 @@ namespace KachiGun
         readonly Image[] starterStars = new Image[2];
         float starterT, starterShowT = -1, starterFxT;   // starterFxT = 나타난 뒤 지난 시간 (Config Starter_Fx_Time 초까지만 강조)
         public const string StarterId = "starter_ss_missile";
+        RectTransform bombRoot;   // 11-17 다이아 폭탄 아이콘 (왼쪽 줄, 1회 한정 상품 아래 · 그게 없으면 그 자리)
+        Text bombCap;
         readonly Card[] cards = new Card[3];
         readonly Dictionary<string, SideBtn> side = new();
         Button buffAtk, buffGold;
@@ -155,6 +157,7 @@ namespace KachiGun
             // 11-13 초반 정착 상품 (Shop 표 starter_ss_missile · Reward Bullet:코드): 상점이 열리면 미션 아래에 보이고,
             // 누르면 바로 구매(폰 = 구글 결제창 · 에디터 = 가짜 결제 확인 창). 사면 · 결제가 꺼진 폰이면 숨김 (RefreshStarter)
             BuildStarter();
+            BuildBomb();
 
             // 자동강화 (오른쪽 맨 아래 = 절전모드 밑). 10-30: 안 가졌으면 구매(auto_upgrade), 가졌으면 켜기/끄기.
             // 폰에서 결제가 꺼져 있고(라이선스 키 없음·상품 없음) 안 가졌으면 숨김
@@ -558,6 +561,7 @@ namespace KachiGun
             bool buffOpen = GM.Unlocked("buff");
             missionDot.SetActive(GM.AnyMissionReady);
             RefreshStarter();
+            RefreshBomb();
             ecoBtn.gameObject.SetActive(GM.Unlocked("eco") && GM.mode == GameManager.Mode.Stage);
             buffAtk.gameObject.SetActive(buffOpen);
             buffGold.gameObject.SetActive(buffOpen);
@@ -676,6 +680,55 @@ namespace KachiGun
             starterPrice.rectTransform.Place(0, 1, new Vector2(75, -191), new Vector2(160, 32), new Vector2(0.5f, 0.5f));
             starterPrice.raycastTarget = false;
             starterRoot.gameObject.SetActive(false);
+        }
+
+        /// <summary>11-17 다이아 폭탄 아이콘 (사용자 의견 "기존 화면에 가리지 않게"): 왼쪽 버튼 줄(설정 · 상점 · 미션 · 1회 한정 상품) 바로 아래
+        /// 빈 흙 위 — 오른쪽(좀비가 오는 쪽)·가운데·아래 카드는 안 가림. 1회 한정 상품이 안 보이면 그 자리로 올라감.
+        /// 움직이지 않는 그림이라 따로 Canvas 없음. 누르면 상점의 폭탄 줄(맨 위)</summary>
+        void BuildBomb()
+        {
+            bombRoot = UIKit.Rect(root, "GemBomb").Place(0, 1, new Vector2(10, -503), new Vector2(150, 196), new Vector2(0, 1));
+            var glow = UIKit.Img(bombRoot, Art.Glow, new Vector2(210, 210), "Glow");
+            glow.raycastTarget = false; glow.preserveAspect = false;
+            glow.color = new Color(0.55f, 0.85f, 1f, 0.75f);   // 다이아 빛 (하늘색)
+            glow.rectTransform.Place(0, 1, new Vector2(75, -88), new Vector2(210, 210), new Vector2(0.5f, 0.5f));
+            var btn = UIKit.KitBtn(bombRoot, "tile_gold", new Vector2(104, 114), null, 0, ShopPopup.OpenGems, "GemBombBtn");
+            ((RectTransform)btn.transform).Place(0, 1, new Vector2(75, -88), new Vector2(104, 114), new Vector2(0.5f, 0.5f));
+            var ic = UIKit.Img(btn.transform, Art.Get("UI/icon_gem"), new Vector2(74, 74), "Icon");
+            ic.rectTransform.Place(0.5f, 0.5f, new Vector2(0, 2), new Vector2(74, 74), new Vector2(0.5f, 0.5f));
+            ic.raycastTarget = false;
+            var burst = UIKit.KitImg(btn.transform, "burst_red", new Vector2(60, 60), "Burst").rectTransform;
+            burst.Place(1, 0.5f, new Vector2(4, -26), new Vector2(60, 60), new Vector2(0.5f, 0.5f));
+            burst.localRotation = Quaternion.Euler(0, 0, -12);
+            burst.GetComponent<Image>().raycastTarget = false;
+            var bt = UIKit.Fit(UIKit.Label(burst, L.F("월 {0}회", Iap.BombLimit), 18, Color.white, TextAnchor.MiddleCenter, 2.5f), 12);
+            bt.rectTransform.Place(0.5f, 0.5f, new Vector2(0, 2), new Vector2(50, 30), new Vector2(0.5f, 0.5f));
+            bt.raycastTarget = false;
+            var rib = UIKit.KitImg(bombRoot, "ribbon_red", new Vector2(150, 48), "Ribbon").rectTransform;
+            rib.Place(0, 1, new Vector2(75, -20), new Vector2(150, 48), new Vector2(0.5f, 0.5f));
+            rib.GetComponent<Image>().raycastTarget = false;
+            var rtx = UIKit.Fit(UIKit.Label(rib, L.T("다이아 폭탄"), 24, Color.white, TextAnchor.MiddleCenter, 3), 14);
+            rtx.rectTransform.Place(0.5f, 0.5f, new Vector2(0, 4), new Vector2(116, 34), new Vector2(0.5f, 0.5f));
+            rtx.raycastTarget = false;
+            bombCap = UIKit.Fit(UIKit.Label(bombRoot, "", 26, UIKit.Gold, TextAnchor.MiddleCenter, 3), 16);
+            bombCap.rectTransform.Place(0, 1, new Vector2(75, -174), new Vector2(160, 34), new Vector2(0.5f, 0.5f));
+            bombCap.raycastTarget = false;
+            bombRoot.gameObject.SetActive(false);
+        }
+
+        /// <summary>폭탄 아이콘: 스테이지 화면 + 상점 열림 + 이번 달 횟수가 남은 폭탄을 팔 수 있음 (다 사면 다음 달 1일까지 숨김)</summary>
+        void RefreshBomb()
+        {
+            if (!bombRoot) return;
+            bool show = GM.mode == GameManager.Mode.Stage && GM.Unlocked("shop") && Iap.AnyBombOnSale();
+            if (bombRoot.gameObject.activeSelf != show) bombRoot.gameObject.SetActive(show);
+            if (!show) return;
+            float y = starterRoot && starterRoot.gameObject.activeSelf ? -503 - 208 - 6 : -503;
+            if (bombRoot.anchoredPosition.y != y) bombRoot.anchoredPosition = new Vector2(10, y);
+            double best = 0;
+            foreach (var x in Tables.Shop) if (Iap.IsBomb(x) && Iap.BombLeft(x) > 0) best = System.Math.Max(best, Iap.BombMul(x));
+            string cap = L.F("최대 {0}배!", (System.Math.Floor(best * 10 + 1e-9) / 10).ToString("0.#", System.Globalization.CultureInfo.InvariantCulture));
+            if (bombCap.text != cap) bombCap.text = cap;
         }
 
         /// <summary>SS급 미사일탄 아이콘: 스테이지 화면 + 상점 열림 + 아직 안 삼 + 살 수 있음(스토어에 상품이 있음)

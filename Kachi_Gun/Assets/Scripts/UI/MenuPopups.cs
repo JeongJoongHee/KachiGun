@@ -170,8 +170,9 @@ namespace KachiGun
                 {
                     // 10-30 실제 결제: 스토어 가격(받았으면) · 폰에서 결제가 꺼져 있으면 숨김 · 영구 상품을 가졌으면 "보유 중"
                     if (!Iap.CanSell(r) && !Iap.Owned(r)) continue;
-                    bool owned = Iap.Permanent(r) && Iap.Owned(r);
-                    price = owned ? L.T(Iap.BulletOf(r) >= 0 ? "구매 완료" : "보유 중") : Iap.PriceText(r);   // 11-13 1회 한정 총알은 "구매 완료"
+                    if (Iap.IsBomb(r) && Iap.BombLimit <= 0) continue;   // 11-17 Gem_Bomb_Limit 0 = 폭탄 안 팖
+                    bool owned = Iap.Permanent(r) && Iap.Owned(r) || Iap.IsBomb(r) && Iap.BombLeft(r) <= 0;   // 11-17 폭탄은 이번 달 횟수를 다 쓰면 회색
+                    price = owned ? L.T(Iap.IsBomb(r) ? "다음 달" : Iap.BulletOf(r) >= 0 ? "구매 완료" : "보유 중") : Iap.PriceText(r);   // 11-13 1회 한정 총알은 "구매 완료"
                     kind = owned ? 3 : 2;
                     act = () => { Iap.Buy(row.id); };
                 }
@@ -181,7 +182,7 @@ namespace KachiGun
             }
             scroll = SkinPopup.MakeScroll(content, new Vector2(0, -10), new Vector2(900, 1430), out var inner);
             gemRowY = -1;
-            int gi = items.FindIndex(x => x.id.StartsWith("gem_pack"));
+            int gi = items.FindIndex(x => x.id.StartsWith("gem_pack") || x.id.StartsWith("gem_bomb"));   // 11-17 폭탄이 맨 위면 폭탄부터
             if (gi < 0) gi = items.FindIndex(x => x.id == "free_gems_ad");
             if (gi >= 0) gemRowY = gi * 170;
             inner.sizeDelta = new Vector2(0, items.Count * 170 + 10);
@@ -201,24 +202,32 @@ namespace KachiGun
                 if (it.id == "free_gems_ad") adGemBtn = b;
                 var srow = Tables.Shop.Find(x => x.id == it.id);
                 if (it.kind == 2 && Iap.FirstBonus(srow)) FirstBadge(rb.transform, b.transform);
+                if (Iap.IsBomb(srow)) Badge(rb.transform, b.transform, L.F("월 {0}회", Iap.BombLimit), Iap.BombMulText(srow) + L.T("배"), "Bomb", it.kind == 3);   // 11-17
                 if (it.kind == 3) UIKit.SetOn(b, false);
             }
         }
 
         /// <summary>11-14 첫 구매 2배 딱지: 가격 버튼 위 빨간 리본 "첫 구매 2배" + 버튼 오른쪽 위 빨간 별 "x2" (홈 화면 1회 한정 상품 딱지와 같은 그림)</summary>
-        static void FirstBadge(Transform row, Transform btn)
+        static void FirstBadge(Transform row, Transform btn) =>
+            Badge(row, btn, L.F("첫 구매 {0}배", Iap.FirstMul.ToString("0.#")), "x" + Iap.FirstMul.ToString("0.#"), "First", false);
+
+        /// <summary>리본(가격 버튼 위) + 별(버튼 오른쪽 위) 딱지 — 이름 = 앞말 + Ribbon/Burst · 11-17 다이아 폭탄 "월 3회" + "2.3배" (다 사면 흐리게)</summary>
+        static void Badge(Transform row, Transform btn, string ribbon, string star, string tag, bool dim)
         {
-            var rib = UIKit.KitImg(row, "ribbon_red", new Vector2(196, 56), "FirstRibbon").rectTransform;
+            var tint = dim ? new Color(1, 1, 1, 0.45f) : Color.white;
+            var rib = UIKit.KitImg(row, "ribbon_red", new Vector2(196, 56), tag + "Ribbon").rectTransform;
             rib.Place(1, 1, new Vector2(-134, 6), new Vector2(196, 56), new Vector2(0.5f, 0.5f));
             rib.GetComponent<Image>().raycastTarget = false;
-            var rt = UIKit.Fit(UIKit.Label(rib, L.F("첫 구매 {0}배", Iap.FirstMul.ToString("0.#")), 26, Color.white, TextAnchor.MiddleCenter, 3), 16);
+            rib.GetComponent<Image>().color = tint;
+            var rt = UIKit.Fit(UIKit.Label(rib, ribbon, 26, Color.white, TextAnchor.MiddleCenter, 3), 16);
             rt.rectTransform.Place(0.5f, 0.5f, new Vector2(0, 4), new Vector2(140, 36), new Vector2(0.5f, 0.5f));
             rt.raycastTarget = false;
-            var burst = UIKit.KitImg(btn, "burst_red", new Vector2(76, 76), "FirstBurst").rectTransform;
+            var burst = UIKit.KitImg(btn, "burst_red", new Vector2(76, 76), tag + "Burst").rectTransform;
             burst.Place(1, 1, new Vector2(-4, -6), new Vector2(76, 76), new Vector2(0.5f, 0.5f));
             burst.localRotation = Quaternion.Euler(0, 0, -12);
             burst.GetComponent<Image>().raycastTarget = false;
-            var bx = UIKit.Label(burst, "x" + Iap.FirstMul.ToString("0.#"), 30, Color.white, TextAnchor.MiddleCenter, 3);
+            burst.GetComponent<Image>().color = tint;
+            var bx = UIKit.Fit(UIKit.Label(burst, star, 30, Color.white, TextAnchor.MiddleCenter, 3), 18);
             bx.rectTransform.Place(0.5f, 0.5f, new Vector2(0, 2), new Vector2(64, 40), new Vector2(0.5f, 0.5f));
             bx.raycastTarget = false;
         }

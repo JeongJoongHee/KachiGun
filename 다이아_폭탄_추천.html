@@ -1,0 +1,130 @@
+<!doctype html><html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>다이아 폭탄 추천</title><style>
+:root{--bg:#fbf7ef;--fg:#3b281c;--mut:#7a6a5c;--line:#e3d8c6;--card:#fff;--acc:#a8642f}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--fg);font-family:"Malgun Gothic",sans-serif;margin:0;padding:24px 16px;line-height:1.6}
+main{max-width:980px;margin:auto} h1{font-size:24px;margin:0 0 4px} h2{font-size:19px;margin:30px 0 8px;color:var(--acc)}
+.mut{color:var(--mut);font-size:14px} code{background:#f1e8d8;padding:1px 5px;border-radius:4px;font-size:13px}
+.box{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:10px 16px;margin:12px 0;font-size:14.5px}
+.box.warn{background:#fff6e6;border-color:#f0cf96}
+ul.todo{list-style:none;padding:0;margin:0}
+ul.todo>li{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px 14px;margin:12px 0}
+ul.todo>li.checked{border-color:#9cc47e;background:#f6fbef}
+.row{display:flex;align-items:flex-start;gap:10px}
+.row label{flex:1;display:flex;gap:10px;align-items:flex-start;cursor:pointer}
+.row input{width:22px;height:22px;margin-top:4px;flex:none;accent-color:#6aa84f}
+.t{font-weight:700;font-size:17px}
+.meta{font-size:14.5px}
+.pen{border:1px solid var(--line);background:#faf5ea;border-radius:8px;font-size:13px;padding:2px 8px;cursor:pointer;color:var(--fg);flex:none}
+li.has-note .pen{background:#fde9c8}
+.notebox{display:none;margin-top:8px} li.open .notebox{display:block}
+.notebox textarea{width:100%;min-height:60px;border:1px solid var(--line);border-radius:8px;padding:6px 8px;font:inherit;font-size:14px}
+.hint{font-size:12px;color:var(--mut)}
+.tw{overflow-x:auto}
+table{border-collapse:collapse;width:100%;font-size:14px;margin:6px 0}
+th,td{border:1px solid var(--line);padding:5px 8px;text-align:right;white-space:nowrap} th{background:#f4ecdf;text-align:center}
+td.l{text-align:left} tr.bomb td{background:#fff3e3} b.hot{color:#b4542a}
+#bar{position:sticky;top:0;background:var(--bg);padding:8px 0;z-index:2;border-bottom:1px solid var(--line)}
+</style></head><body><main>
+<h1>월 3회 "다이아 폭탄" — 수량 · 가격 추천</h1>
+<div class="mut">2026-11-17 · 지금 상점 표(Shop_Products) · 출석(Config) · 밸런스 시뮬레이터(tools/balance_sim.py)로 잰 값 기준 · 체크 = "추천대로", ✎ 의견 = 다른 값</div>
+<div id="bar"><span id="stat" class="mut"></span></div>
+
+<div class="box" style="border-color:#9cc47e;background:#f6fbef"><b>11-17 반영 결과 (체크 4 · 의견 3)</b>
+<ol>
+<li><b>"월초 1일에 매번 갱신" 해석</b>: 정해진 날(5·15·25일)에만 여는 대신 <b>늘 팔고, 상품마다 한 달에 3번</b>까지 · <b>매월 1일 0시(한국 시간)에 다시 3번</b>. 날짜 창은 만들지 않았습니다 — 다르게 뜻하셨으면 알려 주세요. 횟수 = Config <code>Gem_Bomb_Limit</code> (0 = 폭탄 안 팖)</li>
+<li><b>기존 다이아 상품 소폭 올림 (약 +10%)</b>: 한 줌 500 → <b>550</b> · 주머니 1,800 → <b>2,000</b> · 상자 4,200 → <b>4,600</b>. 그래서 폭탄의 "평소의 몇 배"는 <b>1.8 · 2 · 2.3배</b>로 조금 줄었습니다(폭탄 개수는 추천 그대로 3,500 · 8,000 · 27,000).
+ ※ 상자를 "첫 구매 2배"로 사면 1,000원당 773개라 작은 폭탄(714)보다 조금 좋습니다 — 평생 1번뿐이라 그대로 뒀고, 바꾸려면 작은 폭탄을 3,900개로.</li>
+<li><b>화면을 안 가리게</b>: 홈 아이콘은 왼쪽 버튼 줄(설정 · 상점 · 미션 · 1회 상품) <b>바로 아래 빈 흙 위</b> — 좀비가 오는 오른쪽 · 가운데 · 아래 카드는 안 가림. 1회 상품이 안 보이면 그 자리로 올라감 · 움직이지 않는 그림(빛만) · 이번 달 폭탄을 다 사면 숨김. 상점은 맨 위 3줄 + 리본 "월 3회" · 별 "2.3배" · 설명 "다이아 8,000 · 평소의 2배 · 이번 달 3번 남음" · 다 사면 "다음 달"(회색)</li>
+<li>상품 ID = <code>gem_bomb_s</code>(4,900원) · <code>gem_bomb_m</code>(9,900원) · <code>gem_bomb_l</code>(29,900원) — Play Console 인앱 상품 ID 와 글자 하나까지 같아야 폰에 보입니다. 첫 구매 2배는 안 붙음.</li>
+</ol></div>
+
+<div class="box warn"><b>한 줄 요약</b><br>
+한 번 열릴 때 <b>3단(4,900원 · 9,900원 · 29,900원)</b>, 각 1번만 살 수 있게 하고, 1,000원당 다이아를 <b>평소 제일 좋은 상품(다이아 상자)의 2~2.6배</b>로 둡니다.
+<b>"첫 구매 2배"(1,000원당 706개)보다 조금이라도 좋아야</b> "폭탄"으로 느껴집니다.</div>
+
+<h2>1. 지금 다이아 값 (기준점)</h2>
+<div class="tw"><table>
+<tr><th>상품</th><th>가격</th><th>다이아</th><th>1,000원당</th><th>첫 구매 2배 때</th></tr>
+<tr><td class="l">다이아 한 줌</td><td>2,900원</td><td>500</td><td>172</td><td>345</td></tr>
+<tr><td class="l">다이아 주머니</td><td>5,900원</td><td>1,800</td><td>305</td><td>610</td></tr>
+<tr><td class="l">다이아 상자</td><td>11,900원</td><td>4,200</td><td><b>353</b></td><td><b>706</b></td></tr>
+<tr><td class="l">모든 광고 제거 (덤)</td><td>9,900원</td><td>1,000</td><td>101</td><td>-</td></tr>
+</table></div>
+<div class="tw"><table>
+<tr><th>무료로 버는 다이아 (한 달 30일)</th><th>광고 안 봄 · 하루 4시간</th><th>광고 다 봄 · 하루 4시간</th></tr>
+<tr><td class="l">미션 · 도전 · 광산 · 보스 던전 · 광고 다이아 (시뮬레이터)</td><td>약 3,000</td><td>약 13,300</td></tr>
+<tr><td class="l">출석 7일 (100~1,500, 한 바퀴 4,300)</td><td>약 18,400</td><td>약 18,400</td></tr>
+<tr><td class="l"><b>합계</b></td><td><b>약 21,000</b></td><td><b>약 32,000</b></td></tr>
+</table></div>
+<div class="mut">다이아 쓰는 곳: 코스튬 17벌 합 352,700 (1벌 1,900~46,800) · 보급품 25개 합 175,000 · 총알 뽑기 1번 100 (끝없음) · 무기 강화</div>
+
+<h2>2. 추천안</h2>
+<ul class="todo">
+<li data-id="gb-tiers"><label><input type="checkbox"><span class="t">한 번 열릴 때 3단 · 각 1번만</span></label>
+<div class="tw"><table>
+<tr><th>이름</th><th>가격</th><th>다이아</th><th>1,000원당</th><th>상자 대비</th><th>평소 값으로 치면</th><th>대략</th></tr>
+<tr class="bomb"><td class="l">작은 폭탄</td><td>4,900원</td><td>3,500</td><td>714</td><td>2.0배</td><td>약 9,900원어치</td><td class="l">코스튬 1~2번째 한 벌</td></tr>
+<tr class="bomb"><td class="l">다이아 폭탄</td><td>9,900원</td><td>8,000</td><td>808</td><td>2.3배</td><td>약 22,700원어치</td><td class="l">무과금 8~11일치 · 꿀꿀 돼지(7,800)</td></tr>
+<tr class="bomb"><td class="l">초대형 폭탄</td><td>29,900원</td><td>27,000</td><td>903</td><td>2.6배</td><td>약 76,500원어치</td><td class="l">무과금 약 한 달치 · 멜빵바지(27,300)</td></tr>
+</table></div>
+<div class="meta">· <b>4,900원</b> = 처음 사 보게 만드는 미끼(990원·1,990원 1회 상품을 산 사람이 다음에 사기 쉬운 값) · <b>9,900원</b> = 주력 · <b>29,900원</b> = 많이 쓰는 사람용<br>
+· 한 번에 다 사면 38,500개 / 44,700원 · <b>한 달 최대 115,500개 / 134,100원</b> → 코스튬·보급품 전부(약 53만)를 폭탄만으로 다 사려면 4~5달 걸림 — 너무 빨리 끝나지 않음<br>
+· 화면에는 "<b>평소보다 2.3배!</b>"처럼 배수를 크게 (사용자 숫자 그대로 "8,000" 표시, 1k 줄임 안 씀)</div></li>
+
+<li data-id="gb-when"><label><input type="checkbox"><span class="t">언제: 매월 5일 · 15일 · 25일, 각 48시간</span></label>
+<div class="meta">· 열흘 간격으로 고르게 · 25일은 흔한 월급날, 5일은 월초 고정비가 빠진 뒤<br>
+· 48시간 = "놓치면 열흘 뒤"라는 급한 느낌 + 주말에 걸릴 때가 많음<br>
+· 날짜·시간은 Config 줄(예: <code>Gem_Bomb_Days</code> 5,15,25 · <code>Gem_Bomb_Hours</code> 48)로 두어 나중에 표만 바꾸면 되게<br>
+· 폰 시계를 바꿔 아무 때나 사는 걸 막으려면 랭킹 서버(Cloudflare)에서 시간을 받아 판단 — 서버 시간을 못 받으면 상품을 안 보이게</div></li>
+
+<li data-id="gb-nostack"><label><input type="checkbox"><span class="t">"첫 구매 2배"와 안 겹치게 — 다른 종류로</span></label>
+<div class="meta">· 폭탄 상품은 Shop 표 Category 를 새 <code>Gem_Bomb</code> 로 → 지금 <code>Gem_First_Mul</code>(Gem_Shop 줄에만 적용)이 안 붙음<br>
+· 겹치면 9,900원 → 16,000개(1,000원당 1,616)가 되어 평소 상품을 아무도 안 삼<br>
+· 인앱 상품 ID 3개를 새로 만들어야 함(예: <code>gem_bomb_s</code> · <code>gem_bomb_m</code> · <code>gem_bomb_l</code>) — Play Console 에 만든 뒤 폰에 내려오기까지 약 2시간</div></li>
+
+<li data-id="gb-show"><label><input type="checkbox"><span class="t">보여 주기: 홈 화면 아이콘 + 남은 시간</span></label>
+<div class="meta">· 열린 동안 홈 화면에 1회 한정 상품과 같은 모양의 아이콘(리본·번쩍 그림 재사용) + "남은 시간 31:20:05" · 상점 맨 위에 폭탄 칸<br>
+· 산 단은 "구매 완료" 회색 · 셋 다 사면 아이콘 사라짐</div></li>
+</ul>
+
+<h2>3. 다른 안 (고르면 의견 칸에)</h2>
+<ul class="todo">
+<li data-id="gb-alt-one"><label><input type="checkbox"><span class="t">B. 하나만: 9,900원 → 8,000개 (1번만)</span></label>
+<div class="meta">만들기·알리기가 가장 쉬움. 대신 990원 상품만 산 사람(작은 돈)과 많이 쓰는 사람(큰 돈)을 놓침.</div></li>
+<li data-id="gb-alt-soft"><label><input type="checkbox"><span class="t">C. 순하게: 2배 고정 (4,900 → 3,500 · 9,900 → 7,000 · 29,900 → 21,000)</span></label>
+<div class="meta">평소 상품을 덜 깎아 먹음. 대신 "첫 구매 2배"(706)와 거의 같아 폭탄 느낌이 약함.</div></li>
+</ul>
+
+<h2>4. 같이 알려 드릴 것 (지금 바꾸지 않음)</h2>
+<div class="box"><b>출석이 평소 상품보다 큽니다.</b> 출석 한 바퀴(7일) 4,300개 &gt; 다이아 상자 11,900원 4,200개. 무과금도 한 달 2만 개 넘게 받아서 평소 상품이 약하게 보입니다.
+폭탄은 이걸 보완하는 쪽이라 위 값이 맞지만, 평소 상품 값(또는 출석 6·7일차)은 <b>밸런스 단계에서 마지막에</b> 함께 보는 걸 추천합니다.</div>
+
+<script>
+(function(){
+  // 저장 형식: {"c":{항목id:true}, "n":{항목id:"의견"}} — python tools/todo_checks.py 다이아_폭탄_추천.html 로 읽음
+  var KEY='kachigun-gembomb-1117', st={c:{},n:{}};
+  try{ var v=JSON.parse(localStorage.getItem(KEY)||'{}'); st.c=v.c||{}; st.n=v.n||{}; }catch(e){}
+  var items=document.querySelectorAll('ul.todo > li[data-id]');
+  function save(){ try{ localStorage.setItem(KEY,JSON.stringify(st)); }catch(e){} stat(); }
+  function stat(){ var c=0,n=0; items.forEach(function(li){ if(st.c[li.dataset.id]) c++; if((st.n[li.dataset.id]||'').trim()) n++; });
+    document.getElementById('stat').textContent='체크 '+c+' / '+items.length+' · 의견 '+n+'  (이 브라우저에 저장 → "체크했어" 라고 알려 주세요)'; }
+  items.forEach(function(li){
+    var id=li.dataset.id, label=li.querySelector('label'), cb=li.querySelector('input');
+    var row=document.createElement('div'); row.className='row'; li.insertBefore(row,label); row.appendChild(label);
+    var pen=document.createElement('button'); pen.type='button'; pen.className='pen'; pen.textContent='✎ 의견'; row.appendChild(pen);
+    var box=document.createElement('div'); box.className='notebox';
+    var ta=document.createElement('textarea'); ta.placeholder='다른 값 (예: 9,900원 → 10,000개 · 매주 금토일)';
+    var hint=document.createElement('div'); hint.className='hint'; hint.textContent='적는 대로 이 브라우저에 저장됩니다.';
+    box.appendChild(ta); box.appendChild(hint); li.appendChild(box);
+    cb.checked=!!st.c[id]; ta.value=st.n[id]||''; li.classList.toggle('checked',cb.checked);
+    function mark(){ li.classList.toggle('has-note',!!ta.value.trim()); pen.textContent=ta.value.trim()?'✎ 의견 있음':'✎ 의견'; }
+    mark(); if(ta.value.trim()) li.classList.add('open');
+    cb.addEventListener('change',function(){ st.c[id]=cb.checked; li.classList.toggle('checked',cb.checked); save(); });
+    ta.addEventListener('input',function(){ if(ta.value.trim()) st.n[id]=ta.value; else delete st.n[id]; mark(); save(); });
+    pen.addEventListener('click',function(){ li.classList.toggle('open'); if(li.classList.contains('open')) ta.focus(); });
+  });
+  stat();
+})();
+</script>
+</main></body></html>

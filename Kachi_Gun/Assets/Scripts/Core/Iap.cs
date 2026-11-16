@@ -16,6 +16,7 @@ namespace KachiGun
     ///  - 소모(살 때마다 다이아): gem_pack_small · gem_pack_mid · gem_pack_large (Bonus_Gems 칸)
     ///  - 1회 한정 총알(11-13): Reward 칸 Bullet:총알 코드 (starter_ss_missile = Bullet:55 SS 미사일탄 · 990원) — 구글엔 영구 상품,
     ///    빈 장착 칸 → 인벤토리 → 둘 다 차 있으면 빈 칸이 생길 때까지 기다림 (SaveData.PutBullet). 다시 설치해 되살리면 총알을 다시 줌
+    ///  - 11-17 다이아 폭탄(소모): gem_bomb_s · gem_bomb_m · gem_bomb_l (Category Gem_Bomb) — 상품마다 한 달 Gem_Bomb_Limit 번, 매월 1일 갱신
     ///
     ///  [구매] → 구글 결제창 → OnPurchasePending → 앱 안에서 구글 서명 확인 (CrossPlatformValidator, 라이선스 키)
     ///  → 지급(Grant) · 세이브 → 구글에 "지급 끝"(ConfirmPurchase).
@@ -50,10 +51,49 @@ namespace KachiGun
         static string FirstKey(ShopRow r) => "first2x:" + r.id;
         /// <summary>다음 구매가 첫 구매 2배인지 (상점 딱지 · 지급)</summary>
         public static bool FirstBonus(ShopRow r) => r != null && r.category == "Gem_Shop" && r.bonusGems > 0 && FirstMul > 1 && !S.iapOnce.Contains(FirstKey(r));
-        /// <summary>상품 설명 (상점 줄 · 구매 확인 창 같은 글): 11-14 첫 구매 2배가 남았으면 "첫 구매 2배! 다이아 500 → 1,000", 받은 뒤엔 표의 설명 그대로</summary>
-        public static string Desc(ShopRow r) => FirstBonus(r)
+        /// <summary>상품 설명 (상점 줄 · 구매 확인 창 같은 글): 11-14 첫 구매 2배가 남았으면 "첫 구매 2배! 다이아 500 → 1,000", 받은 뒤엔 표의 설명 그대로
+        /// · 11-17 다이아 폭탄은 "다이아 8,000 · 평소의 2.1배 · 이번 달 3번 남음"</summary>
+        public static string Desc(ShopRow r) => IsBomb(r)
+            ? (BombLeft(r) > 0
+                ? L.F("다이아 {0} · 평소의 {1}배 · 이번 달 {2}번 남음", ShopPopup.GemN(r.bonusGems), BombMulText(r), BombLeft(r))
+                : L.T("이번 달 구매 끝 · 매월 1일에 다시 열려요"))
+            : FirstBonus(r)
             ? L.F("첫 구매 {0}배! 다이아 {1} → {2}", FirstMul.ToString("0.#"), ShopPopup.GemN(r.bonusGems), ShopPopup.GemN(r.bonusGems * FirstMul))
             : L.T(r.desc);
+
+        // ---------- 11-17 다이아 폭탄 (Category Gem_Bomb · 다이아_폭탄_추천.html) ----------
+        // 사용자 "월 3회 다이아 폭탄" + 의견 "월초 1일에 매번 갱신" → 상품마다 한 달에 Gem_Bomb_Limit(3)번, 매월 1일 0시(한국 시간)에 다시 3번.
+        // 산 기록 = SaveData.iapOnce 의 "bomb:202611:gem_bomb_m" (산 횟수만큼 줄 · 세이브 판 번호 그대로 · 지난달 줄은 살 때 지움)
+        public static bool IsBomb(ShopRow r) => r != null && r.category == "Gem_Bomb";
+        public static int BombLimit => Math.Max(0, (int)Math.Round(Tables.C("Gem_Bomb_Limit", 3)));
+        /// <summary>한국 시간 기준 달 "202611" (폰 시계)</summary>
+        public static string BombMonth(long unix) => DateTimeOffset.FromUnixTimeSeconds(unix).ToOffset(TimeSpan.FromHours(9)).ToString("yyyyMM");
+        static string BombKey(ShopRow r) => "bomb:" + BombMonth(SaveData.Now) + ":" + r.id;
+        /// <summary>이번 달 더 살 수 있는 횟수</summary>
+        public static int BombLeft(ShopRow r)
+        {
+            if (!IsBomb(r)) return 0;
+            string k = BombKey(r);
+            int n = 0;
+            foreach (var x in S.iapOnce) if (x == k) n++;
+            return Math.Max(0, BombLimit - n);
+        }
+        /// <summary>1원당 다이아가 평소 제일 좋은 다이아 상품(Gem_Shop · 첫 구매 2배 빼고)의 몇 배인지</summary>
+        public static double BombMul(ShopRow r)
+        {
+            double best = 0;
+            foreach (var x in Tables.Shop)
+                if (x.category == "Gem_Shop" && x.bonusGems > 0 && IsCash(x)) best = Math.Max(best, x.bonusGems / Math.Max(1, GameManager.Digits(x.priceValue)));
+            return best > 0 ? r.bonusGems / Math.Max(1, GameManager.Digits(r.priceValue)) / best : 1;
+        }
+        public static string BombMulText(ShopRow r) => (Math.Floor(BombMul(r) * 10 + 1e-9) / 10).ToString("0.#", System.Globalization.CultureInfo.InvariantCulture);
+        /// <summary>홈 화면 폭탄 아이콘: 팔 수 있고 이번 달 횟수가 남은 폭탄이 하나라도 있는지</summary>
+        public static bool AnyBombOnSale()
+        {
+            if (BombLimit <= 0) return false;
+            foreach (var x in Tables.Shop) if (IsBomb(x) && CanSell(x) && BombLeft(x) > 0) return true;
+            return false;
+        }
         /// <summary>구매 확인 창 글 (에디터 가짜 결제 — 폰은 [구매]를 누르면 바로 구글 결제창)</summary>
         public static string ConfirmText(ShopRow r) => $"<size=46>{L.T(r.name)}</size>\n\n{Desc(r)}\n\n" + L.F("[테스트] 가짜 결제 {0} — 살까요?", PriceText(r));
 
@@ -80,6 +120,13 @@ namespace KachiGun
             double bonus = restore ? 0 : r.bonusGems;
             bool first = bonus > 0 && FirstBonus(r);
             if (first) { bonus *= FirstMul; S.iapOnce.Add(FirstKey(r)); }   // 11-14 첫 구매 2배 (상품마다 1번만)
+            if (IsBomb(r) && !restore)
+            {
+                // 11-17 다이아 폭탄: 이번 달 산 횟수 한 줄 더 · 지난달 줄은 지움 (한도가 넘은 결제가 들어와도 돈을 냈으니 지급은 함)
+                string month = "bomb:" + BombMonth(SaveData.Now) + ":";
+                S.iapOnce.RemoveAll(x => x.StartsWith("bomb:") && !x.StartsWith(month));
+                S.iapOnce.Add(BombKey(r));
+            }
             if (bonus > 0) S.gems += bonus;
             S.Save();
             Debug.Log($"[Iap] {(restore ? "되살림" : "지급")} {r.id} ({r.reward}, 다이아 +{bonus}{(first ? " 첫 구매 x" + FirstMul : "")}{(put >= 0 ? $", 총알 {bullet} → {(put == 0 ? "장착" : put == 1 ? "인벤토리" : "기다림")}" : "")})");
@@ -103,6 +150,7 @@ namespace KachiGun
             var r = Row(id);
             if (r == null) { HUD.I?.Toast(L.T("결제는 준비 중입니다")); return; }
             if (Permanent(r) && Owned(r)) { HUD.I?.Toast(L.T(BulletOf(r) >= 0 ? "이미 구매한 상품입니다 (1회 한정)" : "이미 가지고 있습니다")); return; }
+            if (IsBomb(r) && BombLeft(r) <= 0) { HUD.I?.Toast(L.T("이번 달 구매 끝 · 매월 1일에 다시 열려요")); return; }   // 11-17
 #if UNITY_ANDROID && !UNITY_EDITOR
             switch (Purchase(r))
             {

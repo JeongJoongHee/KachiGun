@@ -13,6 +13,8 @@
 클라우드 데이터를 읽지 못했습니다,Couldn't read the cloud data,Core/Cloud.cs
 클라우드에서 불러왔습니다,Loaded from the cloud,Core/Cloud.cs
 클라우드에 저장된 데이터가 없습니다,No data saved in the cloud,Core/Cloud.cs
+다이아 {0} · 평소의 {1}배 · 이번 달 {2}번 남음,{0} gems · {1}x the usual · {2} left this month,Core/Iap.cs
+이번 달 구매 끝 · 매월 1일에 다시 열려요,Sold out this month · Back on the 1st,Core/Iap.cs
 첫 구매 {0}배! 다이아 {1} → {2},First purchase x{0}! Gems {1} → {2},Core/Iap.cs
 [테스트] 가짜 결제 {0} — 살까요?,[Test] Fake purchase {0} — buy?,Core/Iap.cs
 {0} 구매 완료!,{0} purchased!,Core/Iap.cs
@@ -133,10 +135,13 @@
 1회 구매,One time,UI/HUD.cs
 단 1번!,Only once!,UI/HUD.cs
 {0} 총알 지급,Get {0} Ammo,UI/HUD.cs
+월 {0}회,{0}/month,UI/HUD.cs
+다이아 폭탄,Gem Bomb,UI/HUD.cs
+최대 {0}배!,Up to {0}x!,UI/HUD.cs
 그림 준비 중,Art coming soon,UI/MenuPopups.cs
-다이아 {0} 으로 살까요?,Buy for {0} gems?,UI/MenuPopups.cs
 보유 효과,Owned bonus,UI/MenuPopups.cs
 공격력 +{0}% · 공격속도 +{1}% · 금전 +{2}%,ATK +{0}% · SPD +{1}% · Gold +{2}%,UI/MenuPopups.cs
+다이아 {0} 으로 살까요?,Buy for {0} gems?,UI/MenuPopups.cs
 코스튬 구매,Buy Costume,UI/MenuPopups.cs
 보유 효과 합계,Total owned bonus,UI/MenuPopups.cs
 공격력 +{0}% · 공격속도 +{1}% · 금전 획득량 +{2}%,ATK +{0}% · SPD +{1}% · Gold +{2}%,UI/MenuPopups.cs
@@ -148,8 +153,10 @@
 상점으로,Go to Shop,UI/MenuPopups.cs
 광고,Ad,UI/MenuPopups.cs
 {0} 으로 살까요?,Buy for {0}?,UI/MenuPopups.cs
+다음 달,Next month,UI/MenuPopups.cs
 구매 완료,Purchased,UI/MenuPopups.cs
 보유 중,Owned,UI/MenuPopups.cs
+배,x,UI/MenuPopups.cs
 첫 구매 {0}배,First Buy x{0},UI/MenuPopups.cs
 {0}원,KRW {0},UI/MenuPopups.cs
 일반,Common,UI/MenuPopups.cs
@@ -362,9 +369,24 @@ D 등급 총알 획득!,Got D grade ammo!,UI/WeaponPopup.cs
 돈가방 좀비,Treasure Zombie,Zombie_Master.Name
 하키 좀비,Hockey Zombie,Zombie_Master.Name
 파라오 좀비,Pharaoh Zombie,Zombie_Master.Name
-설인 좀비,Yeti Zombie,Zombie_Master.Name
+거대 설인,Giant Yeti,Zombie_Master.Name
 닻 선장 좀비,Anchor Captain Zombie,Zombie_Master.Name
 방독면 거인,Gas Giant,Zombie_Master.Name
+해골 좀비,Skeleton Zombie,Zombie_Master.Name
+개 좀비,Zombie Dog,Zombie_Master.Name
+뱀파이어 좀비,Vampire Zombie,Zombie_Master.Name
+늑대인간 좀비,Werewolf Zombie,Zombie_Master.Name
+거대 거미 좀비,Giant Spider Zombie,Zombie_Master.Name
+미믹 좀비,Mimic Zombie,Zombie_Master.Name
+골렘 좀비,Golem Zombie,Zombie_Master.Name
+켄타우로스 좀비,Centaur Zombie,Zombie_Master.Name
+설인 좀비,Yeti Zombie,Zombie_Master.Name
+사이클롭스 좀비,Cyclops Zombie,Zombie_Master.Name
+크라켄 좀비,Kraken Zombie,Zombie_Master.Name
+눈알 좀비,Eyeball Zombie,Zombie_Master.Name
+미노타우르스 좀비,Minotaur Zombie,Zombie_Master.Name
+와이번 좀비,Wyvern Zombie,Zombie_Master.Name
+용 좀비,Dragon Zombie,Zombie_Master.Name
 비상 건빵,Emergency Crackers,Supply_Collection.Name
 통조림 캔,Canned Food,Supply_Collection.Name
 정수 필터,Water Filter,Supply_Collection.Name
@@ -396,6 +418,12 @@ D 등급 총알 획득!,Got D grade ammo!,UI/WeaponPopup.cs
 비밀던전 플레이하기,Play the Secret Dungeon,Mission_Master.Mission_Name
 보스 처치하기,Defeat bosses,Mission_Master.Mission_Name
 총알 합성하기,Merge ammo,Mission_Master.Mission_Name
+"작은 다이아 폭탄 (3,500)","Small Gem Bomb (3,500)",Shop_Products.Name
+"다이아 3,500개 · 한 달에 3번","3,500 gems · 3 times a month",Shop_Products.Description
+"다이아 폭탄 (8,000)","Gem Bomb (8,000)",Shop_Products.Name
+"다이아 8,000개 · 한 달에 3번","8,000 gems · 3 times a month",Shop_Products.Description
+"초대형 다이아 폭탄 (27,000)","Mega Gem Bomb (27,000)",Shop_Products.Name
+"다이아 27,000개 · 한 달에 3번","27,000 gems · 3 times a month",Shop_Products.Description
 공격력 x2 (5분),Attack x2 (5 min),Shop_Products.Name
 광고 1편 · 연속 시청 시 시간 누적,1 ad · time stacks when watched again,Shop_Products.Description
 금전 획득량 x2 (5분),Gold x2 (5 min),Shop_Products.Name
@@ -403,12 +431,12 @@ D 등급 총알 획득!,Got D grade ammo!,UI/WeaponPopup.cs
 광고 없이 바로 보상 + 다이아 1000,"Rewards without ads + 1,000 gems",Shop_Products.Description
 자동강화 패키지,Auto Upgrade Pack,Shop_Products.Name
 하단 강화 자동 + 다이아 500,Upgrades buy themselves + 500 gems,Shop_Products.Description
-다이아 한 줌 (500),Handful of Gems (500),Shop_Products.Name
-다이아 500개 즉시 획득,Get 500 gems now,Shop_Products.Description
-"다이아 주머니 (1,800)","Pouch of Gems (1,800)",Shop_Products.Name
-"다이아 1,800개 즉시 획득","Get 1,800 gems now",Shop_Products.Description
-"다이아 상자 (4,200)","Chest of Gems (4,200)",Shop_Products.Name
-"다이아 4,200개 즉시 획득","Get 4,200 gems now",Shop_Products.Description
+다이아 한 줌 (550),Handful of Gems (550),Shop_Products.Name
+다이아 550개 즉시 획득,Get 550 gems now,Shop_Products.Description
+"다이아 주머니 (2,000)","Pouch of Gems (2,000)",Shop_Products.Name
+"다이아 2,000개 즉시 획득","Get 2,000 gems now",Shop_Products.Description
+"다이아 상자 (4,600)","Chest of Gems (4,600)",Shop_Products.Name
+"다이아 4,600개 즉시 획득","Get 4,600 gems now",Shop_Products.Description
 무료 다이아,Free Gems,Shop_Products.Name
 광고 1편 · 다이아 40 · 하루 3번,1 ad · 40 gems · 3 times a day,Shop_Products.Description
 SS급 미사일탄,SS Missile,Shop_Products.Name
@@ -466,6 +494,18 @@ Stage 10-1 에서 열립니다,Unlocks at Stage 10-1,Unlock_Roadmap.Lock_Toast_M
 크다...! 몇 끼 분량이지?,Huge...! How many meals?,Speech_Lines.Text
 귀여움으로 이겼다!,Cuteness wins!,Speech_Lines.Text
 "자, 낮잠 시간이다!","Okay, nap time!",Speech_Lines.Text
+여긴 내 구역이다!,This is my turf!,Speech_Lines.Text
+킁킁... 맛있는 냄새!,Sniff... smells tasty!,Speech_Lines.Text
+감히 여기까지 와?,You dare come this far?,Speech_Lines.Text
+털뭉치들이 겁도 없군!,Brave little furballs!,Speech_Lines.Text
+배고프다... 아주 배고프다!,Hungry... so hungry!,Speech_Lines.Text
+그게 다냐?,Is that all?,Speech_Lines.Text
+"간지럽다, 간지러워!",That tickles!,Speech_Lines.Text
+으윽... 제법인데?,Ugh... not bad?,Speech_Lines.Text
+아야! 그건 아프다!,Ow! That hurts!,Speech_Lines.Text
+이따 또 만나!,See you later!,Speech_Lines.Text
+엄마... 보고 싶어...,I miss my mom...,Speech_Lines.Text
+크하하! 더 강해져서 와라!,Haha! Come back stronger!,Speech_Lines.Text
 밥이라도 먹고 할까?,Wanna grab a bite first?,Speech_Lines.Text
 좋아! 수박 먹자!,Yes! Watermelon time!,Speech_Lines.Text
 이것만 끝내고 먹자!,Let's eat after this!,Speech_Lines.Text
@@ -517,6 +557,25 @@ Stage 10-1 에서 열립니다,Unlocks at Stage 10-1,Unlock_Roadmap.Lock_Toast_M
 ...몰라..일단 지켜보자..,...Dunno.. let's just guard it..,Speech_Lines.Text
 나보다 커?,Bigger than me?,Speech_Lines.Text
 너보단 다 커.,Everything's bigger than you.,Speech_Lines.Text
+여긴 우리 산책로야!,This is our walking path!,Speech_Lines.Text
+그거 우리 샴푸 냄새야!,That's our shampoo!,Speech_Lines.Text
+...무슨 샴푸 쓰냐?,...Which shampoo?,Speech_Lines.Text
+아니 저기까지 왔는데?,We came all the way!,Speech_Lines.Text
+털뭉치 아니고 카피바라!,"Not furballs, capybaras!",Speech_Lines.Text
+풀 좀 나눠 줄까?,Want some grass?,Speech_Lines.Text
+...풀은 됐다.,...I'll pass on grass.,Speech_Lines.Text
+아직 몸풀기야!,Just warming up!,Speech_Lines.Text
+곧 안 간지러울걸!,Won't tickle for long!,Speech_Lines.Text
+이제 알았어?,Took you long enough?,Speech_Lines.Text
+ㅇㅋ 기달!,"OK, wait for us!",Speech_Lines.Text
+다이아 한 줌 (500),Handful of Gems (500),(지금은 안 씀) Shop_Products.Name
+다이아 500개 즉시 획득,Get 500 gems now,(지금은 안 씀) Shop_Products.Description
+"다이아 주머니 (1,800)","Pouch of Gems (1,800)",(지금은 안 씀) Shop_Products.Name
+"다이아 1,800개 즉시 획득","Get 1,800 gems now",(지금은 안 씀) Shop_Products.Description
+"다이아 상자 (4,200)","Chest of Gems (4,200)",(지금은 안 씀) Shop_Products.Name
+"다이아 4,200개 즉시 획득","Get 4,200 gems now",(지금은 안 씀) Shop_Products.Description
+초보 스타터팩,,(지금은 안 씀) Shop_Products.Name
+1회 한정 · 코스튬 밀집모자 · 보급품 비상 건빵,,(지금은 안 씀) Shop_Products.Description
 총알 {0},Ammo {0},(지금은 안 씀) UI/HUD.cs
 진동,Vibration,(지금은 안 씀) UI/MenuPopups.cs
 불러오기 · 구매 복원 · 문의,Load · Restore · Contact,(지금은 안 씀) UI/MenuPopups.cs
@@ -601,52 +660,14 @@ S 등급 레이저 건 즉시 지급,Get an S grade Laser Gun now,(지금은 안
 차원파괴 미사일,Rift Missile,(지금은 안 씀) Weapon_Master.Name
 제네시스 레이저,Genesis Laser,(지금은 안 씀) Weapon_Master.Name
 아포칼립스 미사일,Apocalypse Missile,(지금은 안 씀) Weapon_Master.Name
-여긴 내 구역이다!,This is my turf!,Speech_Lines.Text
-킁킁... 맛있는 냄새!,Sniff... smells tasty!,Speech_Lines.Text
-감히 여기까지 와?,You dare come this far?,Speech_Lines.Text
-털뭉치들이 겁도 없군!,Brave little furballs!,Speech_Lines.Text
-배고프다... 아주 배고프다!,Hungry... so hungry!,Speech_Lines.Text
-그게 다냐?,Is that all?,Speech_Lines.Text
-"간지럽다, 간지러워!",That tickles!,Speech_Lines.Text
-더 세게 쏴 봐라!,Shoot harder!,Speech_Lines.Text
-크아아아!,Graaaah!,Speech_Lines.Text
-도망치려면 지금이다!,Run while you can!,Speech_Lines.Text
-카피바라 수프 끓여야지!,Capybara soup tonight!,Speech_Lines.Text
-으윽... 제법인데?,Ugh... not bad?,Speech_Lines.Text
-아야! 그건 아프다!,Ow! That hurts!,Speech_Lines.Text
-"이, 이럴 리가 없어!",Th-this can't be!,Speech_Lines.Text
-내가... 지다니...,I... lost...,Speech_Lines.Text
-기억해 두겠다...!,I'll remember this...!,Speech_Lines.Text
-엄마... 보고 싶어...,I miss my mom...,Speech_Lines.Text
-크하하! 더 강해져서 와라!,Haha! Come back stronger!,Speech_Lines.Text
-시시하군. 다음에 보자!,Boring. See you later!,Speech_Lines.Text
-여긴 우리 산책로야!,This is our walking path!,Speech_Lines.Text
-그거 우리 샴푸 냄새야!,That's our shampoo!,Speech_Lines.Text
-...무슨 샴푸 쓰냐?,...Which shampoo?,Speech_Lines.Text
-걸어서 왔는데?,We walked here.,Speech_Lines.Text
-털뭉치 아니고 카피바라!,"Not furballs, capybaras!",Speech_Lines.Text
-풀 좀 나눠 줄까?,Want some grass?,Speech_Lines.Text
-...풀은 됐다.,...I'll pass on grass.,Speech_Lines.Text
-아직 몸풀기야!,Just warming up!,Speech_Lines.Text
-곧 안 간지러울걸!,Won't tickle for long!,Speech_Lines.Text
-우린 맛없어!!,We taste bad!!,Speech_Lines.Text
-이제 알았어?,Took you long enough?,Speech_Lines.Text
-강화하고 다시 온다!,We'll power up and return!,Speech_Lines.Text
-해골 좀비,Skeleton Zombie,Zombie_Master.Name
-개 좀비,Zombie Dog,Zombie_Master.Name
-뱀파이어 좀비,Vampire Zombie,Zombie_Master.Name
-늑대인간 좀비,Werewolf Zombie,Zombie_Master.Name
-거대 거미 좀비,Giant Spider Zombie,Zombie_Master.Name
-미믹 좀비,Mimic Zombie,Zombie_Master.Name
-골렘 좀비,Golem Zombie,Zombie_Master.Name
-켄타우로스 좀비,Centaur Zombie,Zombie_Master.Name
-사이클롭스 좀비,Cyclops Zombie,Zombie_Master.Name
-크라켄 좀비,Kraken Zombie,Zombie_Master.Name
-미노타우르스 좀비,Minotaur Zombie,Zombie_Master.Name
-와이번 좀비,Wyvern Zombie,Zombie_Master.Name
-용 좀비,Dragon Zombie,Zombie_Master.Name
-거대 설인,Giant Yeti,Zombie_Master.Name
-이따 또 만나!,See you later!,Speech_Lines.Text
-아니 저기까지 왔는데?,We came all the way!,Speech_Lines.Text
-ㅇㅋ 기달!,"OK, wait for us!",Speech_Lines.Text
-눈알 좀비,Eyeball Zombie,Zombie_Master.Name
+더 세게 쏴 봐라!,Shoot harder!,(지금은 안 씀) Speech_Lines.Text
+크아아아!,Graaaah!,(지금은 안 씀) Speech_Lines.Text
+도망치려면 지금이다!,Run while you can!,(지금은 안 씀) Speech_Lines.Text
+카피바라 수프 끓여야지!,Capybara soup tonight!,(지금은 안 씀) Speech_Lines.Text
+"이, 이럴 리가 없어!",Th-this can't be!,(지금은 안 씀) Speech_Lines.Text
+내가... 지다니...,I... lost...,(지금은 안 씀) Speech_Lines.Text
+기억해 두겠다...!,I'll remember this...!,(지금은 안 씀) Speech_Lines.Text
+시시하군. 다음에 보자!,Boring. See you later!,(지금은 안 씀) Speech_Lines.Text
+걸어서 왔는데?,We walked here.,(지금은 안 씀) Speech_Lines.Text
+우린 맛없어!!,We taste bad!!,(지금은 안 씀) Speech_Lines.Text
+강화하고 다시 온다!,We'll power up and return!,(지금은 안 씀) Speech_Lines.Text
