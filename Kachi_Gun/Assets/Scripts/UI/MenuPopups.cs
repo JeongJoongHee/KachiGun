@@ -8,18 +8,20 @@ namespace KachiGun
     public class SkinPopup : Popup
     {
         protected override Vector2 Size => new(1010, 1660);
-        protected override string Title => "코스튬";   // 11-05 아래 탭 이름 스킨 → 코스튬
+        protected override string Title => CollectionTabs.Title;   // 11-05 아래 탭 이름 스킨 → 코스튬 · 11-18 코스튬·보급품·카피친구 = 컬렉션 (탭)
+        CollectionTabs tabs;
         Text total;
         readonly List<(SkinRow row, Image bg, Image pic, Text name, Text price)> cells = new();
 
         protected override void Build()
         {
+            tabs = CollectionTabs.Build(content, 0, this);
             var tb = UIKit.Row(content, "Total", true);
-            tb.rectTransform.Place(0.5f, 1, new Vector2(0, -10), new Vector2(890, 110), new Vector2(0.5f, 1));
+            tb.rectTransform.Place(0.5f, 1, new Vector2(0, -10 - CollectionTabs.Off), new Vector2(890, 110), new Vector2(0.5f, 1));
             total = UIKit.Label(tb.transform, "", 32, Color.white, TextAnchor.MiddleCenter, 2);
             total.rectTransform.Fill(10, 6, 10, 6);
 
-            var scroll = MakeScroll(content, new Vector2(0, -135), new Vector2(900, 1300), out var inner);
+            var scroll = MakeScroll(content, new Vector2(0, -135 - CollectionTabs.Off), new Vector2(900, 1300 - CollectionTabs.Off), out var inner);
             int cols = 4; float cw = 212, ch = 300;
             int n = Tables.Skins.Count;
             inner.sizeDelta = new Vector2(0, Mathf.CeilToInt(n / (float)cols) * (ch + 12) + 10);
@@ -70,12 +72,13 @@ namespace KachiGun
             // 11-12 다이아 부족 → [상점으로] · 11-15 사용자: 부족해도 코스튬 능력치(보유 효과)는 보이게
             if (S.gems < r.price) { ShopPopup.GemShort(r.price, $"<size=46>{L.T(r.name)}</size>\n\n" + L.T("보유 효과") + "\n" + L.F("공격력 +{0}% · 공격속도 +{1}% · 금전 +{2}%", r.atk, r.spd, r.gold)); return; }
             ConfirmPopup.Ask($"<size=46>{L.T(r.name)}</size>\n\n" + L.F("다이아 {0} 으로 살까요?", Comma(r.price)) + "\n\n" + L.T("보유 효과") + "\n" + L.F("공격력 +{0}% · 공격속도 +{1}% · 금전 +{2}%", r.atk, r.spd, r.gold),
-                () => { Msg(GM.BuySkin(id)); H.Open<SkinPopup>(); }, "코스튬 구매");
+                () => { Msg(GM.BuySkin(id)); CollectionTabs.Open(0); }, "코스튬 구매");
         }
 
         public override void Refresh()
         {
-            total.text = L.T("보유 효과 합계") + "\n" + L.F("공격력 +{0}% · 공격속도 +{1}% · 금전 획득량 +{2}%", Stats.SkinAtk, Stats.SkinSpd, Stats.SkinGold);
+            tabs?.Refresh();
+            total.text = L.T("보유 효과 합계") +"\n" + L.F("공격력 +{0}% · 공격속도 +{1}% · 금전 획득량 +{2}%", Stats.SkinAtk, Stats.SkinSpd, Stats.SkinGold);
             foreach (var c in cells)
             {
                 bool own = S.skins.Contains(c.row.id), on = S.skin == c.row.id;
@@ -112,7 +115,7 @@ namespace KachiGun
     {
         protected override Vector2 Size => new(1000, 1600);
         protected override string Title => "상점";
-        Button adGemBtn;
+        Button adGemBtn, adBulletBtn;
         ScrollRect scroll;
         // 11-17 사용자 "상점에 탭을 추가해서 상품을 배치": Shop 표 Tab(순서 번호) · Tab_Name(탭 글자) 칸 — 고른 탭의 줄만 보임
         int tab;                                          // 고른 탭 번호 (0 = 맨 앞 탭)
@@ -185,6 +188,7 @@ namespace KachiGun
                 if (r.id == "buff_atk") { act = () => Msg(GM.Buff(true)); price = L.T("광고"); kind = 0; }
                 else if (r.id == "buff_gold") { act = () => Msg(GM.Buff(false)); price = L.T("광고"); kind = 0; }
                 else if (r.id == "free_gems_ad") { act = () => { Msg(GM.AdGems()); Refresh(); }; price = L.T("광고"); kind = 0; }
+                else if (r.id == "free_bullets_ad") { act = () => { Msg(GM.AdBullets()); Refresh(); }; price = L.T("광고"); kind = 0; }   // 11-18 무료 총알
                 else if (r.priceType == "Gems")
                 {
                     price = L.T("다이아") + " " + Num.F(GameManager.Digits(r.priceValue));
@@ -226,7 +230,7 @@ namespace KachiGun
                 ((RectTransform)tb.transform).Place(0.5f, 1, new Vector2(x, sel ? -8 : -22), new Vector2(tw, th), new Vector2(0.5f, 1));
                 var tl = UIKit.LabelOf(tb);
                 if (!sel) { tb.GetComponent<Image>().color = new Color(0.7f, 0.66f, 0.6f); if (tl) tl.color = new Color(1, 1, 1, 0.8f); }
-                if (Tables.Shop.Exists(x => x.tab == t && x.id == "free_gems_ad"))
+                if (Tables.Shop.Exists(x => x.tab == t && (x.id == "free_gems_ad" || x.id == "free_bullets_ad")))
                 {
                     var dot = UIKit.KitImg(tb.transform, "badge", new Vector2(34, 34), "Dot");
                     dot.rectTransform.Place(1, 1, new Vector2(8, 8), new Vector2(34, 34), new Vector2(1, 1));
@@ -255,6 +259,7 @@ namespace KachiGun
                 var b = UIKit.ColorBtn(rb.transform, gem ? new Color(0.3f, 0.55f, 0.95f) : new Color(0.45f, 0.7f, 0.3f), new Vector2(220, 100), it.price, gem ? 32 : 38, it.act);
                 ((RectTransform)b.transform).Place(1, 0.5f, new Vector2(-24, 0), new Vector2(220, 100), new Vector2(1, 0.5f));
                 if (it.id == "free_gems_ad") adGemBtn = b;
+                if (it.id == "free_bullets_ad") adBulletBtn = b;
                 var srow = Tables.Shop.Find(x => x.id == it.id);
                 if (it.kind == 2 && Iap.FirstBonus(srow)) FirstBadge(rb.transform, b.transform);
                 if (Iap.IsBomb(srow)) Badge(rb.transform, b.transform, L.F("월 {0}회", Iap.BombLimit), Iap.BombMulText(srow) + L.T("배"), "Bomb", it.kind == 3);   // 11-17
@@ -293,7 +298,7 @@ namespace KachiGun
         {
             if (this == null) { Iap.Changed -= Rebuild; return; }
             for (int i = content.childCount - 1; i >= 0; i--) Destroy(content.GetChild(i).gameObject);
-            adGemBtn = null;
+            adGemBtn = null; adBulletBtn = null;
             Build();
             Refresh();
         }
@@ -303,7 +308,13 @@ namespace KachiGun
         /// <summary>광고 무료 다이아: 남은 횟수 "광고 2/3"</summary>
         public override void Refresh()
         {
-            foreach (var kv in tabDots) if (kv.Value) kv.Value.SetActive(GM.Unlocked("shop") && GM.AdGemsLeft > 0);   // 11-17 무료 탭 빨간 점
+            foreach (var kv in tabDots) if (kv.Value) kv.Value.SetActive(GM.Unlocked("shop") && (GM.AdGemsLeft > 0 || GM.AdBulletsLeft > 0));   // 11-17 무료 탭 빨간 점 · 11-18 무료 총알도
+            if (adBulletBtn)
+            {
+                int bl = GM.AdBulletsLeft;
+                UIKit.LabelOf(adBulletBtn).text = $"{L.T("광고")} {bl}/{Tables.Ci("AdBullets_Daily")}";
+                UIKit.SetOn(adBulletBtn, bl > 0);
+            }
             if (!adGemBtn) return;
             int left = GM.AdGemsLeft;
             UIKit.LabelOf(adGemBtn).text = $"{L.T("광고")} {left}/{(int)Tables.C("AdGems_Daily", 3)}";
@@ -320,7 +331,8 @@ namespace KachiGun
     public class SupplyPopup : Popup
     {
         protected override Vector2 Size => new(1010, 1660);
-        protected override string Title => "보급품";
+        protected override string Title => CollectionTabs.Title;   // 11-18 컬렉션 안 [보급품] 탭
+        CollectionTabs tabs;
         Text total;
         readonly List<(SupplyRow row, Image bg, Image icon, Text name, Text info, Button buy)> rows = new();
 
@@ -334,8 +346,9 @@ namespace KachiGun
 
         protected override void Build()
         {
+            tabs = CollectionTabs.Build(content, 1, this);
             var tb = UIKit.Row(content, "Total", true);
-            tb.rectTransform.Place(0.5f, 1, new Vector2(0, -10), new Vector2(890, 110), new Vector2(0.5f, 1));
+            tb.rectTransform.Place(0.5f, 1, new Vector2(0, -10 - CollectionTabs.Off), new Vector2(890, 110), new Vector2(0.5f, 1));
             total = UIKit.Label(tb.transform, "", 30, Color.white, TextAnchor.MiddleCenter, 2);
             total.rectTransform.Fill(10, 6, 10, 6);
 
@@ -370,7 +383,7 @@ namespace KachiGun
         public static Sprite Icon(SupplyRow r) =>
             string.IsNullOrEmpty(r.icon) || Resources.Load<Texture2D>("Art/Supply/" + r.icon) == null ? null : Art.Get("Supply/" + r.icon);
 
-        void MakeList(out RectTransform inner) => SkinPopup.MakeScroll(content, new Vector2(0, -135), new Vector2(900, 1300), out inner);
+        void MakeList(out RectTransform inner) => SkinPopup.MakeScroll(content, new Vector2(0, -135 - CollectionTabs.Off), new Vector2(900, 1300 - CollectionTabs.Off), out inner);
 
         void Tap(int id)
         {
@@ -387,6 +400,7 @@ namespace KachiGun
 
         public override void Refresh()
         {
+            tabs?.Refresh();
             total.text = L.F("보유 효과 합계 ({0}/{1})", S.supplies.Count, Tables.Supplies.Count) + "\n" +
                          L.F("공격력 +{0}% · 공격속도 +{1}% · 금전 +{2}% · 보스 +{3}%", Stats.SupplyAtk.ToString("0.#"), Stats.SupplySpd.ToString("0.#"), Stats.SupplyGold.ToString("0.#"), Stats.SupplyBoss.ToString("0.#"));
             foreach (var c in rows)

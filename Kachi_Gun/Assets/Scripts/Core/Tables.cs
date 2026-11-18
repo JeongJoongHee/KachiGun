@@ -50,6 +50,8 @@ namespace KachiGun
     public class UnlockRow { public string id, name, type, lockMsg, bannerMsg; public int stageIdx; public double value; }
     public class SupplyRow { public int id, unlockChapter; public string grade, name, icon; public double cost, atk, spd, gold, boss; }   // icon = Supply 표 Icon 칸 (Art/Supply/ 의 그림 이름, 10-24)
     public class EnchantRow { public int lv; public double gems, gold, atk, spd, boss, rate; }
+    /// <summary>11-18 카피친구 (Friend.xlsx Friend_List): stat = Atk · Spd · Gold · Boss, 효과 = bonus x 레벨(%), unlockLv = 이 친구 던전 단계부터 나옴</summary>
+    public class FriendRow { public int id, unlockLv; public string name, stat, icon; public double bonus, weight; }
 
     /// <summary>
     /// 기획 표 (원본 = Kachi_Gun/Table/*.xlsx → [카치건 → 표 변환] 또는 재생할 때 자동으로 Resources/Tables/*.csv).
@@ -80,6 +82,8 @@ namespace KachiGun
         public static readonly List<UnlockRow> Unlocks = new();
         public static readonly List<SupplyRow> Supplies = new();
         static readonly List<EnchantRow> enchants = new();
+        public static readonly List<FriendRow> Friends = new();
+        static readonly List<int> friendNeed = new();   // 11-18 Friend_Level: [lv-1] = 그 레벨이 되는 데 드는 카드
 
         public static void Load()
         {
@@ -243,6 +247,49 @@ namespace KachiGun
                     spd = r.D("Spd_Bonus_Pct"), boss = r.D("Boss_Dmg_Bonus_Pct"), rate = r.D("Success_Rate", 100)
                 });
             enchants.Sort((a, b) => a.lv.CompareTo(b.lv));
+            foreach (var r in Read("Friend_List"))
+                Friends.Add(new FriendRow
+                {
+                    id = r.I("Friend_Id"), name = r.S("Name"), stat = r.S("Stat"), bonus = r.D("Bonus_Per_Lv"), unlockLv = Math.Max(1, r.I("Unlock_Dgn_Lv", 1)),
+                    weight = Math.Max(0, r.D("Weight", 1)), icon = r.S("Icon")
+                });
+            Friends.Sort((a, b) => a.id.CompareTo(b.id));
+            var fl = Read("Friend_Level");
+            fl.Sort((a, b) => a.I("Lv").CompareTo(b.I("Lv")));
+            foreach (var r in fl) friendNeed.Add(Math.Max(1, r.I("Cards_Need", 1)));
+        }
+
+        // =====================================================================
+        // 11-18 카피친구 · 친구 던전
+        // =====================================================================
+        /// <summary>최대 레벨 (Friend_Level 줄 수, 표가 없으면 10)</summary>
+        public static int FriendMaxLv { get { Load(); return friendNeed.Count > 0 ? friendNeed.Count : 10; } }
+        /// <summary>lv 레벨이 되는 데 드는 카드 (lv 1 = 처음 얻을 때)</summary>
+        public static int FriendNeed(int lv) { Load(); return friendNeed.Count == 0 ? lv : friendNeed[Mathf.Clamp(lv - 1, 0, friendNeed.Count - 1)]; }
+        /// <summary>친구 던전 단계(1부터) → 맞먹는 스테이지 번호(0부터): 1:2 → 던전 1 = 스테이지 2 (1-2)</summary>
+        public static int FriendDgnStage(int lv) => Math.Max(0, Math.Max(1, lv) * Math.Max(1, (int)Math.Round(C("FriendDgn_Stage_Mul", 2))) - 1);
+        /// <summary>친구 던전 보스 한 마리 체력 = 그 스테이지 좀비 체력 x 그 챕터 보스 배율(보스 HP ÷ 같은 줄 좀비 HP) x FriendDgn_Hp_Mul</summary>
+        public static double FriendDgnHp(int lv)
+        {
+            int idx = FriendDgnStage(lv);
+            var b = Stage(idx / 5 * 5 + 4);
+            double mul = b.bossHp > 0 && b.hp > 0 ? b.bossHp / b.hp : C("BossHpMul", 15);
+            return Stage(idx).hp * mul * C("FriendDgn_Hp_Mul", 1);
+        }
+        /// <summary>이기면 받는 카드 수</summary>
+        public static int FriendDgnCards(int lv)
+        {
+            int step = (int)Math.Round(C("FriendDgn_Cards_Step", 20));
+            return Math.Max(1, (int)Math.Round(C("FriendDgn_Cards", 3)) + (step > 0 ? (Math.Max(1, lv) - 1) / step : 0));
+        }
+        /// <summary>그 단계에서 나올 수 있는 친구 (Unlock_Dgn_Lv 이하)</summary>
+        public static List<FriendRow> FriendsAt(int lv) { Load(); return Friends.FindAll(f => f.unlockLv <= Math.Max(1, lv)); }
+        /// <summary>친구 던전 보스 순서 = 스테이지 보스 순환(9마리) — 단계마다 한 칸씩 밀림</summary>
+        public static string FriendDgnBoss(int lv, int k)
+        {
+            int c = ((Math.Max(1, lv) - 1 + k) % BossCycle + BossCycle) % BossCycle;
+            string id = Stage(c * 5 + 4).bossId;
+            return string.IsNullOrEmpty(id) || id == "-" ? "ogre" : id;
         }
 
         // =====================================================================

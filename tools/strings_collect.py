@@ -24,7 +24,8 @@ TABLE_COLS = [
     ('Supply_Collection', ['Name', 'Grade']), ('Mission_Master', ['Mission_Name']),
     ('Shop_Products', ['Name', 'Description', 'Tab_Name']), ('Chapter_Summary', ['Biome_Name']),
     ('Unlock_Roadmap', ['Lock_Toast_Message', 'Unlock_Banner_Message']), ('Mine_Ore_Spec', ['Name_KR']),
-    ('Speech_Lines', ['Text']),   # 11-14 말풍선 대사 (speech_add_1111.py 가 넣은 줄이 '안 씀'으로 밀리지 않게)
+    ('Speech_Lines', ['Text']),
+    ('Friend_List', ['Name']),   # 11-18 카피친구 이름   # 11-14 말풍선 대사 (speech_add_1111.py 가 넣은 줄이 '안 씀'으로 밀리지 않게)
 ]
 # 코드에 있어도 번역하지 않는 것 (출시 전에 지울 테스트 버튼 등)
 SKIP = {'[테스트용 — 에디터에서만 보임]', '다이아 +1000', '골드 x100', '다음 스테이지', '처음부터', '세이브를 지우고 처음부터 시작할까요?',
@@ -226,6 +227,26 @@ EN.update({'작은 다이아 폭탄 (3,500)': 'Small Gem Bomb (3,500)', '다이�
            '다음 달': 'Next month', '월 {0}회': '{0}/month', '배': 'x', '다이아 폭탄': 'Gem Bomb', '최대 {0}배!': 'Up to {0}x!'})
 # 11-17 상점 탭
 EN.update({'패키지': 'Packs', '무료': 'Free', '상품': 'Items'})
+# 11-18 1차 업데이트: 무료 총알 · 컬렉션 · 카피친구 · 친구 던전
+EN.update({
+    '총알 {0}개를 인벤토리에 넣었습니다': 'Added {0} bullets to your inventory', '인벤토리가 꽉 차 있어 총알을 받지 못했습니다': 'Inventory is full - no bullets received',
+    '인벤토리가 꽉 차서 총알 {0}개만 받았습니다': 'Inventory full - only {0} bullets received', '지금은 들어갈 수 없습니다': "You can't enter right now",
+    '오늘 입장을 다 썼습니다': 'No entries left today', '친구 던전 Lv.{0}': 'Friend Dungeon Lv.{0}', '보스 {0}/{1}': 'Boss {0}/{1}',
+    '없는 친구입니다': 'Unknown friend', '친구 던전 Lv.{0} 부터 만날 수 있어요': 'Meet them from Friend Dungeon Lv.{0}', '최대 레벨입니다': 'Max level',
+    '카드가 부족합니다 ({0}/{1})': 'Not enough cards ({0}/{1})', '친구 던전 Lv.{0} 성공!': 'Friend Dungeon Lv.{0} cleared!',
+    '컬렉션': 'Collection', '카피친구': 'Capy Friends', '보스 피해': 'Boss DMG', '{0} Lv.{1}! {2} +{3}%': '{0} Lv.{1}! {2} +{3}%',
+    '{0} 최대 레벨 · {1} +{2}%': '{0} max level · {1} +{2}%', '다음 레벨까지 카드 {0}/{1} · {2} +{3}% → +{4}%': 'Cards to next level {0}/{1} · {2} +{3}% → +{4}%',
+    '던전 Lv.{0}': 'Dungeon Lv.{0}', '레벨 업!': 'Level up!', '친구 던전': 'Friend Dungeon', '깬 단계': 'cleared',
+    '깬 단계는 왼쪽 버튼으로 다시 골라 도전할 수 있어요': 'Use the left button to replay cleared levels',
+    '{0}초 안에 보스 {1}마리를 모두 처치!': 'Defeat all {1} bosses in {0}s!', '보스 체력': 'Boss HP', '스테이지 {0} 수준': 'Stage {0} level',
+    '이기면 카피친구 카드 {0}장': 'Win: {0} Capy Friend cards', '오늘 입장': "Today's entries", '실패해도 사용한 입장은 돌아오지 않습니다': 'Entries are not refunded on failure',
+    '입장': 'Enter', '광고 보고 입장': 'Watch ad to enter', '내일 다시': 'Come back tomorrow', '친구': 'Friends', '남은 보스 {0}/{1}': 'Bosses left {0}/{1}',
+    '카피친구 카드 {0}장': '{0} Capy Friend cards', '새 친구!': 'New!', '사용한 입장은 돌아오지 않습니다': 'Used entries are not refunded',
+    '친구 던전이 열렸습니다!': 'Friend Dungeon unlocked!', '컬렉션이 열렸습니다!': 'Collection unlocked!',
+    '무료 총알': 'Free Bullets', '광고 1편 · D 등급 총알 5개 · 하루 3번': '1 ad · 5 D-grade bullets · 3 per day', '금전': 'Gold',
+    '토끼': 'Rabbit', '다람쥐': 'Squirrel', '햄스터': 'Hamster', '양': 'Sheep', '염소': 'Goat', '사슴': 'Deer', '나무늘보': 'Sloth', '코알라': 'Koala',
+    '웜뱃': 'Wombat', '기니피그': 'Guinea Pig', '너구리': 'Raccoon', '고양이': 'Cat', '강아지': 'Puppy', '젖소': 'Cow', '당나귀': 'Donkey',
+})
 
 def code_strings():
     """(글자, 파일) — 주석·Debug 줄 제외, $"" 안 한글은 경고"""

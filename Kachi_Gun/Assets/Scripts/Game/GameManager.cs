@@ -11,7 +11,7 @@ namespace KachiGun
     /// </summary>
     public class GameManager : MonoBehaviour
     {
-        public enum Mode { Stage, Challenge, Mine, Boss }
+        public enum Mode { Stage, Challenge, Mine, Boss, Friend }   // 11-18 Friend = 친구 던전
         public static GameManager I;
         public Mode mode = Mode.Stage;
         public event Action Changed;          // 골드·레벨 등 화면 갱신
@@ -527,6 +527,7 @@ namespace KachiGun
                 Mode.Mine => new Color(0.55f, 0.62f, 0.85f),
                 Mode.Challenge => new Color(1f, 0.82f, 0.8f),
                 Mode.Boss => new Color(0.8f, 0.68f, 0.68f),
+                Mode.Friend => new Color(0.9f, 0.86f, 0.72f),
                 _ => Field.ChapterTint(S.Chapter),
             };
             Field.I.SetMap(Tables.Chapter(S.Chapter).mapSprite);   // 11-11 챕터 좀비 색에 맞춘 배경 판 (세모 나무 · 죽은 나무 · 황폐)
@@ -562,6 +563,13 @@ namespace KachiGun
                     int left = 0;
                     foreach (var o in Target.All) if (o.Alive) left++;
                     if (left == 0) EndDungeon(true);
+                }
+                else if (mode == Mode.Friend && z.isBoss)
+                {
+                    // 11-18 친구 던전: 보스를 잡으면 잠깐 뒤 다음 보스 · 마지막 보스면 이김
+                    int left = 0;
+                    foreach (var o in Target.All) if (o.Alive) left++;
+                    if (left == 0) { if (friendSpawned < dungeonTotal) friendNextT = FriendNextDelay; else EndDungeon(true); }
                 }
             }
             else if (t is Ore o && mode == Mode.Mine)
@@ -1017,6 +1025,168 @@ namespace KachiGun
         public bool AnyMissionReady { get { for (int i = 0; i < Tables.Missions.Count; i++) if (MissionReady(i)) return true; return false; } }
 
         // =====================================================================
+        // 11-18 무료 총알 (상점 무료 탭 · 하루 AdBullets_Daily 번, 한 번에 D 등급 AdBullets_Amount 개 = 뽑기와 같은 비중)
+        //   기획(업데이트/1차 업데이트): 인벤토리가 꽉 차 있으면 "꽉 찼다" 알림 + 광고 횟수는 줄어듦 → 들어갈 자리만큼만 받고 나머지는 사라짐
+        // =====================================================================
+        public int AdBulletsLeft { get { S.RefreshDaily(); return Math.Max(0, Tables.Ci("AdBullets_Daily") - S.adBulletUsed); } }
+
+        public string AdBullets()
+        {
+            if (AdBulletsLeft <= 0) return L.T("오늘은 다 받았습니다 (내일 다시)");
+            AdService.Show("free_bullets", () => GiveAdBullets());
+            return null;
+        }
+
+        /// <summary>광고를 본 뒤: 횟수 +1 → 빈 인벤토리 칸에 D 등급 총알 (돌려주는 값 = 받은 개수)</summary>
+        public int GiveAdBullets()
+        {
+            S.adBulletUsed++;
+            int n = Math.Max(1, Tables.Ci("AdBullets_Amount")), got = 0;
+            for (int i = 0; i < n; i++)
+            {
+                int e = S.inv.IndexOf(-1);
+                if (e < 0) break;
+                S.inv[e] = Tables.Code(0, Tables.RandomType(0));
+                got++;
+            }
+            if (got > 0) { S.weaponUnlocked = true; AudioManager.Play(AudioManager.Sfx.Merge); }
+            HUD.I?.Toast(got == n ? L.F("총알 {0}개를 인벤토리에 넣었습니다", got)
+                       : got == 0 ? L.T("인벤토리가 꽉 차 있어 총알을 받지 못했습니다")
+                       : L.F("인벤토리가 꽉 차서 총알 {0}개만 받았습니다", got));
+            S.SaveSoon();
+            Notify();
+            return got;
+        }
+
+        // =====================================================================
+        // 11-18 카피친구 · 친구 던전 (업데이트/1차 업데이트/261118.pptx)
+        //   친구 던전에서 보스 FriendDgn_Bosses 마리를 FriendDgn_Time 초 안에 모두 잡으면 카피친구 카드 → 친구마다 카드를 모아 레벨 업(최대 Friend_Level 줄 수)
+        //   던전 N 단계 = 스테이지 N x FriendDgn_Stage_Mul 번째의 체력 (1:2, 던전 1 = 1-2) · 하루 무료 FriendDgn_Tickets + 광고 FriendDgn_Ad_Daily
+        //   지면 티켓은 돌아오지 않음 · 깬 단계 아래로는 언제든 골라서 다시 (◀ ▶)
+        // =====================================================================
+        public bool FriendOpen => Unlocked("friend");
+        public int friendRunLv, friendSpawned;
+        float friendNextT;
+        const float FriendNextDelay = 0.7f;
+        readonly List<int> friendReward = new();
+        public IReadOnlyList<int> FriendReward => friendReward;
+
+        /// <summary>고를 수 있는 가장 높은 단계 = 깬 단계 + 1</summary>
+        public int FriendTopLv => S.friendBest + 1;
+        /// <summary>지금 고른 단계 (고른 적이 없으면 다음 단계)</summary>
+        public int FriendSelLv => S.friendSel > 0 ? Math.Min(S.friendSel, FriendTopLv) : FriendTopLv;
+        /// <summary>◀ ▶ (1 ~ 깬 단계 + 1)</summary>
+        public void FriendSelect(int lv)
+        {
+            lv = Mathf.Clamp(lv, 1, FriendTopLv);
+            S.friendSel = lv == FriendTopLv ? 0 : lv;
+            Notify();
+        }
+        public int FriendAdLeft { get { S.RefreshDaily(); return Math.Max(0, Tables.Ci("FriendDgn_Ad_Daily") - S.friendAdUsed); } }
+        public int FriendTickets { get { S.RefreshDaily(); return S.friendTickets; } }
+
+        /// <summary>입장: 무료 입장이 남았으면 그걸 쓰고, 없으면 광고 보고 (하루 FriendDgn_Ad_Daily 번)</summary>
+        public string StartFriend()
+        {
+            if (!FriendOpen) return LockMsg("friend");
+            if (mode != Mode.Stage) return L.T("지금은 들어갈 수 없습니다");
+            int lv = FriendSelLv;
+            if (FriendTickets > 0)
+            {
+                S.friendTickets--;
+                BeginFriend(lv);
+                return null;
+            }
+            if (FriendAdLeft <= 0) return L.T("오늘 입장을 다 썼습니다");
+            AdService.Show("friend_dungeon", () => { S.friendAdUsed++; BeginFriend(lv); });
+            return null;
+        }
+
+        void BeginFriend(int lv)
+        {
+            BeginDungeon(Mode.Friend, Mathf.Max(5f, Tables.Cf("FriendDgn_Time")));
+            friendRunLv = lv;
+            friendSpawned = 0;
+            friendNextT = 0;
+            friendReward.Clear();
+            dungeonTotal = Math.Max(1, Tables.Ci("FriendDgn_Bosses"));
+            S.SaveSoon();
+            SpawnFriendBoss();
+            HUD.I?.Banner(L.F("친구 던전 Lv.{0}", lv), new Color(1f, 0.8f, 0.45f));
+        }
+
+        void SpawnFriendBoss()
+        {
+            friendNextT = 0;
+            if (mode != Mode.Friend || dungeonOver || friendSpawned >= dungeonTotal) return;
+            int idx = Tables.FriendDgnStage(friendRunLv);
+            var r = Tables.Zombie(Tables.FriendDgnBoss(friendRunLv, friendSpawned));
+            float sc = Mathf.Max(1.5f, Tables.Stage(idx / 5 * 5 + 4).bossScale);
+            var z = Zombie.Spawn(r, Field.I.RandomRoad(0.5f, 0.62f, 1.4f), Tables.FriendDgnHp(friendRunLv), 0, sc, true, PickTint(idx / 5 + 1, true));
+            z.standStill = true;
+            friendSpawned++;
+            AudioManager.Play(AudioManager.Sfx.BossAppear);
+            if (friendSpawned > 1) HUD.I?.Banner(L.F("보스 {0}/{1}", friendSpawned, dungeonTotal), new Color(1f, 0.55f, 0.4f));
+        }
+
+        /// <summary>남은 보스 (지금 싸우는 것 포함)</summary>
+        public int FriendBossLeft { get { int n = dungeonTotal - friendSpawned; foreach (var t in Target.All) if (t.Alive) n++; return n; } }
+
+        /// <summary>이긴 단계의 카드 = FriendDgnCards 장, 그 단계에서 나오는 친구(Unlock_Dgn_Lv 이하) 중 Weight 비중으로</summary>
+        public static List<int> RollFriendCards(int lv)
+        {
+            var pool = Tables.FriendsAt(lv);
+            var got = new List<int>();
+            if (pool.Count == 0) return got;
+            double sum = 0; foreach (var f in pool) sum += f.weight;
+            int n = Tables.FriendDgnCards(lv);
+            for (int i = 0; i < n; i++)
+            {
+                double x = UnityEngine.Random.value * sum;
+                var pick = pool[^1];
+                foreach (var f in pool) { if (x < f.weight) { pick = f; break; } x -= f.weight; }
+                got.Add(pick.id);
+            }
+            return got;
+        }
+
+        /// <summary>카드 넣기: 처음 얻은 친구 = Lv.1 (카드 1장), 이미 있으면 모아 둠 · 깬 단계 기록</summary>
+        public void GiveFriendCards(IEnumerable<int> ids, int lv)
+        {
+            foreach (var id in ids)
+            {
+                int i = id - 1;
+                if (i < 0) continue;
+                while (S.friendLv.Count <= i) { S.friendLv.Add(0); S.friendCards.Add(0); }
+                if (S.friendLv[i] <= 0) S.friendLv[i] = 1; else S.friendCards[i]++;
+            }
+            if (lv > S.friendBest) { S.friendBest = lv; S.friendSel = 0; }
+            S.SaveSoon();
+        }
+
+        public FriendRow Friend(int id) => Tables.Friends.Find(f => f.id == id);
+        /// <summary>레벨 업할 수 있음 (가졌고 · 최대가 아니고 · 다음 레벨 카드가 모임)</summary>
+        public bool FriendReady(FriendRow r) { int lv = Stats.FriendLv(r); return lv > 0 && lv < Tables.FriendMaxLv && Stats.FriendCards(r) >= Tables.FriendNeed(lv + 1); }
+        public bool AnyFriendReady { get { foreach (var r in Tables.Friends) if (FriendReady(r)) return true; return false; } }
+
+        public string FriendLevelUp(int id)
+        {
+            var r = Friend(id);
+            if (r == null) return L.T("없는 친구입니다");
+            int lv = Stats.FriendLv(r);
+            if (lv <= 0) return L.F("친구 던전 Lv.{0} 부터 만날 수 있어요", r.unlockLv);
+            if (lv >= Tables.FriendMaxLv) return L.T("최대 레벨입니다");
+            int need = Tables.FriendNeed(lv + 1);
+            if (Stats.FriendCards(r) < need) return L.F("카드가 부족합니다 ({0}/{1})", Stats.FriendCards(r), need);
+            S.friendCards[id - 1] -= need;
+            S.friendLv[id - 1] = lv + 1;
+            AudioManager.Play(AudioManager.Sfx.Upgrade);
+            S.SaveSoon();
+            Notify();
+            return null;
+        }
+
+        // =====================================================================
         // 던전 공통
         // =====================================================================
         /// <summary>도전할 수 있는 가장 낮은 챕터 (지금 챕터까지, 이미 깬 챕터 제외). 없으면 0</summary>
@@ -1115,6 +1285,11 @@ namespace KachiGun
                 mineDoneT -= dt;
                 if (mineDoneT <= 0) { EndDungeon(true); return; }
             }
+            if (mode == Mode.Friend && friendNextT > 0)
+            {
+                friendNextT -= dt;
+                if (friendNextT <= 0) SpawnFriendBoss();
+            }
             dungeonTime -= dt;
             if (dungeonTime <= 0)
             {
@@ -1133,6 +1308,16 @@ namespace KachiGun
             string title;
             if (mode == Mode.Challenge) { title = win ? L.F("도전 {0} 성공!", dungeonChapter) : L.T("시간 초과"); if (win) reward = Tables.Challenge(dungeonChapter).reward; }
             else if (mode == Mode.Mine) { title = L.T("채굴 끝!"); reward = Math.Round(dungeonGems, 1); }
+            else if (mode == Mode.Friend)
+            {
+                // 11-18 이기면 카드를 여기서 정해 결과 창에 보여 주고, [받기] 때 넣음 · 지면 티켓은 돌아오지 않음 (기획 6번)
+                title = win ? L.F("친구 던전 Lv.{0} 성공!", friendRunLv) : L.T("시간 초과");
+                friendReward.Clear();
+                if (win) friendReward.AddRange(RollFriendCards(friendRunLv));
+                AudioManager.Play(win ? AudioManager.Sfx.Victory : AudioManager.Sfx.Fail);
+                HUD.I?.ShowFriendResult(title, win, friendReward);
+                return;
+            }
             else { title = win ? L.T("보스 처치!") : L.T("시간 초과"); if (win) reward = Tables.BossRaid(S.bossLv).reward; }
             AudioManager.Play(win ? AudioManager.Sfx.Victory : AudioManager.Sfx.Fail);
             HUD.I?.ShowResult(title, win, reward);
@@ -1141,7 +1326,12 @@ namespace KachiGun
         /// <summary>결과 창에서 받기 (광고 = 배율)</summary>
         public void ClaimDungeon(double reward, bool win)
         {
-            if (win || mode == Mode.Mine)
+            if (mode == Mode.Friend)
+            {
+                if (win) GiveFriendCards(friendReward, friendRunLv);
+                friendReward.Clear();
+            }
+            else if (win || mode == Mode.Mine)
             {
                 S.gems += reward;
                 if (mode == Mode.Challenge && win && !S.challengeCleared.Contains(dungeonChapter)) S.challengeCleared.Add(dungeonChapter);

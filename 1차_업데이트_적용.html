@@ -1,0 +1,124 @@
+<!doctype html><html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>1차 업데이트 적용</title><style>
+:root{--bg:#fbf7ef;--fg:#3b281c;--mut:#7a6a5c;--line:#e3d8c6;--card:#fff;--acc:#a8642f}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--fg);font-family:"Malgun Gothic",sans-serif;margin:0;padding:24px 16px;line-height:1.6}
+main{max-width:1000px;margin:auto} h1{font-size:24px;margin:0 0 4px} h2{font-size:19px;margin:30px 0 8px;color:var(--acc)}
+.mut{color:var(--mut);font-size:14px} code{background:#f1e8d8;padding:1px 5px;border-radius:4px;font-size:13px}
+.box{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:10px 16px;margin:12px 0;font-size:14.5px}
+.box.warn{background:#fff6e6;border-color:#f0cf96} .box.ok{border-color:#9cc47e;background:#f6fbef}
+ul.todo{list-style:none;padding:0;margin:0}
+ul.todo>li{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px 14px;margin:12px 0}
+ul.todo>li.checked{border-color:#9cc47e;background:#f6fbef}
+.row{display:flex;align-items:flex-start;gap:10px}
+.row label{flex:1;display:flex;gap:10px;align-items:flex-start;cursor:pointer}
+.row input{width:22px;height:22px;margin-top:4px;flex:none;accent-color:#6aa84f}
+.t{font-weight:700;font-size:17px} .meta{font-size:14.5px;margin-top:4px}
+.pen{border:1px solid var(--line);background:#faf5ea;border-radius:8px;font-size:13px;padding:2px 8px;cursor:pointer;color:var(--fg);flex:none}
+li.has-note .pen{background:#fde9c8}
+.notebox{display:none;margin-top:8px} li.open .notebox{display:block}
+.notebox textarea{width:100%;min-height:60px;border:1px solid var(--line);border-radius:8px;padding:6px 8px;font:inherit;font-size:14px}
+.hint{font-size:12px;color:var(--mut)}
+.tw{overflow-x:auto}
+table{border-collapse:collapse;width:100%;font-size:14px;margin:6px 0}
+th,td{border:1px solid var(--line);padding:5px 8px;text-align:center} th{background:#f4ecdf} td.l{text-align:left}
+.shots{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px}
+.shots figure{margin:0;background:#fff;border:1px solid var(--line);border-radius:10px;padding:6px}
+.shots img{width:100%;border-radius:6px;display:block} .shots figcaption{font-size:13px;color:var(--mut);text-align:center}
+#bar{position:sticky;top:0;background:var(--bg);padding:8px 0;z-index:2;border-bottom:1px solid var(--line)}
+</style></head><body><main>
+<h1>1차 업데이트 적용 결과 (업데이트/1차 업데이트/261118.pptx)</h1>
+<div class="mut">2026-11-18 · 기획 장표 1장 7항목 → 게임에 넣음 · 체크 = "이대로 좋음", ✎ 의견 = 바꿀 점 → "체크했어" 라고 알려 주시면 읽어서 반영합니다</div>
+<div id="bar"><span id="stat" class="mut"></span></div>
+
+<div class="box warn"><b>먼저 알려 드릴 해석 (애매했던 곳 — 모두 Config 값 하나로 바꿀 수 있음)</b>
+<ol>
+<li><b>무료 총알 "인벤토리가 꽉 차 있으면 토스트 + 광고 횟수 차감"</b> → 광고를 본 뒤 <b>빈 칸만큼만</b> 넣고, 못 넣은 총알은 사라지며 횟수는 줄어듭니다(기획 그대로). 하루 횟수는 장표에 없어 <b>무료 다이아와 같은 3번</b>으로 둠 (<code>AdBullets_Daily</code> · <code>AdBullets_Amount</code> 5).</li>
+<li><b>"오픈 난이도 동일"</b> → 탭마다 여는 조건은 <b>지금 그대로</b>: 컬렉션(코스튬) 1-2 · 보급품 탭 6-1 · 카피친구 탭 = 친구 던전과 같이 <b>보급품 자리였던 6-1</b> (Unlock 표 <code>friend</code> 줄).</li>
+<li><b>"5. 하루 2회 – 추가로 광고 3회를 통해 클리어 가능"</b> → 광고 3번 = <b>입장 3번 더</b>(직접 싸움). 광고로 "바로 클리어(소탕)"를 뜻하셨다면 의견에 적어 주세요.</li>
+<li><b>"보스들을 상대해서 이기면"</b> → 한 판에 <b>보스 3마리가 한 마리씩 차례로</b>, <b>60초</b> 안에 모두 잡으면 성공 (<code>FriendDgn_Bosses</code> · <code>FriendDgn_Time</code>). 보스 그림은 스테이지 보스 9종을 돌려 씀.</li>
+<li><b>"토끼 5/10 · 12/100 (최대 10레벨)"</b> → 친구 카드를 모아 <b>칸을 누르면 레벨 업</b>. 처음 카드 1장 = Lv.1, 그 뒤 레벨마다 필요한 카드 <b>2 · 4 · 6 · 10 · 15 · 25 · 40 · 60 · 100</b> (Friend.xlsx Friend_Level) — <b>[임시]</b>, 밸런스는 마지막에.</li>
+<li><b>결과 창의 광고 x2</b>는 장표에 없어 친구 던전엔 넣지 않았습니다.</li>
+</ol></div>
+
+<h2>1. 무엇이 바뀌었나</h2>
+<ul class="todo">
+<li data-id="u1-free"><label><input type="checkbox"><span class="t">1. 상점 [무료] 탭 — "무료 총알" (광고 → D 등급 총알 5개, 하루 3번)</span></label>
+<div class="meta">무료 다이아 아래 줄 · 버튼 "광고 3/3" · 무료 탭 빨간 점은 무료 다이아나 무료 총알이 남아 있으면 켜짐 · 총알은 뽑기와 같은 비중(Merge_Weight)으로 인벤토리 빈 칸에.<br>
+알림: 다 들어감 "총알 5개를 인벤토리에 넣었습니다" · 일부 "인벤토리가 꽉 차서 총알 2개만 받았습니다" · 하나도 못 넣음 "인벤토리가 꽉 차 있어 총알을 받지 못했습니다"</div></li>
+
+<li data-id="u2-coll"><label><input type="checkbox"><span class="t">2. 아래 [코스튬] 버튼 → [컬렉션] — 안에 탭 3개 (코스튬 · 보급품 · 카피친구)</span></label>
+<div class="meta">세 탭은 같은 크기 · 같은 제목 "컬렉션" 창이라 탭을 누르면 그 자리에서 내용만 바뀜 · 탭 모양은 상점 탭과 같음(고른 탭만 나무색, 나머지 흐리게) · 잠긴 탭은 자물쇠 + 누르면 "Stage 6-1 에서 열립니다" · 카피친구 레벨 업이 가능하면 [컬렉션] 버튼과 [카피친구] 탭에 빨간 점</div></li>
+
+<li data-id="u3-dgn"><label><input type="checkbox"><span class="t">3. 보급품 자리 → [친구] 던전 (아래 버튼 3번째, 6-1 에서 열림)</span></label>
+<div class="meta">버튼 = 토끼 얼굴 + "친구 2/2"(오늘 무료 입장) · 누르면 입장 창: 단계 Lv.N · 보스 3마리 그림 · 보스 체력 · "스테이지 ○-○ 수준" · 이기면 받는 카드 수 · 그 단계에서 나오는 친구(안 나오는 친구는 어둡게) · 오늘 입장 2/2 · 광고 3/3<br>
+싸우는 중 위에 "남은 보스 2/3" · 보스를 잡으면 0.7초 뒤 다음 보스 + "보스 2/3" 알림</div></li>
+
+<li data-id="u3-friends"><label><input type="checkbox"><span class="t">3-1. 카피친구 15마리 — 모으면 능력치 증가 (최대 10레벨)</span></label>
+<div class="meta">토끼 · 다람쥐 · 햄스터 · 양 · 염소 · 사슴 · 나무늘보 · 코알라 · 웜뱃 · 기니피그 · 너구리 · 고양이 · 강아지 · 젖소 · 당나귀 (장표 순서) — 그림은 카치건 낙서풍으로 새로 그림(<code>tools/friend_icons.py</code>)<br>
+친구마다 능력 하나: 공격력 · 공격속도 · 금전 · 보스 피해가 돌아가며, 효과 = 레벨 x 표의 %(지금 레벨당 3~8%) — 보급품·코스튬처럼 곱으로 더해짐<br>
+늦게 나오는 친구가 있게 <b>던전 단계별로 등장</b>: 토끼·다람쥐·햄스터 1 · 양 5 · 염소 10 · 사슴 15 · 나무늘보 20 · 코알라 30 · 웜뱃 40 · 기니피그 50 · 너구리 60 · 고양이 80 · 강아지 100 · 젖소 120 · 당나귀 150 (Friend_List <code>Unlock_Dgn_Lv</code>)</div></li>
+
+<li data-id="u4-match"><label><input type="checkbox"><span class="t">4. 던전 난이도 = 스테이지와 1:2 (던전 1 = 스테이지 2 = 1-2)</span></label>
+<div class="meta">던전 N 단계 보스 한 마리 체력 = 스테이지 (2N 번째) 좀비 체력 x 그 챕터 보스 배율 — 던전 13 = 6-1 수준 (<code>FriendDgn_Stage_Mul</code> 2 · <code>FriendDgn_Hp_Mul</code> 1)<br>
+이기면 카드 3장 + 20단계마다 +1 (<code>FriendDgn_Cards</code> · <code>FriendDgn_Cards_Step</code>) [임시]</div></li>
+
+<li data-id="u5-daily"><label><input type="checkbox"><span class="t">5. 하루 무료 2번 + 광고 3번 (매일 0시 다시)</span></label>
+<div class="meta">무료를 다 쓰면 버튼이 [광고 보고 입장] → 다 쓰면 [내일 다시] (흐림) · 업데이트한 날에도 바로 2번 채워짐</div></li>
+
+<li data-id="u6-fail"><label><input type="checkbox"><span class="t">6. 실패하면 입장은 돌아오지 않음</span></label>
+<div class="meta">입장 창 · 실패 결과 창 · [포기] 확인 창에 같은 안내 · 실패 = 보상 없음</div></li>
+
+<li data-id="u7-prev"><label><input type="checkbox"><span class="t">7. 이전 단계 고르기 버튼</span></label>
+<div class="meta">입장 창 Lv 양옆 ◀ ▶ 버튼(주아 글꼴에 ◀▶ 글자가 없어 UI 팩 세모 그림) — 1 ~ (깬 단계 + 1) 사이 · 낮은 단계를 깨도 "깬 단계"는 안 내려감 · 고른 단계는 기억</div></li>
+</ul>
+
+<h2>2. 화면 (자동 시험 캡처)</h2>
+<div class="shots" id="shots"></div>
+
+<div class="box ok"><b>자동 시험 308줄 errors=0</b> — 이번에 더한 검사 35줄: 컬렉션 탭 3개·잠김 · 친구 던전 무료 2+광고 3 · 1:2 체력 · 보스 한 마리씩 3마리 · 성공 카드 · 실패 시 입장 안 돌아옴 · 단계 고르기 · 낮은 단계 깨도 기록 유지 · 레벨 업 효과 · 빨간 점 · 무료 총알 5개/2개만/꽉 참 · 세이브 판 4 지문</div>
+
+<h2>3. 숫자 [임시] — 밸런스는 마지막에</h2>
+<div class="tw"><table>
+<tr><th>항목</th><th>지금 값</th><th>뜻</th></tr>
+<tr><td class="l">친구 한 마리 Lv.10 까지 카드</td><td>263장</td><td class="l">15마리 다 = 3,945장</td></tr>
+<tr><td class="l">하루 받는 카드 (다 이길 때)</td><td>약 15~20장</td><td class="l">입장 5번 x 3장(+단계) → 15마리 만렙까지 약 200~260일</td></tr>
+<tr><td class="l">만렙 합 효과</td><td colspan="2" class="l">공격력 +230% · 공격속도 +180% · 금전 +230% · 보스 피해 +150% (코스튬 합 수천 % 보다 작게 — "일부 증가")</td></tr>
+</table></div>
+
+<h2>4. 바뀐 파일</h2>
+<div class="box mut">표: <code>Table/Friend.xlsx</code>(새) · Config(친구 던전 8줄 · 무료 총알 2줄) · Unlock(friend 줄 · 코스튬/보급품 위치 글) · Shop(free_bullets_ad) — 다시 만들기 <code>python tools/friend_1118.py</code><br>
+코드: GameManager(친구 던전 · 레벨 업 · 무료 총알) · Stats(친구 효과) · SaveData(<b>세이브 판 3 → 4</b>: 친구 레벨·카드·깬 단계·오늘 입장) · Tables · HUD · MenuPopups · Popup(결과 창) · 새 FriendPopups.cs<br>
+세이브 판 4: 옛 앱(1.0.17 이하)은 클라우드에서 판 4 세이브를 받지도 올리지도 않고 "업데이트" 안내만 (11-12 에 만든 보호 장치 그대로).</div>
+
+<script>
+(function(){
+  var SHOTS=[["1차_업데이트_적용_그림/16c_coll_costume.jpg", "컬렉션 — 코스튬 탭"], ["1차_업데이트_적용_그림/16d_coll_supply.jpg", "컬렉션 — 보급품 탭"], ["1차_업데이트_적용_그림/21g_friend_collection.jpg", "컬렉션 — 카피친구 탭 (Lv · 카드 막대 · MAX)"], ["1차_업데이트_적용_그림/21f_friend_ready.jpg", "카드가 모이면 [레벨 업!] + 빨간 점"], ["1차_업데이트_적용_그림/16f_coll_locked.jpg", "6-1 전: 보급품·카피친구 탭 자물쇠"], ["1차_업데이트_적용_그림/21a_friend_dgn.jpg", "친구 던전 입장 창 (Lv.1)"], ["1차_업데이트_적용_그림/21e_friend_select.jpg", "이전 단계 고르기 · 다 쓰면 [내일 다시]"], ["1차_업데이트_적용_그림/21b_friend_battle.jpg", "친구 던전 — 보스 한 마리씩 · 남은 보스"], ["1차_업데이트_적용_그림/21c_friend_result.jpg", "성공 — 카피친구 카드"], ["1차_업데이트_적용_그림/21d_friend_fail.jpg", "실패 — 입장 안 돌아옴"], ["1차_업데이트_적용_그림/21h_shop_free_bullets.jpg", "상점 무료 탭 — 무료 총알"]];
+  var g=document.getElementById('shots');
+  SHOTS.forEach(function(s){ var f=document.createElement('figure'); f.innerHTML='<a href="'+s[0]+'" target="_blank"><img src="'+s[0]+'" loading="lazy"></a><figcaption>'+s[1]+'</figcaption>'; g.appendChild(f); });
+  // 저장 형식: {"c":{항목id:true}, "n":{항목id:"의견"}} — python tools/todo_checks.py 1차_업데이트_적용.html 로 읽음
+  var KEY='kachigun-update1-1118', st={c:{},n:{}};
+  try{ var v=JSON.parse(localStorage.getItem(KEY)||'{}'); st.c=v.c||{}; st.n=v.n||{}; }catch(e){}
+  var items=document.querySelectorAll('ul.todo > li[data-id]');
+  function save(){ try{ localStorage.setItem(KEY,JSON.stringify(st)); }catch(e){} stat(); }
+  function stat(){ var c=0,n=0; items.forEach(function(li){ if(st.c[li.dataset.id]) c++; if((st.n[li.dataset.id]||'').trim()) n++; });
+    document.getElementById('stat').textContent='체크 '+c+' / '+items.length+' · 의견 '+n+'  (이 브라우저에 저장 → "체크했어" 라고 알려 주세요)'; }
+  items.forEach(function(li){
+    var id=li.dataset.id, label=li.querySelector('label'), cb=li.querySelector('input');
+    var row=document.createElement('div'); row.className='row'; li.insertBefore(row,label); row.appendChild(label);
+    var pen=document.createElement('button'); pen.type='button'; pen.className='pen'; pen.textContent='✎ 의견'; row.appendChild(pen);
+    var box=document.createElement('div'); box.className='notebox';
+    var ta=document.createElement('textarea'); ta.placeholder='바꿀 점 (예: 보스 2마리 · 90초 · 광고는 바로 클리어)';
+    var hint=document.createElement('div'); hint.className='hint'; hint.textContent='적는 대로 이 브라우저에 저장됩니다.';
+    box.appendChild(ta); box.appendChild(hint); li.appendChild(box);
+    cb.checked=!!st.c[id]; ta.value=st.n[id]||''; li.classList.toggle('checked',cb.checked);
+    function mark(){ li.classList.toggle('has-note',!!ta.value.trim()); pen.textContent=ta.value.trim()?'✎ 의견 있음':'✎ 의견'; }
+    mark(); if(ta.value.trim()) li.classList.add('open');
+    cb.addEventListener('change',function(){ st.c[id]=cb.checked; li.classList.toggle('checked',cb.checked); save(); });
+    ta.addEventListener('input',function(){ if(ta.value.trim()) st.n[id]=ta.value; else delete st.n[id]; mark(); save(); });
+    pen.addEventListener('click',function(){ li.classList.toggle('open'); if(li.classList.contains('open')) ta.focus(); });
+  });
+  stat();
+})();
+</script>
+</main></body></html>

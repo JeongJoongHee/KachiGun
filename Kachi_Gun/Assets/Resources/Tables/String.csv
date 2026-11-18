@@ -72,6 +72,17 @@
 모든 단계를 끝냈습니다,All tiers completed,Game/GameManager.cs
 아직 달성하지 못했습니다,Not achieved yet,Game/GameManager.cs
 오늘은 다 받았습니다 (내일 다시),All claimed today (come back tomorrow),Game/GameManager.cs
+총알 {0}개를 인벤토리에 넣었습니다,Added {0} bullets to your inventory,Game/GameManager.cs
+인벤토리가 꽉 차 있어 총알을 받지 못했습니다,Inventory is full - no bullets received,Game/GameManager.cs
+인벤토리가 꽉 차서 총알 {0}개만 받았습니다,Inventory full - only {0} bullets received,Game/GameManager.cs
+지금은 들어갈 수 없습니다,You can't enter right now,Game/GameManager.cs
+오늘 입장을 다 썼습니다,No entries left today,Game/GameManager.cs
+친구 던전 Lv.{0},Friend Dungeon Lv.{0},Game/GameManager.cs
+보스 {0}/{1},Boss {0}/{1},Game/GameManager.cs
+없는 친구입니다,Unknown friend,Game/GameManager.cs
+친구 던전 Lv.{0} 부터 만날 수 있어요,Meet them from Friend Dungeon Lv.{0},Game/GameManager.cs
+최대 레벨입니다,Max level,Game/GameManager.cs
+카드가 부족합니다 ({0}/{1}),Not enough cards ({0}/{1}),Game/GameManager.cs
 다음 챕터에서 새 도전이 열립니다,A new challenge opens next chapter,Game/GameManager.cs
 도전 {0} — 모두 처치!,Challenge {0} — defeat them all!,Game/GameManager.cs
 오늘 티켓을 다 썼습니다,No tickets left today,Game/GameManager.cs
@@ -80,6 +91,7 @@
 도전 {0} 성공!,Challenge {0} cleared!,Game/GameManager.cs
 시간 초과,Time's up,Game/GameManager.cs
 채굴 끝!,Mining done!,Game/GameManager.cs
+친구 던전 Lv.{0} 성공!,Friend Dungeon Lv.{0} cleared!,Game/GameManager.cs
 보스 처치!,Boss defeated!,Game/GameManager.cs
 세이브를 읽지 못해 예비 세이브로 불러왔습니다,Couldn't read your save - loaded the backup save,Game/GameManager.cs
 클라우드 저장,Cloud Save,UI/CloudPopups.cs
@@ -106,6 +118,33 @@
 코스튬 {0}개,{0} costumes,UI/CloudPopups.cs
 저장,Save,UI/CloudPopups.cs
 {0} 진행으로 이어서 할까요?\n{1}의 진행은 지워집니다.,Continue with the {0} progress?\nThe {1} progress will be lost.,UI/CloudPopups.cs
+컬렉션,Collection,UI/FriendPopups.cs
+코스튬,Costumes,UI/FriendPopups.cs
+보급품,Supplies,UI/FriendPopups.cs
+카피친구,Capy Friends,UI/FriendPopups.cs
+공격력,Attack,UI/FriendPopups.cs
+공격속도,Attack Speed,UI/FriendPopups.cs
+금전,Gold,UI/FriendPopups.cs
+보스 피해,Boss DMG,UI/FriendPopups.cs
+{0} 최대 레벨 · {1} +{2}%,{0} max level · {1} +{2}%,UI/FriendPopups.cs
+다음 레벨까지 카드 {0}/{1} · {2} +{3}% → +{4}%,Cards to next level {0}/{1} · {2} +{3}% → +{4}%,UI/FriendPopups.cs
+보유 효과 합계 ({0}/{1}),Total owned bonus ({0}/{1}),UI/FriendPopups.cs
+공격력 +{0}% · 공격속도 +{1}% · 금전 +{2}% · 보스 +{3}%,ATK +{0}% · SPD +{1}% · Gold +{2}% · Boss +{3}%,UI/FriendPopups.cs
+던전 Lv.{0},Dungeon Lv.{0},UI/FriendPopups.cs
+레벨 업!,Level up!,UI/FriendPopups.cs
+친구 던전,Friend Dungeon,UI/FriendPopups.cs
+깬 단계는 왼쪽 버튼으로 다시 골라 도전할 수 있어요,Use the left button to replay cleared levels,UI/FriendPopups.cs
+입장,Enter,UI/FriendPopups.cs
+깬 단계,cleared,UI/FriendPopups.cs
+{0}초 안에 보스 {1}마리를 모두 처치!,Defeat all {1} bosses in {0}s!,UI/FriendPopups.cs
+보스 체력,Boss HP,UI/FriendPopups.cs
+스테이지 {0} 수준,Stage {0} level,UI/FriendPopups.cs
+이기면 카피친구 카드 {0}장,Win: {0} Capy Friend cards,UI/FriendPopups.cs
+오늘 입장,Today's entries,UI/FriendPopups.cs
+광고,Ad,UI/FriendPopups.cs
+실패해도 사용한 입장은 돌아오지 않습니다,Entries are not refunded on failure,UI/FriendPopups.cs
+광고 보고 입장,Watch ad to enter,UI/FriendPopups.cs
+내일 다시,Come back tomorrow,UI/FriendPopups.cs
 절전모드,Eco,UI/HUD.cs
 상점,Shop,UI/HUD.cs
 미션,Missions,UI/HUD.cs
@@ -113,21 +152,19 @@
 공격,ATK,UI/HUD.cs
 보스 도전,Fight Boss,UI/HUD.cs
 도전,Challenge,UI/HUD.cs
-공격력,Attack,UI/HUD.cs
-공격속도,Attack Speed,UI/HUD.cs
 금전 획득량,Gold Gain,UI/HUD.cs
 리더,Leader,UI/HUD.cs
 동료 1,Ally 1,UI/HUD.cs
 동료 2,Ally 2,UI/HUD.cs
 비어 있음,Empty,UI/HUD.cs
 총알,Ammo,UI/HUD.cs
-코스튬,Costumes,UI/HUD.cs
-보급품,Supplies,UI/HUD.cs
+친구,Friends,UI/HUD.cs
 보스,Boss,UI/HUD.cs
 포기,Give Up,UI/HUD.cs
 던전을 포기할까요?\n(사용한 티켓은 돌아오지 않습니다),Give up the dungeon?\n(Used tickets are not refunded),UI/HUD.cs
 눌러서 강화!,Tap to upgrade!,UI/HUD.cs
 절전 모드\n\n화면을 누르면 돌아옵니다,Eco Mode\n\nTap the screen to return,UI/HUD.cs
+남은 보스 {0}/{1},Bosses left {0}/{1},UI/HUD.cs
 남은 좀비 {0},Zombies left {0},UI/HUD.cs
 도전 {0},Challenge {0},UI/HUD.cs
 보스! {0}초,BOSS! {0}s,UI/HUD.cs
@@ -151,7 +188,6 @@
 상점에서 다이아를 얻을 수 있어요.,You can get gems in the Shop.,UI/MenuPopups.cs
 다이아 부족,Not Enough Gems,UI/MenuPopups.cs
 상점으로,Go to Shop,UI/MenuPopups.cs
-광고,Ad,UI/MenuPopups.cs
 {0} 으로 살까요?,Buy for {0}?,UI/MenuPopups.cs
 다음 달,Next month,UI/MenuPopups.cs
 구매 완료,Purchased,UI/MenuPopups.cs
@@ -170,8 +206,6 @@
 불멸,Immortal,UI/MenuPopups.cs
 보급품 구매,Buy Supply,UI/MenuPopups.cs
 공격 +{0}% · 속도 +{1}% · 금전 +{2}% · 보스 +{3}%,ATK +{0}% · SPD +{1}% · Gold +{2}% · Boss +{3}%,UI/MenuPopups.cs
-보유 효과 합계 ({0}/{1}),Total owned bonus ({0}/{1}),UI/MenuPopups.cs
-공격력 +{0}% · 공격속도 +{1}% · 금전 +{2}% · 보스 +{3}%,ATK +{0}% · SPD +{1}% · Gold +{2}% · Boss +{3}%,UI/MenuPopups.cs
 챕터 {0},Ch. {0},UI/MenuPopups.cs
 모든 단계 완료,All tiers complete,UI/MenuPopups.cs
 완료,Done,UI/MenuPopups.cs
@@ -214,6 +248,9 @@
 {0}일차,Day {0},UI/Popup.cs
 내일 또 받을 수 있어요!,Come back tomorrow for more!,UI/Popup.cs
 {0}일을 다 받으면 1일차부터 다시 시작합니다,"After Day {0}, it starts again from Day 1",UI/Popup.cs
+카피친구 카드 {0}장,{0} Capy Friend cards,UI/Popup.cs
+새 친구!,New!,UI/Popup.cs
+사용한 입장은 돌아오지 않습니다,Used entries are not refunded,UI/Popup.cs
 돌아가기,Back,UI/Popup.cs
 총알 관리,Ammo,UI/WeaponPopup.cs
 ※ 뽑기는 무조건 D 등급 총알만 나옵니다,※ Draws always give D grade ammo only,UI/WeaponPopup.cs

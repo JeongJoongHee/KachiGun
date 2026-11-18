@@ -352,8 +352,10 @@ namespace KachiGun
             navBar = UIKit.Rect(root, "NavBar").Place(0.5f, 0, new Vector2(0, NavY), new Vector2(NavStep * 5, NavH), new Vector2(0.5f, 0));
             // 잠금 글 = Unlock_Roadmap 의 Lock_Toast_Message
             NavBtn(0, "weapon", "UI/icon_pistol", L.T("총알"), () => GM.WeaponOpen, "weapon", () => Open<WeaponPopup>());
-            NavBtn(1, "skin", "Gen/capy_head", L.T("코스튬"), () => GM.SkinOpen, "skin", () => Open<SkinPopup>());
-            NavBtn(2, "fish", "Kit/i_chest_w", L.T("보급품"), () => GM.FishOpen, "supply", () => Open<SupplyPopup>());
+            // 11-18 1차 업데이트: 코스튬 → [컬렉션](코스튬 · 보급품 · 카피친구 탭) · 보급품 자리 → [친구] 던전
+            NavBtn(1, "collection", "Gen/capy_head", L.T("컬렉션"), () => GM.SkinOpen, "skin", () => CollectionTabs.Open(0));
+            NavBtn(2, "friend", "Friend/friend_01", L.T("친구"), () => GM.FriendOpen, "friend", () => Open<FriendDungeonPopup>());
+            side["friend"].icon.preserveAspect = true;
             NavBtn(3, "boss", null, L.T("보스"), () => GM.BossRaidOpen, "boss_raid", () => Confirm(ConfirmPopup.Kind.Boss));
             NavBtn(4, "mine", "UI/icon_gem", MineNav, () => GM.MineOpen, "mine", () => Confirm(ConfirmPopup.Kind.Mine));
         }
@@ -511,7 +513,9 @@ namespace KachiGun
             {
                 timerText.text = Mathf.CeilToInt(GM.dungeonTime).ToString();
                 timerText.color = GM.dungeonTime < 10 ? UIKit.Red : Color.white;
-                leftText.text = GM.mode == GameManager.Mode.Mine ? L.T("다이아") + $" +{GM.dungeonGems:0.0}" : L.F("남은 좀비 {0}", GM.DungeonLeft);
+                leftText.text = GM.mode == GameManager.Mode.Mine ? L.T("다이아") + $" +{GM.dungeonGems:0.0}"
+                              : GM.mode == GameManager.Mode.Friend ? L.F("남은 보스 {0}/{1}", GM.FriendBossLeft, GM.dungeonTotal)
+                              : L.F("남은 좀비 {0}", GM.DungeonLeft);
             }
         }
 
@@ -588,6 +592,9 @@ namespace KachiGun
             S.RefreshDaily();
             side["mine"].label.text = GM.MineOpen ? $"{MineNav} {S.mineTickets}/{Tables.Ci("MineTickets")}" : MineNav;
             side["boss"].label.text = GM.BossRaidOpen ? $"{L.T("보스")} {S.bossTickets}/{Tables.Ci("BossRaidTickets")}" : L.T("보스");
+            side["friend"].label.text = GM.FriendOpen ? $"{L.T("친구")} {S.friendTickets}/{Tables.Ci("FriendDgn_Tickets")}" : L.T("친구");
+            side["friend"].dot.SetActive(GM.FriendOpen && S.friendTickets > 0);
+            side["collection"].dot.SetActive(GM.SkinOpen && GM.FriendOpen && GM.AnyFriendReady);   // 11-18 카피친구 레벨 업 가능
             side["mine"].dot.SetActive(GM.MineOpen && S.mineTickets > 0);
             side["boss"].dot.SetActive(GM.BossRaidOpen && S.bossTickets > 0);
             side["shop"].dot.SetActive(GM.Unlocked("shop") && GM.AdGemsLeft > 0);
@@ -805,7 +812,7 @@ namespace KachiGun
             }
         }
 
-        static string BossId(string id) => string.IsNullOrEmpty(id) || id == "-" ? "ogre" : id;
+        public static string BossId(string id) => string.IsNullOrEmpty(id) || id == "-" ? "ogre" : id;
 
         void RefreshStage()
         {
@@ -878,6 +885,8 @@ namespace KachiGun
         void Confirm(ConfirmPopup.Kind k) => ConfirmPopup.Dungeon(k);
 
         public void ShowResult(string title, bool win, double reward) => ResultPopup.Show(title, win, reward);
+        /// <summary>11-18 친구 던전 결과 (받은 카피친구 카드)</summary>
+        public void ShowFriendResult(string title, bool win, IReadOnlyList<int> cards) => ResultPopup.ShowFriend(title, win, cards);
 
         // ---------- 11-11 요청_04 해금: 알림 글을 더 오래(Unlock_Toast_Time) + 열린 버튼 뒤 빛 깜빡임 · 통통 (Unlock_Glow_Time) ----------
         Color nodeGlowColor = new(1f, 0.86f, 0.32f);
@@ -894,7 +903,7 @@ namespace KachiGun
         List<RectTransform> UnlockTargets(string id)
         {
             var l = new List<RectTransform>();
-            string sk = id == "supply" ? "fish" : id == "boss_raid" ? "boss" : id;
+            string sk = id == "supply" || id == "skin" ? "collection" : id == "boss_raid" ? "boss" : id;   // 11-18 코스튬·보급품 = 컬렉션 버튼
             if (side.TryGetValue(sk, out var sb)) l.Add((RectTransform)sb.b.transform);
             if (id == "mission") l.Add((RectTransform)missionBtn.transform);
             if (id == "eco") l.Add((RectTransform)ecoBtn.transform);
@@ -1003,7 +1012,7 @@ namespace KachiGun
 
         void Prewarm()
         {
-            Make<WeaponPopup>(); Make<WeaponInfoPopup>(); Make<SkinPopup>(); Make<SupplyPopup>();
+            Make<WeaponPopup>(); Make<WeaponInfoPopup>(); Make<SkinPopup>(); Make<SupplyPopup>(); Make<FriendPopup>(); Make<FriendDungeonPopup>();
             Make<ShopPopup>(); Make<MissionPopup>(); Make<ConfirmPopup>(); Make<ResultPopup>();
             var made = new List<Popup>(popups.Values);
             foreach (var p in made) p.gameObject.SetActive(true);

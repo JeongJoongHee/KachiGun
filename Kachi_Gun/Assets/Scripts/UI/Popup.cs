@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -469,9 +470,61 @@ namespace KachiGun
             ((RectTransform)ad.transform).Place(0.5f, 0, new Vector2(180, 10), new Vector2(330, 110), new Vector2(0.5f, 0));
         }
 
+        // 11-18 친구 던전: 받은 카피친구 카드 (같은 친구는 한 칸에 "x2") — 광고 x2 는 없음 (기획에 없음)
+        RectTransform cardRow;
+        public int CardIcons => cardRow ? cardRow.childCount : 0;
+
+        public static void ShowFriend(string t, bool win, IReadOnlyList<int> cards)
+        {
+            var p = HUD.I.Open<ResultPopup>();
+            p.title.text = t;
+            p.win = win; p.reward = 0;
+            foreach (var st in p.stars) st.gameObject.SetActive(win);
+            p.lose.gameObject.SetActive(!win);
+            p.ad.gameObject.SetActive(false);
+            p.gemIcon.gameObject.SetActive(false);
+            if (p.cardRow) Destroy(p.cardRow.gameObject);
+            p.cardRow = null;
+            ((RectTransform)p.body.transform).sizeDelta = new Vector2(720, 140);
+            var count = new Dictionary<int, int>();
+            var order = new List<int>();
+            foreach (var id in cards) { if (!count.ContainsKey(id)) { count[id] = 0; order.Add(id); } count[id]++; }
+            if (win && order.Count > 0)
+            {
+                p.body.text = L.F("카피친구 카드 {0}장", cards.Count);
+                ((RectTransform)p.body.transform).anchoredPosition = new Vector2(0, 70);
+                p.cardRow = UIKit.Rect(p.content, "Cards").Place(0.5f, 0.5f, new Vector2(0, -70), new Vector2(760, 150), new Vector2(0.5f, 0.5f));
+                float step = Mathf.Min(150, 760f / order.Count);
+                for (int i = 0; i < order.Count; i++)
+                {
+                    var r = GameManager.I.Friend(order[i]);
+                    if (r == null) continue;
+                    bool isNew = Stats.FriendLv(r) <= 0;
+                    var im = UIKit.Img(p.cardRow, FriendPopup.Icon(r), new Vector2(120, 120), "Card" + r.id);
+                    im.rectTransform.Place(0.5f, 0.5f, new Vector2((i - (order.Count - 1) * 0.5f) * step, 14), new Vector2(120, 120), new Vector2(0.5f, 0.5f));
+                    var n = UIKit.Label(im.transform, $"x{count[order[i]]}", 32, Color.white, TextAnchor.MiddleCenter, 3);
+                    n.rectTransform.Place(0.5f, 0, new Vector2(0, -6), new Vector2(step, 40), new Vector2(0.5f, 0.5f));
+                    if (isNew)
+                    {
+                        var nw = UIKit.Fit(UIKit.Label(im.transform, L.T("새 친구!"), 26, UIKit.Gold, TextAnchor.MiddleCenter, 3), 16);
+                        nw.rectTransform.Place(0.5f, 1, new Vector2(0, 10), new Vector2(step - 6, 34), new Vector2(0.5f, 0.5f));
+                    }
+                }
+            }
+            else
+            {
+                p.body.text = L.T("보상 없음") + "\n<size=30>" + L.T("사용한 입장은 돌아오지 않습니다") + "</size>";
+                ((RectTransform)p.body.transform).anchoredPosition = new Vector2(0, -40);
+            }
+            UIKit.LabelOf(p.take).text = L.T(win ? "받기" : "돌아가기");
+            ((RectTransform)p.take.transform).anchoredPosition = new Vector2(0, 10);
+        }
+
         public static void Show(string t, bool win, double reward)
         {
             var p = HUD.I.Open<ResultPopup>();
+            if (p.cardRow) { Destroy(p.cardRow.gameObject); p.cardRow = null; }
+            ((RectTransform)p.body.transform).sizeDelta = new Vector2(600, 80);
             p.title.text = t;
             p.win = win; p.reward = reward;
             p.body.text = reward > 0 ? L.T("다이아") + $" +{reward:0.#}" : L.T("보상 없음");
