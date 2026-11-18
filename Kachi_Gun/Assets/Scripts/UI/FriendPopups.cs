@@ -101,6 +101,21 @@ namespace KachiGun
             return tile;
         }
 
+        /// <summary>11-18 3차 받은 카드 (결과 창): 세로 카드 틀(Art/Friend/friend_card — 굵은 테두리 · 아래 주황 띠) 안 위쪽에 얼굴, 띠에 글자(x2)</summary>
+        public static Image CardTall(Transform parent, FriendRow r, float w, string band, string name)
+        {
+            float h = w * 1.3f;
+            var card = UIKit.Img(parent, Art.Get("Friend/friend_card"), new Vector2(w, h), name);
+            card.raycastTarget = false;
+            var ic = UIKit.Img(card.transform, Icon(r), new Vector2(w * 0.78f, w * 0.78f), "Icon");
+            ic.rectTransform.Place(0.5f, 1, new Vector2(0, -w * 0.1f), new Vector2(w * 0.78f, w * 0.78f), new Vector2(0.5f, 1));
+            ic.raycastTarget = false;
+            var t = UIKit.Fit(UIKit.Label(card.transform, band, Mathf.RoundToInt(w * 0.24f), Color.white, TextAnchor.MiddleCenter, 3), 12);
+            t.rectTransform.Place(0.5f, 0, new Vector2(0, h * 0.16f), new Vector2(w * 0.9f, h * 0.2f), new Vector2(0.5f, 0.5f));   // 아래 주황 띠 (그림 높이의 5~27%)
+            t.raycastTarget = false;
+            return card;
+        }
+
         /// <summary>카드 칸 + 얼굴을 함께 어둡게(못 가진 · 안 나오는 친구) / 밝게</summary>
         public static void CardOn(Image tile, bool on)
         {

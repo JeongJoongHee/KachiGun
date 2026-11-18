@@ -20,12 +20,12 @@ T = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'Kachi_Gun', 
 # 이름 · 능력 · 레벨당 % · 나오기 시작하는 던전 단계 · 필요 카드 배율(Card_Mul)
 #  11-18 2차(사용자 의견): 던전 N = 챕터 2N 이라 던전은 75단계쯤이 150챕터 끝 → 등장 단계를 75 안으로 다시 나눔
 #  "하위 카피친구일수록 필요 개수 상승" → 일찍 나오는(자주 나오는) 친구일수록 레벨마다 필요한 카드 x Card_Mul
-FRIENDS = [
-    ('토끼', 'Atk', 4, 1, 3.0), ('다람쥐', 'Spd', 3, 1, 3.0), ('햄스터', 'Gold', 4, 1, 3.0),
-    ('양', 'Boss', 4, 3, 2.6), ('염소', 'Atk', 5, 5, 2.4), ('사슴', 'Spd', 4, 8, 2.2),
-    ('나무늘보', 'Gold', 5, 12, 2.0), ('코알라', 'Boss', 5, 16, 1.8), ('웜뱃', 'Atk', 6, 20, 1.6),
-    ('기니피그', 'Spd', 5, 25, 1.5), ('너구리', 'Gold', 6, 30, 1.4), ('고양이', 'Boss', 6, 37, 1.3),
-    ('강아지', 'Atk', 8, 45, 1.2), ('젖소', 'Gold', 8, 55, 1.1), ('당나귀', 'Spd', 6, 65, 1.0),
+FRIENDS = [   # 11-18 3차 밸런스(tools/friend_balance.py --tune2): 레벨당 % = 2차 값 x 0.362 · Card_Mul = 2차 x 0.5
+    ('토끼', 'Atk', 1.4, 1, 1.5), ('다람쥐', 'Spd', 1.1, 1, 1.5), ('햄스터', 'Gold', 1.4, 1, 1.5),
+    ('양', 'Boss', 1.4, 3, 1.3), ('염소', 'Atk', 1.8, 5, 1.2), ('사슴', 'Spd', 1.4, 8, 1.1),
+    ('나무늘보', 'Gold', 1.8, 12, 1.0), ('코알라', 'Boss', 1.8, 16, 0.9), ('웜뱃', 'Atk', 2.2, 20, 0.8),
+    ('기니피그', 'Spd', 1.8, 25, 0.75), ('너구리', 'Gold', 2.2, 30, 0.7), ('고양이', 'Boss', 2.2, 37, 0.65),
+    ('강아지', 'Atk', 2.9, 45, 0.6), ('젖소', 'Gold', 2.9, 55, 0.55), ('당나귀', 'Spd', 2.2, 65, 0.5),
 ]
 # 그 레벨이 되는 데 드는 기본 카드 (Lv1 = 처음 얻을 때 1장, 배율 안 붙음) — 친구마다 x Card_Mul (반올림)
 LEVELS = [1, 2, 4, 6, 10, 15, 25, 40, 60, 100]
@@ -60,7 +60,7 @@ def friend_xlsx():
     head(ws, ['Friend_Id', 'Name', 'Stat', 'Bonus_Per_Lv', 'Max_Bonus (%)', 'Unlock_Dgn_Lv', 'Unlock_Stage', 'Card_Mul', 'Cards_To_Max', 'Weight', 'Icon', 'Note'])
     for i, (nm, st, b, u, m) in enumerate(FRIENDS, 1):
         tot = 1 + sum(round(n * m) for n in LEVELS[1:])
-        ws.append([i, nm, st, b, b * len(LEVELS), u, f'{u * 2}-1', m, tot, 1, 'friend_%02d' % i,
+        ws.append([i, nm, st, b, round(b * len(LEVELS), 1), u, f'{u * 2}-1', m, tot, 1, 'friend_%02d' % i,
                    'Stat: Atk 공격력 · Spd 공격속도 · Gold 금전 · Boss 보스 피해 / Unlock_Stage = 그 던전 단계와 맞먹는 스테이지(참고) / Card_Mul = 레벨마다 필요한 카드 x 이 값 (일찍 나오는 친구일수록 큼)'])
     for c, w in zip('ABCDEFGHIJKL', (10, 12, 8, 13, 13, 14, 13, 10, 13, 8, 12, 60)): ws.column_dimensions[c].width = w
     wl = wb.create_sheet('Friend_Level')

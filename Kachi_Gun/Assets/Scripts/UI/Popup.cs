@@ -486,6 +486,7 @@ namespace KachiGun
             if (p.cardRow) Destroy(p.cardRow.gameObject);
             p.cardRow = null;
             ((RectTransform)p.body.transform).sizeDelta = new Vector2(720, 140);
+            p.panel.sizeDelta = new Vector2(860, 760);
             var count = new Dictionary<int, int>();
             var order = new List<int>();
             foreach (var id in cards) { if (!count.ContainsKey(id)) { count[id] = 0; order.Add(id); } count[id]++; }
@@ -493,22 +494,30 @@ namespace KachiGun
             {
                 p.body.text = L.F("카피친구 카드 {0}장", cards.Count);
                 ((RectTransform)p.body.transform).anchoredPosition = new Vector2(0, 70);
-                p.cardRow = UIKit.Rect(p.content, "Cards").Place(0.5f, 0.5f, new Vector2(0, -70), new Vector2(760, 150), new Vector2(0.5f, 0.5f));
-                float step = Mathf.Min(150, 760f / order.Count);
-                for (int i = 0; i < order.Count; i++)
+                // 11-18 3차 사용자 "카피 카드 획득 시, 네모 카드 모양의 경계선": 세로 카드(굵은 테두리 · 아래 주황 띠에 "x2") — 많으면 두 줄
+                int nc = order.Count, perRow = Mathf.Min(nc, 6), rowsN = (nc + perRow - 1) / perRow;
+                float cw = Mathf.Min(rowsN > 1 ? 96f : 130f, 760f / perRow - 14f), chh = cw * 1.3f, rowGap = chh + 36f;
+                p.cardRow = UIKit.Rect(p.content, "Cards").Place(0.5f, 0.5f, new Vector2(0, rowsN > 1 ? -60 : -80), new Vector2(760, rowsN * rowGap), new Vector2(0.5f, 0.5f));
+                for (int i = 0; i < nc; i++)
                 {
                     var r = GameManager.I.Friend(order[i]);
                     if (r == null) continue;
                     bool isNew = Stats.FriendLv(r) <= 0;
-                    var im = FriendPopup.Card(p.cardRow, r, 120, "Card" + r.id);   // 11-18 2차 카드 칸 위 얼굴
-                    im.rectTransform.Place(0.5f, 0.5f, new Vector2((i - (order.Count - 1) * 0.5f) * step, 14), new Vector2(120, 120), new Vector2(0.5f, 0.5f));
-                    var n = UIKit.Label(im.transform, $"x{count[order[i]]}", 32, Color.white, TextAnchor.MiddleCenter, 3);
-                    n.rectTransform.Place(0.5f, 0, new Vector2(0, -6), new Vector2(step, 40), new Vector2(0.5f, 0.5f));
+                    int row = i / perRow, inRow = Mathf.Min(perRow, nc - row * perRow), col = i % perRow;
+                    var im = FriendPopup.CardTall(p.cardRow, r, cw, $"x{count[order[i]]}", "Card" + r.id);
+                    im.rectTransform.Place(0.5f, 0.5f, new Vector2((col - (inRow - 1) * 0.5f) * (cw + 14f), (rowsN - 1) * rowGap * 0.5f - row * rowGap), new Vector2(cw, chh), new Vector2(0.5f, 0.5f));
                     if (isNew)
                     {
-                        var nw = UIKit.Fit(UIKit.Label(im.transform, L.T("새 친구!"), 26, UIKit.Gold, TextAnchor.MiddleCenter, 3), 16);
-                        nw.rectTransform.Place(0.5f, 1, new Vector2(0, 10), new Vector2(step - 6, 34), new Vector2(0.5f, 0.5f));
+                        var nw = UIKit.Fit(UIKit.Label(im.transform, L.T("새 친구!"), cw > 100 ? 26 : 20, UIKit.Gold, TextAnchor.MiddleCenter, 3), 14);
+                        nw.rectTransform.Place(0.5f, 1, new Vector2(0, 14), new Vector2(cw + 10, 30), new Vector2(0.5f, 0.5f));
                     }
+                }
+                if (rowsN > 1)
+                {
+                    // 두 줄이면 창을 키움 (별 · 글 · 카드 두 줄 · [받기] 가 겹치지 않게)
+                    p.panel.sizeDelta = new Vector2(860, 920);
+                    ((RectTransform)p.body.transform).anchoredPosition = new Vector2(0, 112);
+                    p.cardRow.anchoredPosition = new Vector2(0, -85);
                 }
             }
             else
@@ -525,6 +534,7 @@ namespace KachiGun
             var p = HUD.I.Open<ResultPopup>();
             if (p.cardRow) { Destroy(p.cardRow.gameObject); p.cardRow = null; }
             ((RectTransform)p.body.transform).sizeDelta = new Vector2(600, 80);
+            p.panel.sizeDelta = new Vector2(860, 760);
             p.title.text = t;
             p.win = win; p.reward = reward;
             p.body.text = reward > 0 ? L.T("다이아") + $" +{reward:0.#}" : L.T("보상 없음");

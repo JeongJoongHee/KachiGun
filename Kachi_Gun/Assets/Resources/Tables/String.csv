@@ -159,7 +159,7 @@
 동료 2,Ally 2,UI/HUD.cs
 비어 있음,Empty,UI/HUD.cs
 총알,Ammo,UI/HUD.cs
-친구,Friends,UI/HUD.cs
+던전,Dungeon,UI/HUD.cs
 보스,Boss,UI/HUD.cs
 포기,Give Up,UI/HUD.cs
 던전을 포기할까요?\n(사용한 티켓은 돌아오지 않습니다),Give up the dungeon?\n(Used tickets are not refunded),UI/HUD.cs
@@ -483,7 +483,7 @@ D 등급 총알 획득!,Got D grade ammo!,UI/WeaponPopup.cs
 SS급 미사일탄,SS Missile,Shop_Products.Name
 1회 한정 · SS 미사일탄 1개 · 빈 칸에 바로 장착,One-time offer · 1 SS Missile · auto-equipped,Shop_Products.Description
 무료 총알,Free Bullets,Shop_Products.Name
-광고 1편 · D 등급 총알 5개 · 하루 3번,1 ad · 5 D-grade bullets · 3 per day,Shop_Products.Description
+광고 1편 · D 등급 총알 1개 · 하루 3번,1 ad · 1 D-grade bullet · 3 per day,Shop_Products.Description
 폐허 숲길,Ruined Forest Trail,Chapter_Summary.Biome_Name
 오염된 해안,Polluted Coast,Chapter_Summary.Biome_Name
 사막 도로,Desert Road,Chapter_Summary.Biome_Name
@@ -497,8 +497,10 @@ Stage 1-2 에서 열립니다,Unlocks at Stage 1-2,Unlock_Roadmap.Lock_Toast_Mes
 Stage 4-1 에서 열립니다,Unlocks at Stage 4-1,Unlock_Roadmap.Lock_Toast_Message
 비밀던전이 열렸습니다!,Secret Dungeon unlocked!,Unlock_Roadmap.Unlock_Banner_Message
 Stage 6-1 에서 열립니다,Unlocks at Stage 6-1,Unlock_Roadmap.Lock_Toast_Message
+보급품이 열렸습니다!,Supplies unlocked!,Unlock_Roadmap.Unlock_Banner_Message
 Stage 10-1 에서 열립니다,Unlocks at Stage 10-1,Unlock_Roadmap.Lock_Toast_Message
 보스 던전이 열렸습니다!,Boss Dungeon unlocked!,Unlock_Roadmap.Unlock_Banner_Message
+Stage 2-1 에서 열립니다,Unlocks at Stage 2-1,Unlock_Roadmap.Lock_Toast_Message
 친구 던전이 열렸습니다!,Friend Dungeon unlocked!,Unlock_Roadmap.Unlock_Banner_Message
 큰 푸른 보석,Big Blue Gem,Mine_Ore_Spec.Name_KR
 작은 푸른 보석,Small Blue Gem,Mine_Ore_Spec.Name_KR
@@ -626,8 +628,9 @@ Stage 10-1 에서 열립니다,Unlocks at Stage 10-1,Unlock_Roadmap.Lock_Toast_M
 강아지,Puppy,Friend_List.Name
 젖소,Cow,Friend_List.Name
 당나귀,Donkey,Friend_List.Name
+친구,Friends,(지금은 안 씀) UI/HUD.cs
+광고 1편 · D 등급 총알 5개 · 하루 3번,1 ad · 5 D-grade bullets · 3 per day,(지금은 안 씀) Shop_Products.Description
 코스튬이 열렸습니다!,Costumes unlocked!,(지금은 안 씀) Unlock_Roadmap.Unlock_Banner_Message
-보급품이 열렸습니다!,Supplies unlocked!,(지금은 안 씀) Unlock_Roadmap.Unlock_Banner_Message
 다이아 한 줌 (500),Handful of Gems (500),(지금은 안 씀) Shop_Products.Name
 다이아 500개 즉시 획득,Get 500 gems now,(지금은 안 씀) Shop_Products.Description
 "다이아 주머니 (1,800)","Pouch of Gems (1,800)",(지금은 안 씀) Shop_Products.Name

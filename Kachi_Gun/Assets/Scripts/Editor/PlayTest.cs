@@ -488,7 +488,7 @@ namespace KachiGun.EditorTools
                 float ax(int k) { var g = GameObject.Find("AmmoSlot" + k); return g ? ((RectTransform)g.transform).anchoredPosition.x : float.NaN; }
                 Check(ax(1) < ax(0) && ax(0) < ax(2) && Mathf.Abs(ax(0)) < 1f, $"아래 총알 칸: 동료1 {ax(1):0} | 리더 {ax(0):0} | 동료2 {ax(2):0}");
                 string NavText(string id) { var g = GameObject.Find("Nav_" + id); var t = g ? g.GetComponentInChildren<Text>() : null; return t ? t.text : ""; }
-                Check(NavText("weapon") == "총알" && NavText("collection") == "컬렉션", $"아래 탭 이름 총알 · 컬렉션 ({NavText("weapon")} · {NavText("collection")})");
+                Check(NavText("weapon") == "총알" && NavText("collection") == "컬렉션" && NavText("friend").StartsWith("던전"), $"아래 탭 이름 총알 · 컬렉션 · 던전 ({NavText("weapon")} · {NavText("collection")} · {NavText("friend")})");
 
                 for (int k = 0; k < S.inv.Count; k++) S.inv[k] = -1;
                 int dS = Tables.Code(0, "single"), dF = Tables.Code(0, "fast"), cS = Tables.Code(1, "single");
@@ -731,7 +731,7 @@ namespace KachiGun.EditorTools
                       $"11-18 2차 단계가 오를수록 카드 +1 (5단계마다): 1 → {Tables.FriendDgnCards(1)} · 6 → {Tables.FriendDgnCards(6)} · 50 → {Tables.FriendDgnCards(50)}");
                 {
                     var fr1 = GM.Friend(1); var fr15 = GM.Friend(15);
-                    Check(Tables.FriendNeed(fr1, 1) == 1 && Tables.FriendNeed(fr1, 2) == 6 && Tables.FriendNeed(fr15, 2) == 2 && Tables.FriendNeed(fr1, 10) > Tables.FriendNeed(fr15, 10),
+                    Check(Tables.FriendNeed(fr1, 1) == 1 && Tables.FriendNeed(fr1, 2) == 3 && Tables.FriendNeed(fr15, 2) == 1 && Tables.FriendNeed(fr1, 10) > Tables.FriendNeed(fr15, 10),
                           $"11-18 2차 하위 친구일수록 필요 카드 많음: 토끼 Lv.2 {Tables.FriendNeed(fr1, 2)}장 · Lv.10 {Tables.FriendNeed(fr1, 10)}장 / 당나귀 {Tables.FriendNeed(fr15, 2)} · {Tables.FriendNeed(fr15, 10)}");
                 }
                 GameObject.Find("Nav_friend")?.GetComponent<Button>().onClick.Invoke(); yield return Wait(0.35f);
@@ -757,6 +757,19 @@ namespace KachiGun.EditorTools
                 Check(frp && frp.gameObject.activeSelf && reward.Count == Tables.FriendDgnCards(1) && frp.CardIcons > 0 && reward.TrueForAll(id => GM.Friend(id).unlockLv <= 1),
                       $"보스 3마리 처치 → 성공 · 카드 {reward.Count}장 (Lv.1 에서 나오는 친구만: {string.Join(",", reward)})");
                 Capture("21c_friend_result");
+                {
+                    // 11-18 3차: 받은 카드 = 세로 카드 틀 · 친구가 많으면 두 줄 (캡처용으로 결과 창만 따로 띄움)
+                    var saveReward = new List<int>(reward);
+                    var many = new List<int> { 1, 2, 3, 1, 4, 5, 6, 7, 8, 9, 10, 2 };
+                    frp.gameObject.SetActive(false);
+                    ResultPopup.ShowFriend(L.F("친구 던전 Lv.{0} 성공!", 40), true, many);
+                    yield return Wait(0.3f);
+                    var tall = GameObject.Find("Card1");
+                    Check(frp.CardIcons == 10 && tall && tall.GetComponent<Image>().sprite && tall.GetComponent<Image>().sprite.name == "Friend/friend_card", $"받은 카드 = 세로 카드 틀 ({frp.CardIcons}종 · 두 줄)");
+                    Capture("21c2_friend_result_many");
+                    ResultPopup.ShowFriend(L.F("친구 던전 Lv.{0} 성공!", 1), true, saveReward);
+                    yield return Wait(0.2f);
+                }
                 frp.Close(); yield return Wait(0.3f);
                 int owned = 0, cards = 0; foreach (var f in Tables.Friends) { if (Stats.FriendLv(f) > 0) owned++; cards += Stats.FriendCards(f) + (Stats.FriendLv(f) > 0 ? 1 : 0); }
                 Check(GM.mode == GameManager.Mode.Stage && S.friendBest == 1 && GM.FriendSelLv == 2 && cards == reward.Count && owned >= 1,

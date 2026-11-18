@@ -354,7 +354,8 @@ namespace KachiGun
             NavBtn(0, "weapon", "UI/icon_pistol", L.T("총알"), () => GM.WeaponOpen, "weapon", () => Open<WeaponPopup>());
             // 11-18 1차 업데이트: 코스튬 → [컬렉션](코스튬 · 보급품 · 카피친구 탭) · 보급품 자리 → [친구] 던전
             NavBtn(1, "collection", "Gen/capy_head", L.T("컬렉션"), () => GM.SkinOpen, "skin", () => CollectionTabs.Open(0));
-            NavBtn(2, "friend", "Friend/friend_01", L.T("친구"), () => GM.FriendOpen, "friend", () => Open<FriendDungeonPopup>());
+            NavBtn(2, "friend", "Friend/friend_01", L.T("던전"),   // 11-18 3차 사용자 "친구 -> 던전으로 이름 변경"
+                () => GM.FriendOpen, "friend", () => Open<FriendDungeonPopup>());
             side["friend"].icon.preserveAspect = true;
             NavBtn(3, "boss", null, L.T("보스"), () => GM.BossRaidOpen, "boss_raid", () => Confirm(ConfirmPopup.Kind.Boss));
             NavBtn(4, "mine", "UI/icon_gem", MineNav, () => GM.MineOpen, "mine", () => Confirm(ConfirmPopup.Kind.Mine));
@@ -592,7 +593,7 @@ namespace KachiGun
             S.RefreshDaily();
             side["mine"].label.text = GM.MineOpen ? $"{MineNav} {S.mineTickets}/{Tables.Ci("MineTickets")}" : MineNav;
             side["boss"].label.text = GM.BossRaidOpen ? $"{L.T("보스")} {S.bossTickets}/{Tables.Ci("BossRaidTickets")}" : L.T("보스");
-            side["friend"].label.text = GM.FriendOpen ? $"{L.T("친구")} {S.friendTickets}/{Tables.Ci("FriendDgn_Tickets")}" : L.T("친구");
+            side["friend"].label.text = GM.FriendOpen ? $"{L.T("던전")} {S.friendTickets}/{Tables.Ci("FriendDgn_Tickets")}" : L.T("던전");
             side["friend"].dot.SetActive(GM.FriendOpen && S.friendTickets > 0);
             side["collection"].dot.SetActive(GM.SkinOpen && GM.FriendOpen && GM.AnyFriendReady);   // 11-18 카피친구 레벨 업 가능
             side["mine"].dot.SetActive(GM.MineOpen && S.mineTickets > 0);

@@ -155,6 +155,16 @@ def main():
         Image.fromarray(im).save(os.path.join(OUT, n + '.png'))
         tiles.append(Image.fromarray(im))
         print(n, NAMES[k - 1])
+    # 11-18 3차 사용자 "카피 카드 획득 시, 네모 카드 모양의 경계선 필요" → 세로 카드 틀 (크림 바탕 · 굵은 진한 테두리 · 안쪽 얇은 선 · 아래 띠)
+    cw, ch = 200, 260
+    card = (f'<rect x="7" y="7" width="{cw - 14}" height="{ch - 14}" rx="22" fill="#fff4dc" stroke="{DARK}" stroke-width="9"/>'
+            f'<rect x="19" y="19" width="{cw - 38}" height="{ch - 38}" rx="13" fill="none" stroke="#e2c99a" stroke-width="4"/>'
+            f'<path d="M12 {ch - 70} L{cw - 12} {ch - 70} L{cw - 12} {ch - 30} Q{cw - 12} {ch - 12} {cw - 30} {ch - 12} L30 {ch - 12} Q12 {ch - 12} 12 {ch - 30} Z" fill="#f2ad55"/>'
+            f'<path d="M12 {ch - 70} L{cw - 12} {ch - 70}" stroke="{DARK}" stroke-width="5"/>'
+            f'<rect x="7" y="7" width="{cw - 14}" height="{ch - 14}" rx="22" fill="none" stroke="{DARK}" stroke-width="9"/>')
+    im = render(card, cw, ch, wob=WOB, freq=0.04)
+    Image.fromarray(im).save(os.path.join(OUT, 'friend_card.png'))
+    print('friend_card')
     T = 200; cols = 5
     pv = Image.new('RGBA', (cols * T, 3 * T), (236, 220, 184, 255))
     for i, t in enumerate(tiles):
