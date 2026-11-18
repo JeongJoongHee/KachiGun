@@ -1027,12 +1027,20 @@ namespace KachiGun
         // =====================================================================
         // 11-18 무료 총알 (상점 무료 탭 · 하루 AdBullets_Daily 번, 한 번에 D 등급 AdBullets_Amount 개 = 뽑기와 같은 비중)
         //   기획(업데이트/1차 업데이트): 인벤토리가 꽉 차 있으면 "꽉 찼다" 알림 + 광고 횟수는 줄어듦 → 들어갈 자리만큼만 받고 나머지는 사라짐
+        //   11-18 2차: 광고 1번에 1개 · 꽉 차 있으면 광고 전에 알림만 (AdBullets_FullBlock 0 = 1차처럼 광고 진행·횟수 차감)
         // =====================================================================
         public int AdBulletsLeft { get { S.RefreshDaily(); return Math.Max(0, Tables.Ci("AdBullets_Daily") - S.adBulletUsed); } }
 
         public string AdBullets()
         {
             if (AdBulletsLeft <= 0) return L.T("오늘은 다 받았습니다 (내일 다시)");
+            // 11-18 2차 사용자 "광고 보기 전에 (인벤토리가 꽉 차있으면 보상을 받을 수 없습니다.) 토스트" — AdBullets_FullBlock 1 = 광고 안 나옴 · 횟수 그대로
+            if (S.inv.IndexOf(-1) < 0)
+            {
+                string full = L.T("인벤토리가 꽉 차있으면 보상을 받을 수 없습니다.");
+                if (Tables.C("AdBullets_FullBlock", 1) >= 0.5) return full;
+                HUD.I?.Toast(full);
+            }
             AdService.Show("free_bullets", () => GiveAdBullets());
             return null;
         }
@@ -1166,7 +1174,7 @@ namespace KachiGun
 
         public FriendRow Friend(int id) => Tables.Friends.Find(f => f.id == id);
         /// <summary>레벨 업할 수 있음 (가졌고 · 최대가 아니고 · 다음 레벨 카드가 모임)</summary>
-        public bool FriendReady(FriendRow r) { int lv = Stats.FriendLv(r); return lv > 0 && lv < Tables.FriendMaxLv && Stats.FriendCards(r) >= Tables.FriendNeed(lv + 1); }
+        public bool FriendReady(FriendRow r) { int lv = Stats.FriendLv(r); return lv > 0 && lv < Tables.FriendMaxLv && Stats.FriendCards(r) >= Tables.FriendNeed(r, lv + 1); }
         public bool AnyFriendReady { get { foreach (var r in Tables.Friends) if (FriendReady(r)) return true; return false; } }
 
         public string FriendLevelUp(int id)
@@ -1176,7 +1184,7 @@ namespace KachiGun
             int lv = Stats.FriendLv(r);
             if (lv <= 0) return L.F("친구 던전 Lv.{0} 부터 만날 수 있어요", r.unlockLv);
             if (lv >= Tables.FriendMaxLv) return L.T("최대 레벨입니다");
-            int need = Tables.FriendNeed(lv + 1);
+            int need = Tables.FriendNeed(r, lv + 1);
             if (Stats.FriendCards(r) < need) return L.F("카드가 부족합니다 ({0}/{1})", Stats.FriendCards(r), need);
             S.friendCards[id - 1] -= need;
             S.friendLv[id - 1] = lv + 1;

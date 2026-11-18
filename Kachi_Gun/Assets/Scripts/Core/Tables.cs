@@ -51,7 +51,7 @@ namespace KachiGun
     public class SupplyRow { public int id, unlockChapter; public string grade, name, icon; public double cost, atk, spd, gold, boss; }   // icon = Supply 표 Icon 칸 (Art/Supply/ 의 그림 이름, 10-24)
     public class EnchantRow { public int lv; public double gems, gold, atk, spd, boss, rate; }
     /// <summary>11-18 카피친구 (Friend.xlsx Friend_List): stat = Atk · Spd · Gold · Boss, 효과 = bonus x 레벨(%), unlockLv = 이 친구 던전 단계부터 나옴</summary>
-    public class FriendRow { public int id, unlockLv; public string name, stat, icon; public double bonus, weight; }
+    public class FriendRow { public int id, unlockLv; public string name, stat, icon; public double bonus, weight, cardMul = 1; }   // 11-18 2차 cardMul = 레벨마다 필요한 카드 배율 (하위 친구일수록 큼)
 
     /// <summary>
     /// 기획 표 (원본 = Kachi_Gun/Table/*.xlsx → [카치건 → 표 변환] 또는 재생할 때 자동으로 Resources/Tables/*.csv).
@@ -251,7 +251,7 @@ namespace KachiGun
                 Friends.Add(new FriendRow
                 {
                     id = r.I("Friend_Id"), name = r.S("Name"), stat = r.S("Stat"), bonus = r.D("Bonus_Per_Lv"), unlockLv = Math.Max(1, r.I("Unlock_Dgn_Lv", 1)),
-                    weight = Math.Max(0, r.D("Weight", 1)), icon = r.S("Icon")
+                    weight = Math.Max(0, r.D("Weight", 1)), icon = r.S("Icon"), cardMul = Math.Max(0.1, r.D("Card_Mul", 1))
                 });
             Friends.Sort((a, b) => a.id.CompareTo(b.id));
             var fl = Read("Friend_Level");
@@ -264,10 +264,12 @@ namespace KachiGun
         // =====================================================================
         /// <summary>최대 레벨 (Friend_Level 줄 수, 표가 없으면 10)</summary>
         public static int FriendMaxLv { get { Load(); return friendNeed.Count > 0 ? friendNeed.Count : 10; } }
-        /// <summary>lv 레벨이 되는 데 드는 카드 (lv 1 = 처음 얻을 때)</summary>
+        /// <summary>lv 레벨이 되는 데 드는 기본 카드 (lv 1 = 처음 얻을 때)</summary>
         public static int FriendNeed(int lv) { Load(); return friendNeed.Count == 0 ? lv : friendNeed[Mathf.Clamp(lv - 1, 0, friendNeed.Count - 1)]; }
-        /// <summary>친구 던전 단계(1부터) → 맞먹는 스테이지 번호(0부터): 1:2 → 던전 1 = 스테이지 2 (1-2)</summary>
-        public static int FriendDgnStage(int lv) => Math.Max(0, Math.Max(1, lv) * Math.Max(1, (int)Math.Round(C("FriendDgn_Stage_Mul", 2))) - 1);
+        /// <summary>11-18 2차 "하위 카피친구일수록 필요 개수 상승": 그 친구가 lv 레벨이 되는 데 드는 카드 = 기본 x Card_Mul (Lv.1 은 늘 1장)</summary>
+        public static int FriendNeed(FriendRow r, int lv) => lv <= 1 || r == null ? FriendNeed(lv) : Math.Max(1, (int)Math.Round(FriendNeed(lv) * r.cardMul));
+        /// <summary>친구 던전 단계(1부터) → 맞먹는 스테이지 번호(0부터). 11-18 2차 사용자 "스테이지 = 앞자리(챕터)": 던전 N = 챕터 2N 의 첫 스테이지 (던전 1 = 2-1 · 13 = 26-1)</summary>
+        public static int FriendDgnStage(int lv) => Math.Max(0, (Math.Max(1, lv) * Math.Max(1, (int)Math.Round(C("FriendDgn_Stage_Mul", 2))) - 1) * 5);
         /// <summary>친구 던전 보스 한 마리 체력 = 그 스테이지 좀비 체력 x 그 챕터 보스 배율(보스 HP ÷ 같은 줄 좀비 HP) x FriendDgn_Hp_Mul</summary>
         public static double FriendDgnHp(int lv)
         {
@@ -279,8 +281,9 @@ namespace KachiGun
         /// <summary>이기면 받는 카드 수</summary>
         public static int FriendDgnCards(int lv)
         {
-            int step = (int)Math.Round(C("FriendDgn_Cards_Step", 20));
-            return Math.Max(1, (int)Math.Round(C("FriendDgn_Cards", 3)) + (step > 0 ? (Math.Max(1, lv) - 1) / step : 0));
+            // 11-18 2차 "던전 레벨이 오를수록 + n장씩": FriendDgn_Cards_Step 단계마다 + FriendDgn_Cards_Add 장
+            int step = (int)Math.Round(C("FriendDgn_Cards_Step", 5)), add = (int)Math.Round(C("FriendDgn_Cards_Add", 1));
+            return Math.Max(1, (int)Math.Round(C("FriendDgn_Cards", 3)) + (step > 0 ? (Math.Max(1, lv) - 1) / step * add : 0));
         }
         /// <summary>그 단계에서 나올 수 있는 친구 (Unlock_Dgn_Lv 이하)</summary>
         public static List<FriendRow> FriendsAt(int lv) { Load(); return Friends.FindAll(f => f.unlockLv <= Math.Max(1, lv)); }

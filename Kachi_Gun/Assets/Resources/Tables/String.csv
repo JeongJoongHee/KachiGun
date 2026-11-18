@@ -72,6 +72,7 @@
 모든 단계를 끝냈습니다,All tiers completed,Game/GameManager.cs
 아직 달성하지 못했습니다,Not achieved yet,Game/GameManager.cs
 오늘은 다 받았습니다 (내일 다시),All claimed today (come back tomorrow),Game/GameManager.cs
+인벤토리가 꽉 차있으면 보상을 받을 수 없습니다.,You can't receive the reward while your inventory is full.,Game/GameManager.cs
 총알 {0}개를 인벤토리에 넣었습니다,Added {0} bullets to your inventory,Game/GameManager.cs
 인벤토리가 꽉 차 있어 총알을 받지 못했습니다,Inventory is full - no bullets received,Game/GameManager.cs
 인벤토리가 꽉 차서 총알 {0}개만 받았습니다,Inventory full - only {0} bullets received,Game/GameManager.cs
@@ -120,8 +121,8 @@
 {0} 진행으로 이어서 할까요?\n{1}의 진행은 지워집니다.,Continue with the {0} progress?\nThe {1} progress will be lost.,UI/CloudPopups.cs
 컬렉션,Collection,UI/FriendPopups.cs
 코스튬,Costumes,UI/FriendPopups.cs
-보급품,Supplies,UI/FriendPopups.cs
 카피친구,Capy Friends,UI/FriendPopups.cs
+보급품,Supplies,UI/FriendPopups.cs
 공격력,Attack,UI/FriendPopups.cs
 공격속도,Attack Speed,UI/FriendPopups.cs
 금전,Gold,UI/FriendPopups.cs
@@ -481,6 +482,8 @@ D 등급 총알 획득!,Got D grade ammo!,UI/WeaponPopup.cs
 광고 1편 · 다이아 40 · 하루 3번,1 ad · 40 gems · 3 times a day,Shop_Products.Description
 SS급 미사일탄,SS Missile,Shop_Products.Name
 1회 한정 · SS 미사일탄 1개 · 빈 칸에 바로 장착,One-time offer · 1 SS Missile · auto-equipped,Shop_Products.Description
+무료 총알,Free Bullets,Shop_Products.Name
+광고 1편 · D 등급 총알 5개 · 하루 3번,1 ad · 5 D-grade bullets · 3 per day,Shop_Products.Description
 폐허 숲길,Ruined Forest Trail,Chapter_Summary.Biome_Name
 오염된 해안,Polluted Coast,Chapter_Summary.Biome_Name
 사막 도로,Desert Road,Chapter_Summary.Biome_Name
@@ -490,13 +493,13 @@ SS급 미사일탄,SS Missile,Shop_Products.Name
 총알은 다이아 100 또는 도전 클리어 에서 열립니다,Ammo unlocks with 100 gems or a challenge clear,Unlock_Roadmap.Lock_Toast_Message
 총알 메뉴가 열렸습니다!,Ammo unlocked!,Unlock_Roadmap.Unlock_Banner_Message
 Stage 1-2 에서 열립니다,Unlocks at Stage 1-2,Unlock_Roadmap.Lock_Toast_Message
-코스튬이 열렸습니다!,Costumes unlocked!,Unlock_Roadmap.Unlock_Banner_Message
+컬렉션이 열렸습니다!,Collection unlocked!,Unlock_Roadmap.Unlock_Banner_Message
 Stage 4-1 에서 열립니다,Unlocks at Stage 4-1,Unlock_Roadmap.Lock_Toast_Message
 비밀던전이 열렸습니다!,Secret Dungeon unlocked!,Unlock_Roadmap.Unlock_Banner_Message
 Stage 6-1 에서 열립니다,Unlocks at Stage 6-1,Unlock_Roadmap.Lock_Toast_Message
-보급품이 열렸습니다!,Supplies unlocked!,Unlock_Roadmap.Unlock_Banner_Message
 Stage 10-1 에서 열립니다,Unlocks at Stage 10-1,Unlock_Roadmap.Lock_Toast_Message
 보스 던전이 열렸습니다!,Boss Dungeon unlocked!,Unlock_Roadmap.Unlock_Banner_Message
+친구 던전이 열렸습니다!,Friend Dungeon unlocked!,Unlock_Roadmap.Unlock_Banner_Message
 큰 푸른 보석,Big Blue Gem,Mine_Ore_Spec.Name_KR
 작은 푸른 보석,Small Blue Gem,Mine_Ore_Spec.Name_KR
 회색 바위,Gray Rock,Mine_Ore_Spec.Name_KR
@@ -608,6 +611,23 @@ Stage 10-1 에서 열립니다,Unlocks at Stage 10-1,Unlock_Roadmap.Lock_Toast_M
 곧 안 간지러울걸!,Won't tickle for long!,Speech_Lines.Text
 이제 알았어?,Took you long enough?,Speech_Lines.Text
 ㅇㅋ 기달!,"OK, wait for us!",Speech_Lines.Text
+토끼,Rabbit,Friend_List.Name
+다람쥐,Squirrel,Friend_List.Name
+햄스터,Hamster,Friend_List.Name
+양,Sheep,Friend_List.Name
+염소,Goat,Friend_List.Name
+사슴,Deer,Friend_List.Name
+나무늘보,Sloth,Friend_List.Name
+코알라,Koala,Friend_List.Name
+웜뱃,Wombat,Friend_List.Name
+기니피그,Guinea Pig,Friend_List.Name
+너구리,Raccoon,Friend_List.Name
+고양이,Cat,Friend_List.Name
+강아지,Puppy,Friend_List.Name
+젖소,Cow,Friend_List.Name
+당나귀,Donkey,Friend_List.Name
+코스튬이 열렸습니다!,Costumes unlocked!,(지금은 안 씀) Unlock_Roadmap.Unlock_Banner_Message
+보급품이 열렸습니다!,Supplies unlocked!,(지금은 안 씀) Unlock_Roadmap.Unlock_Banner_Message
 다이아 한 줌 (500),Handful of Gems (500),(지금은 안 씀) Shop_Products.Name
 다이아 500개 즉시 획득,Get 500 gems now,(지금은 안 씀) Shop_Products.Description
 "다이아 주머니 (1,800)","Pouch of Gems (1,800)",(지금은 안 씀) Shop_Products.Name

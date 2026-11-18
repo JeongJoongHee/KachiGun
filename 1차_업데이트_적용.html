@@ -31,37 +31,47 @@ th,td{border:1px solid var(--line);padding:5px 8px;text-align:center} th{backgro
 <div class="mut">2026-11-18 · 기획 장표 1장 7항목 → 게임에 넣음 · 체크 = "이대로 좋음", ✎ 의견 = 바꿀 점 → "체크했어" 라고 알려 주시면 읽어서 반영합니다</div>
 <div id="bar"><span id="stat" class="mut"></span></div>
 
+<div class="box ok"><b>11-18 2차 — 의견 5개 반영 (체크 8개는 모두 "좋음"으로 받음)</b>
+<ol>
+<li><b>무료 총알</b>: 광고 1번에 <b>1개</b> · 인벤토리가 꽉 차 있으면 <b>광고를 보기 전에</b> "인벤토리가 꽉 차있으면 보상을 받을 수 없습니다." 토스트 — 이때 광고는 안 나오고 횟수도 그대로입니다 (해석: 보상을 못 받는 광고를 보게 하지 않음 · <code>AdBullets_FullBlock</code> 0 = 알림 뒤 광고 진행·횟수 차감).</li>
+<li><b>카피친구 2-1 에서 오픈</b> — 친구 던전 · 컬렉션 [카피친구] 탭이 함께 2-1 에서 열림 (보급품 탭은 그대로 6-1, "보급품이 열렸습니다!" 알림도 다시 따로) · 탭 순서 <b>코스튬 → 카피친구 → 보급품</b>.</li>
+<li><b>카드 마감 선명하게</b>: 친구 그림을 다시 그림 — 선 3.4 → 4.6 굵게 · 주인공과 같은 진한 선 색 · 손그림 흔들림 1.2 → 0.5 · 눈 조금 크게. 그리고 <b>모든 곳(컬렉션 · 던전 입장 창 · 결과 창)에서 얼굴을 크림색 카드 칸(총알 칸과 같은 틀) 위에</b> 올려 깔끔하게 — 못 가진 친구는 칸까지 같이 어둡게.</li>
+<li><b>던전 레벨이 오를수록 카드 +n장</b>: 5단계마다 +1장 (던전 1~5 = 3장 · 6~10 = 4장 · … · 50 = 12장 — <code>FriendDgn_Cards_Step</code> 5 · <code>FriendDgn_Cards_Add</code> 1). <b>하위 친구일수록 필요 카드 많게</b>: Friend_List 새 칸 <code>Card_Mul</code> — 토끼·다람쥐·햄스터 x3 → … → 당나귀 x1 (토끼 Lv.1 → 2 = 6장, 당나귀 = 2장).</li>
+<li><b>던전 13 = 스테이지 26 (앞자리)</b>: "스테이지" = 챕터로 고침 → 던전 N = <b>챕터 2N 의 첫 스테이지</b> (던전 1 = 2-1 · 13 = 26-1). 그래서 던전은 75단계쯤이 150챕터 끝 → 친구 등장 단계를 75 안으로 다시 나눔 (1 · 1 · 1 · 3 · 5 · 8 · 12 · 16 · 20 · 25 · 30 · 37 · 45 · 55 · 65).</li>
+</ol>
+<div class="mut">아래 1번 목록은 2차 내용으로 고쳐 두었고 체크·의견 칸은 비웠습니다(새 키). 지난 판 문서 = 스크래치 백업.</div></div>
+
 <div class="box warn"><b>먼저 알려 드릴 해석 (애매했던 곳 — 모두 Config 값 하나로 바꿀 수 있음)</b>
 <ol>
-<li><b>무료 총알 "인벤토리가 꽉 차 있으면 토스트 + 광고 횟수 차감"</b> → 광고를 본 뒤 <b>빈 칸만큼만</b> 넣고, 못 넣은 총알은 사라지며 횟수는 줄어듭니다(기획 그대로). 하루 횟수는 장표에 없어 <b>무료 다이아와 같은 3번</b>으로 둠 (<code>AdBullets_Daily</code> · <code>AdBullets_Amount</code> 5).</li>
-<li><b>"오픈 난이도 동일"</b> → 탭마다 여는 조건은 <b>지금 그대로</b>: 컬렉션(코스튬) 1-2 · 보급품 탭 6-1 · 카피친구 탭 = 친구 던전과 같이 <b>보급품 자리였던 6-1</b> (Unlock 표 <code>friend</code> 줄).</li>
+<li><s>무료 총알 꽉 참 = 광고 뒤 빈 칸만큼 · 횟수 차감</s> → 2차에서 바뀜(위 1번). 하루 횟수는 장표에 없어 <b>무료 다이아와 같은 3번</b> (<code>AdBullets_Daily</code>).</li>
+<li><b>"오픈 난이도 동일"</b> → 컬렉션(코스튬) 1-2 · 보급품 탭 6-1 그대로 · 카피친구 탭 = 친구 던전과 같이 <b>2-1</b> (2차).</li>
 <li><b>"5. 하루 2회 – 추가로 광고 3회를 통해 클리어 가능"</b> → 광고 3번 = <b>입장 3번 더</b>(직접 싸움). 광고로 "바로 클리어(소탕)"를 뜻하셨다면 의견에 적어 주세요.</li>
 <li><b>"보스들을 상대해서 이기면"</b> → 한 판에 <b>보스 3마리가 한 마리씩 차례로</b>, <b>60초</b> 안에 모두 잡으면 성공 (<code>FriendDgn_Bosses</code> · <code>FriendDgn_Time</code>). 보스 그림은 스테이지 보스 9종을 돌려 씀.</li>
-<li><b>"토끼 5/10 · 12/100 (최대 10레벨)"</b> → 친구 카드를 모아 <b>칸을 누르면 레벨 업</b>. 처음 카드 1장 = Lv.1, 그 뒤 레벨마다 필요한 카드 <b>2 · 4 · 6 · 10 · 15 · 25 · 40 · 60 · 100</b> (Friend.xlsx Friend_Level) — <b>[임시]</b>, 밸런스는 마지막에.</li>
+<li><b>"토끼 5/10 · 12/100 (최대 10레벨)"</b> → 친구 카드를 모아 <b>칸을 누르면 레벨 업</b>. 처음 카드 1장 = Lv.1, 그 뒤 기본 카드 <b>2 · 4 · 6 · 10 · 15 · 25 · 40 · 60 · 100</b> x 친구별 <code>Card_Mul</code>(3 ~ 1) — <b>[임시]</b>, 밸런스는 마지막에.</li>
 <li><b>결과 창의 광고 x2</b>는 장표에 없어 친구 던전엔 넣지 않았습니다.</li>
 </ol></div>
 
 <h2>1. 무엇이 바뀌었나</h2>
 <ul class="todo">
-<li data-id="u1-free"><label><input type="checkbox"><span class="t">1. 상점 [무료] 탭 — "무료 총알" (광고 → D 등급 총알 5개, 하루 3번)</span></label>
+<li data-id="u1-free"><label><input type="checkbox"><span class="t">1. 상점 [무료] 탭 — "무료 총알" (광고 → D 등급 총알 1개, 하루 3번)</span></label>
 <div class="meta">무료 다이아 아래 줄 · 버튼 "광고 3/3" · 무료 탭 빨간 점은 무료 다이아나 무료 총알이 남아 있으면 켜짐 · 총알은 뽑기와 같은 비중(Merge_Weight)으로 인벤토리 빈 칸에.<br>
-알림: 다 들어감 "총알 5개를 인벤토리에 넣었습니다" · 일부 "인벤토리가 꽉 차서 총알 2개만 받았습니다" · 하나도 못 넣음 "인벤토리가 꽉 차 있어 총알을 받지 못했습니다"</div></li>
+알림: 받음 "총알 1개를 인벤토리에 넣었습니다" · 인벤토리가 꽉 차 있으면 버튼을 누르는 순간(광고 전) "인벤토리가 꽉 차있으면 보상을 받을 수 없습니다." — 광고 안 나옴 · 횟수 그대로</div></li>
 
-<li data-id="u2-coll"><label><input type="checkbox"><span class="t">2. 아래 [코스튬] 버튼 → [컬렉션] — 안에 탭 3개 (코스튬 · 보급품 · 카피친구)</span></label>
-<div class="meta">세 탭은 같은 크기 · 같은 제목 "컬렉션" 창이라 탭을 누르면 그 자리에서 내용만 바뀜 · 탭 모양은 상점 탭과 같음(고른 탭만 나무색, 나머지 흐리게) · 잠긴 탭은 자물쇠 + 누르면 "Stage 6-1 에서 열립니다" · 카피친구 레벨 업이 가능하면 [컬렉션] 버튼과 [카피친구] 탭에 빨간 점</div></li>
+<li data-id="u2-coll"><label><input type="checkbox"><span class="t">2. 아래 [코스튬] 버튼 → [컬렉션] — 안에 탭 3개 (코스튬 → 카피친구 → 보급품)</span></label>
+<div class="meta">세 탭은 같은 크기 · 같은 제목 "컬렉션" 창이라 탭을 누르면 그 자리에서 내용만 바뀜 · 탭 모양은 상점 탭과 같음(고른 탭만 나무색, 나머지 흐리게) · 잠긴 탭은 자물쇠 + 누르면 "Stage 2-1 에서 열립니다"(카피친구) · "Stage 6-1 에서 열립니다"(보급품) · 카피친구 레벨 업이 가능하면 [컬렉션] 버튼과 [카피친구] 탭에 빨간 점</div></li>
 
-<li data-id="u3-dgn"><label><input type="checkbox"><span class="t">3. 보급품 자리 → [친구] 던전 (아래 버튼 3번째, 6-1 에서 열림)</span></label>
+<li data-id="u3-dgn"><label><input type="checkbox"><span class="t">3. 보급품 자리 → [친구] 던전 (아래 버튼 3번째, 2-1 에서 열림)</span></label>
 <div class="meta">버튼 = 토끼 얼굴 + "친구 2/2"(오늘 무료 입장) · 누르면 입장 창: 단계 Lv.N · 보스 3마리 그림 · 보스 체력 · "스테이지 ○-○ 수준" · 이기면 받는 카드 수 · 그 단계에서 나오는 친구(안 나오는 친구는 어둡게) · 오늘 입장 2/2 · 광고 3/3<br>
 싸우는 중 위에 "남은 보스 2/3" · 보스를 잡으면 0.7초 뒤 다음 보스 + "보스 2/3" 알림</div></li>
 
 <li data-id="u3-friends"><label><input type="checkbox"><span class="t">3-1. 카피친구 15마리 — 모으면 능력치 증가 (최대 10레벨)</span></label>
-<div class="meta">토끼 · 다람쥐 · 햄스터 · 양 · 염소 · 사슴 · 나무늘보 · 코알라 · 웜뱃 · 기니피그 · 너구리 · 고양이 · 강아지 · 젖소 · 당나귀 (장표 순서) — 그림은 카치건 낙서풍으로 새로 그림(<code>tools/friend_icons.py</code>)<br>
+<div class="meta">토끼 · 다람쥐 · 햄스터 · 양 · 염소 · 사슴 · 나무늘보 · 코알라 · 웜뱃 · 기니피그 · 너구리 · 고양이 · 강아지 · 젖소 · 당나귀 (장표 순서) — 그림은 카치건 낙서풍으로 새로 그림(<code>tools/friend_icons.py</code>, 2차: 굵고 진한 선 + 크림 카드 칸)<br>
 친구마다 능력 하나: 공격력 · 공격속도 · 금전 · 보스 피해가 돌아가며, 효과 = 레벨 x 표의 %(지금 레벨당 3~8%) — 보급품·코스튬처럼 곱으로 더해짐<br>
-늦게 나오는 친구가 있게 <b>던전 단계별로 등장</b>: 토끼·다람쥐·햄스터 1 · 양 5 · 염소 10 · 사슴 15 · 나무늘보 20 · 코알라 30 · 웜뱃 40 · 기니피그 50 · 너구리 60 · 고양이 80 · 강아지 100 · 젖소 120 · 당나귀 150 (Friend_List <code>Unlock_Dgn_Lv</code>)</div></li>
+늦게 나오는 친구가 있게 <b>던전 단계별로 등장</b>: 토끼·다람쥐·햄스터 1 · 양 3 · 염소 5 · 사슴 8 · 나무늘보 12 · 코알라 16 · 웜뱃 20 · 기니피그 25 · 너구리 30 · 고양이 37 · 강아지 45 · 젖소 55 · 당나귀 65 (2차) (Friend_List <code>Unlock_Dgn_Lv</code>)</div></li>
 
-<li data-id="u4-match"><label><input type="checkbox"><span class="t">4. 던전 난이도 = 스테이지와 1:2 (던전 1 = 스테이지 2 = 1-2)</span></label>
-<div class="meta">던전 N 단계 보스 한 마리 체력 = 스테이지 (2N 번째) 좀비 체력 x 그 챕터 보스 배율 — 던전 13 = 6-1 수준 (<code>FriendDgn_Stage_Mul</code> 2 · <code>FriendDgn_Hp_Mul</code> 1)<br>
-이기면 카드 3장 + 20단계마다 +1 (<code>FriendDgn_Cards</code> · <code>FriendDgn_Cards_Step</code>) [임시]</div></li>
+<li data-id="u4-match"><label><input type="checkbox"><span class="t">4. 던전 난이도 = 챕터와 1:2 (던전 1 = 2-1 · 던전 13 = 26-1)</span></label>
+<div class="meta">던전 N 단계 보스 한 마리 체력 = 챕터 2N 첫 스테이지 좀비 체력 x 그 챕터 보스 배율 (<code>FriendDgn_Stage_Mul</code> 2 · <code>FriendDgn_Hp_Mul</code> 1)<br>
+이기면 카드 3장 + 5단계마다 +1 (<code>FriendDgn_Cards</code> · <code>FriendDgn_Cards_Step</code> · <code>FriendDgn_Cards_Add</code>) [임시]</div></li>
 
 <li data-id="u5-daily"><label><input type="checkbox"><span class="t">5. 하루 무료 2번 + 광고 3번 (매일 0시 다시)</span></label>
 <div class="meta">무료를 다 쓰면 버튼이 [광고 보고 입장] → 다 쓰면 [내일 다시] (흐림) · 업데이트한 날에도 바로 2번 채워짐</div></li>
@@ -81,8 +91,8 @@ th,td{border:1px solid var(--line);padding:5px 8px;text-align:center} th{backgro
 <h2>3. 숫자 [임시] — 밸런스는 마지막에</h2>
 <div class="tw"><table>
 <tr><th>항목</th><th>지금 값</th><th>뜻</th></tr>
-<tr><td class="l">친구 한 마리 Lv.10 까지 카드</td><td>263장</td><td class="l">15마리 다 = 3,945장</td></tr>
-<tr><td class="l">하루 받는 카드 (다 이길 때)</td><td>약 15~20장</td><td class="l">입장 5번 x 3장(+단계) → 15마리 만렙까지 약 200~260일</td></tr>
+<tr><td class="l">친구 한 마리 Lv.10 까지 카드 (2차)</td><td>787장(토끼) ~ 263장(당나귀)</td><td class="l">15마리 다 = 약 7,250장 (Friend_List <code>Cards_To_Max</code>)</td></tr>
+<tr><td class="l">하루 받는 카드 (다 이길 때)</td><td>15장(던전 1~5) → 60장(던전 50)</td><td class="l">입장 5번 x (3 + 5단계마다 1) — 늦게 나오는 친구는 카드 수가 적게 필요</td></tr>
 <tr><td class="l">만렙 합 효과</td><td colspan="2" class="l">공격력 +230% · 공격속도 +180% · 금전 +230% · 보스 피해 +150% (코스튬 합 수천 % 보다 작게 — "일부 증가")</td></tr>
 </table></div>
 
@@ -97,7 +107,7 @@ th,td{border:1px solid var(--line);padding:5px 8px;text-align:center} th{backgro
   var g=document.getElementById('shots');
   SHOTS.forEach(function(s){ var f=document.createElement('figure'); f.innerHTML='<a href="'+s[0]+'" target="_blank"><img src="'+s[0]+'" loading="lazy"></a><figcaption>'+s[1]+'</figcaption>'; g.appendChild(f); });
   // 저장 형식: {"c":{항목id:true}, "n":{항목id:"의견"}} — python tools/todo_checks.py 1차_업데이트_적용.html 로 읽음
-  var KEY='kachigun-update1-1118', st={c:{},n:{}};
+  var KEY='kachigun-update1-1118b', st={c:{},n:{}};
   try{ var v=JSON.parse(localStorage.getItem(KEY)||'{}'); st.c=v.c||{}; st.n=v.n||{}; }catch(e){}
   var items=document.querySelectorAll('ul.todo > li[data-id]');
   function save(){ try{ localStorage.setItem(KEY,JSON.stringify(st)); }catch(e){} stat(); }

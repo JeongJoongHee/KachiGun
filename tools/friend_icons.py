@@ -10,7 +10,9 @@ from PIL import Image
 sys.path.insert(0, os.path.dirname(__file__))
 from doodle_art import render, P, L, C, E, F, INK, ART, PREV
 
-SW = 3.4            # 100 칸 기준 선 굵기 (아이콘)
+SW = 4.6            # 100 칸 기준 선 굵기 — 11-18 2차 사용자 "마감이 흐릿함 · 선명하게" 3.4 → 4.6 (주인공처럼 진하고 또렷하게)
+DARK = '#1c110a'     # 2차: 선 색을 주인공 선 색으로 (기본 INK #3b281c 보다 진함)
+WOB = 0.5            # 2차: 손그림 흔들림 1.2 → 0.5 (가장자리 또렷하게)
 OUT = os.path.join(ART, 'Friend')
 NAMES = ['토끼', '다람쥐', '햄스터', '양', '염소', '사슴', '나무늘보', '코알라', '웜뱃', '기니피그', '너구리', '고양이', '강아지', '젖소', '당나귀']
 
@@ -26,13 +28,13 @@ def clip(d, inner, k):
     return f'<clipPath id="cl{k}"><path d="{d}"/></clipPath><g clip-path="url(#cl{k})">{inner}</g>'
 
 
-def eyes(y=58, dx=12, r=3.4, cx=50):
+def eyes(y=58, dx=12, r=3.9, cx=50):
     return C(cx - dx, y, r, INK, 0) + C(cx + dx, y, r, INK, 0) + C(cx - dx + 1.1, y - 1.2, 1.0, '#ffffff', 0) + C(cx + dx + 1.1, y - 1.2, 1.0, '#ffffff', 0)
 
 
 def nose_mouth(y=66, nose='#6b4a3a', w=5, cx=50, open_mouth=False):
-    s = P(f'M{cx - w} {y - 2} Q{cx} {y - 4.5} {cx + w} {y - 2} Q{cx + w * .5} {y + 2.6} {cx} {y + 3} Q{cx - w * .5} {y + 2.6} {cx - w} {y - 2} Z', nose, 2.4)
-    s += L(f'M{cx} {y + 3} L{cx} {y + 6} M{cx - 6} {y + 6.5} Q{cx - 3} {y + 9.5} {cx} {y + 6} Q{cx + 3} {y + 9.5} {cx + 6} {y + 6.5}', 2.4)
+    s = P(f'M{cx - w} {y - 2} Q{cx} {y - 4.5} {cx + w} {y - 2} Q{cx + w * .5} {y + 2.6} {cx} {y + 3} Q{cx - w * .5} {y + 2.6} {cx - w} {y - 2} Z', nose, 3.0)
+    s += L(f'M{cx} {y + 3} L{cx} {y + 6} M{cx - 6} {y + 6.5} Q{cx - 3} {y + 9.5} {cx} {y + 6} Q{cx + 3} {y + 9.5} {cx + 6} {y + 6.5}', 3.0)
     return s
 
 
@@ -122,7 +124,7 @@ def animals():
     h = head(50, 62, 30, 24); Cc = '#f2b06a'
     A[12] = (tri_ear(30, 48, 10, 18, -4, Cc, PINK) + tri_ear(70, 48, 10, 18, 4, Cc, PINK) + P(h, Cc, SW)
              + clip(h, '<path d="M44 38 L46 50 L48 38 Z M49 38 L50 52 L51 38 Z M52 38 L54 50 L56 38 Z" fill="#d98f4a"/>' + muzzle(72, 13, 9, '#fbe9d2'), 12)
-             + eyes(60, 11) + nose_mouth(68, '#e8968a', 3.6) + L('M22 66 L36 68 M22 72 L36 71 M78 66 L64 68 M78 72 L64 71', 1.8))
+             + eyes(60, 11) + nose_mouth(68, '#e8968a', 3.6) + L('M22 66 L36 68 M22 72 L36 71 M78 66 L64 68 M78 72 L64 71', 2.6))
     # 13 강아지 — 크림 · 늘어진 갈색 귀 · 혀
     h = head(50, 60, 27, 25); Pc = '#f3dcb0'
     droop = lambda s: P(f'M{50 + s * 20} 40 Q{50 + s * 36} 40 {50 + s * 34} 64 Q{50 + s * 30} 74 {50 + s * 24} 66 Q{50 + s * 22} 52 {50 + s * 18} 46 Z', '#b07a4a', SW)
@@ -147,7 +149,8 @@ def main():
     tiles = []
     S = 256
     for k, svg in animals().items():
-        im = render(f'<g transform="scale({S / 100})">{svg}</g>', S, S, wob=1.2, freq=0.04)
+        svg = svg.replace(INK, DARK)
+        im = render(f'<g transform="scale({S / 100})">{svg}</g>', S, S, wob=WOB, freq=0.04)
         n = 'friend_%02d' % k
         Image.fromarray(im).save(os.path.join(OUT, n + '.png'))
         tiles.append(Image.fromarray(im))

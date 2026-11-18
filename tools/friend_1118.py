@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 """11-18 1차 업데이트 (업데이트/1차 업데이트/261118.pptx) 표 만들기 — 여러 번 돌려도 같은 결과.
+11-18 2차 (1차_업데이트_적용.html 의견): 2-1 오픈 · 던전 N = 챕터 2N · 단계마다 카드 +n · 하위 친구 필요 카드 x Card_Mul · 무료 총알 1개 + 꽉 차면 광고 전 알림
 사용: PYTHONUTF8=1 python tools/friend_1118.py   (그 뒤 python tools/strings_collect.py 로 영어 글자 + csv)
 
  1) Table/Friend.xlsx 새로 만듦
@@ -16,28 +17,33 @@ from openpyxl.styles import Font, PatternFill
 
 T = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'Kachi_Gun', 'Table')
 
-# 이름 · 능력 · 레벨당 % · 나오기 시작하는 던전 단계
+# 이름 · 능력 · 레벨당 % · 나오기 시작하는 던전 단계 · 필요 카드 배율(Card_Mul)
+#  11-18 2차(사용자 의견): 던전 N = 챕터 2N 이라 던전은 75단계쯤이 150챕터 끝 → 등장 단계를 75 안으로 다시 나눔
+#  "하위 카피친구일수록 필요 개수 상승" → 일찍 나오는(자주 나오는) 친구일수록 레벨마다 필요한 카드 x Card_Mul
 FRIENDS = [
-    ('토끼', 'Atk', 4, 1), ('다람쥐', 'Spd', 3, 1), ('햄스터', 'Gold', 4, 1),
-    ('양', 'Boss', 4, 5), ('염소', 'Atk', 5, 10), ('사슴', 'Spd', 4, 15),
-    ('나무늘보', 'Gold', 5, 20), ('코알라', 'Boss', 5, 30), ('웜뱃', 'Atk', 6, 40),
-    ('기니피그', 'Spd', 5, 50), ('너구리', 'Gold', 6, 60), ('고양이', 'Boss', 6, 80),
-    ('강아지', 'Atk', 8, 100), ('젖소', 'Gold', 8, 120), ('당나귀', 'Spd', 6, 150),
+    ('토끼', 'Atk', 4, 1, 3.0), ('다람쥐', 'Spd', 3, 1, 3.0), ('햄스터', 'Gold', 4, 1, 3.0),
+    ('양', 'Boss', 4, 3, 2.6), ('염소', 'Atk', 5, 5, 2.4), ('사슴', 'Spd', 4, 8, 2.2),
+    ('나무늘보', 'Gold', 5, 12, 2.0), ('코알라', 'Boss', 5, 16, 1.8), ('웜뱃', 'Atk', 6, 20, 1.6),
+    ('기니피그', 'Spd', 5, 25, 1.5), ('너구리', 'Gold', 6, 30, 1.4), ('고양이', 'Boss', 6, 37, 1.3),
+    ('강아지', 'Atk', 8, 45, 1.2), ('젖소', 'Gold', 8, 55, 1.1), ('당나귀', 'Spd', 6, 65, 1.0),
 ]
-# 그 레벨이 되는 데 드는 카드 (Lv1 = 처음 얻을 때 1장) — 사용자 예시 "토끼 5/10 · 12/100" 처럼 뒤로 갈수록 많이
+# 그 레벨이 되는 데 드는 기본 카드 (Lv1 = 처음 얻을 때 1장, 배율 안 붙음) — 친구마다 x Card_Mul (반올림)
 LEVELS = [1, 2, 4, 6, 10, 15, 25, 40, 60, 100]
 
+# (키, 값, 단위, 분류, 표, 설명) — 이 도구가 만든 줄이라 돌릴 때마다 값·설명을 이 내용으로 맞춤
 CONFIG = [
     ('FriendDgn_Tickets', 2, '회/일', '친구던전', 'Friend.xlsx', '11-18 친구 던전 하루 무료 입장 수 (매일 0시 다시 채움)'),
     ('FriendDgn_Ad_Daily', 3, '회/일', '친구던전', 'Friend.xlsx', '11-18 무료 입장을 다 쓴 뒤 광고 보고 더 들어갈 수 있는 수 (하루)'),
-    ('FriendDgn_Stage_Mul', 2, '배', '친구던전', 'Friend.xlsx', '11-18 던전 단계 ↔ 스테이지 1:2 — 던전 N 단계 = 스테이지 N x 이 값 번째(던전 1 = 1-2) 의 좀비 체력'),
+    ('FriendDgn_Stage_Mul', 2, '배', '친구던전', 'Friend.xlsx', '11-18 던전 단계 ↔ 챕터 1:2 (사용자 "스테이지 = 앞자리") — 던전 N = 챕터 N x 이 값 의 첫 스테이지(던전 1 = 2-1 · 던전 13 = 26-1) 체력'),
     ('FriendDgn_Bosses', 3, '마리', '친구던전', 'Friend.xlsx', '11-18 한 번에 상대하는 보스 수 (한 마리씩 차례로 나옴, 모두 잡으면 이김)'),
     ('FriendDgn_Time', 60, '초', '친구던전', 'Friend.xlsx', '11-18 제한 시간 — 넘기면 실패 (티켓은 돌아오지 않음)'),
-    ('FriendDgn_Hp_Mul', 1, '배', '친구던전', 'Friend.xlsx', '11-18 보스 한 마리 체력 = 그 스테이지 챕터 보스와 같은 배율 x 이 값 [임시]'),
-    ('FriendDgn_Cards', 3, '장', '친구던전', 'Friend.xlsx', '11-18 이기면 받는 카피친구 카드 기본 수 [임시]'),
-    ('FriendDgn_Cards_Step', 20, '단계', '친구던전', 'Friend.xlsx', '11-18 던전 단계가 이만큼 오를 때마다 카드 +1 (0 = 늘지 않음) [임시]'),
+    ('FriendDgn_Hp_Mul', 1, '배', '친구던전', 'Friend.xlsx', '11-18 보스 한 마리 체력 = 그 스테이지 좀비 체력 x 그 챕터 보스 배율 x 이 값 [임시]'),
+    ('FriendDgn_Cards', 3, '장', '친구던전', 'Friend.xlsx', '11-18 이기면 받는 카피친구 카드 기본 수 (던전 1) [임시]'),
+    ('FriendDgn_Cards_Step', 5, '단계', '친구던전', 'Friend.xlsx', '11-18 2차 "던전 레벨이 오를수록 + n장씩": 던전 단계가 이만큼 오를 때마다 카드 + FriendDgn_Cards_Add (0 = 늘지 않음) [임시]'),
+    ('FriendDgn_Cards_Add', 1, '장', '친구던전', 'Friend.xlsx', '11-18 2차 위 단계마다 더 주는 카드 n장 — 던전 1~5 = 3장 · 6~10 = 4장 · … · 50 = 12장 [임시]'),
     ('AdBullets_Daily', 3, '회/일', '광고', 'Shop.xlsx', '11-18 상점 무료 탭 [무료 총알] 광고 하루 횟수'),
-    ('AdBullets_Amount', 5, '개', '광고', 'Shop.xlsx', '11-18 [무료 총알] 광고 1번에 받는 D 등급 총알 (뽑기 5번과 같음) — 인벤토리가 차 있으면 못 받은 만큼 사라지고 횟수는 줄어듦(기획 그대로)'),
+    ('AdBullets_Amount', 1, '개', '광고', 'Shop.xlsx', '11-18 2차 "광고 1번에 총알 1개": [무료 총알] 광고 1번에 받는 D 등급 총알'),
+    ('AdBullets_FullBlock', 1, '0/1', '광고', 'Shop.xlsx', '11-18 2차: 1 = 인벤토리가 꽉 차 있으면 광고 전에 "보상을 받을 수 없습니다" 알림만 (광고 안 나옴 · 횟수 그대로) · 0 = 알림을 띄우고 광고 진행 · 횟수 줄어듦(1차 기획)'),
 ]
 
 FILL = PatternFill('solid', fgColor='FFE9C46A')
@@ -51,18 +57,18 @@ def head(ws, cols):
 def friend_xlsx():
     wb = openpyxl.Workbook()
     ws = wb.active; ws.title = 'Friend_List'
-    head(ws, ['Friend_Id', 'Name', 'Stat', 'Bonus_Per_Lv', 'Max_Bonus (%)', 'Unlock_Dgn_Lv', 'Unlock_Stage', 'Weight', 'Icon', 'Note'])
-    for i, (nm, st, b, u) in enumerate(FRIENDS, 1):
-        idx = u * 2 - 1
-        ws.append([i, nm, st, b, b * len(LEVELS), u, f'{idx // 5 + 1}-{idx % 5 + 1}', 1, 'friend_%02d' % i,
-                   'Stat: Atk 공격력 · Spd 공격속도 · Gold 금전 · Boss 보스 피해 / Unlock_Stage = 그 던전 단계와 맞먹는 스테이지(참고)'])
-    for c, w in zip('ABCDEFGHIJ', (10, 12, 8, 13, 13, 14, 13, 8, 12, 60)): ws.column_dimensions[c].width = w
+    head(ws, ['Friend_Id', 'Name', 'Stat', 'Bonus_Per_Lv', 'Max_Bonus (%)', 'Unlock_Dgn_Lv', 'Unlock_Stage', 'Card_Mul', 'Cards_To_Max', 'Weight', 'Icon', 'Note'])
+    for i, (nm, st, b, u, m) in enumerate(FRIENDS, 1):
+        tot = 1 + sum(round(n * m) for n in LEVELS[1:])
+        ws.append([i, nm, st, b, b * len(LEVELS), u, f'{u * 2}-1', m, tot, 1, 'friend_%02d' % i,
+                   'Stat: Atk 공격력 · Spd 공격속도 · Gold 금전 · Boss 보스 피해 / Unlock_Stage = 그 던전 단계와 맞먹는 스테이지(참고) / Card_Mul = 레벨마다 필요한 카드 x 이 값 (일찍 나오는 친구일수록 큼)'])
+    for c, w in zip('ABCDEFGHIJKL', (10, 12, 8, 13, 13, 14, 13, 10, 13, 8, 12, 60)): ws.column_dimensions[c].width = w
     wl = wb.create_sheet('Friend_Level')
     head(wl, ['Lv', 'Cards_Need', 'Cum_Cards', 'Note'])
     cum = 0
     for lv, n in enumerate(LEVELS, 1):
         cum += n
-        wl.append([lv, n, cum, '처음 얻을 때 1장' if lv == 1 else f'Lv.{lv - 1} → Lv.{lv} 에 카드 {n}장'])
+        wl.append([lv, n, cum, '처음 얻을 때 1장 (배율 없음)' if lv == 1 else f'Lv.{lv - 1} → Lv.{lv} 에 기본 카드 {n}장 x 친구 Card_Mul'])
     wb.save(os.path.join(T, 'Friend.xlsx'))
     print('Friend.xlsx', len(FRIENDS), '마리 ·', len(LEVELS), '레벨 · 한 마리 끝까지 카드', cum)
 
@@ -70,9 +76,12 @@ def friend_xlsx():
 def config():
     p = os.path.join(T, 'Config.xlsx')
     wb = openpyxl.load_workbook(p); ws = wb['Global_Config']
-    have = {ws.cell(r, 1).value for r in range(2, ws.max_row + 1)}
+    have = {ws.cell(r, 1).value: r for r in range(2, ws.max_row + 1)}
     for row in CONFIG:
-        if row[0] not in have: ws.append(list(row)); print('Config +', row[0])
+        if row[0] not in have: ws.append(list(row)); print('Config +', row[0]); continue
+        r = have[row[0]]
+        for c, v in enumerate(row, 1):
+            if ws.cell(r, c).value != v: ws.cell(r, c).value = v; print('Config 고침', row[0], c, v)
     wb.save(p)
 
 
@@ -87,9 +96,11 @@ def unlock():
     if 'supply' in rows:
         ws.cell(rows['supply'], col['UI_Location']).value = '컬렉션 안 [보급품] 탭'
         ws.cell(rows['supply'], col['Unlock_Banner_Message']).value = '-'      # 같은 때 열리는 친구 던전 알림이 나옴
-    if 'friend' not in rows:
-        ws.append(['friend', '친구 던전 (카피친구)', '하단 탭 3 [친구] (보급품 자리)', 'Stage', 25, '6-1', 25, 'Stage 6-1 에서 열립니다', '친구 던전이 열렸습니다!'])
-        print('Unlock + friend')
+    FR = ['friend', '친구 던전 (카피친구)', '하단 탭 3 [친구] (보급품 자리) · 컬렉션 [카피친구] 탭', 'Stage', 5, '2-1', 5, 'Stage 2-1 에서 열립니다', '친구 던전이 열렸습니다!']   # 11-18 2차 "카피친구 2-1에서 오픈"
+    if 'friend' not in rows: ws.append(FR); print('Unlock + friend')
+    else:
+        for c, v in enumerate(FR, 1): ws.cell(rows['friend'], c).value = v
+    if 'supply' in rows: ws.cell(rows['supply'], col['Unlock_Banner_Message']).value = '보급품이 열렸습니다!'   # 2차: 이제 친구와 따로 열림
     wb.save(p)
 
 
@@ -97,8 +108,14 @@ def shop():
     p = os.path.join(T, 'Shop.xlsx')
     wb = openpyxl.load_workbook(p); ws = wb['Shop_Products']
     ids = {ws.cell(r, 2).value for r in range(2, ws.max_row + 1)}
+    SHOP_DESC = '광고 1편 · D 등급 총알 1개 · 하루 3번'   # 11-18 2차 "광고 1번에 총알 1개"
+    for r in range(2, ws.max_row + 1):
+        if ws.cell(r, 2).value == 'free_bullets_ad':
+            ws.cell(r, 5).value = SHOP_DESC
+            ws.cell(r, 9).value = 'Bullet D x1 (Global_Config AdBullets_Daily·AdBullets_Amount)'
+            ws.cell(r, 10).value = '11-18 1차 업데이트 · 2차: 1개 · 인벤토리가 꽉 차 있으면 광고 전에 알림 (AdBullets_FullBlock)'
     if 'free_bullets_ad' not in ids:
-        ws.append([6, 'free_bullets_ad', 'Ad_Bullets', '무료 총알', '광고 1편 · D 등급 총알 5개 · 하루 3번', 'Ad', '광고', 0,
+        ws.append([6, 'free_bullets_ad', 'Ad_Bullets', '무료 총알', SHOP_DESC, 'Ad', '광고', 0,
                    'Bullet D x5 (Global_Config AdBullets_Daily·AdBullets_Amount)', '11-18 1차 업데이트 (인벤토리가 차 있으면 못 받은 만큼 사라지고 횟수는 줄어듦)', 3, '무료'])
         print('Shop + free_bullets_ad')
     wb.save(p)

@@ -500,7 +500,7 @@ namespace KachiGun
                     var r = GameManager.I.Friend(order[i]);
                     if (r == null) continue;
                     bool isNew = Stats.FriendLv(r) <= 0;
-                    var im = UIKit.Img(p.cardRow, FriendPopup.Icon(r), new Vector2(120, 120), "Card" + r.id);
+                    var im = FriendPopup.Card(p.cardRow, r, 120, "Card" + r.id);   // 11-18 2차 카드 칸 위 얼굴
                     im.rectTransform.Place(0.5f, 0.5f, new Vector2((i - (order.Count - 1) * 0.5f) * step, 14), new Vector2(120, 120), new Vector2(0.5f, 0.5f));
                     var n = UIKit.Label(im.transform, $"x{count[order[i]]}", 32, Color.white, TextAnchor.MiddleCenter, 3);
                     n.rectTransform.Place(0.5f, 0, new Vector2(0, -6), new Vector2(step, 40), new Vector2(0.5f, 0.5f));

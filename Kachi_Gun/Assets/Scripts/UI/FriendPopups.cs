@@ -13,7 +13,8 @@ namespace KachiGun
     {
         public const float Off = 100f;   // 탭 줄 높이만큼 창 내용이 아래로
         public const string Title = "컬렉션";
-        static readonly (string name, string unlock)[] Tabs = { ("코스튬", "skin"), ("보급품", "supply"), ("카피친구", "friend") };
+        public const int SkinTab = 0, FriendTab = 1, SupplyTab = 2;
+        static readonly (string name, string unlock)[] Tabs = { ("코스튬", "skin"), ("카피친구", "friend"), ("보급품", "supply") };   // 11-18 2차 순서 코스튬 → 카피친구 → 보급품
 
         readonly List<(Button b, Image lk, GameObject dot)> btns = new();
         readonly int cur;
@@ -54,7 +55,7 @@ namespace KachiGun
             {
                 bool open = gm.Unlocked(Tabs[i].unlock);
                 btns[i].lk.gameObject.SetActive(!open);
-                btns[i].dot.SetActive(open && i == 2 && gm.AnyFriendReady);
+                btns[i].dot.SetActive(open && i == FriendTab && gm.AnyFriendReady);
             }
         }
 
@@ -65,11 +66,11 @@ namespace KachiGun
             Open(i, self);
         }
 
-        /// <summary>그 탭의 창을 엶 (지금 창은 닫음) — 0 코스튬 · 1 보급품 · 2 카피친구</summary>
+        /// <summary>그 탭의 창을 엶 (지금 창은 닫음) — 0 코스튬 · 1 카피친구 · 2 보급품</summary>
         public static void Open(int i, Popup from = null)
         {
             if (from) from.Close();
-            Popup p = i switch { 1 => HUD.I.Open<SupplyPopup>(), 2 => HUD.I.Open<FriendPopup>(), _ => HUD.I.Open<SkinPopup>() };
+            Popup p = i switch { SupplyTab => HUD.I.Open<SupplyPopup>(), FriendTab => HUD.I.Open<FriendPopup>(), _ => HUD.I.Open<SkinPopup>() };
             p.panel.localScale = from ? Vector3.one : p.panel.localScale;   // 탭을 바꿀 땐 창이 다시 커지는 효과 없이
         }
     }
@@ -88,6 +89,26 @@ namespace KachiGun
             get { var l = new List<(int, string, string, bool)>(); foreach (var c in cells) l.Add((c.row.id, c.name.text, c.cards.text, GM.FriendReady(c.row))); return l; }
         }
 
+        /// <summary>11-18 2차 사용자 "카드 마감을 선명하게 · 컬렉션도 깔끔하게": 크림 카드 칸(UI 팩 slot_light — 총알 칸과 같은 틀) 위에 친구 얼굴.
+        /// 돌려주는 값 = 카드 칸 (얼굴 = 그 안 "Icon")</summary>
+        public static Image Card(Transform parent, FriendRow r, float size, string name)
+        {
+            var tile = UIKit.KitImg(parent, "slot_light", new Vector2(size, size), name);
+            tile.raycastTarget = false;
+            var ic = UIKit.Img(tile.transform, Icon(r), new Vector2(size * 0.88f, size * 0.88f), "Icon");
+            ic.rectTransform.Place(0.5f, 0.5f, new Vector2(0, 0), new Vector2(size * 0.88f, size * 0.88f), new Vector2(0.5f, 0.5f));
+            ic.raycastTarget = false;
+            return tile;
+        }
+
+        /// <summary>카드 칸 + 얼굴을 함께 어둡게(못 가진 · 안 나오는 친구) / 밝게</summary>
+        public static void CardOn(Image tile, bool on)
+        {
+            tile.color = on ? Color.white : new Color(0.7f, 0.66f, 0.62f);
+            var ic = tile.transform.Find("Icon")?.GetComponent<Image>();
+            if (ic) ic.color = on ? Color.white : new Color(0.25f, 0.22f, 0.2f, 0.75f);
+        }
+
         public static Sprite Icon(FriendRow r) =>
             string.IsNullOrEmpty(r.icon) || Resources.Load<Texture2D>("Art/Friend/" + r.icon) == null ? Art.Get("Gen/capy_head") : Art.Get("Friend/" + r.icon);
 
@@ -96,7 +117,7 @@ namespace KachiGun
 
         protected override void Build()
         {
-            tabs = CollectionTabs.Build(content, 2, this);
+            tabs = CollectionTabs.Build(content, CollectionTabs.FriendTab, this);
             var tb = UIKit.Row(content, "Total", true);
             tb.rectTransform.Place(0.5f, 1, new Vector2(0, -10 - CollectionTabs.Off), new Vector2(890, 110), new Vector2(0.5f, 1));
             total = UIKit.Label(tb.transform, "", 30, Color.white, TextAnchor.MiddleCenter, 2);
@@ -114,13 +135,12 @@ namespace KachiGun
                 c.bg = UIKit.Row(inner, "Friend" + r.id);
                 c.rt = c.bg.rectTransform;
                 c.rt.Place(0.5f, 1, new Vector2(-(cols - 1) * (cw + gap) / 2 + x * (cw + gap), -10 - y * (ch + gap)), new Vector2(cw, ch), new Vector2(0.5f, 1));
-                c.icon = UIKit.Img(c.bg.transform, Icon(r), new Vector2(150, 150), "Icon");
-                c.icon.rectTransform.Place(0.5f, 1, new Vector2(0, -8), new Vector2(150, 150), new Vector2(0.5f, 1));
-                c.icon.raycastTarget = false;
+                c.icon = Card(c.bg.transform, r, 158, "Card");
+                c.icon.rectTransform.Place(0.5f, 1, new Vector2(0, -12), new Vector2(158, 158), new Vector2(0.5f, 1));
                 c.name = UIKit.Fit(UIKit.Label(c.bg.transform, "", 30, Color.white, TextAnchor.MiddleCenter, 3), 18);
-                c.name.rectTransform.Place(0.5f, 1, new Vector2(0, -178), new Vector2(cw - 16, 40), new Vector2(0.5f, 0.5f));
+                c.name.rectTransform.Place(0.5f, 1, new Vector2(0, -192), new Vector2(cw - 16, 40), new Vector2(0.5f, 0.5f));
                 c.info = UIKit.Fit(UIKit.Label(c.bg.transform, "", 25, UIKit.Cream, TextAnchor.MiddleCenter, 2), 16);
-                c.info.rectTransform.Place(0.5f, 1, new Vector2(0, -218), new Vector2(cw - 16, 34), new Vector2(0.5f, 0.5f));
+                c.info.rectTransform.Place(0.5f, 1, new Vector2(0, -229), new Vector2(cw - 16, 34), new Vector2(0.5f, 0.5f));
                 // 카드 막대 (모은 카드 / 다음 레벨에 드는 카드)
                 c.bar = UIKit.Plain(c.bg.transform, new Color(0.25f, 0.16f, 0.1f, 0.85f), "Bar");
                 c.bar.rectTransform.Place(0.5f, 0, new Vector2(0, 26), new Vector2(cw - 40, 46), new Vector2(0.5f, 0));
@@ -154,7 +174,7 @@ namespace KachiGun
                 return;
             }
             if (lv >= Tables.FriendMaxLv) { H.Toast(L.F("{0} 최대 레벨 · {1} +{2}%", L.T(r.name), StatName(r.stat), Stats.FriendBonus(r).ToString("0.#"))); return; }
-            H.Toast(L.F("다음 레벨까지 카드 {0}/{1} · {2} +{3}% → +{4}%", Stats.FriendCards(r), Tables.FriendNeed(lv + 1), StatName(r.stat),
+            H.Toast(L.F("다음 레벨까지 카드 {0}/{1} · {2} +{3}% → +{4}%", Stats.FriendCards(r), Tables.FriendNeed(r, lv + 1), StatName(r.stat),
                 Stats.FriendBonus(r).ToString("0.#"), Stats.FriendBonus(r, lv + 1).ToString("0.#")));
         }
 
@@ -175,7 +195,7 @@ namespace KachiGun
                 var r = c.row;
                 int lv = Stats.FriendLv(r), cards = Stats.FriendCards(r);
                 bool own = lv > 0, ready = GM.FriendReady(r);
-                c.icon.color = own ? Color.white : new Color(0.3f, 0.3f, 0.3f, 0.85f);
+                CardOn(c.icon, own);
                 c.bg.color = ready ? new Color(1f, 0.92f, 0.6f) : own ? Color.white : new Color(0.72f, 0.68f, 0.64f);
                 c.name.text = own ? $"{L.T(r.name)} <color=#ffd34d>Lv.{lv}</color>" : L.T(r.name);
                 c.info.text = own ? $"{StatName(r.stat)} +{Stats.FriendBonus(r):0.#}%" : $"{StatName(r.stat)} +{r.bonus:0.#}%/Lv";
@@ -184,7 +204,7 @@ namespace KachiGun
                 else if (lv >= max) { c.cards.text = "MAX"; k = 1; }
                 else
                 {
-                    int need = Tables.FriendNeed(lv + 1);
+                    int need = Tables.FriendNeed(r, lv + 1);
                     c.cards.text = ready ? L.T("레벨 업!") + $" {cards}/{need}" : $"{cards}/{need}";
                     k = Mathf.Clamp01(cards / (float)need);
                 }
@@ -251,8 +271,7 @@ namespace KachiGun
             pb.rectTransform.Place(0.5f, 1, new Vector2(0, -575), new Vector2(800, 210), new Vector2(0.5f, 1));
             for (int i = 0; i < Tables.Friends.Count; i++)
             {
-                var im = UIKit.Img(pb.transform, FriendPopup.Icon(Tables.Friends[i]), new Vector2(88, 88), "Pool" + i);
-                im.raycastTarget = false;
+                var im = FriendPopup.Card(pb.transform, Tables.Friends[i], 88, "Pool" + i);
                 im.rectTransform.Place(0.5f, 0.5f, new Vector2((i % 8 - 3.5f) * 94, i < 8 ? 48 : -48), new Vector2(88, 88), new Vector2(0.5f, 0.5f));
                 poolImgs.Add(im);
             }
@@ -282,7 +301,7 @@ namespace KachiGun
             for (int i = 0; i < poolImgs.Count; i++)
             {
                 bool can = Tables.Friends[i].unlockLv <= lv;
-                poolImgs[i].color = can ? Color.white : new Color(0.25f, 0.25f, 0.25f, 0.6f);
+                FriendPopup.CardOn(poolImgs[i], can);
             }
             int t = GM.FriendTickets, ad = GM.FriendAdLeft;
             tickets.text = L.T("오늘 입장") + $" {t}/{Tables.Ci("FriendDgn_Tickets")} · " + L.T("광고") + $" {ad}/{Tables.Ci("FriendDgn_Ad_Daily")}" +

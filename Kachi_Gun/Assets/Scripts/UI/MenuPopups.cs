@@ -346,7 +346,7 @@ namespace KachiGun
 
         protected override void Build()
         {
-            tabs = CollectionTabs.Build(content, 1, this);
+            tabs = CollectionTabs.Build(content, CollectionTabs.SupplyTab, this);
             var tb = UIKit.Row(content, "Total", true);
             tb.rectTransform.Place(0.5f, 1, new Vector2(0, -10 - CollectionTabs.Off), new Vector2(890, 110), new Vector2(0.5f, 1));
             total = UIKit.Label(tb.transform, "", 30, Color.white, TextAnchor.MiddleCenter, 2);

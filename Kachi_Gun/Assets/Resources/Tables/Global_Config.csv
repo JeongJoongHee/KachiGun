@@ -116,11 +116,13 @@ Bgm_Boss_Mul,0.63,배,소리,-,11-15 보스·던전 곡만 위 음량에 이 배
 Sfx_Volume,0.43,0~1,소리,-,11-15 효과음 음량 0.48 → 0.43 (-1dB)
 FriendDgn_Tickets,2,회/일,친구던전,Friend.xlsx,11-18 친구 던전 하루 무료 입장 수 (매일 0시 다시 채움)
 FriendDgn_Ad_Daily,3,회/일,친구던전,Friend.xlsx,11-18 무료 입장을 다 쓴 뒤 광고 보고 더 들어갈 수 있는 수 (하루)
-FriendDgn_Stage_Mul,2,배,친구던전,Friend.xlsx,11-18 던전 단계 ↔ 스테이지 1:2 — 던전 N 단계 = 스테이지 N x 이 값 번째(던전 1 = 1-2) 의 좀비 체력
+FriendDgn_Stage_Mul,2,배,친구던전,Friend.xlsx,"11-18 던전 단계 ↔ 챕터 1:2 (사용자 ""스테이지 = 앞자리"") — 던전 N = 챕터 N x 이 값 의 첫 스테이지(던전 1 = 2-1 · 던전 13 = 26-1) 체력"
 FriendDgn_Bosses,3,마리,친구던전,Friend.xlsx,"11-18 한 번에 상대하는 보스 수 (한 마리씩 차례로 나옴, 모두 잡으면 이김)"
 FriendDgn_Time,60,초,친구던전,Friend.xlsx,11-18 제한 시간 — 넘기면 실패 (티켓은 돌아오지 않음)
-FriendDgn_Hp_Mul,1,배,친구던전,Friend.xlsx,11-18 보스 한 마리 체력 = 그 스테이지 챕터 보스와 같은 배율 x 이 값 [임시]
-FriendDgn_Cards,3,장,친구던전,Friend.xlsx,11-18 이기면 받는 카피친구 카드 기본 수 [임시]
-FriendDgn_Cards_Step,20,단계,친구던전,Friend.xlsx,11-18 던전 단계가 이만큼 오를 때마다 카드 +1 (0 = 늘지 않음) [임시]
+FriendDgn_Hp_Mul,1,배,친구던전,Friend.xlsx,11-18 보스 한 마리 체력 = 그 스테이지 좀비 체력 x 그 챕터 보스 배율 x 이 값 [임시]
+FriendDgn_Cards,3,장,친구던전,Friend.xlsx,11-18 이기면 받는 카피친구 카드 기본 수 (던전 1) [임시]
+FriendDgn_Cards_Step,5,단계,친구던전,Friend.xlsx,"11-18 2차 ""던전 레벨이 오를수록 + n장씩"": 던전 단계가 이만큼 오를 때마다 카드 + FriendDgn_Cards_Add (0 = 늘지 않음) [임시]"
 AdBullets_Daily,3,회/일,광고,Shop.xlsx,11-18 상점 무료 탭 [무료 총알] 광고 하루 횟수
-AdBullets_Amount,5,개,광고,Shop.xlsx,11-18 [무료 총알] 광고 1번에 받는 D 등급 총알 (뽑기 5번과 같음) — 인벤토리가 차 있으면 못 받은 만큼 사라지고 횟수는 줄어듦(기획 그대로)
+AdBullets_Amount,1,개,광고,Shop.xlsx,"11-18 2차 ""광고 1번에 총알 1개"": [무료 총알] 광고 1번에 받는 D 등급 총알"
+FriendDgn_Cards_Add,1,장,친구던전,Friend.xlsx,11-18 2차 위 단계마다 더 주는 카드 n장 — 던전 1~5 = 3장 · 6~10 = 4장 · … · 50 = 12장 [임시]
+AdBullets_FullBlock,1,0/1,광고,Shop.xlsx,"11-18 2차: 1 = 인벤토리가 꽉 차 있으면 광고 전에 ""보상을 받을 수 없습니다"" 알림만 (광고 안 나옴 · 횟수 그대로) · 0 = 알림을 띄우고 광고 진행 · 횟수 줄어듦(1차 기획)"

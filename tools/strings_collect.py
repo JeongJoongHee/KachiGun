@@ -245,6 +245,8 @@ EN.update({
     '친구 던전이 열렸습니다!': 'Friend Dungeon unlocked!', '컬렉션이 열렸습니다!': 'Collection unlocked!',
     '무료 총알': 'Free Bullets', '광고 1편 · D 등급 총알 5개 · 하루 3번': '1 ad · 5 D-grade bullets · 3 per day', '금전': 'Gold',
     '토끼': 'Rabbit', '다람쥐': 'Squirrel', '햄스터': 'Hamster', '양': 'Sheep', '염소': 'Goat', '사슴': 'Deer', '나무늘보': 'Sloth', '코알라': 'Koala',
+    '인벤토리가 꽉 차있으면 보상을 받을 수 없습니다.': "You can't receive the reward while your inventory is full.", '광고 1편 · D 등급 총알 1개 · 하루 3번': '1 ad · 1 D-grade bullet · 3 per day',
+    'Stage 2-1 에서 열립니다': 'Unlocks at Stage 2-1', '보급품이 열렸습니다!': 'Supplies unlocked!',
     '웜뱃': 'Wombat', '기니피그': 'Guinea Pig', '너구리': 'Raccoon', '고양이': 'Cat', '강아지': 'Puppy', '젖소': 'Cow', '당나귀': 'Donkey',
 })
 

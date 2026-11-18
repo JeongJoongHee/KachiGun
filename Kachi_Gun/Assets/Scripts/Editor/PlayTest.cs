@@ -686,41 +686,54 @@ namespace KachiGun.EditorTools
 
             // 10-2b) 11-18 1차 업데이트 (업데이트/1차 업데이트/261118.pptx): 컬렉션 탭 · 친구 던전 · 카피친구 · 무료 총알
             {
-                // 컬렉션 = 코스튬 · 보급품 · 카피친구 탭 (탭마다 여는 조건은 예전 그대로)
-                Check(Tables.Friends.Count == 15 && Tables.FriendMaxLv == 10 && Tables.Unlock("friend") != null && Tables.Unlock("friend").stageIdx == Tables.Unlock("supply").stageIdx,
-                      $"표: 카피친구 {Tables.Friends.Count}마리 · 최대 Lv.{Tables.FriendMaxLv} · 친구 던전 열림 = 보급품 자리와 같은 6-1");
+                // 컬렉션 = 코스튬 · 카피친구 · 보급품 탭 (11-18 2차 순서) · 카피친구·친구 던전 = 2-1 에서 열림
+                Check(Tables.Friends.Count == 15 && Tables.FriendMaxLv == 10 && Tables.Unlock("friend") != null && Tables.Unlock("friend").stageIdx == 5,
+                      $"표: 카피친구 {Tables.Friends.Count}마리 · 최대 Lv.{Tables.FriendMaxLv} · 친구 던전·카피친구 열림 = 2-1 (11-18 2차)");
                 bool icons = true; foreach (var f in Tables.Friends) icons &= Resources.Load<Texture2D>("Art/Friend/" + f.icon) != null;
                 Check(icons, "카피친구 그림 15장 (표 Icon 칸)");
                 GameObject.Find("Nav_collection")?.GetComponent<Button>().onClick.Invoke(); yield return Wait(0.35f);
                 var skp = HUD.I.Get<SkinPopup>();
                 Check(skp.gameObject.activeSelf && skp.title.text == L.T("컬렉션") && GameObject.Find("CollTab0") && GameObject.Find("CollTab1") && GameObject.Find("CollTab2"),
-                      "아래 [컬렉션] → 코스튬 탭 + 탭 3개 (코스튬 · 보급품 · 카피친구)");
+                      "아래 [컬렉션] → 코스튬 탭 + 탭 3개 (코스튬 · 카피친구 · 보급품)");
+                string TabText(int k) { var g = GameObject.Find("CollTab" + k); var tx = g ? UIKit.LabelOf(g.GetComponent<Button>()) : null; return tx ? tx.text : ""; }
+                Check(TabText(0) == "코스튬" && TabText(1) == "카피친구" && TabText(2) == "보급품", $"11-18 2차 탭 순서 {TabText(0)} → {TabText(1)} → {TabText(2)}");
                 Capture("16c_coll_costume");
-                GameObject.Find("CollTab1").GetComponent<Button>().onClick.Invoke(); yield return Wait(0.35f);
+                GameObject.Find("CollTab2").GetComponent<Button>().onClick.Invoke(); yield return Wait(0.35f);
                 Check(HUD.I.Get<SupplyPopup>().gameObject.activeSelf && !skp.gameObject.activeSelf && HUD.I.Get<SupplyPopup>().title.text == L.T("컬렉션"), "[보급품] 탭 → 보급품 (같은 컬렉션 창)");
                 Capture("16d_coll_supply");
-                GameObject.Find("CollTab2").GetComponent<Button>().onClick.Invoke(); yield return Wait(0.35f);
+                GameObject.Find("CollTab1").GetComponent<Button>().onClick.Invoke(); yield return Wait(0.35f);
                 var fpp = HUD.I.Get<FriendPopup>();
                 Check(fpp.gameObject.activeSelf && !HUD.I.Get<SupplyPopup>().gameObject.activeSelf && fpp.Shown.Count == 15, $"[카피친구] 탭 → 15칸 ({fpp.Shown.Count})");
                 CloseAll();
                 int be0 = S.bestEver; S.bestEver = 3; GM.Notify();
                 CollectionTabs.Open(0); yield return Wait(0.3f);
-                GameObject.Find("CollTab1").GetComponent<Button>().onClick.Invoke(); yield return Wait(0.2f);
+                GameObject.Find("CollTab2").GetComponent<Button>().onClick.Invoke(); yield return Wait(0.2f);
                 string lt = HUD.I.ToastText;
-                Check(skp.gameObject.activeSelf && !HUD.I.Get<SupplyPopup>().gameObject.activeSelf && lt != null && lt.Contains("6-1") && GameObject.Find("CollTab1").transform.Find("Lock").gameObject.activeSelf,
+                Check(skp.gameObject.activeSelf && !HUD.I.Get<SupplyPopup>().gameObject.activeSelf && lt != null && lt.Contains("6-1") && GameObject.Find("CollTab2").transform.Find("Lock").gameObject.activeSelf,
                       $"6-1 전엔 보급품 탭 잠김 (자물쇠 · \"{lt}\")");
+                GameObject.Find("CollTab1").GetComponent<Button>().onClick.Invoke(); yield return Wait(0.2f);
+                string lt1 = HUD.I.ToastText;
+                Check(skp.gameObject.activeSelf && lt1 != null && lt1.Contains("2-1") && GameObject.Find("CollTab1").transform.Find("Lock").gameObject.activeSelf, $"2-1 전엔 카피친구 탭 잠김 (\"{lt1}\")");
                 Capture("16f_coll_locked");
                 CloseAll();
-                Check(!GM.FriendOpen && GameObject.Find("Nav_friend").transform.Find("Lock").gameObject.activeSelf, "6-1 전엔 친구 던전 잠김");
+                Check(!GM.FriendOpen && GameObject.Find("Nav_friend").transform.Find("Lock").gameObject.activeSelf, "2-1 전엔 친구 던전 잠김");
+                S.bestEver = 5; GM.Notify(); yield return Wait(0.2f);
+                Check(GM.FriendOpen && !GM.FishOpen, "2-1 에서 친구 던전·카피친구 열림 (보급품은 아직 6-1)");
                 S.bestEver = be0; GM.Notify(); yield return Wait(0.2f);
-                Check(GM.FriendOpen, "6-1 뒤 친구 던전 열림");
 
                 // 친구 던전: 하루 무료 2 + 광고 3 · 던전 N = 스테이지 2N 번째 (1:2)
                 for (int i = 0; i < S.friendLv.Count; i++) { S.friendLv[i] = 0; S.friendCards[i] = 0; }
                 S.friendBest = 0; S.friendSel = 0; S.friendDay = ""; S.friendTickets = 0; S.RefreshDaily();
                 Check(GM.FriendTickets == 2 && GM.FriendAdLeft == 3, $"친구 던전 하루 무료 {GM.FriendTickets} + 광고 {GM.FriendAdLeft}");
-                Check(Tables.FriendDgnStage(1) == 1 && Tables.FriendDgnStage(13) == 25 && System.Math.Abs(Tables.FriendDgnHp(2) / Tables.FriendDgnHp(1) - Tables.Stage(3).hp / Tables.Stage(1).hp) < 1e-6,
-                      $"던전 1 = 스테이지 {SaveData.StageName(Tables.FriendDgnStage(1))} · 던전 13 = {SaveData.StageName(Tables.FriendDgnStage(13))} (1:2) · 보스 체력 {Num.F(Tables.FriendDgnHp(1))}");
+                Check(Tables.FriendDgnStage(1) == 5 && Tables.FriendDgnStage(13) == 125 && Tables.FriendDgnHp(2) > Tables.FriendDgnHp(1) * 2,
+                      $"11-18 2차 던전 1 = {SaveData.StageName(Tables.FriendDgnStage(1))} · 던전 13 = {SaveData.StageName(Tables.FriendDgnStage(13))} (챕터 1:2) · 보스 체력 {Num.F(Tables.FriendDgnHp(1))} → {Num.F(Tables.FriendDgnHp(2))}");
+                Check(Tables.FriendDgnCards(1) == 3 && Tables.FriendDgnCards(5) == 3 && Tables.FriendDgnCards(6) == 4 && Tables.FriendDgnCards(50) == 12,
+                      $"11-18 2차 단계가 오를수록 카드 +1 (5단계마다): 1 → {Tables.FriendDgnCards(1)} · 6 → {Tables.FriendDgnCards(6)} · 50 → {Tables.FriendDgnCards(50)}");
+                {
+                    var fr1 = GM.Friend(1); var fr15 = GM.Friend(15);
+                    Check(Tables.FriendNeed(fr1, 1) == 1 && Tables.FriendNeed(fr1, 2) == 6 && Tables.FriendNeed(fr15, 2) == 2 && Tables.FriendNeed(fr1, 10) > Tables.FriendNeed(fr15, 10),
+                          $"11-18 2차 하위 친구일수록 필요 카드 많음: 토끼 Lv.2 {Tables.FriendNeed(fr1, 2)}장 · Lv.10 {Tables.FriendNeed(fr1, 10)}장 / 당나귀 {Tables.FriendNeed(fr15, 2)} · {Tables.FriendNeed(fr15, 10)}");
+                }
                 GameObject.Find("Nav_friend")?.GetComponent<Button>().onClick.Invoke(); yield return Wait(0.35f);
                 var fdp = HUD.I.Get<FriendDungeonPopup>();
                 Check(fdp && fdp.gameObject.activeSelf && fdp.ShownLv == 1 && fdp.GoText == L.T("입장"), $"아래 [친구] → 입장 창 (Lv.{(fdp ? fdp.ShownLv : 0)} · {(fdp ? fdp.GoText : "")})");
@@ -792,13 +805,13 @@ namespace KachiGun.EditorTools
                 GameManager.HoldFire = false;
                 var rab = GM.Friend(1);
                 for (int i = 0; i < S.friendLv.Count; i++) { S.friendLv[i] = 0; S.friendCards[i] = 0; }   // 다른 친구가 레벨 업 가능하면 빨간 점이 안 꺼짐
-                S.friendLv[0] = 1; S.friendCards[0] = Tables.FriendNeed(2) - 1; GM.Notify(); yield return Wait(0.15f);
-                Check(!GM.FriendReady(rab) && GM.FriendLevelUp(1) != null, $"카드 모자람 → 레벨 업 안 됨 ({Stats.FriendCards(rab)}/{Tables.FriendNeed(2)})");
+                S.friendLv[0] = 1; S.friendCards[0] = Tables.FriendNeed(rab, 2) - 1; GM.Notify(); yield return Wait(0.15f);
+                Check(!GM.FriendReady(rab) && GM.FriendLevelUp(1) != null, $"카드 모자람 → 레벨 업 안 됨 ({Stats.FriendCards(rab)}/{Tables.FriendNeed(rab, 2)})");
                 S.friendCards[0]++; GM.Notify(); yield return Wait(0.15f);
                 var cdot = GameObject.Find("Nav_collection").transform.Find("Dot");
                 Check(GM.FriendReady(rab) && cdot && cdot.gameObject.activeSelf, "카드가 모이면 컬렉션 버튼 빨간 점");
                 double atk0 = Stats.AtkMul;
-                CollectionTabs.Open(2); yield return Wait(0.3f);
+                CollectionTabs.Open(CollectionTabs.FriendTab); yield return Wait(0.3f);
                 Capture("21f_friend_ready");
                 GameObject.Find("Friend1").GetComponent<Button>().onClick.Invoke(); yield return Wait(0.2f);
                 double want = (1 + rab.bonus * 2 / 100) / (1 + rab.bonus / 100);
@@ -812,20 +825,26 @@ namespace KachiGun.EditorTools
                 Check(fs > 0 && fg > 0 && fb > 0 && Stats.BossMul() > 1 + Stats.SupplyBoss / 100, $"카피친구 효과 합: 속도 +{fs}% · 금전 +{fg}% · 보스 +{fb}%");
                 CloseAll();
 
-                // 무료 총알 (상점 무료 탭): 광고 → D 등급 5개 · 인벤토리가 차 있으면 들어갈 만큼만 + 알림 + 횟수는 줄어듦
+                // 무료 총알 (상점 무료 탭) · 11-18 2차: 광고 1번에 1개 · 인벤토리가 꽉 차 있으면 광고 전에 알림 (광고 안 나옴 · 횟수 그대로)
                 var invBak = new List<int>(S.inv);
                 for (int i = 0; i < S.inv.Count; i++) S.inv[i] = -1;
                 S.adBulletUsed = 0;
                 var ab = GM.AdBullets();
                 int dN = S.inv.FindAll(c => c >= 0 && Tables.GradeOf(c) == 0).Count;
-                Check(ab == null && dN == 5 && S.adBulletUsed == 1 && GM.AdBulletsLeft == 2, $"무료 총알 광고 → D 등급 {dN}개 · 남은 {GM.AdBulletsLeft}/3");
-                for (int i = 0; i < S.inv.Count - 2; i++) if (S.inv[i] < 0) S.inv[i] = Tables.Code(1, "single");
-                GM.AdBullets();
-                string t2 = HUD.I.ToastText;
-                Check(S.inv.IndexOf(-1) < 0 && S.adBulletUsed == 2 && t2 != null && t2.Contains("2"), $"빈 칸 2개 → 2개만 받음 · 횟수 줄어듦 (\"{t2}\")");
-                GM.AdBullets();
-                string t3 = HUD.I.ToastText;
-                Check(S.adBulletUsed == 3 && GM.AdBulletsLeft == 0 && t3 != null && t3.Contains("꽉") && GM.AdBullets() != null, $"인벤토리 꽉 참 → 알림 + 횟수 줄어듦 (\"{t3}\") · 다 쓰면 안 됨");
+                Check(ab == null && dN == 1 && S.adBulletUsed == 1 && GM.AdBulletsLeft == 2, $"무료 총알 광고 → D 등급 {dN}개 (11-18 2차 1개) · 남은 {GM.AdBulletsLeft}/3");
+                for (int i = 0; i < S.inv.Count; i++) if (S.inv[i] < 0) S.inv[i] = Tables.Code(1, "single");
+                var full = GM.AdBullets();
+                Check(full != null && full.Contains("꽉") && S.adBulletUsed == 1 && S.inv.IndexOf(-1) < 0, $"인벤토리 꽉 참 → 광고 전에 \"{full}\" · 광고 안 나옴 · 횟수 그대로 ({S.adBulletUsed})");
+                ShopPopup.OpenFor("free_bullets_ad"); yield return Wait(0.2f);
+                var fbtn = GameObject.Find("Item3")?.GetComponentInChildren<Button>();
+                fbtn?.onClick.Invoke(); yield return Wait(0.2f);
+                string tf = HUD.I.ToastText;
+                Check(tf != null && tf.Contains("꽉") && S.adBulletUsed == 1, $"상점 [무료 총알] 버튼 → 토스트 \"{tf}\"");
+                Capture("21h_shop_free_full");
+                CloseAll();
+                S.inv[3] = -1; S.inv[4] = -1;
+                GM.AdBullets(); GM.AdBullets();
+                Check(S.adBulletUsed == 3 && GM.AdBulletsLeft == 0 && GM.AdBullets() != null, "빈 칸이 생기면 다시 받음 · 하루 3번 다 쓰면 안 됨");
                 ShopPopup.OpenFor("free_bullets_ad"); yield return Wait(0.3f);
                 Capture("21h_shop_free_bullets");
                 CloseAll();
