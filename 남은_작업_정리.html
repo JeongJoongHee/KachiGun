@@ -72,6 +72,32 @@
   <tr><td>3</td><td><b>13번 AAB (1.0.13)</b> — 분대 자리 아래로 <span class="ok" style="display:inline">✔ 11-13 밤 구움 — <a href="#build13">아래 13번</a></span></td><td>개발</td><td>내부 테스트 → 폰에서 아이콘 · 카피바라 겹침 확인 → 프로덕션</td></tr>
 </table>
 <p class="note" style="margin:6px 0 0">밸런스 영향(시뮬레이터, 하루 4시간 · 광고 안 봄): 1-2 에서 사면 <b>챕터 15 도달 58일 → 4.5일</b>(1~14챕터를 거의 첫날 지나감) · 챕터 23 159 → 129일 · 챕터 150 1440 → 1412일(약 2%). 광고 보는 사람은 챕터 15 12.8 → 0.8일. 조정은 맨 마지막 밸런스 때 — 지금은 숫자만 알려 드림.</p></div>
+<div class="tip orange" style="margin-bottom:10px;background:var(--orange-bg)" id="build18"><b>11-18 — 18번 AAB (1.0.18) 구움 · 1차 업데이트</b>: <code>Kachi_Gun\Builds\kachizombie-1.0.18-18.aab</code> 66MB + 개발용 APK <code>kachizombie-1.0.18-18-debug.apk</code>(테스트 광고). 들어간 것 = 17번 것 전부 + <b>1차 업데이트</b>(<a href="1차_업데이트_적용.html">1차_업데이트_적용.html</a>): 아래 [컬렉션](코스튬 · 카피친구 · 보급품 탭) · [던전](친구 던전 — 보스 3마리 · 하루 무료 2 + 광고 3 · 2-1 부터) · 카피친구 15마리(카드로 Lv.10 까지) · 상점 무료 탭 [무료 총알](광고 1번 = D 총알 1개 · 인벤토리가 꽉 차면 광고 전 알림) · 밸런스(광고 다 봄 150챕터 401일 · 카피친구 만렙 408일).
+<br>점검: aab_check 모두 통과(패키지 · AD_ID · BILLING · AdMob · Play 게임즈 APP_ID · 64비트 · 서명 · 앱 이름) · bundletool versionCode <b>18</b> · 1.0.18 · <b>권한 목록 17번과 같음</b> · AAB 안에 새 코드 들어감 · 자동 시험 314줄 errors=0.
+<br><b>17번을 아직 안 냈으면 17은 건너뛰고 18만</b> 내면 됩니다(18에 17 것이 다 들어 있음). 다이아 폭탄 상품 3개(<code>gem_bomb_s/m/l</code>) 활성 확인은 17번 1번 칸 그대로.
+<br><b>세이브 판 3 → 4</b>: 18을 깐 폰이 클라우드에 올린 진행은 옛 앱(1.0.17 이하) 폰에선 받지도 올리지도 않고 "업데이트" 안내만 나옵니다(11-12 에 만든 보호 장치) — 내부 테스트 확인 뒤 프로덕션까지 너무 오래 끌지 않는 게 좋습니다.
+<table style="margin-top:8px">
+  <tr><th style="width:44px">순서</th><th>할 일</th><th style="width:80px">누가</th><th style="width:200px">끝나면</th></tr>
+  <tr><td>1</td><td>Play Console › 테스트 및 출시 › <b>내부 테스트</b> › [새 버전 만들기] → <code>kachizombie-1.0.18-18.aab</code> → 출시 노트 = 아래 [복사] 상자 → [다음] → [저장 및 출시]</td><td>직접</td><td>내부 테스터 폰에 1.0.18</td></tr>
+  <tr><td>2</td><td>폰에서 확인: 아래 버튼 [컬렉션] · [던전 2/2] · 던전 입장 → 보스 3마리 차례로 → 결과 창 세로 카드 → [컬렉션] › [카피친구] 에서 카드가 모이면 레벨 업 · 상점 [무료] 탭 [무료 총알] · 좀비 떼·던전 보스 성능(느리지 않은지)</td><td>직접</td><td>이상 없으면 3번</td></tr>
+  <tr><td>3</td><td>테스트 및 출시 › <b>프로덕션</b> › [새 버전 만들기] → [라이브러리에서 추가] → <b>18 (1.0.18)</b> → 같은 출시 노트 → 검토 → <b>[프로덕션 트랙으로 출시 시작]</b>까지 (게시 개요에 "18 (1.0.18) 전체 출시" 줄 확인)</td><td>직접</td><td>검토 통과 뒤 스토어에 1.0.18</td></tr>
+  <tr><td>4</td><td>(18번이 나간 뒤) 스토어 설명 글 · 스크린샷에 던전 · 카피친구를 넣을지 결정 — 스토어 그림은 그 빌드가 나간 날 바꾸기</td><td>결정</td><td>-</td></tr>
+</table>
+<p style="margin:8px 0 2px"><b>출시 노트</b> (한국어 · 영어 둘 다 · 언어 태그 포함 통째로 붙여 넣기)</p>
+<ul class="copy-list" data-plain="한국어 · 영어 (각 500자 안)"><li><span class="t" style="white-space:pre-line;display:block">&lt;ko-KR&gt;
+1.0.18 업데이트
+- 새 콘텐츠 '던전': 보스 3마리를 물리치고 카피친구 카드를 모아요 (2-1부터)
+- 카피친구 15마리! 레벨을 올리면 공격력·공격속도·골드·보스 피해가 올라요
+- 코스튬·카피친구·보급품을 '컬렉션' 한 곳에서 볼 수 있어요
+- 상점 무료 탭에 '무료 총알'이 생겼어요 (광고 보고 총알 받기)
+&lt;/ko-KR&gt;
+&lt;en-US&gt;
+Version 1.0.18
+- New Dungeon: defeat 3 bosses to collect Capy Friend cards (from Stage 2-1)
+- 15 Capy Friends! Level them up to boost ATK, attack speed, gold and boss damage
+- Costumes, Capy Friends and Supplies are now together in the Collection
+- New Free Bullets in the shop's Free tab (watch an ad to get a bullet)
+&lt;/en-US&gt;</span></li></ul></div>
 <div class="tip orange" style="margin-bottom:10px;background:var(--orange-bg)" id="build17"><b>11-17 — 17번 AAB (1.0.17) 구움</b>: <code>Kachi_Gun\Builds\kachizombie-1.0.17-17.aab</code> 65.5MB + 개발용 APK <code>kachizombie-1.0.17-17-debug.apk</code>(테스트 광고). 들어간 것 = 16번 것 전부 + <b>다이아 폭탄</b>(작은 3,500 · 4,900원 / 8,000 · 9,900원 / 초대형 27,000 · 29,900원 · 상품마다 한 달 3번 · 매월 1일 0시(한국 시간)에 다시 · 첫 구매 2배 없음 · Config <code>Gem_Bomb_Limit</code>) · <b>기존 다이아 상품 +10%</b>(500→550 · 1,800→2,000 · 4,200→4,600) · <b>상점 탭</b> [다이아] [패키지] [무료] · <b>990원 미사일 · 폭탄 아이콘을 상점 버튼 오른쪽 한 줄</b>. 세이브 판 그대로(3 — 폭탄 기록은 기존 목록에 "bomb:달:상품"으로).
 <br>점검: aab_check 모두 통과(패키지 · AD_ID · BILLING · AdMob · Play 게임즈 APP_ID · 64비트 · 서명 · 앱 이름) · bundletool versionCode <b>17</b> · 1.0.17 · <b>권한 목록 16번과 같음</b> · AAB 안에 새 코드 들어감 · 자동 시험 errors=0 (상점 탭 3줄 · 폭탄 · 아이콘 순서/안 겹침 검사 포함).
 <br><b>폰에서 폭탄은 Play Console 에 상품이 있고 활성이어야 보입니다</b> — 없거나 아직 안 내려왔으면 폭탄 줄 · 홈 아이콘이 저절로 숨고 나머지는 그대로(위험 없음). 새 상품은 만든 뒤 폰에 내려오기까지 약 2시간 걸렸었음.
